@@ -113,8 +113,8 @@ export class Element extends HTMLElement implements IElement {
   }
   private attributeChangedCallback(name: string, oldV: string, newV: string) {
     this.props[name]["value"] = newV;
-    // this.handleProps(name, newV, oldV);
-    // this.propChanged(name, newV, oldV);
+    this.handleProps(name, newV, oldV);
+    this.propChanged(name, newV, oldV);
   }
   protected bindMethods() {
     Object.assign(this.$methods, this.methods);
