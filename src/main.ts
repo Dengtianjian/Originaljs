@@ -1,33 +1,21 @@
-import { createComponent, defineComponent, importTemplate } from "./runtime";
+import {
+  createComponent,
+  defineComponent,
+  importTemplate,
+  Query,
+} from "./runtime";
 
-let template: string = `
-<style>
-button {
-  padding:5px;
-  border:none;
-  cursor:pointer;
-}
-button:hover {
-  color:white;
-  background-color:red;
-}
-</style>
-<button onclick="show" title="aaa" data-date="2021" >
-<slot />
-</button>
-<button title="aaa" onclick="startMove" data-date="3333" >
-2
-</button>
-`;
+// let template: string = await import("./components/templates/cbutton.html");
+// template = template.default;
 
-template = await importTemplate("./components/template/cbutton.html");
+let template = Query(".c-button");
 
 class CButton extends createComponent({}, template) {
   constructor() {
     super();
   }
-  show() {
-    alert(this.dataset.date);
+  show(a, b, c) {
+    console.log(a, b, c);
   }
   startMove() {
     alert(this.dataset.date);

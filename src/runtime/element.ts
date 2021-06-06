@@ -19,19 +19,12 @@ export class Element extends HTMLElement implements IElement {
   constructor() {
     super();
   }
-  protected async reader() {
-    const document = new DOMParser().parseFromString(
-      this.$template,
-      "text/html"
-    );
-    const headChildNodes = document.childNodes[0].childNodes[0].childNodes;
-    const bodyChildNodes = document.childNodes[0].childNodes[1].childNodes;
-    const appendChilds = [
-      ...Array.from(headChildNodes),
-      ...Array.from(bodyChildNodes),
-    ];
+  private nodeBindMethods(nodes) {
+    nodes.forEach((node, key) => {
+      if (node.childNodes.length > 0) {
+        this.nodeBindMethods(node.childNodes);
+      }
 
-    appendChilds.forEach((node, key) => {
       // @ts-ignore
       if (node.attributes && node.attributes.length > 0) {
         // @ts-ignore
@@ -65,7 +58,27 @@ export class Element extends HTMLElement implements IElement {
           }
         }
       }
+    });
+    return nodes;
+  }
+  protected async reader() {
+    let appendChilds = [];
+    if (typeof this.$template === "string") {
+      const document = new DOMParser().parseFromString(
+        this.$template,
+        "text/html"
+      );
+      const headChildNodes = document.childNodes[0].childNodes[0].childNodes;
+      const bodyChildNodes = document.childNodes[0].childNodes[1].childNodes;
+      appendChilds = [
+        ...Array.from(headChildNodes),
+        ...Array.from(bodyChildNodes),
+      ];
+    } else {
+      appendChilds = [this.$template];
+    }
 
+    this.nodeBindMethods(appendChilds).forEach((node, key) => {
       this.$ref.appendChild(node);
     });
   }
@@ -184,7 +197,10 @@ export class Element extends HTMLElement implements IElement {
   }
 }
 
-export function createComponent(props: TProps = {}, template: string = "") {
+export function createComponent(
+  props: TProps = {},
+  template: string | keyof HTMLElementTagNameMap = ""
+) {
   return class extends Element {
     $template: string = template;
     $propsRaw: TProps = props;
