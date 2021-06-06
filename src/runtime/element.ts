@@ -7,7 +7,7 @@ import {
 } from "../types/elementType";
 
 export class Element extends HTMLElement implements IElement {
-  $i = this;
+  $target = this;
   protected $ref: Element | ShadowRoot | null = null;
   protected $template: string = "";
   protected static $propsRaw: TProps = {};
@@ -19,7 +19,7 @@ export class Element extends HTMLElement implements IElement {
   constructor() {
     super();
   }
-  private nodeBindMethods(nodes) {
+  protected nodeBindMethods(nodes) {
     nodes.forEach((node, key) => {
       if (node.childNodes.length > 0) {
         this.nodeBindMethods(node.childNodes);
@@ -33,11 +33,12 @@ export class Element extends HTMLElement implements IElement {
             /^on[a-z]+$/.test(attributeItem.name) &&
             /^\w+(\(\))?/.test(attributeItem.value)
           ) {
-            let params = String(attributeItem.value).match(/(?<=\().+(?=\))/);
-            if (params !== null) {
-              params = params[0].split(",");
-            } else {
-              params = [];
+            let paramsRaw = String(attributeItem.value).match(
+              /(?<=\().+(?=\))/
+            );
+            let params = [];
+            if (paramsRaw !== null) {
+              params = paramsRaw[0].split(",");
             }
             // let eventName = String(attributeItem.name).match(/(?<=on)\w+$/);
             let methodName = String(attributeItem.value).match(
@@ -49,12 +50,25 @@ export class Element extends HTMLElement implements IElement {
             //   this[methodName[0]].bind(this, ...params)
             // );
 
-            node["$i"] = this;
+            node[attributeItem.name] = (event) => {
+              event["$target"] = node;
 
-            node[attributeItem.name] = this[methodName[0]].bind(
-              node,
-              ...params
-            );
+              if (paramsRaw && params.length > 0) {
+                params.forEach((param, index) => {
+                  if (/\$event/.test(param)) {
+                    params[index] = event;
+                  }
+                  if (/\$target/.test(param)) {
+                    params[index] = node;
+                  }
+                });
+              }
+              if (paramsRaw) {
+                this[methodName[0]].bind(this)(...params);
+              } else {
+                this[methodName[0]].bind(this)(event);
+              }
+            };
           }
         }
       }
@@ -81,14 +95,14 @@ export class Element extends HTMLElement implements IElement {
     this.nodeBindMethods(appendChilds).forEach((node, key) => {
       this.$ref.appendChild(node);
     });
+    // this.bindMethods();
+    this.queryPropsEl();
   }
   connected() {}
   disconnected() {}
   adoptied() {}
   propChanged(name: string, oldV: string, newV: string) {}
   private connectedCallback() {
-    this.bindMethods();
-    this.queryPropsEl();
     this.connected();
   }
   private disconnectedCallback() {
@@ -99,8 +113,8 @@ export class Element extends HTMLElement implements IElement {
   }
   private attributeChangedCallback(name: string, oldV: string, newV: string) {
     this.props[name]["value"] = newV;
-    this.handleProps(name, newV, oldV);
-    this.propChanged(name, newV, oldV);
+    // this.handleProps(name, newV, oldV);
+    // this.propChanged(name, newV, oldV);
   }
   protected bindMethods() {
     Object.assign(this.$methods, this.methods);

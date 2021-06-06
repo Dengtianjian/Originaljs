@@ -57,7 +57,7 @@ function addExportToHTMLFile(): Plugin {
 export default defineConfig({
   plugins: [insertTemplate(), addExportToHTMLFile()],
   build: {
-    minify: false,
+    minify: true,
     lib: {
       entry: "src/runtime/index.ts",
       name: "original",
