@@ -1,0 +1,63 @@
+<style>
+  .c-button {
+    position: relative;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 2px;
+    transition: filter 0.13s ease-in-out;
+    cursor: pointer;
+    background: none;
+  }
+  .c-button:hover {
+    filter: brightness(1.1);
+  }
+  .c-button:active {
+    filter: brightness(0.8);
+  }
+  .c-button_normal {
+    border: 1px solid #ccc;
+  }
+  .c-button_normal:hover {
+    color: white;
+    background: var(--primary-color);
+    border-color: transparent;
+  }
+  .c-button_primary {
+    color: white;
+    background-color: var(--primary-color);
+    border: none;
+  }
+  .c-button_warning {
+    color: white;
+    background-color: var(--warning-color);
+    border: none;
+  }
+  .c-button_success {
+    color: white;
+    background-color: var(--success-color);
+    border: none;
+  }
+  .c-button_danger {
+    color: white;
+    background-color: var(--danger-color);
+    border: none;
+  }
+  .c-button_success.c-button_plain {
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+    background-color: transparent;
+  }
+  .c-button_success.c-button_plain::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.2;
+    background-color: currentColor;
+  }
+  .c-button_success.c-button_plain:hover::before {
+    content: "";
+  }
+</style>
+<button class="c-button" onclick="show()"><slot /></button>
