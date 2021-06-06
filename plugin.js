@@ -1,3 +1,1 @@
-const jsdom = require("jsdom");
-
-const dom = new jsdom.JSDOM("<div>666</div>");
+const postcss = require("orignaljs");

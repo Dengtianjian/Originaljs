@@ -1,6 +1,6 @@
 {
-  "name": "cuicomponents",
-  "version": "0.0.0",
+  "name": "originaljs",
+  "version": "0.0.20",
   "scripts": {
     "dev": "vite --host",
     "build": "vue-tsc --noEmit && vite build",
@@ -30,5 +30,8 @@
     "vite": "^2.3.5",
     "vitepress": "^0.14.0",
     "vue-tsc": "^0.0.24"
-  }
+  },
+  "files": [
+    "dist/index.js"
+  ]
 }
