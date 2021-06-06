@@ -1,4 +1,4 @@
-import { Query } from ".";
+import { Query } from "./selector";
 import { ITransitionProperty, ITrantionItem } from "../types/transitionTypes";
 
 class Transition {

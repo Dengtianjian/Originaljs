@@ -7,33 +7,6 @@ const insertTemplate = (): Plugin => {
   return {
     name: "insert-template",
     apply: "build",
-    // transformIndexHtml(html): IndexHtmlTransformResult {
-    //   const fs = require("fs");
-    //   const templateRoot = "./src/template";
-    //   const template = fs.readdirSync(templateRoot);
-
-    //   let templateContent = "";
-    //   template.forEach((templateFile) => {
-    //     const content = fs.readFileSync(templateRoot + "/" + templateFile);
-    //     templateContent += content.toString() + "\n";
-    //   });
-
-    //   const body = String(html).match(/<body[^>]*>([\s\S]+?)<\/body>/i);
-    //   let bodyContent: string = body[0];
-    //   bodyContent = bodyContent.replace(
-    //     /<body[^>]*>([\s\S]+?)<\/body>/i,
-    //     `<body>${templateContent}\n${bodyContent}</body>`
-    //   );
-
-    //   return bodyContent;
-    // },
-    // load(id) {
-    //   if (id.endsWith(".html")) {
-    //     const template = require(id);
-    //     console.log(template);
-    //   }
-    //   return "aaa";
-    // },
     outputOptions(options) {
       options["chunkFileNames"] = "[name].js";
       options["entryFileNames"] = "[name].js";
@@ -41,6 +14,8 @@ const insertTemplate = (): Plugin => {
       return options;
     },
     transform(code, id) {
+      console.log(id);
+
       if (/(await)? ?importTemplate\(".+"\)/.test(code)) {
         let templateFile = code.match(/(?<=importTemplate\(")(.+)(?="\))/gi);
 
@@ -82,12 +57,12 @@ function addExportToHTMLFile(): Plugin {
 export default defineConfig({
   plugins: [insertTemplate(), addExportToHTMLFile()],
   build: {
-    polyfillDynamicImport: true,
-    minify: true,
-    // lib: {
-    //   entry: "src/components/index.ts",
-    //   name: "cui",
-    //   formats: ["es"],
-    // },
+    minify: false,
+    lib: {
+      entry: "src/runtime/index.ts",
+      name: "original",
+      formats: ["es"],
+      fileName: "original",
+    },
   },
 });

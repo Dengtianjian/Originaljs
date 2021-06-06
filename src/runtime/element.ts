@@ -7,6 +7,7 @@ import {
 } from "../types/elementType";
 
 export class Element extends HTMLElement implements IElement {
+  $i = this;
   protected $ref: Element | ShadowRoot | null = null;
   protected $template: string = "";
   protected static $propsRaw: TProps = {};
@@ -19,7 +20,54 @@ export class Element extends HTMLElement implements IElement {
     super();
   }
   protected async reader() {
-    this.$ref.innerHTML = this.$template;
+    const document = new DOMParser().parseFromString(
+      this.$template,
+      "text/html"
+    );
+    const headChildNodes = document.childNodes[0].childNodes[0].childNodes;
+    const bodyChildNodes = document.childNodes[0].childNodes[1].childNodes;
+    const appendChilds = [
+      ...Array.from(headChildNodes),
+      ...Array.from(bodyChildNodes),
+    ];
+
+    appendChilds.forEach((node, key) => {
+      // @ts-ignore
+      if (node.attributes && node.attributes.length > 0) {
+        // @ts-ignore
+        for (const attributeItem of node.attributes) {
+          if (
+            /^on[a-z]+$/.test(attributeItem.name) &&
+            /^\w+(\(\))?/.test(attributeItem.value)
+          ) {
+            let params = String(attributeItem.value).match(/(?<=\().+(?=\))/);
+            if (params !== null) {
+              params = params[0].split(",");
+            } else {
+              params = [];
+            }
+            // let eventName = String(attributeItem.name).match(/(?<=on)\w+$/);
+            let methodName = String(attributeItem.value).match(
+              /\w+(?=\(.+\))?/
+            );
+
+            // node.addEventListener(
+            //   eventName[0],
+            //   this[methodName[0]].bind(this, ...params)
+            // );
+
+            node["$i"] = this;
+
+            node[attributeItem.name] = this[methodName[0]].bind(
+              node,
+              ...params
+            );
+          }
+        }
+      }
+
+      this.$ref.appendChild(node);
+    });
   }
   connected() {}
   disconnected() {}
@@ -34,8 +82,6 @@ export class Element extends HTMLElement implements IElement {
     this.disconnected();
   }
   private adoptedCallback() {
-    console.log("adopted");
-
     this.adoptied();
   }
   private attributeChangedCallback(name: string, oldV: string, newV: string) {
