@@ -1,6 +1,4 @@
 import { defineConfig, IndexHtmlTransformResult, Plugin } from "vite";
-import vue from "@vitejs/plugin-vue"; //* 暂时去掉vue
-import vueJsx from "@vitejs/plugin-vue-jsx";
 import FS from "fs";
 
 const insertTemplate = (): Plugin => {
@@ -14,8 +12,6 @@ const insertTemplate = (): Plugin => {
       return options;
     },
     transform(code, id) {
-      console.log(id);
-
       if (/(await)? ?importTemplate\(".+"\)/.test(code)) {
         let templateFile = code.match(/(?<=importTemplate\(")(.+)(?="\))/gi);
 
