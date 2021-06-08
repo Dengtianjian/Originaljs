@@ -10,6 +10,7 @@ export class Element extends HTMLElement implements IElement {
   $target = this;
   protected $ref: Element | ShadowRoot | null = null;
   protected $template: string = "";
+  $propsRaw: TProps = {};
   protected static $propsRaw: TProps = {};
   protected static $propKeys: string[] = [];
   props: TProps = {};
@@ -92,9 +93,11 @@ export class Element extends HTMLElement implements IElement {
       appendChilds = [this.$template];
     }
 
+    // this.replaceVar();
     this.nodeBindMethods(appendChilds).forEach((node, key) => {
       this.$ref.appendChild(node);
     });
+
     // this.bindMethods();
     this.queryPropsEl();
   }
@@ -102,7 +105,20 @@ export class Element extends HTMLElement implements IElement {
   disconnected() {}
   adoptied() {}
   propChanged(name: string, oldV: string, newV: string) {}
+  data(): object {
+    return {};
+  }
+  addDataToProperty() {
+    const data = this.data();
+    for (const key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        const element = data[key];
+        this[`$${key}`] = data[key];
+      }
+    }
+  }
   private connectedCallback() {
+    this.addDataToProperty();
     this.connected();
   }
   private disconnectedCallback() {
@@ -209,6 +225,30 @@ export class Element extends HTMLElement implements IElement {
       }
     }
   }
+  replaceVar() {
+    const vars =
+      this.$template.lastElementChild.innerHTML.match(/(?<=\{).+?(?=\})/g);
+    if (vars === null) {
+      return;
+    }
+
+    vars.forEach((varItem) => {
+      let prop = this.$propsRaw[varItem];
+      let replaceVal;
+      if (typeof prop === "function") {
+        replaceVal = replaceVal();
+      }
+
+      this.$template.lastElementChild.innerHTML =
+        this.$template.lastElementChild.innerHTML.replace(
+          `\{${varItem}\}`,
+          String(this.$num)
+        );
+    });
+  }
+  test() {
+    console.log("test");
+  }
 }
 
 export function createComponent(
@@ -229,6 +269,7 @@ export function createComponent(
       });
       this.reader();
     }
+    $num = 789;
   };
 }
 

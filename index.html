@@ -9,11 +9,11 @@
   <body>
     <div id="app"></div>
     <script type="module" src="./src/main.ts"></script>
-    <c-button>Save</c-button>
-    <div class="c-button">
-      <button onclick="show(1,2,3)">1</button>
-      <button>12</button>
-      <button>3</button>
-    </div>
+    <c-button class="save-button">Save</c-button>
+    <c-button class="num-button">123</c-button>
+    <c-button>456</c-button>
+    <template id="CButton">
+      <button>{num}</button>
+    </template>
   </body>
 </html>
