@@ -22,9 +22,10 @@ button {
     background-color: blueviolet;
   }
 </style>
-<button onclick="show" title="aaa" data-date="2021">
+<button title="aaa" data-date="2021">
   <slot></slot>
   {num}
+  <span>&nbsp;{num}</span>
 </button>`;
 
 class CButton extends ElementSpace.Element {
@@ -33,7 +34,7 @@ class CButton extends ElementSpace.Element {
   }
   state = {
     name: "admin",
-    num: [Date.now(), 1, 3]
+    num: [Date.now(), 1, 3],
   };
   show() {
     console.log(this);
@@ -45,17 +46,16 @@ class CButton extends ElementSpace.Element {
   }
 }
 
-function component(el, newAttr = {}) {
-  console.log(newAttr);
-
-  window.onload = function () {
-    el.$target.show = newAttr.show;
-  };
+function component<T>(el, newAttrs: T) {
+  // el.$target.num = newAttr.num;
+  for (const key in newAttrs) {
+    if (Object.prototype.hasOwnProperty.call(newAttrs, key)) {
+      const element = newAttrs[key];
+    }
+  }
 }
-// component(Query(".save-button"), {
-//   show() {
-//     console.log(2);
-//   },
-//   $num: "abc",
-// });
+Query(".save-button").onclick = function () {
+  this.setState("num", Date.now());
+};
+
 defineComponent("c-button", CButton);
