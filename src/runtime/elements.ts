@@ -61,10 +61,10 @@ namespace ElementSpace {
 
       for (const nodeItem of appendNodes) {
         this._reactive(nodeItem as HTMLElement);
+        this._bindMethods(nodeItem as HTMLElement);
       }
 
       this.$ref.append(...appendNodes);
-      console.log(this._state);
     }
     _reactive(El: HTMLElement): boolean {
       if (El.childNodes.length > 0) {
@@ -105,6 +105,57 @@ namespace ElementSpace {
           El.innerHTML = ElHTML;
           break;
       }
+      return true;
+    }
+    _bindMethods(El: HTMLElement): boolean {
+      if (El.childNodes.length > 0) {
+        El.childNodes.forEach((node) => {
+          this._bindMethods(node as HTMLElement);
+        });
+      }
+      if (El.attributes && El.attributes.length > 0) {
+        Array.from(El.attributes).forEach((attrItem) => {
+          if (
+            /^on[a-z]+$/.test(attrItem.name) &&
+            /^\w+(\(\))?/.test(attrItem.value)
+          ) {
+            const paramsRaw: RegExpMatchArray = String(attrItem.value).match(
+              /(?<=\().+(?=\))/
+            );
+            let params = [];
+            if (paramsRaw !== null) {
+              params = paramsRaw[0].split(",");
+            }
+            const methodName: RegExpMatchArray = String(attrItem.value).match(
+              /\w+(?=\(.+\))?/
+            );
+            //* 清除DOMParser 加上的方法
+            El[attrItem["localName"]] = null;
+            // TODO 绑定多个方法
+            // El.addEventListener(
+            //   eventName[0],
+            //   this[methodName[0]].bind(this, ...params)
+            // );
+
+            if (paramsRaw && params.length > 0) {
+              params.forEach((param, index) => {
+                if (/\$target/.test(param)) {
+                  params[index] = El;
+                }
+              });
+            }
+            if (paramsRaw) {
+              El[attrItem["localName"]] = this[methodName[0]].bind(
+                this,
+                ...params
+              );
+            } else {
+              El[attrItem["localName"]] = this[methodName[0]].bind(this);
+            }
+          }
+        });
+      }
+
       return true;
     }
     setState(key, value) {
