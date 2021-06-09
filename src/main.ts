@@ -32,10 +32,6 @@ class CButton extends ElementSpace.Element {
   constructor() {
     super(template);
   }
-  state = {
-    name: "admin",
-    num: [Date.now(), 1, 3],
-  };
   show() {
     console.log(this);
 
@@ -44,16 +40,9 @@ class CButton extends ElementSpace.Element {
   startMove() {
     alert(this.dataset.date);
   }
+  num = [Date.now(), 1, 3];
 }
 
-function component<T>(el, newAttrs: T) {
-  // el.$target.num = newAttr.num;
-  for (const key in newAttrs) {
-    if (Object.prototype.hasOwnProperty.call(newAttrs, key)) {
-      const element = newAttrs[key];
-    }
-  }
-}
 Query(".save-button").onclick = function () {
   this.setState("num", Date.now());
 };

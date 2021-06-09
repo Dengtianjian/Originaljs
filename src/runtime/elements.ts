@@ -3,9 +3,7 @@ import { IElement } from "../types/elementType";
 namespace ElementSpace {
   export class Element extends HTMLElement implements IElement {
     $ref: Element | ShadowRoot | null = null;
-    _updateStatusQueue: Set<string> = new Set();
     _state: Record<string, { value: any; els: Set<HTMLElement> }> = {};
-    state: Record<string, any> = {};
     $methods: Record<string, { listener: any; els: Array<HTMLElement> }> = {};
     _template: Node | NodeList | string = "";
     static observedAttributes: string[] = [];
@@ -89,13 +87,10 @@ namespace ElementSpace {
       }
 
       vars.forEach((varItem) => {
-        ElHTML = ElHTML.replace(
-          `\{${varItem}\}`,
-          this.state[varItem].toString()
-        );
+        ElHTML = ElHTML.replace(`\{${varItem}\}`, this[varItem].toString());
         if (!this._state[varItem]) {
           this._state[varItem] = {
-            value: this.state[varItem],
+            value: this[varItem],
             els: new Set<HTMLElement>(),
           };
         }
@@ -126,6 +121,7 @@ namespace ElementSpace {
       });
       state.value = value;
     }
+    update(key, value) {}
   }
 }
 
