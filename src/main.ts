@@ -4,6 +4,7 @@ import {
   importTemplate,
   Query,
 } from "./runtime";
+import ElementSpace from "./runtime/elements";
 
 // let template: string = await import("./components/templates/cbutton.html");
 // template = template.default;
@@ -22,18 +23,18 @@ button {
   }
 </style>
 <button onclick="show" title="aaa" data-date="2021">
-  <slot />{num}
+  <slot></slot>
+  {num}
 </button>`;
 
-class CButton extends createComponent({}, template) {
+class CButton extends ElementSpace.Element {
   constructor() {
-    super();
+    super(template);
   }
-  data() {
-    return {
-      name: "aaa",
-    };
-  }
+  state = {
+    name: "admin",
+    num: [Date.now(), 1, 3]
+  };
   show() {
     console.log(this);
 
@@ -42,7 +43,6 @@ class CButton extends createComponent({}, template) {
   startMove() {
     alert(this.dataset.date);
   }
-  $num = 123456;
 }
 
 function component(el, newAttr = {}) {
@@ -52,10 +52,10 @@ function component(el, newAttr = {}) {
     el.$target.show = newAttr.show;
   };
 }
-component(Query(".save-button"), {
-  show() {
-    console.log(2);
-  },
-  $num: "abc",
-});
+// component(Query(".save-button"), {
+//   show() {
+//     console.log(2);
+//   },
+//   $num: "abc",
+// });
 defineComponent("c-button", CButton);

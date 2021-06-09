@@ -1,5 +1,5 @@
 export interface IElement {
-  methods: IMethodObject;
+
 }
 
 export type IMethods = {

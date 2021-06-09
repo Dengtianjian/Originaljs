@@ -132,6 +132,7 @@ export class Element extends HTMLElement implements IElement {
     this.handleProps(name, newV, oldV);
     this.propChanged(name, newV, oldV);
   }
+  //! 待废弃
   protected bindMethods() {
     Object.assign(this.$methods, this.methods);
     for (const methodKey in this.$methods) {
@@ -227,7 +228,7 @@ export class Element extends HTMLElement implements IElement {
   }
   replaceVar() {
     const vars =
-      this.$template.lastElementChild.innerHTML.match(/(?<=\{).+?(?=\})/g);
+      this.$template.match(/(?<=\{).+?(?=\})/g);
     if (vars === null) {
       return;
     }
@@ -239,15 +240,12 @@ export class Element extends HTMLElement implements IElement {
         replaceVal = replaceVal();
       }
 
-      this.$template.lastElementChild.innerHTML =
-        this.$template.lastElementChild.innerHTML.replace(
+      this.$template.innerHTML =
+        this.$template.innerHTML.replace(
           `\{${varItem}\}`,
           String(this.$num)
         );
     });
-  }
-  test() {
-    console.log("test");
   }
 }
 
@@ -269,7 +267,6 @@ export function createComponent(
       });
       this.reader();
     }
-    $num = 789;
   };
 }
 
