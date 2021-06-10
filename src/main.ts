@@ -22,10 +22,10 @@ button {
     background-color: blueviolet;
   }
 </style>
-<button title="aaa" data-date="2021" onclick="show">
+<button title="aaa" data-date="2021">
   <slot></slot>
   {num}
-  <span onclick="startMove">&nbsp;{num}</span>
+  <span onclick="startMove;moving(666,'aa','{num}')" onmouseenter="endMove">&nbsp;{num}</span>
 </button>`;
 
 class CButton extends ElementSpace.Element {
@@ -38,6 +38,12 @@ class CButton extends ElementSpace.Element {
   startMove(event) {
     // event.stopPropagation();
     console.log(event);
+  }
+  moving(p) {
+    console.log(p);
+  }
+  endMove() {
+    console.log("endMove");
   }
   num = [Date.now(), 1, 3];
 }

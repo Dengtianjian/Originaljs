@@ -4,7 +4,12 @@ namespace ElementSpace {
   export class Element extends HTMLElement implements IElement {
     $ref: Element | ShadowRoot | null = null;
     _state: Record<string, { value: any; els: Set<HTMLElement> }> = {};
-    $methods: Record<string, { listener: any; els: Array<HTMLElement> }> = {};
+    _methods: Record<string, {
+      listener: any; params: any[], els: Array<{
+        el: HTMLElement,
+        type: keyof WindowEventMap,
+      }>
+    }> = {};
     _template: Node | NodeList | string = "";
     static observedAttributes: string[] = [];
     constructor(template) {
@@ -22,10 +27,10 @@ namespace ElementSpace {
     private adoptedCallback() {
       this.adoptied();
     }
-    connected() {}
-    disconnected() {}
-    adoptied() {}
-    propChanged(name: string, oldV: string, newV: string) {}
+    connected() { }
+    disconnected() { }
+    adoptied() { }
+    propChanged(name: string, oldV: string, newV: string) { }
     private attributeChangedCallback(name: string, oldV: string, newV: string) {
       this.propChanged(name, newV, oldV);
     }
@@ -87,7 +92,8 @@ namespace ElementSpace {
       }
 
       vars.forEach((varItem) => {
-        ElHTML = ElHTML.replace(`\{${varItem}\}`, this[varItem].toString());
+        let replace: string = this[varItem].toString();
+        ElHTML = ElHTML.replace(`\{${varItem}\}`, replace);
         if (!this._state[varItem]) {
           this._state[varItem] = {
             value: this[varItem],
@@ -119,44 +125,61 @@ namespace ElementSpace {
             /^on[a-z]+$/.test(attrItem.name) &&
             /^\w+(\(\))?/.test(attrItem.value)
           ) {
-            const paramsRaw: RegExpMatchArray = String(attrItem.value).match(
-              /(?<=\().+(?=\))/
-            );
-            let params = [];
-            if (paramsRaw !== null) {
-              params = paramsRaw[0].split(",");
-            }
             const methodName: RegExpMatchArray = String(attrItem.value).match(
-              /\w+(?=\(.+\))?/
+              /\w+(\(.+\))?;?/g
             );
             //* 清除DOMParser 加上的方法
             El[attrItem["localName"]] = null;
-            // TODO 绑定多个方法
-            // El.addEventListener(
-            //   eventName[0],
-            //   this[methodName[0]].bind(this, ...params)
-            // );
+            console.log(methodName);
 
-            if (paramsRaw && params.length > 0) {
-              params.forEach((param, index) => {
-                if (/\$target/.test(param)) {
-                  params[index] = El;
+            for (const name of methodName) {
+              const params = this._parserParams(name);
+              const methodName: RegExpMatchArray = name.match(/\w+(?=\(.+\))?/);
+              if (methodName === null) {
+                continue;
+              }
+              console.log(params);
+
+              if (!this._methods[methodName[0]]) {
+                let listener = null;
+                if (params.length > 0) {
+                  listener = this[methodName[0]].bind(this, ...params);
+                } else {
+                  listener = this[methodName[0]].bind(this);
                 }
-              });
-            }
-            if (paramsRaw) {
-              El[attrItem["localName"]] = this[methodName[0]].bind(
-                this,
-                ...params
-              );
-            } else {
-              El[attrItem["localName"]] = this[methodName[0]].bind(this);
+                const type: RegExpMatchArray = attrItem.localName.match(/(?<=on)\w+/g);
+                if (type === null) {
+                  continue;
+                }
+                this._methods[methodName[0]] = {
+                  listener,
+                  els: [{
+                    type: type[0] as keyof WindowEventMap,
+                    el: El
+                  }],
+                  params
+                }
+                El.addEventListener(type[0] as keyof WindowEventMap, listener);
+              }
             }
           }
         });
       }
 
       return true;
+    }
+    _parserParams(paramsString: string): string[] {
+      const paramsRaw: RegExpMatchArray = String(paramsString).match(
+        /(?<=\().+(?=\))/
+      );
+      if(paramsRaw===null){
+        return [];
+      }
+      let params = [];
+      if (paramsRaw !== null) {
+        params = paramsRaw[0].split(",");
+      }
+      return params;
     }
     setState(key, value) {
       const state = this._state[key];
@@ -172,7 +195,7 @@ namespace ElementSpace {
       });
       state.value = value;
     }
-    update(key, value) {}
+    update(key, value) { }
   }
 }
 
