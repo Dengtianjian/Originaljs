@@ -25,10 +25,10 @@ button {
 <button title="aaa" data-date="2021">
   <slot></slot>
   {num}
-  <span onclick="startMove;moving(666,'aa','{num}')" onmouseenter="endMove">&nbsp;{num}</span>
+  <span onclick="startMove;moving(666,'aa','{num}');endMove" >&nbsp;{num}</span>
   <div style="margin-top:20px;width:200px">
     123456
-    <div onclick="endMove" >
+    <div onclick="show;endMove"  >
       moving
     </div>
   </div>
@@ -57,7 +57,7 @@ class CButton extends ElementSpace.Element {
 Query(".save-button").addEventListener("click", function () {
   const now = Date.now();
   this.setMethod("endMove", (event) => {
-    console.log(event);
+    console.log(now);
   });
 });
 
