@@ -150,11 +150,7 @@ namespace ElementSpace {
 
               if (!this._methods[methodName[0]]) {
                 let listener = null;
-                if (params.length > 0) {
-                  listener = this[methodName[0]].bind(this, ...params);
-                } else {
-                  listener = this[methodName[0]].bind(this);
-                }
+                listener = this[methodName[0]].bind(this, ...params);
                 const type: RegExpMatchArray =
                   attrItem.localName.match(/(?<=on)\w+/g);
                 if (type === null) {
@@ -192,8 +188,11 @@ namespace ElementSpace {
       }
       return params;
     }
-    setState(key, value) {
+    async setState<T>(key: string, value: T) {
       const state = this._state[key];
+      if (typeof value === "function") {
+        console.log(value.construector.name);
+      }
       state.els.forEach((el) => {
         if (el.nodeType === 3) {
           el.textContent = el.textContent.replace(
@@ -206,7 +205,16 @@ namespace ElementSpace {
       });
       state.value = value;
     }
-    update(key, value) {}
+    async setMethod(name: string, func: Function | AsyncGeneratorFunction) {
+      const method = this._methods[name];
+      const listener = func.bind(this, ...method.params);
+
+      method.els.forEach((elItem) => {
+        elItem.el.removeEventListener(elItem.type, method.listener);
+        elItem.el.addEventListener(elItem.type, listener);
+      });
+      method.listener = listener;
+    }
   }
 }
 

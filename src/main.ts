@@ -26,6 +26,12 @@ button {
   <slot></slot>
   {num}
   <span onclick="startMove;moving(666,'aa','{num}')" onmouseenter="endMove">&nbsp;{num}</span>
+  <div style="margin-top:20px;width:200px">
+    123456
+    <div onclick="endMove" >
+      moving
+    </div>
+  </div>
 </button>`;
 
 class CButton extends ElementSpace.Element {
@@ -43,13 +49,16 @@ class CButton extends ElementSpace.Element {
     console.log(p);
   }
   endMove() {
-    console.log("endMove");
+    console.log(this);
   }
   num = [Date.now(), 1, 3];
 }
 
 Query(".save-button").addEventListener("click", function () {
-  this.setState("num", Date.now());
+  const now = Date.now();
+  this.setMethod("endMove", (event) => {
+    console.log(event);
+  });
 });
 
 defineComponent("c-button", CButton);
