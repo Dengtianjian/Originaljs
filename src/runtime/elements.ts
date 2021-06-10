@@ -143,21 +143,31 @@ namespace ElementSpace {
 
             for (const name of methodName) {
               const params = this._parserParams(name);
-              const methodName: RegExpMatchArray = name.match(/\w+(?=\(.+\))?/);
-              if (methodName === null) {
+              const methodNameItem: RegExpMatchArray =
+                name.match(/\w+(?=\(.+\))?/);
+              if (methodNameItem === null) {
                 continue;
               }
 
-              if (!this._methods[methodName[0]]) {
-                let listener = null;
-                listener = this[methodName[0]].bind(this, ...params);
-                const type: RegExpMatchArray =
-                  attrItem.localName.match(/(?<=on)\w+/g);
-                if (type === null) {
-                  continue;
-                }
+              let type: RegExpMatchArray =
+                attrItem.localName.match(/(?<=on)\w+/g);
+              if (type === null) {
+                continue;
+              }
+              if (this._methods[methodNameItem[0]]) {
+                this._methods[methodNameItem[0]].els.push({
+                  el: El,
+                  type: type[0] as keyof WindowEventMap,
+                });
+                console.log(this._methods[methodNameItem[0]]);
+                El.addEventListener(
+                  type[0] as keyof WindowEventMap,
+                  this._methods[methodNameItem[0]].listener
+                );
+              } else {
+                let listener = this[methodNameItem[0]].bind(this, ...params);
 
-                this._methods[methodName[0]] = {
+                this._methods[methodNameItem[0]] = {
                   listener,
                   els: [
                     {
