@@ -48,8 +48,8 @@ class CButton extends ElementSpace.Element {
   num = [Date.now(), 1, 3];
 }
 
-Query(".save-button").onclick = function () {
+Query(".save-button").addEventListener("click", function () {
   this.setState("num", Date.now());
-};
+});
 
 defineComponent("c-button", CButton);

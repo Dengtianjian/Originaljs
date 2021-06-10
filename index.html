@@ -16,5 +16,16 @@
     <template id="CButton">
       <button><slot></slot>{num}</button>
     </template>
+    <script>
+      function show() {
+        console.log(1);
+      }
+    </script>
+    <button class="test-b"><span onclick="show()">123</span></button>
+    <script>
+      document.querySelector(".test-b").addEventListener("click", () => {
+        console.log("click");
+      });
+    </script>
   </body>
 </html>

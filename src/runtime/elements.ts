@@ -4,12 +4,17 @@ namespace ElementSpace {
   export class Element extends HTMLElement implements IElement {
     $ref: Element | ShadowRoot | null = null;
     _state: Record<string, { value: any; els: Set<HTMLElement> }> = {};
-    _methods: Record<string, {
-      listener: any; params: any[], els: Array<{
-        el: HTMLElement,
-        type: keyof WindowEventMap,
-      }>
-    }> = {};
+    _methods: Record<
+      string,
+      {
+        listener: any;
+        params: any[];
+        els: Array<{
+          el: HTMLElement;
+          type: keyof WindowEventMap;
+        }>;
+      }
+    > = {};
     _template: Node | NodeList | string = "";
     static observedAttributes: string[] = [];
     constructor(template) {
@@ -27,10 +32,10 @@ namespace ElementSpace {
     private adoptedCallback() {
       this.adoptied();
     }
-    connected() { }
-    disconnected() { }
-    adoptied() { }
-    propChanged(name: string, oldV: string, newV: string) { }
+    connected() {}
+    disconnected() {}
+    adoptied() {}
+    propChanged(name: string, oldV: string, newV: string) {}
     private attributeChangedCallback(name: string, oldV: string, newV: string) {
       this.propChanged(name, newV, oldV);
     }
@@ -77,6 +82,11 @@ namespace ElementSpace {
           this._reactive(node as HTMLElement);
         });
       }
+
+      if (El.nodeType !== 3) {
+        return true;
+      }
+
       let ElHTML: string = "";
       switch (El.nodeType) {
         case 3:
@@ -130,7 +140,6 @@ namespace ElementSpace {
             );
             //* 清除DOMParser 加上的方法
             El[attrItem["localName"]] = null;
-            console.log(methodName);
 
             for (const name of methodName) {
               const params = this._parserParams(name);
@@ -138,7 +147,6 @@ namespace ElementSpace {
               if (methodName === null) {
                 continue;
               }
-              console.log(params);
 
               if (!this._methods[methodName[0]]) {
                 let listener = null;
@@ -147,18 +155,22 @@ namespace ElementSpace {
                 } else {
                   listener = this[methodName[0]].bind(this);
                 }
-                const type: RegExpMatchArray = attrItem.localName.match(/(?<=on)\w+/g);
+                const type: RegExpMatchArray =
+                  attrItem.localName.match(/(?<=on)\w+/g);
                 if (type === null) {
                   continue;
                 }
+
                 this._methods[methodName[0]] = {
                   listener,
-                  els: [{
-                    type: type[0] as keyof WindowEventMap,
-                    el: El
-                  }],
-                  params
-                }
+                  els: [
+                    {
+                      type: type[0] as keyof WindowEventMap,
+                      el: El,
+                    },
+                  ],
+                  params,
+                };
                 El.addEventListener(type[0] as keyof WindowEventMap, listener);
               }
             }
@@ -169,10 +181,9 @@ namespace ElementSpace {
       return true;
     }
     _parserParams(paramsString: string): string[] {
-      const paramsRaw: RegExpMatchArray = String(paramsString).match(
-        /(?<=\().+(?=\))/
-      );
-      if(paramsRaw===null){
+      const paramsRaw: RegExpMatchArray =
+        String(paramsString).match(/(?<=\().+(?=\))/);
+      if (paramsRaw === null) {
         return [];
       }
       let params = [];
@@ -190,12 +201,12 @@ namespace ElementSpace {
             value
           );
         } else {
-          el.innerHTML = el.innerHTML.replace(state.value.toString(), value);
+          el.innerText = el.innerText.replaceAll(state.value.toString(), value);
         }
       });
       state.value = value;
     }
-    update(key, value) { }
+    update(key, value) {}
   }
 }
 
