@@ -1,25 +1,18 @@
-import { IElement } from "../types/elementType";
+import { IElement, TMethodItem } from "../types/elementType";
 
 export default class Element extends HTMLElement implements IElement {
+  _customElement = true;
   $ref: Element | ShadowRoot | null = null;
   _state: Record<string, { value: any; els: Set<HTMLElement> }> = {};
   _methods: Record<
     string,
-    {
-      listener: any;
-      params: any[];
-      els: Array<{
-        el: HTMLElement;
-        type: keyof WindowEventMap;
-      }>;
-    }
+    TMethodItem
   > = {};
-  _template: Node | NodeList | string = "";
+  _props: Record<string, any> = {};
   static observedAttributes: string[] = [];
-  constructor(template) {
+  constructor() {
     super();
     this.$ref = this.attachShadow({ mode: "closed" });
-    this._template = template;
   }
   private connectedCallback() {
     this._render();
@@ -34,7 +27,8 @@ export default class Element extends HTMLElement implements IElement {
   connected() { }
   disconnected() { }
   adoptied() { }
-  propChanged(name: string, oldV: string, newV: string) { }
+  propChanged(name: string, newV: string, oldV: string) {
+  }
   private attributeChangedCallback(name: string, oldV: string, newV: string) {
     this.propChanged(name, newV, oldV);
   }
@@ -42,14 +36,14 @@ export default class Element extends HTMLElement implements IElement {
     return null;
   }
   protected _render(): void {
-    if (this._template === "" && this.render() !== null) {
-      this._template = this.render();
-    }
+    console.log(this._props);
+
+    const template: string | Node | NodeList = this.render();
 
     let appendNodes: Node[] | NodeList = [];
-    if (typeof this._template === "string") {
+    if (typeof template === "string") {
       const document: Document = new DOMParser().parseFromString(
-        this._template,
+        template,
         "text/html"
       );
       const headChildNodes: NodeListOf<ChildNode> =
@@ -61,10 +55,10 @@ export default class Element extends HTMLElement implements IElement {
         ...Array.from(bodyChildNodes)
       );
     } else {
-      if (this._template instanceof NodeList) {
+      if (template instanceof NodeList) {
         appendNodes = appendNodes;
       } else {
-        appendNodes = [this._template];
+        appendNodes = [template];
       }
     }
 
@@ -82,9 +76,10 @@ export default class Element extends HTMLElement implements IElement {
       });
     }
 
-    if (El.nodeType !== 3) {
-      return true;
-    }
+    // console.dir(El)
+    // if (El.nodeType !== 3) {
+    //   return true;
+    // }
 
     let ElHTML: string = "";
     switch (El.nodeType) {
@@ -95,14 +90,18 @@ export default class Element extends HTMLElement implements IElement {
         ElHTML = El.innerHTML;
         break;
     }
+
     const vars: null | string[] = ElHTML.match(/(?<=\{).+?(?=\})/g);
     if (vars === null) {
       return true;
     }
 
     vars.forEach((varItem) => {
-      let replace: string = this[varItem].toString();
-      ElHTML = ElHTML.replace(`\{${varItem}\}`, replace);
+      if (this[varItem]) {
+        let replace: string = this[varItem].toString();
+        ElHTML = ElHTML.replace(`\{${varItem}\}`, replace);
+      }
+
       if (!this._state[varItem]) {
         this._state[varItem] = {
           value: this[varItem],
@@ -158,7 +157,6 @@ export default class Element extends HTMLElement implements IElement {
                 el: El,
                 type: type[0] as keyof WindowEventMap,
               });
-              console.log(this._methods[methodNameItem[0]]);
               El.addEventListener(
                 type[0] as keyof WindowEventMap,
                 this._methods[methodNameItem[0]].listener
@@ -199,24 +197,31 @@ export default class Element extends HTMLElement implements IElement {
   }
   async setState<T>(key: string, value: T) {
     const state = this._state[key];
-    if (typeof value === "function") {
-      if (value.constructor.name === "AsyncFunction") {
-        value = await value();
-      } else {
-        value = value();
+    if (state) {
+      if (typeof value === "function") {
+        if (value.constructor.name === "AsyncFunction") {
+          value = await value();
+        } else {
+          value = value();
+        }
       }
+
+      if (state.els.size > 0) {
+        state.els.forEach((el) => {
+          if (el.nodeType === 3) {
+            el.textContent = el.textContent.replace(
+              state.value.toString(),
+              value.toString()
+            );
+          } else {
+            el.innerText = el.innerText.replaceAll(state.value.toString(), value.toString());
+          }
+        });
+      }
+      state.value = value;
     }
-    state.els.forEach((el) => {
-      if (el.nodeType === 3) {
-        el.textContent = el.textContent.replace(
-          state.value.toString(),
-          value.toString()
-        );
-      } else {
-        el.innerText = el.innerText.replaceAll(state.value.toString(), value.toString());
-      }
-    });
-    state.value = value;
+
+    this[key] = value;
   }
   async setMethod(name: string, func: Function | AsyncGeneratorFunction) {
     const method = this._methods[name];

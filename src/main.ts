@@ -1,8 +1,9 @@
 import {
-  defineComponent,
+  defineElement,
   importTemplate,
   Query,
-  Element
+  Element,
+  createElement
 } from "./runtime";
 
 // let template: string = await import("./components/templates/cbutton.html");
@@ -21,21 +22,24 @@ button {
     background-color: blueviolet;
   }
 </style>
-<button title="aaa" data-date="2021">
+<button class="{_className}" title="aaa" data-date="2021" {_className}>
+
   <slot></slot>
   {num}
   <span onclick="startMove;moving(666,'aa','{num}');endMove" >&nbsp;{num}</span>
   <div style="margin-top:20px;width:200px">
-    123456
+    {nums}
     <div onclick="show;endMove"  >
       moving
     </div>
   </div>
 </button>`;
 
-class CButton extends Element {
+class CButton extends createElement({
+  name: "666"
+}) {
   constructor() {
-    super(template);
+    super();
   }
   show() {
     console.log(1);
@@ -50,18 +54,22 @@ class CButton extends Element {
   endMove() {
     console.log(this);
   }
+  render() {
+    return template;
+  }
   num = [Date.now(), 1, 3];
+  nums = 888;
+  _className: string = "c-button";
+  set type(val) {
+    this.setState("_className", this._className += " c-button-" + val);
+  }
+  get type() {
+    return "";
+  }
 }
 
 Query(".save-button").addEventListener("click", function () {
-  const now = Date.now();
-  this.setState("num", async (event) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(Math.round(Math.random() * 10000));
-      })
-    })
-  });
+  this.setState("type", "primary");
 });
 
-defineComponent("c-button", CButton);
+defineElement("c-button", CButton);

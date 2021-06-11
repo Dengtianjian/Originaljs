@@ -1,31 +1,35 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Original</title>
-  </head>
 
-  <body>
-    <div id="app"></div>
-    <script type="module" src="./src/main.ts"></script>
-    <c-button class="save-button">Save</c-button>
-    <!-- <c-button class="num-button">123</c-button>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Original</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="./src/main.ts"></script>
+  <c-button class="save-button" name="888">Save</c-button>
+  <!-- <c-button class="num-button">123</c-button>
     <c-button>456</c-button> -->
-    <template id="CButton">
-      <button><slot></slot>{num}</button>
-    </template>
-    <script>
-      function show() {
-        console.log(1);
-      }
-    </script>
-    <button class="test-b"><span onclick="show()">123</span></button>
-    <script>
-      document.querySelector(".test-b").addEventListener("click", () => {
-        console.log("click");
-      });
-    </script>
-  </body>
+  <template id="CButton">
+    <button>
+      <slot></slot>{num}
+    </button>
+  </template>
+  <script>
+    function show() {
+      console.log(1);
+    }
+  </script>
+  <button class="test-b"><span onclick="show()">123</span></button>
+  <script>
+    document.querySelector(".test-b").addEventListener("click", () => {
+      console.log("click");
+    });
+  </script>
+</body>
+
 </html>
