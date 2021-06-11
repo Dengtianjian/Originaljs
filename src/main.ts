@@ -1,10 +1,9 @@
 import {
-  createComponent,
   defineComponent,
   importTemplate,
   Query,
+  Element
 } from "./runtime";
-import ElementSpace from "./runtime/elements";
 
 // let template: string = await import("./components/templates/cbutton.html");
 // template = template.default;
@@ -34,7 +33,7 @@ button {
   </div>
 </button>`;
 
-class CButton extends ElementSpace.Element {
+class CButton extends Element {
   constructor() {
     super(template);
   }
@@ -56,8 +55,12 @@ class CButton extends ElementSpace.Element {
 
 Query(".save-button").addEventListener("click", function () {
   const now = Date.now();
-  this.setMethod("endMove", (event) => {
-    console.log(now);
+  this.setState("num", async (event) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(Math.round(Math.random() * 10000));
+      })
+    })
   });
 });
 

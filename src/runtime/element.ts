@@ -1,124 +1,28 @@
-import {
-  IMethodObject,
-  IElement,
-  TProps,
-  TProp,
-  TPropValueFunction,
-} from "../types/elementType";
+import { IElement } from "../types/elementType";
 
-export class Element extends HTMLElement implements IElement {
-  $target = this;
-  protected $ref: Element | ShadowRoot | null = null;
-  protected $template: string = "";
-  $propsRaw: TProps = {};
-  protected static $propsRaw: TProps = {};
-  protected static $propKeys: string[] = [];
-  props: TProps = {};
-  private $methods: IMethodObject = {};
-  methods: IMethodObject | {} = {};
-  static observedAttributes = [];
-  constructor() {
+export default class Element extends HTMLElement implements IElement {
+  $ref: Element | ShadowRoot | null = null;
+  _state: Record<string, { value: any; els: Set<HTMLElement> }> = {};
+  _methods: Record<
+    string,
+    {
+      listener: any;
+      params: any[];
+      els: Array<{
+        el: HTMLElement;
+        type: keyof WindowEventMap;
+      }>;
+    }
+  > = {};
+  _template: Node | NodeList | string = "";
+  static observedAttributes: string[] = [];
+  constructor(template) {
     super();
-  }
-  protected nodeBindMethods(nodes) {
-    nodes.forEach((node, key) => {
-      if (node.childNodes.length > 0) {
-        this.nodeBindMethods(node.childNodes);
-      }
-
-      // @ts-ignore
-      if (node.attributes && node.attributes.length > 0) {
-        // @ts-ignore
-        for (const attributeItem of node.attributes) {
-          if (
-            /^on[a-z]+$/.test(attributeItem.name) &&
-            /^\w+(\(\))?/.test(attributeItem.value)
-          ) {
-            let paramsRaw = String(attributeItem.value).match(
-              /(?<=\().+(?=\))/
-            );
-            let params = [];
-            if (paramsRaw !== null) {
-              params = paramsRaw[0].split(",");
-            }
-            // let eventName = String(attributeItem.name).match(/(?<=on)\w+$/);
-            let methodName = String(attributeItem.value).match(
-              /\w+(?=\(.+\))?/
-            );
-
-            // node.addEventListener(
-            //   eventName[0],
-            //   this[methodName[0]].bind(this, ...params)
-            // );
-
-            node[attributeItem.name] = (event) => {
-              event["$target"] = node;
-
-              if (paramsRaw && params.length > 0) {
-                params.forEach((param, index) => {
-                  if (/\$event/.test(param)) {
-                    params[index] = event;
-                  }
-                  if (/\$target/.test(param)) {
-                    params[index] = node;
-                  }
-                });
-              }
-              if (paramsRaw) {
-                this[methodName[0]].bind(this)(...params);
-              } else {
-                this[methodName[0]].bind(this)(event);
-              }
-            };
-          }
-        }
-      }
-    });
-    return nodes;
-  }
-  protected async reader() {
-    let appendChilds = [];
-    if (typeof this.$template === "string") {
-      const document = new DOMParser().parseFromString(
-        this.$template,
-        "text/html"
-      );
-      const headChildNodes = document.childNodes[0].childNodes[0].childNodes;
-      const bodyChildNodes = document.childNodes[0].childNodes[1].childNodes;
-      appendChilds = [
-        ...Array.from(headChildNodes),
-        ...Array.from(bodyChildNodes),
-      ];
-    } else {
-      appendChilds = [this.$template];
-    }
-
-    // this.replaceVar();
-    this.nodeBindMethods(appendChilds).forEach((node, key) => {
-      this.$ref.appendChild(node);
-    });
-
-    // this.bindMethods();
-    this.queryPropsEl();
-  }
-  connected() {}
-  disconnected() {}
-  adoptied() {}
-  propChanged(name: string, oldV: string, newV: string) {}
-  data(): object {
-    return {};
-  }
-  addDataToProperty() {
-    const data = this.data();
-    for (const key in data) {
-      if (Object.prototype.hasOwnProperty.call(data, key)) {
-        const element = data[key];
-        this[`$${key}`] = data[key];
-      }
-    }
+    this.$ref = this.attachShadow({ mode: "closed" });
+    this._template = template;
   }
   private connectedCallback() {
-    this.addDataToProperty();
+    this._render();
     this.connected();
   }
   private disconnectedCallback() {
@@ -127,147 +31,201 @@ export class Element extends HTMLElement implements IElement {
   private adoptedCallback() {
     this.adoptied();
   }
+  connected() { }
+  disconnected() { }
+  adoptied() { }
+  propChanged(name: string, oldV: string, newV: string) { }
   private attributeChangedCallback(name: string, oldV: string, newV: string) {
-    this.props[name]["value"] = newV;
-    this.handleProps(name, newV, oldV);
     this.propChanged(name, newV, oldV);
   }
-  //! 待废弃
-  protected bindMethods() {
-    Object.assign(this.$methods, this.methods);
-    for (const methodKey in this.$methods) {
-      if (Object.hasOwnProperty.call(this.$methods, methodKey)) {
-        const methodItem = this.$methods[methodKey];
+  render(): null | Node | NodeList | string {
+    return null;
+  }
+  protected _render(): void {
+    if (this._template === "" && this.render() !== null) {
+      this._template = this.render();
+    }
 
-        if (typeof methodItem === "function") {
-          methodItem.call(this, this.$ref.querySelector(methodKey));
-        } else {
-          let selector = methodKey;
-          if (methodItem.hasOwnProperty("selector")) {
-            selector = methodItem["selector"];
-          }
-          this.$ref.querySelector(selector).addEventListener(
-            methodItem.type,
-            (event) => {
-              methodItem.listener.call(
-                this,
-                event,
-                this.$ref.querySelector(selector)
-              );
-            },
-            methodItem.options || {}
-          );
-        }
-      }
-    }
-  }
-  protected queryPropsEl() {
-    for (const propName in this.props) {
-      if (Object.prototype.hasOwnProperty.call(this.props, propName)) {
-        const prop: TProp | TPropValueFunction = this.props[propName];
-        if (typeof prop !== "function") {
-          if (prop["selector"]) {
-            prop["el"] = this.$ref.querySelector(prop["selector"]);
-          } else {
-            prop["el"] = this.$ref.querySelector(propName);
-          }
-        }
-        this.handleProps(propName, prop["value"] || null);
-      }
-    }
-  }
-  protected handleProps(
-    name: string,
-    newV: string | boolean | number | null,
-    oldV?: string
-  ) {
-    const prop: TProp | TPropValueFunction = this.props[name];
-    if (typeof prop === "function") {
-      prop.call(this.$ref, newV, oldV, name);
+    let appendNodes: Node[] | NodeList = [];
+    if (typeof this._template === "string") {
+      const document: Document = new DOMParser().parseFromString(
+        this._template,
+        "text/html"
+      );
+      const headChildNodes: NodeListOf<ChildNode> =
+        document.childNodes[0].childNodes[0].childNodes;
+      const bodyChildNodes: NodeListOf<ChildNode> =
+        document.childNodes[0].childNodes[1].childNodes;
+      appendNodes.push(
+        ...Array.from(headChildNodes),
+        ...Array.from(bodyChildNodes)
+      );
     } else {
-      if (prop["selector"]) {
-        prop["el"] = this.$ref.querySelector(prop["selector"]);
+      if (this._template instanceof NodeList) {
+        appendNodes = appendNodes;
       } else {
-        prop["el"] = this.$ref;
-      }
-
-      if (prop["attribute"]) {
-        switch (prop["attribute"]) {
-          case "className":
-            let classList = Array.from(prop["el"]["classList"]);
-            let className = prop["el"]["className"];
-            className = String(className).trim();
-            if (!classList.includes(String(newV))) {
-              prop["el"]["className"] += " " + newV;
-            }
-            if (!newV && oldV) {
-              prop["el"]["className"] = className.replace(
-                new RegExp(`${oldV}\s?`),
-                ""
-              );
-            }
-            prop["value"] = newV;
-            break;
-          case "style":
-            prop["el"]["style"][name] = newV;
-            break;
-          default:
-            prop["el"][prop["attribute"]] = newV;
-            break;
-        }
-      }
-      if (typeof prop["observer"] === "function") {
-        prop["observer"].call(
-          prop["el"],
-          newV ? newV : prop["value"],
-          oldV,
-          name
-        );
+        appendNodes = [this._template];
       }
     }
+
+    for (const nodeItem of appendNodes) {
+      this._reactive(nodeItem as HTMLElement);
+      this._bindMethods(nodeItem as HTMLElement);
+    }
+
+    this.$ref.append(...appendNodes);
   }
-  replaceVar() {
-    const vars =
-      this.$template.match(/(?<=\{).+?(?=\})/g);
+  _reactive(El: HTMLElement): boolean {
+    if (El.childNodes.length > 0) {
+      El.childNodes.forEach((node) => {
+        this._reactive(node as HTMLElement);
+      });
+    }
+
+    if (El.nodeType !== 3) {
+      return true;
+    }
+
+    let ElHTML: string = "";
+    switch (El.nodeType) {
+      case 3:
+        ElHTML = El.textContent;
+        break;
+      default:
+        ElHTML = El.innerHTML;
+        break;
+    }
+    const vars: null | string[] = ElHTML.match(/(?<=\{).+?(?=\})/g);
     if (vars === null) {
-      return;
+      return true;
     }
 
     vars.forEach((varItem) => {
-      let prop = this.$propsRaw[varItem];
-      let replaceVal;
-      if (typeof prop === "function") {
-        replaceVal = replaceVal();
+      let replace: string = this[varItem].toString();
+      ElHTML = ElHTML.replace(`\{${varItem}\}`, replace);
+      if (!this._state[varItem]) {
+        this._state[varItem] = {
+          value: this[varItem],
+          els: new Set<HTMLElement>(),
+        };
       }
-
-      this.$template.innerHTML =
-        this.$template.innerHTML.replace(
-          `\{${varItem}\}`,
-          String(this.$num)
-        );
+      this._state[varItem].els.add(El);
     });
+
+    switch (El.nodeType) {
+      case 3:
+        El.textContent = ElHTML;
+        break;
+      default:
+        El.innerHTML = ElHTML;
+        break;
+    }
+    return true;
+  }
+  _bindMethods(El: HTMLElement): boolean {
+    if (El.childNodes.length > 0) {
+      El.childNodes.forEach((node) => {
+        this._bindMethods(node as HTMLElement);
+      });
+    }
+    if (El.attributes && El.attributes.length > 0) {
+      Array.from(El.attributes).forEach((attrItem) => {
+        if (
+          /^on[a-z]+$/.test(attrItem.name) &&
+          /^\w+(\(\))?/.test(attrItem.value)
+        ) {
+          const methodName: RegExpMatchArray = String(attrItem.value).match(
+            /\w+(\(.+\))?;?/g
+          );
+          //* 清除DOMParser 加上的方法
+          El[attrItem["localName"]] = null;
+
+          for (const name of methodName) {
+            const params = this._parserParams(name);
+            const methodNameItem: RegExpMatchArray =
+              name.match(/\w+(?=\(.+\))?/);
+            if (methodNameItem === null) {
+              continue;
+            }
+
+            let type: RegExpMatchArray =
+              attrItem.localName.match(/(?<=on)\w+/g);
+            if (type === null) {
+              continue;
+            }
+            if (this._methods[methodNameItem[0]]) {
+              this._methods[methodNameItem[0]].els.push({
+                el: El,
+                type: type[0] as keyof WindowEventMap,
+              });
+              console.log(this._methods[methodNameItem[0]]);
+              El.addEventListener(
+                type[0] as keyof WindowEventMap,
+                this._methods[methodNameItem[0]].listener
+              );
+            } else {
+              let listener = this[methodNameItem[0]].bind(this, ...params);
+
+              this._methods[methodNameItem[0]] = {
+                listener,
+                els: [
+                  {
+                    type: type[0] as keyof WindowEventMap,
+                    el: El,
+                  },
+                ],
+                params,
+              };
+              El.addEventListener(type[0] as keyof WindowEventMap, listener);
+            }
+          }
+        }
+      });
+    }
+
+    return true;
+  }
+  _parserParams(paramsString: string): string[] {
+    const paramsRaw: RegExpMatchArray =
+      String(paramsString).match(/(?<=\().+(?=\))/);
+    if (paramsRaw === null) {
+      return [];
+    }
+    let params = [];
+    if (paramsRaw !== null) {
+      params = paramsRaw[0].split(",");
+    }
+    return params;
+  }
+  async setState<T>(key: string, value: T) {
+    const state = this._state[key];
+    if (typeof value === "function") {
+      if (value.constructor.name === "AsyncFunction") {
+        value = await value();
+      } else {
+        value = value();
+      }
+    }
+    state.els.forEach((el) => {
+      if (el.nodeType === 3) {
+        el.textContent = el.textContent.replace(
+          state.value.toString(),
+          value.toString()
+        );
+      } else {
+        el.innerText = el.innerText.replaceAll(state.value.toString(), value.toString());
+      }
+    });
+    state.value = value;
+  }
+  async setMethod(name: string, func: Function | AsyncGeneratorFunction) {
+    const method = this._methods[name];
+    const listener = func.bind(this, ...method.params);
+
+    method.els.forEach((elItem) => {
+      elItem.el.removeEventListener(elItem.type, method.listener);
+      elItem.el.addEventListener(elItem.type, listener);
+    });
+    method.listener = listener;
   }
 }
-
-export function createComponent(
-  props: TProps = {},
-  template: string | keyof HTMLElementTagNameMap = ""
-) {
-  return class extends Element {
-    $template: string = template;
-    $propsRaw: TProps = props;
-    $propKeys: string[] = Object.keys(props);
-    props: TProps = props;
-    static observedAttributes: string[] = Object.keys(props);
-    methods: IMethodObject = {};
-    constructor() {
-      super();
-      this.$ref = this.attachShadow({
-        mode: "closed",
-      });
-      this.reader();
-    }
-  };
-}
-
-export default createComponent;
