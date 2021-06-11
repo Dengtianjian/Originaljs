@@ -1,4 +1,4 @@
-import { IElement, TMethodItem, IStateTypeMap, TStateItem } from "../types/elementType";
+import { IElement, TMethodItem, TStateItem } from "../types/elementType";
 
 export default class Element extends HTMLElement implements IElement {
   _customElement = true;
@@ -27,8 +27,7 @@ export default class Element extends HTMLElement implements IElement {
   connected() { }
   disconnected() { }
   adoptied() { }
-  propChanged(name: string, newV: string, oldV: string) {
-  }
+  propChanged(name: string, newV: string, oldV: string) { }
   private attributeChangedCallback(name: string, oldV: string, newV: string) {
     this.propChanged(name, newV, oldV);
   }
@@ -75,10 +74,12 @@ export default class Element extends HTMLElement implements IElement {
     }
 
     if (El.attributes) {
-      for (const attrItem of Array.from(El.attributes)) {
+      const attributes = Array.from(El.attributes);
+      for (let index = 0; index < attributes.length; index++) {
+        const attrItem = attributes[index];
         const vars: null | string[] = attrItem.nodeValue.match(/(?<=\{).+?(?=\})/g);
         if (vars === null) {
-          return true;
+          continue;
         }
         let replaceContent: string = attrItem.nodeValue;
         vars.forEach((varItem) => {
@@ -215,6 +216,8 @@ export default class Element extends HTMLElement implements IElement {
   }
   async setState<T>(key: string, value: T) {
     const state = this._state[key];
+    console.log(state);
+
     if (state) {
       if (typeof value === "function") {
         if (value.constructor.name === "AsyncFunction") {
@@ -225,15 +228,21 @@ export default class Element extends HTMLElement implements IElement {
       }
 
       if (state.els.size > 0) {
-        state.els.forEach((el) => {
-          if (el.nodeType === 3) {
-            el.textContent = el.textContent.replace(
-              state.value.toString(),
-              value.toString()
-            );
+        state.els.forEach((elItem) => {
+          if (elItem.type === "attribute") {
+            console.log(elItem);
+
           } else {
-            el.outerHTML = el.outerHTML.replaceAll(state.value.toString(), value.toString());
+            if (elItem.el.nodeType === 3) {
+              elItem.el.textContent = elItem.el.textContent.replace(
+                state.value.toString(),
+                value.toString()
+              );
+            } else {
+              elItem.el.innerHTML = elItem.el.innerHTML.replaceAll(state.value.toString(), value.toString());
+            }
           }
+
         });
       }
       state.value = value;

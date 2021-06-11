@@ -28,7 +28,7 @@ button {
   <span onclick="startMove;moving('moving','aa','{num}');endMove" >&nbsp;{num}</span>
   <div style="margin-top:20px;width:200px">
     {nums}
-    <div onclick="show;endMove('bottom')"  >
+    <div onclick="show;endMove('{position}')"  >
       moving
     </div>
   </div>
@@ -59,7 +59,7 @@ class CButton extends createElement({
   num = [Date.now(), 1, 3];
   nums = 888;
   _className: string = "c-button";
-  position: string = "top";
+  position: string = "relative";
   set type(val) {
     // this.setState("_className", this._className += " c-button-" + val);
   }
@@ -69,12 +69,7 @@ class CButton extends createElement({
 }
 
 Query(".save-button").addEventListener("click", function () {
-  console.log("buble");
-
-  this.setMethod("endMove", (...res) => {
-    // event.stopPropagation();
-    console.log(res);
-  });
+  this.setState("position", "fixed");
 });
 
 defineElement("c-button", CButton);
