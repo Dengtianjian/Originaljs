@@ -22,14 +22,13 @@ button {
     background-color: blueviolet;
   }
 </style>
-<button class="{_className}" title="aaa" data-date="2021" {_className}>
-
+<button class="{_className}" title="aaa" data-date="2021" {_className} style="position:{position};">
   <slot></slot>
   {num}
-  <span onclick="startMove;moving(666,'aa','{num}');endMove" >&nbsp;{num}</span>
+  <span onclick="startMove;moving('moving','aa','{num}');endMove" >&nbsp;{num}</span>
   <div style="margin-top:20px;width:200px">
     {nums}
-    <div onclick="show;endMove"  >
+    <div onclick="show;endMove('bottom')"  >
       moving
     </div>
   </div>
@@ -51,8 +50,8 @@ class CButton extends createElement({
   moving(p) {
     console.log(p);
   }
-  endMove() {
-    console.log(this);
+  endMove(position) {
+    console.log(position);
   }
   render() {
     return template;
@@ -60,8 +59,9 @@ class CButton extends createElement({
   num = [Date.now(), 1, 3];
   nums = 888;
   _className: string = "c-button";
+  position: string = "top";
   set type(val) {
-    this.setState("_className", this._className += " c-button-" + val);
+    // this.setState("_className", this._className += " c-button-" + val);
   }
   get type() {
     return "";
@@ -69,7 +69,12 @@ class CButton extends createElement({
 }
 
 Query(".save-button").addEventListener("click", function () {
-  this.setState("type", "primary");
+  console.log("buble");
+
+  this.setMethod("endMove", (...res) => {
+    // event.stopPropagation();
+    console.log(res);
+  });
 });
 
 defineElement("c-button", CButton);

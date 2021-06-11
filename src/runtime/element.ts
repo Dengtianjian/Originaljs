@@ -1,9 +1,9 @@
-import { IElement, TMethodItem } from "../types/elementType";
+import { IElement, TMethodItem, IStateTypeMap, TStateItem } from "../types/elementType";
 
 export default class Element extends HTMLElement implements IElement {
   _customElement = true;
   $ref: Element | ShadowRoot | null = null;
-  _state: Record<string, { value: any; els: Set<HTMLElement> }> = {};
+  _state: Record<string, TStateItem> = {};
   _methods: Record<
     string,
     TMethodItem
@@ -36,8 +36,6 @@ export default class Element extends HTMLElement implements IElement {
     return null;
   }
   protected _render(): void {
-    console.log(this._props);
-
     const template: string | Node | NodeList = this.render();
 
     let appendNodes: Node[] | NodeList = [];
@@ -76,10 +74,37 @@ export default class Element extends HTMLElement implements IElement {
       });
     }
 
-    // console.dir(El)
-    // if (El.nodeType !== 3) {
-    //   return true;
-    // }
+    if (El.attributes) {
+      for (const attrItem of Array.from(El.attributes)) {
+        const vars: null | string[] = attrItem.nodeValue.match(/(?<=\{).+?(?=\})/g);
+        if (vars === null) {
+          return true;
+        }
+        let replaceContent: string = attrItem.nodeValue;
+        vars.forEach((varItem) => {
+          if (this[varItem]) {
+            let replace: string = this[varItem].toString();
+            replaceContent = replaceContent.replace(`\{${varItem}\}`, replace);
+          }
+
+          if (!this._state[varItem]) {
+            this._state[varItem] = {
+              value: this[varItem],
+              els: new Set(),
+            };
+          }
+          this._state[varItem].els.add({
+            attribute: attrItem,
+            type: "attribute"
+          });
+        });
+        attrItem.nodeValue = replaceContent;
+      }
+    }
+
+    if (El.nodeType !== 3) {
+      return true;
+    }
 
     let ElHTML: string = "";
     switch (El.nodeType) {
@@ -105,10 +130,13 @@ export default class Element extends HTMLElement implements IElement {
       if (!this._state[varItem]) {
         this._state[varItem] = {
           value: this[varItem],
-          els: new Set<HTMLElement>(),
+          els: new Set(),
         };
       }
-      this._state[varItem].els.add(El);
+      this._state[varItem].els.add({
+        el: El,
+        type: "element"
+      });
     });
 
     switch (El.nodeType) {
@@ -147,35 +175,25 @@ export default class Element extends HTMLElement implements IElement {
               continue;
             }
 
+            const listener = this[methodNameItem[0]].bind(this, ...params);
             let type: RegExpMatchArray =
               attrItem.localName.match(/(?<=on)\w+/g);
             if (type === null) {
               continue;
             }
-            if (this._methods[methodNameItem[0]]) {
-              this._methods[methodNameItem[0]].els.push({
-                el: El,
-                type: type[0] as keyof WindowEventMap,
-              });
-              El.addEventListener(
-                type[0] as keyof WindowEventMap,
-                this._methods[methodNameItem[0]].listener
-              );
-            } else {
-              let listener = this[methodNameItem[0]].bind(this, ...params);
-
-              this._methods[methodNameItem[0]] = {
-                listener,
-                els: [
-                  {
-                    type: type[0] as keyof WindowEventMap,
-                    el: El,
-                  },
-                ],
-                params,
-              };
-              El.addEventListener(type[0] as keyof WindowEventMap, listener);
+            if (!this._methods[methodNameItem[0]]) {
+              this._methods[methodNameItem[0]] = [];
             }
+            this._methods[methodNameItem[0]].push({
+              el: El,
+              type: type[0] as keyof WindowEventMap,
+              listener,
+              params
+            });
+            El.addEventListener(
+              type[0] as keyof WindowEventMap,
+              listener
+            );
           }
         }
       });
@@ -214,7 +232,7 @@ export default class Element extends HTMLElement implements IElement {
               value.toString()
             );
           } else {
-            el.innerText = el.innerText.replaceAll(state.value.toString(), value.toString());
+            el.outerHTML = el.outerHTML.replaceAll(state.value.toString(), value.toString());
           }
         });
       }
@@ -224,13 +242,13 @@ export default class Element extends HTMLElement implements IElement {
     this[key] = value;
   }
   async setMethod(name: string, func: Function | AsyncGeneratorFunction) {
-    const method = this._methods[name];
-    const listener = func.bind(this, ...method.params);
+    const els = this._methods[name];
 
-    method.els.forEach((elItem) => {
-      elItem.el.removeEventListener(elItem.type, method.listener);
+    els.forEach(elItem => {
+      const listener = func.bind(this, ...elItem.params);
+      elItem.el.removeEventListener(elItem.type, elItem.listener);
       elItem.el.addEventListener(elItem.type, listener);
-    });
-    method.listener = listener;
+      elItem.listener = listener;
+    })
   }
 }

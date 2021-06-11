@@ -1,18 +1,20 @@
 import { Element } from "../runtime";
 
-export type TMethodItem = {
-  listener: any;
+export type TMethodItem = Array<{
+  el: HTMLElement;
+  type: keyof WindowEventMap;
   params: any[];
-  els: Array<{
-    el: HTMLElement;
-    type: keyof WindowEventMap;
-  }>;
-}
+  listener: () => any
+}>;
+export type TStateItem = { value: any; els: Set<{ el?: HTMLElement, attribute?: Attr, type: keyof IStateTypeMap }> };
 
+export interface IStateTypeMap {
+  "attribute": 1, "element": 2
+};
 export interface IElement extends HTMLElement {
   _customElement: boolean;
   $ref: Element | ShadowRoot | null;
-  _state: Record<string, { value: any; els: Set<HTMLElement> }>;
+  _state: Record<string, TStateItem>;
   _methods: Record<
     string,
     TMethodItem
@@ -26,4 +28,3 @@ export interface IElement extends HTMLElement {
   setState<T>(key: string, value: T): void
   setMethod(name: string, func: Function | AsyncGeneratorFunction): void
 }
-
