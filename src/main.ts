@@ -36,7 +36,7 @@ button {
   <span onclick="startMove;moving('moving','aa','{num}');endMove" >&nbsp;{num}</span>
   <div style="margin-top:20px;width:200px">
     {nums}
-    <div onclick="show;endMove('{position}')"  >
+    <div onclick="show;endMove('{position}')" onmouseenter="show"  >
       moving
     </div>
   </div>
@@ -78,7 +78,7 @@ class CButton extends createElement({
 }
 
 Query(".save-button").addEventListener("click", function () {
-  this.setState("_className", "c-button c-button_primary");
+  this.setState("position", "fixed");
 });
 
 defineElement("c-button", CButton);

@@ -225,37 +225,56 @@ export default class Element extends HTMLElement implements IElement {
           value = value();
         }
       }
-
-      if (state.els.size > 0) {
-        state.els.forEach((elItem) => {
-          if (elItem.type === "attribute" && !/^on\w+/.test(elItem.attribute.nodeName)) {
-            elItem.attribute.nodeValue = elItem.attribute.nodeValue.replaceAll(state.value.toString(), value.toString());
-          } else {
-            if (elItem.el.nodeType === 3) {
-              elItem.el.textContent = elItem.el.textContent.replace(
-                state.value.toString(),
-                value.toString()
+      for (let index = 0; index < Array.from(state.els).length; index++) {
+        const elItem = Array.from(state.els)[index];
+        if (elItem.type === "attribute") {
+          if (/^on\w+/.test(elItem.attribute.nodeName)) {
+            if (elItem.attribute.value.includes(this[key]) &&
+              /^\w+(\(\))?/.test(elItem.attribute.value)) {
+              const methodName: RegExpMatchArray = String(elItem.attribute.value).match(
+                /\w+(\(.+\))?;?/g
               );
-            } else {
-              elItem.el.innerHTML = elItem.el.innerHTML.replaceAll(state.value.toString(), value.toString());
+              if (methodName === null) {
+                continue;
+              }
+              for (let nameItem of methodName) {
+                nameItem = nameItem.replaceAll(state.value.toString(), value.toString());
+                const params = this._parserParams(nameItem);
+                const methodNameItem: RegExpMatchArray =
+                  nameItem.match(/\w+(?=\(.+\))?/);
+                if (methodNameItem === null) {
+                  continue;
+                }
+                this.setMethod(methodNameItem[0], this[methodNameItem[0]], params);
+              }
             }
+          } else {
+            elItem.attribute.nodeValue = elItem.attribute.nodeValue.replaceAll(state.value.toString(), value.toString());
           }
-
-        });
+        } else {
+          if (elItem.el.nodeType === 3) {
+            elItem.el.textContent = elItem.el.textContent.replace(
+              state.value.toString(),
+              value.toString()
+            );
+          } else {
+            elItem.el.innerHTML = elItem.el.innerHTML.replaceAll(state.value.toString(), value.toString());
+          }
+        }
       }
       state.value = value;
     }
 
     this[key] = value;
   }
-  async setMethod(name: string, func: Function | AsyncGeneratorFunction) {
+  async setMethod(name: string, func: Function | AsyncGeneratorFunction, params: any[] = []) {
     const els = this._methods[name];
-
     els.forEach(elItem => {
-      const listener = func.bind(this, ...elItem.params);
+      const listener = func.bind(this, ...params);
       elItem.el.removeEventListener(elItem.type, elItem.listener);
       elItem.el.addEventListener(elItem.type, listener);
       elItem.listener = listener;
+      elItem.params = params;
     })
   }
 }
