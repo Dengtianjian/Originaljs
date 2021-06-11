@@ -21,8 +21,16 @@ button {
     color: white;
     background-color: blueviolet;
   }
+  .c-button_primary {
+    color:white;
+    transition:0.2s linear all;
+    background-color:blueviolet;
+  }
+  .c-button_primary:hover {
+    background-color:#6b21af;
+  }
 </style>
-<button class="{_className}" title="aaa" data-date="2021" {_className} style="position:{position};">
+<button class="{_className}" title="aaa" data-date="2021" data-a={showEl} style="position:{position};">
   <slot></slot>
   {num}
   <span onclick="startMove;moving('moving','aa','{num}');endMove" >&nbsp;{num}</span>
@@ -60,6 +68,7 @@ class CButton extends createElement({
   nums = 888;
   _className: string = "c-button";
   position: string = "relative";
+  showEl: number = 2;
   set type(val) {
     // this.setState("_className", this._className += " c-button-" + val);
   }
@@ -69,7 +78,7 @@ class CButton extends createElement({
 }
 
 Query(".save-button").addEventListener("click", function () {
-  this.setState("position", "fixed");
+  this.setState("_className", "c-button c-button_primary");
 });
 
 defineElement("c-button", CButton);

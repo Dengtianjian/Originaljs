@@ -78,12 +78,13 @@ export default class Element extends HTMLElement implements IElement {
       for (let index = 0; index < attributes.length; index++) {
         const attrItem = attributes[index];
         const vars: null | string[] = attrItem.nodeValue.match(/(?<=\{).+?(?=\})/g);
+
         if (vars === null) {
           continue;
         }
         let replaceContent: string = attrItem.nodeValue;
         vars.forEach((varItem) => {
-          if (this[varItem]) {
+          if (this[varItem] !== undefined) {
             let replace: string = this[varItem].toString();
             replaceContent = replaceContent.replace(`\{${varItem}\}`, replace);
           }
@@ -216,8 +217,6 @@ export default class Element extends HTMLElement implements IElement {
   }
   async setState<T>(key: string, value: T) {
     const state = this._state[key];
-    console.log(state);
-
     if (state) {
       if (typeof value === "function") {
         if (value.constructor.name === "AsyncFunction") {
@@ -229,7 +228,7 @@ export default class Element extends HTMLElement implements IElement {
 
       if (state.els.size > 0) {
         state.els.forEach((elItem) => {
-          if (elItem.type === "attribute") {
+          if (elItem.type === "attribute" && !/^on\w+/.test(elItem.attribute.nodeName)) {
             elItem.attribute.nodeValue = elItem.attribute.nodeValue.replaceAll(state.value.toString(), value.toString());
           } else {
             if (elItem.el.nodeType === 3) {
