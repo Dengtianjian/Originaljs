@@ -230,8 +230,7 @@ export default class Element extends HTMLElement implements IElement {
       if (state.els.size > 0) {
         state.els.forEach((elItem) => {
           if (elItem.type === "attribute") {
-            console.log(elItem);
-
+            elItem.attribute.nodeValue = elItem.attribute.nodeValue.replaceAll(state.value.toString(), value.toString());
           } else {
             if (elItem.el.nodeType === 3) {
               elItem.el.textContent = elItem.el.textContent.replace(
