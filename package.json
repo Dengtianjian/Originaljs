@@ -10,7 +10,7 @@
   "version": "0.0.27",
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build",
+    "build": "vite build && npm-dts generate --output dist/types.d.ts",
     "serve": "vite preview",
     "dts": "npm-dts generate --output dist/types.d.ts",
     "docs:dev": "vitepress dev docs --host",
