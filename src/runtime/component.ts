@@ -8,7 +8,7 @@ export function defineElement(
   window.customElements.define(name, constructor, options);
 }
 
-export function createElement(props: string[]) {
+export function createElement(props: string[] = []) {
   return class extends Element {
     static observedAttributes: string[] = props;
     _props = props;
