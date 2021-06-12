@@ -8,9 +8,9 @@ export function defineElement(
   window.customElements.define(name, constructor, options);
 }
 
-export function createElement(props: Record<string, string> = {}) {
+export function createElement(props: string[]) {
   return class extends Element {
-    static observedAttributes: string[] = Object.keys(props);
+    static observedAttributes: string[] = props;
     _props = props;
     constructor() {
       super();

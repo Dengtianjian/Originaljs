@@ -31,18 +31,16 @@ button {
 <button class="{_className}" title="aaa" data-date="2021" data-a={showEl} style="position:{position};">
   <slot></slot>
   {num}
-  <span onclick="startMove;moving('moving','aa','{showEl}');endMove" >&nbsp;{num}</span>
+  <span onclick="startMove;moving('moving','aa','{showEl}');endMove" >&nbsp;{name}</span>
   <div style="margin-top:20px;width:200px">
   {showEl}
     <div onclick="show;endMove('{position}')" onmouseenter="show"  >
-      moving
+    {name}
     </div>
   </div>
 </button>`;
 
-class CButton extends createElement({
-  name: "666"
-}) {
+class CButton extends createElement(["name"]) {
   constructor() {
     super();
   }
@@ -75,8 +73,12 @@ class CButton extends createElement({
   }
 }
 
+// setInterval(() => {
+//   Query(".save-button").setState("name", Date.now());
+// }, 1000);
+
 Query(".test-b").addEventListener("click", function () {
-  Query(".save-button").setState("showEl", [Math.round(Math.random() * 20000), Math.round(Math.random() * 20000)]);
+  Query(".save-button").setState("name", Date.now());
 });
 
 defineElement("c-button", CButton);

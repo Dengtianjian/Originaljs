@@ -1,7 +1,7 @@
 import { IElement, TMethodItem, TStateItem } from "../types/elementType";
 
 export default class Element extends HTMLElement implements IElement {
-  _customElement = true;
+  _customElement: boolean = true;
   $ref: Element | ShadowRoot | null = null;
   _state: Record<string, TStateItem> = {};
   _methods: Record<
@@ -30,6 +30,7 @@ export default class Element extends HTMLElement implements IElement {
   propChanged(name: string, newV: string, oldV: string) { }
   attributeChangedCallback(name: string, oldV: string, newV: string) {
     this.propChanged(name, newV, oldV);
+    this.setState(name, newV);
   }
   render(): null | Node | NodeList | string {
     return null;
@@ -73,7 +74,7 @@ export default class Element extends HTMLElement implements IElement {
       });
     }
 
-    // TODO 记录每个元素替换的位置和结束位置 索引
+    // TODO 如果是元素就创建文本标签作为响应式标签
     if (El.attributes) {
       const attributes = Array.from(El.attributes);
       for (let index = 0; index < attributes.length; index++) {
@@ -125,14 +126,21 @@ export default class Element extends HTMLElement implements IElement {
     }
 
     vars.forEach((varItem) => {
+      let replace: undefined | string;
       if (this[varItem]) {
-        let replace: string = this[varItem].toString();
+        replace = this[varItem].toString();
         ElHTML = ElHTML.replace(`\{${varItem}\}`, replace);
+      } else {
+        console.warn(`
+        CM:存在未定义的响应式变量:${varItem}。
+        EN:undefined reactive variables:${varItem}.
+        `);
       }
+
 
       if (!this._state[varItem]) {
         this._state[varItem] = {
-          value: this[varItem],
+          value: this[varItem] || `{${varItem}}`,
           els: new Set(),
         };
       }
@@ -219,14 +227,16 @@ export default class Element extends HTMLElement implements IElement {
   }
   async setState<T>(key: string, value: T) {
     const state = this._state[key];
-    if (state) {
-      if (typeof value === "function") {
-        if (value.constructor.name === "AsyncFunction") {
-          value = await value();
-        } else {
-          value = value();
-        }
+    if (typeof value === "function") {
+      if (value.constructor.name === "AsyncFunction") {
+        value = await value();
+      } else {
+        value = value();
       }
+    }
+
+    //! 与_reactive重复代码 需优化
+    if (state && state.value.toString() !== value.toString()) {
       for (let index = 0; index < Array.from(state.els).length; index++) {
         const elItem = Array.from(state.els)[index];
         if (elItem.type === "attribute") {
@@ -266,8 +276,12 @@ export default class Element extends HTMLElement implements IElement {
       }
       state.value = value;
     }
-
-    this[key] = value;
+    if (this._props.includes(key) && value.toString() !== this.getAttribute(key)) {
+      this.setAttribute(key, value.toString());
+    }
+    if (value !== this[key]) {
+      this[key] = value;
+    }
   }
   async setMethod(name: string, func: Function | AsyncGeneratorFunction, params: any[] = []) {
     const els = this._methods[name];

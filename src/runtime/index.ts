@@ -1,12 +1,30 @@
 import Transition from "./transition";
-export { Transition };
 
-export { defineElement, createElement } from "./component";
-export { importTemplate } from "./template";
-export { Query } from "./selector";
+import { defineElement, createElement } from "./component";
+import { importTemplate } from "./template";
+import { Query } from "./selector";
 import Element from "./element";
+
+import { ObserverNode, ObserverNodeAttributes } from "./mutationObserver";
+
 export {
-  Element
+  Transition,
+  Element,
+  ObserverNode,
+  ObserverNodeAttributes,
+  defineElement,
+  createElement,
+  importTemplate,
+  Query
 }
 
-export { ObserverNode, ObserverNodeAttributes } from "./mutationObserver";
+export default {
+  Transition,
+  Element,
+  ObserverNode,
+  ObserverNodeAttributes,
+  defineElement,
+  createElement,
+  importTemplate,
+  Query
+}
