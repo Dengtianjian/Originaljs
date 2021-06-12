@@ -1,8 +1,6 @@
 import {
   defineElement,
-  importTemplate,
   Query,
-  Element,
   createElement
 } from "./runtime";
 
@@ -33,9 +31,9 @@ button {
 <button class="{_className}" title="aaa" data-date="2021" data-a={showEl} style="position:{position};">
   <slot></slot>
   {num}
-  <span onclick="startMove;moving('moving','aa','{num}');endMove" >&nbsp;{num}</span>
+  <span onclick="startMove;moving('moving','aa','{showEl}');endMove" >&nbsp;{num}</span>
   <div style="margin-top:20px;width:200px">
-    {nums}
+  {showEl}
     <div onclick="show;endMove('{position}')" onmouseenter="show"  >
       moving
     </div>
@@ -77,8 +75,8 @@ class CButton extends createElement({
   }
 }
 
-Query(".save-button").addEventListener("click", function () {
-  this.setState("position", "fixed");
+Query(".test-b").addEventListener("click", function () {
+  Query(".save-button").setState("showEl", [Math.round(Math.random() * 20000), Math.round(Math.random() * 20000)]);
 });
 
 defineElement("c-button", CButton);
