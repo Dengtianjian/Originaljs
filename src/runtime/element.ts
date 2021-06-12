@@ -14,27 +14,27 @@ export default class Element extends HTMLElement implements IElement {
     super();
     this.$ref = this.attachShadow({ mode: "closed" });
   }
-  private connectedCallback() {
+  connectedCallback() {
     this._render();
     this.connected();
   }
-  private disconnectedCallback() {
+  disconnectedCallback() {
     this.disconnected();
   }
-  private adoptedCallback() {
+  adoptedCallback() {
     this.adoptied();
   }
   connected() { }
   disconnected() { }
   adoptied() { }
   propChanged(name: string, newV: string, oldV: string) { }
-  private attributeChangedCallback(name: string, oldV: string, newV: string) {
+  attributeChangedCallback(name: string, oldV: string, newV: string) {
     this.propChanged(name, newV, oldV);
   }
   render(): null | Node | NodeList | string {
     return null;
   }
-  protected _render(): void {
+  _render(): void {
     const template: string | Node | NodeList = this.render();
 
     let appendNodes: Node[] | NodeList = [];

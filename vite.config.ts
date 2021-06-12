@@ -1,8 +1,10 @@
 import { defineConfig, IndexHtmlTransformResult, Plugin } from "vite";
-import FS from "fs";
+
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  plugins: [],
   build: {
     minify: true,
     lib: {
