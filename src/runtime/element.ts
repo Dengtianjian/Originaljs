@@ -73,6 +73,7 @@ export default class Element extends HTMLElement implements IElement {
       });
     }
 
+    // TODO 记录每个元素替换的位置和结束位置 索引
     if (El.attributes) {
       const attributes = Array.from(El.attributes);
       for (let index = 0; index < attributes.length; index++) {
@@ -197,6 +198,7 @@ export default class Element extends HTMLElement implements IElement {
               listener
             );
           }
+          El.removeAttribute(attrItem["localName"]);
         }
       });
     }
