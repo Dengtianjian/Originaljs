@@ -17,6 +17,7 @@ export default class Element extends HTMLElement implements IElement {
   connectedCallback() {
     this._render();
     this.connected();
+    this._collectionSlots();
   }
   disconnectedCallback() {
     this.disconnected();
@@ -292,5 +293,24 @@ export default class Element extends HTMLElement implements IElement {
       elItem.listener = listener;
       elItem.params = params;
     })
+  }
+  _collectionSlots() {
+    const slots = this.$ref.querySelectorAll("slot");
+
+    for (const slot of Array.from(slots)) {
+      const slotName: string = slot.name || "default";
+      if (!this._slots[slotName]) {
+        this._slots[slotName] = [];
+      }
+      slot.addEventListener("slotchange", () => {
+        if (slotName === "default") {
+          // @ts-ignore
+          this._slots[slotName].push(...this.$ref.querySelector("slot:not(name)").assignedNodes());
+        } else {
+          // @ts-ignore
+          this._slots[slotName].push(...this.$ref.querySelector("slot[name='" + slotName + "']").assignedNodes());
+        }
+      })
+    }
   }
 }
