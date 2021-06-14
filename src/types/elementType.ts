@@ -6,7 +6,7 @@ export type TMethodItem = Array<{
   params: any[];
   listener: () => any
 }>;
-export type TStateItem = { value: any; els: Set<{ el?: HTMLElement, attribute?: Attr, type: keyof IStateTypeMap }> };
+export type TStateItem = { value: any; els: Set<{ el?: HTMLElement | Text, attribute?: Attr, type: keyof IStateTypeMap }> };
 
 export interface IStateTypeMap {
   "attribute": 1, "element": 2

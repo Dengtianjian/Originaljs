@@ -3,6 +3,7 @@ import {
   Query,
   createElement
 } from "./runtime";
+import { DOMFor } from "./runtime/component";
 
 // let template: string = await import("./components/templates/cbutton.html");
 // template = template.default;
@@ -33,12 +34,14 @@ button {
   {num}
   <span onclick="startMove;moving('moving','aa','{showEl}');endMove" >&nbsp;{name}</span>
   <div style="margin-top:20px;width:200px">
-  {showEl}
+  {obj.a}
+  {nums[1].a}
     <div onclick="show;endMove('{position}')" onmouseenter="show"  >
     {name}
     </div>
   </div>
 </button>`;
+template = `{nums} <button onclick="updateArr">Update arr</button>`
 
 class CButton extends createElement(["name"]) {
   constructor() {
@@ -60,25 +63,14 @@ class CButton extends createElement(["name"]) {
   render() {
     return template;
   }
-  num = [Date.now(), 1, 3];
-  nums = 888;
-  _className: string = "c-button";
-  position: string = "relative";
-  showEl: number = 2;
-  set type(val) {
-    // this.setState("_className", this._className += " c-button-" + val);
-  }
-  get type() {
-    return "";
+
+  nums = [1, 2, 34, 5, 6, 7, 8];
+  updateArr() {
+    this.nums[2] = Math.round(Math.random() * 1000);
+    console.log(this.nums);
+
   }
 }
 
-// setInterval(() => {
-//   Query(".save-button").setState("name", Date.now());
-// }, 1000);
-
-Query(".test-b").addEventListener("click", function () {
-  Query(".save-button").setState("name", Date.now());
-});
 
 defineElement("c-button", CButton);

@@ -1,8 +1,11 @@
 import { IElement, TMethodItem, TStateItem } from "../types/elementType";
+import { parserDom } from "./component";
+import { Reactive } from "./reactive";
 
 export default class Element extends HTMLElement implements IElement {
   _customElement: boolean = true;
   $ref: Element | ShadowRoot | null = null;
+  _slots: Record<string, HTMLElement[]> = {};
   _state: Record<string, TStateItem> = {};
   _methods: Record<
     string,
@@ -18,6 +21,7 @@ export default class Element extends HTMLElement implements IElement {
     this._render();
     this.connected();
     this._collectionSlots();
+    new Reactive(this.$ref, this);
   }
   disconnectedCallback() {
     this.disconnected();
@@ -31,7 +35,7 @@ export default class Element extends HTMLElement implements IElement {
   propChanged(name: string, newV: string, oldV: string) { }
   attributeChangedCallback(name: string, oldV: string, newV: string) {
     this.propChanged(name, newV, oldV);
-    this.setState(name, newV);
+    // this.setState(name, newV);
   }
   render(): null | Node | NodeList | string {
     return null;
@@ -41,28 +45,13 @@ export default class Element extends HTMLElement implements IElement {
 
     let appendNodes: Node[] | NodeList = [];
     if (typeof template === "string") {
-      const document: Document = new DOMParser().parseFromString(
-        template,
-        "text/html"
-      );
-      const headChildNodes: NodeListOf<ChildNode> =
-        document.childNodes[0].childNodes[0].childNodes;
-      const bodyChildNodes: NodeListOf<ChildNode> =
-        document.childNodes[0].childNodes[1].childNodes;
-      appendNodes.push(
-        ...Array.from(headChildNodes),
-        ...Array.from(bodyChildNodes)
-      );
-    } else {
-      if (template instanceof NodeList) {
-        appendNodes = appendNodes;
-      } else {
-        appendNodes = [template];
-      }
+      appendNodes = parserDom(template) as Node[];
+    } else if (!(template instanceof NodeList)) {
+      appendNodes = [template];
     }
 
     for (const nodeItem of appendNodes) {
-      this._reactive(nodeItem as HTMLElement);
+      // this._reactive(nodeItem as HTMLElement);
       this._bindMethods(nodeItem as HTMLElement);
     }
 
