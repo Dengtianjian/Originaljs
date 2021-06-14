@@ -42,18 +42,30 @@ export function DOMFor(templateEl: string | Node, data: any, callback?: (node: N
   if (data === null) {
     return;
   }
+
+  Object.defineProperty(data, "_for", {
+    configurable: false,
+    value: () => {
+      console.log(1);
+    },
+    enumerable: false,
+    writable: false
+  })
+  console.log(data);
+
+
   const parentNode: Node & ParentNode = el.parentNode;
   if (typeof data[Symbol.iterator] === "undefined") {
     if (typeof data[Symbol.iterator] === "undefined" && Object.prototype.toString.call(data) !== "[object Object]") {
       return;
     }
   }
+  const doms = [];
   if (Object.prototype.toString.call(data) === "[object Object]") {
     let forIndex: number = 0;
     for (const dataKey in data) {
       if (Object.prototype.hasOwnProperty.call(data, dataKey)) {
         const dataItem = data[dataKey];
-        console.log(forIndex);
 
       }
       forIndex++;
@@ -61,12 +73,13 @@ export function DOMFor(templateEl: string | Node, data: any, callback?: (node: N
   } else {
     for (let index = 0; index < data.length; index++) {
       const element = data[index];
-      console.log(el);
-
+      const newEl = el.cloneNode(true);
+      newEl.innerText = data[index];
+      doms.push(newEl);
     }
   }
-  const newDom = document.createElement("div");
-  parentNode.append(newDom);
+  // parentNode.removeChild(el);
+  parentNode.append(...doms);
   console.log(parentNode);
 
 

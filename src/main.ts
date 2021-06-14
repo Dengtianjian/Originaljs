@@ -41,11 +41,21 @@ button {
     </div>
   </div>
 </button>`;
-template = `{nums} <button onclick="updateArr">Update arr</button>`
+template = `
+{nums}
+<button onclick="updateArr">Update arr</button>
+<o-for dataitem in numarr>
+  <o-for di in dataitem[0]>
+  {di}
+  </o-for>
+</o-for>`
 
 class CButton extends createElement(["name"]) {
   constructor() {
     super();
+  }
+  rendered() {
+    // DOMFor.call(this, this.$ref.querySelector("li"), this.nums);
   }
   show() {
     console.log(1);
@@ -65,10 +75,14 @@ class CButton extends createElement(["name"]) {
   }
 
   nums = [1, 2, 34, 5, 6, 7, 8];
+  numarr = [[123, 456], ["456"]];
+  users = [{
+    name: "admin"
+  }];
   updateArr() {
-    this.nums[2] = Math.round(Math.random() * 1000);
     console.log(this.nums);
 
+    this.nums.push(Math.round(Math.random() * 1000));
   }
 }
 

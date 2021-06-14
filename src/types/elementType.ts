@@ -6,10 +6,10 @@ export type TMethodItem = Array<{
   params: any[];
   listener: () => any
 }>;
-export type TStateItem = { value: any; els: Set<{ el?: HTMLElement | Text, attribute?: Attr, type: keyof IStateTypeMap }> };
+export type TStateItem = { value: any; els: Set<{ el?: HTMLElement | Text, attribute?: Attr, type: keyof IStateTypeMap, template?: HTMLElement }> };
 
 export interface IStateTypeMap {
-  "attribute": 1, "element": 2
+  "attribute": 1, "element": 2, "for": 3
 };
 export interface IElement extends HTMLElement {
   _customElement: boolean;

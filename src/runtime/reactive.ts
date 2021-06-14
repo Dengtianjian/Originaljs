@@ -5,14 +5,20 @@ export class Reactive {
   _state: Record<string, TStateItem> = {};
   _keys: Set<string> = new Set();
   _data;
+  _tags: string[] = ["o-for"]; //* 自带标签
   constructor(target: HTMLElement | ShadowRoot, data: any) {
     this._target = target;
     this._data = data;
+
     this.collection(this._target as HTMLElement).then(res => {
       this.setProxy();
     })
   }
   async collection(El: HTMLElement) {
+    if (El.tagName && this._tags.includes(El.tagName.toLowerCase())) {
+      this.handleBuildInComponents(El);
+    }
+
     if (El.childNodes.length > 0) {
       El.childNodes.forEach((node) => {
         this.collection(node as HTMLElement);
@@ -45,7 +51,7 @@ export class Reactive {
 
           if (!this._state[varItem]) {
             this._state[varItem] = {
-              value: replaceValue,
+              value: attrValue,
               els: new Set(),
             };
           }
@@ -88,7 +94,7 @@ export class Reactive {
       this._keys.add(varItem);
       if (!this._state[varItem]) {
         this._state[varItem] = {
-          value: replaceValue,
+          value: replace,
           els: new Set(),
         };
       }
@@ -192,7 +198,7 @@ export class Reactive {
   setObjectProxy(propertyStrs: string[], targetName: string, target: any, stateKey: string) {
     if (propertyStrs[0] !== targetName) {
       return this.setObjectProxy(propertyStrs.slice(1), targetName, target[propertyStrs[0]], stateKey);
-    } else {
+    } else if (target) {
       if (typeof target[targetName] === "object") {
         target[targetName] = new Proxy(target[targetName], this.ProxyHandler);
         Object.defineProperty(target[targetName], "_stateKey", {
@@ -232,7 +238,7 @@ export class Reactive {
         replaceValue = value();
       }
     } else {
-      replaceValue = target.toString();
+      replaceValue = value.toString();
     }
     state.els.forEach(elItem => {
       switch (elItem.type) {
@@ -242,8 +248,72 @@ export class Reactive {
         case "attribute":
           elItem.attribute.value = replaceValue;
           break;
+        case "for":
+          this.updateForView(elItem.el, target);
+          break;
       }
     });
     return true;
+  }
+  handleBuildInComponents(El: HTMLElement) {
+    switch (El.tagName.toLowerCase()) {
+      case "o-for":
+        this.handleFor(El);
+        break;
+    }
+  }
+  async handleFor(El: HTMLElement) {
+    const attributeMap: NamedNodeMap = El.attributes;
+    const attributes: Attr[] = Array.from(attributeMap);
+    let propertyName: string = "";
+    let indexName: string = "";
+    let itemName: string = attributes[0].nodeName;
+    let keyName: string = "";
+    attributes.forEach((attr, index, arr) => {
+      if (attr.nodeName === "in") {
+        propertyName = arr[index + 1].nodeName;
+      }
+    });
+    if (attributes[1].nodeName !== "in") {
+      indexName = attributes[1].nodeName;
+      if (attributes[2].nodeName !== "in") {
+        keyName = attributes[2].nodeName;
+      }
+    }
+    if (!this._state[propertyName]) {
+      const value = await this.getPropertyData(this.parsePropertyString(propertyName));
+      this._state[propertyName] = {
+        value,
+        els: new Set()
+      }
+    }
+
+    const templateEl: HTMLElement = El.children[0] as HTMLElement;
+    const newChilds: HTMLElement[] = [];
+    this._state[propertyName].value.forEach((item, index) => {
+      const newChild: HTMLElement = templateEl.cloneNode(true) as HTMLElement;
+      newChild['_for'] = {
+        [itemName || "index"]: item,
+        [indexName]: index,
+        itemName,
+        propertyName,
+        indexName,
+        keyName
+      };
+      newChild['_reacrive'] = new Reactive(newChild, newChild['_for']);
+      newChilds.push(newChild)
+    })
+    El.removeChild(templateEl);
+    El.append(...newChilds);
+    this._state[propertyName].els.add({
+      el: El,
+      type: "for",
+      template: templateEl
+    });
+  }
+  updateForView(El, target) {
+    const childres = El.children;
+    console.log(childres[0]['_for'], target);
+    // childres[0]['_for']['dataitem']['value'] = Date.now();
   }
 }

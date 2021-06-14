@@ -18,10 +18,11 @@ export default class Element extends HTMLElement implements IElement {
     this.$ref = this.attachShadow({ mode: "closed" });
   }
   connectedCallback() {
-    this._render();
     this.connected();
+    this._render();
     this._collectionSlots();
     new Reactive(this.$ref, this);
+    this.rendered();
   }
   disconnectedCallback() {
     this.disconnected();
@@ -30,6 +31,7 @@ export default class Element extends HTMLElement implements IElement {
     this.adoptied();
   }
   connected() { }
+  rendered() { }
   disconnected() { }
   adoptied() { }
   propChanged(name: string, newV: string, oldV: string) { }
