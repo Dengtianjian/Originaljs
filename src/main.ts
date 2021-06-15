@@ -1,9 +1,9 @@
 import {
   defineElement,
-  Query,
   createElement
 } from "./runtime";
-import { DOMFor } from "./runtime/component";
+
+import "./runtime/reactive";
 
 // let template: string = await import("./components/templates/cbutton.html");
 // template = template.default;
@@ -45,9 +45,7 @@ template = `
 {nums}
 <button onclick="updateArr">Update arr</button>
 <o-for dataitem in numarr>
-  <o-for di in dataitem[0]>
-  {di}
-  </o-for>
+{dataitem}
 </o-for>`
 
 class CButton extends createElement(["name"]) {

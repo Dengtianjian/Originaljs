@@ -1,6 +1,6 @@
 import { TStateItem } from "../types/elementType";
 
-export class Reactive {
+export class _Reactive {
   _target: HTMLElement | ShadowRoot;
   _state: Record<string, TStateItem> = {};
   _keys: Set<string> = new Set();
