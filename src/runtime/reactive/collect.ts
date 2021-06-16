@@ -95,9 +95,19 @@ export class Collect {
     if (typeof property[propertyNames[0]] === "object" && propertyNames.length > 1) {
       obj[propertyNames[0]] = this.generateObject(propertyNames.slice(1), data[propertyNames[0]], El);
     } else {
-      obj[propertyNames[0]] = {
-        _els: [El]
-      };
+      if (Array.isArray(property[propertyNames[0]])) {
+        obj[propertyNames[0]] = [];
+      } else {
+        obj[propertyNames[0]] = {};
+      }
+      Object.defineProperty(obj[propertyNames[0]], "_els", {
+        value: [
+          El
+        ],
+        writable: true,
+        configurable: true,
+        enumerable: true
+      })
     }
     return obj;
   }

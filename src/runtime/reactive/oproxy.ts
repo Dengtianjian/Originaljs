@@ -8,12 +8,18 @@ export default class OProxy {
       return true;
     }
   }
-  static setProxy(data, path = "") {
-    // console.log(path);
-
+  static setProxy(data, path = []) {
     const dataProxy = new Proxy(JSON.parse(JSON.stringify(data)), {
       set: (target, property, value, reveiver) => {
         Reflect.set(target, property, value, reveiver);
+        if (!target['__og_stateKey']) {
+          Object.defineProperty(target, "__og_stateKey", {
+            value: path.join("."),
+            writable: false,
+            configurable: false,
+            enumerable: false
+          })
+        }
         Reactive.updateView(target, property, value, reveiver);
         return true;
       }
@@ -22,12 +28,16 @@ export default class OProxy {
       for (const key in dataProxy) {
         if (Object.prototype.hasOwnProperty.call(data, key)) {
           if (typeof data[key] === "object") {
-            path += `['${key}']`;
+            path.push(key);
             dataProxy[key] = this.setProxy(dataProxy[key], path);
+          } else {
+            dataProxy[key] = data[key];
+            // console.log(path, data[key]);
           }
         }
       }
     }
+    path.pop();
     return dataProxy;
   }
 }

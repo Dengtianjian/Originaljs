@@ -27,7 +27,6 @@
 
 import { Query } from "../selector";
 import { Collect } from "./collect";
-import ODOM from "./odom";
 import OProxy from "./oproxy";
 
 export default class Reactive {
@@ -38,39 +37,38 @@ export default class Reactive {
     OG['rawData'] = data;
     OG['state'] = Collect.reset(target, data);
 
-    console.log(OG['state'], data);
-
-    let r = this.filterRawData(OG['state'], data);
+    let r = this.filterRawData(OG['state'], OG['rawData']);
 
     OG['data'] = data = OProxy.setProxy(r);
-    console.log(OG['data']);
-
 
     Object.defineProperty(target, "__og__", {
       value: OG,
       configurable: false
     });
 
-    return OG['data'];
+    return data;
   }
 
   static updateView(target, property, value, reveiver) {
-    console.log(target, property, value);
+    console.log(Collect.parsePropertyString(target['__og_stateKey']), property, value);
   }
   static filterRawData(state, rawData) {
-    for (const key in state) {
-      if (Object.prototype.hasOwnProperty.call(state, key)) {
-        const element = state[key];
+    const deps = JSON.parse(JSON.stringify(state));
+    for (const key in deps) {
+      if (Object.prototype.hasOwnProperty.call(deps, key)) {
+        const element = deps[key];
         if (typeof element === "object") {
-          if (element['_els']) {
-            state[key] = rawData[key];
+          if (element.hasOwnProperty("_els")) {
+            deps[key] = rawData[key];
           } else {
-            this.filterRawData(element, rawData[key]);
+            deps[key] = this.filterRawData(element, rawData[key]);
           }
+        } else {
+          deps[key] = rawData[key];
         }
       }
     }
-    return state;
+    return deps;
   }
 }
 
@@ -80,7 +78,9 @@ const data = {
       firstName: "Admin"
     },
     numbers: [
-      1, 2, 3, 4, 5, 6, 7, 8
+      1, 2, 3, 4, {
+        a: [2]
+      }, 6, 7, 8
     ],
     friends: [
       {
@@ -97,3 +97,4 @@ const data = {
 }
 const rd = Reactive.observer(Query("#app"), data)
 rd.user.friends[0].name.firstName = "C";
+// console.log(rd);
