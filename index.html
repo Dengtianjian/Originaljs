@@ -10,7 +10,21 @@
 
 <body>
   <div id="app">
-    <div>{user.name}</div>
+    <div>
+      { user.friends[0].name.firstName }
+      { user.friends[1].name.firstName }
+      <p>{ user.friends[1].name.firstName }</p>
+      <div class="a">
+        {user.numbers}
+      </div>
+      <ul>
+        <li>{user.numbers[0]}</li>
+        <li>{user.numbers[1]}</li>
+        <li>{user.numbers[2]}</li>
+        <li>{user.numbers[3]}</li>
+        <li>{user.numbers[4]}</li>
+      </ul>
+    </div>
   </div>
   <script type="module" src="./src/main.ts"></script>
   <!-- <c-button>Save</c-button> -->

@@ -26,33 +26,74 @@
  */
 
 import { Query } from "../selector";
+import { Collect } from "./collect";
+import ODOM from "./odom";
 import OProxy from "./oproxy";
 
 export default class Reactive {
+  static data;
   static observer(target, data) {
     const OG = {};
+    this.data = data;
     OG['rawData'] = data;
-    OG['data'] = data = OProxy.setProxy(data);
-    console.log(OG);
+    OG['state'] = Collect.reset(target, data);
+
+    console.log(OG['state'], data);
+
+    let r = this.filterRawData(OG['state'], data);
+
+    OG['data'] = data = OProxy.setProxy(r);
+    console.log(OG['data']);
+
 
     Object.defineProperty(target, "__og__", {
       value: OG,
       configurable: false
     });
+
+    return OG['data'];
   }
 
-  static updateView(target, value) {
-    console.log(target, value);
-
+  static updateView(target, property, value, reveiver) {
+    console.log(target, property, value);
+  }
+  static filterRawData(state, rawData) {
+    for (const key in state) {
+      if (Object.prototype.hasOwnProperty.call(state, key)) {
+        const element = state[key];
+        if (typeof element === "object") {
+          if (element['_els']) {
+            state[key] = rawData[key];
+          } else {
+            this.filterRawData(element, rawData[key]);
+          }
+        }
+      }
+    }
+    return state;
   }
 }
 
 const data = {
   user: {
-    name: "admin"
+    name: {
+      firstName: "Admin"
+    },
+    numbers: [
+      1, 2, 3, 4, 5, 6, 7, 8
+    ],
+    friends: [
+      {
+        name: {
+          firstName: "A"
+        }
+      }, {
+        name: {
+          firstName: "B"
+        }
+      }
+    ]
   }
 }
-Reactive.observer(Query("#app"), data)
-console.log(data);
-
-
+const rd = Reactive.observer(Query("#app"), data)
+rd.user.friends[0].name.firstName = "C";
