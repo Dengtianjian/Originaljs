@@ -1,15 +1,8 @@
 import Reactive from "./index";
 
 export default class OProxy {
-  static proxyHandle: ProxyHandler<any> = {
-    set(target, property, value, reveiver) {
-      Reflect.set(target, property, value, reveiver);
-      Reactive.updateView(target, property, value, reveiver);
-      return true;
-    }
-  }
   static setProxy(data, path = []) {
-    const dataProxy = new Proxy(JSON.parse(JSON.stringify(data)), {
+    const dataProxy = new Proxy(data, {
       set: (target, property, value, reveiver) => {
         Reflect.set(target, property, value, reveiver);
         if (!target['__og_stateKey']) {
@@ -20,6 +13,15 @@ export default class OProxy {
             enumerable: false
           })
         }
+        if (!target['__og_rawData']) {
+          Object.defineProperty(target, "__og_rawData", {
+            value: data,
+            writable: false,
+            configurable: false,
+            enumerable: false
+          })
+        }
+
         Reactive.updateView(target, property, value, reveiver);
         return true;
       }
@@ -32,7 +34,6 @@ export default class OProxy {
             dataProxy[key] = this.setProxy(dataProxy[key], path);
           } else {
             dataProxy[key] = data[key];
-            // console.log(path, data[key]);
           }
         }
       }

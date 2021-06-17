@@ -31,28 +31,34 @@ import OProxy from "./oproxy";
 
 export default class Reactive {
   static data;
-  static observer(target, data) {
-    const OG = {};
+  target: HTMLElement | ShadowRoot;
+  data: object;
+  rawData: object;
+  refs: object;
+  constructor(target: HTMLElement | ShadowRoot, data: object) {
+    this.target = target;
     this.data = data;
-    OG['rawData'] = data;
-    OG['state'] = Collect.reset(target, data);
+    this.rawData = JSON.parse(JSON.stringify(data));
+    this.refs = Collect.reset(target, data);
+    const filterData = this.filterRawData(this.refs, data);
+    const proxyData=OProxy.setProxy(filterData);
+    console.log(proxyData);
 
-    let r = this.filterRawData(OG['state'], OG['rawData']);
-
-    OG['data'] = data = OProxy.setProxy(r);
-
+  }
+  static observer(target: HTMLElement | ShadowRoot, data: object) {
     Object.defineProperty(target, "__og__", {
-      value: OG,
+      value: new Reactive(target, data),
       configurable: false
     });
-
-    return data;
   }
-
   static updateView(target, property, value, reveiver) {
-    console.log(Collect.parsePropertyString(target['__og_stateKey']), property, value);
+    if (target['__og_rawData'][property] == target[property]) {
+      return;
+    }
+    // console.log(target['__og_rawData'][property], target[property]);
+
   }
-  static filterRawData(state, rawData) {
+  filterRawData(state, rawData) {
     const deps = JSON.parse(JSON.stringify(state));
     for (const key in deps) {
       if (Object.prototype.hasOwnProperty.call(deps, key)) {
@@ -95,6 +101,6 @@ const data = {
     ]
   }
 }
-const rd = Reactive.observer(Query("#app"), data)
-rd.user.friends[0].name.firstName = "C";
-// console.log(rd);
+Reactive.observer(Query("#app"), data)
+// rd.user.friends[0].name.firstName = "C";
+console.log(data);
