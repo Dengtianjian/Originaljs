@@ -42,9 +42,7 @@ export default class Reactive {
     this.refs = Collect.reset(target, data);
     const filterData = this.filterRawData(this.refs, data);
 
-    console.log(data, filterData);
-
-    OProxy.setProxy(data, filterData, []);
+    OProxy.setProxy(data, filterData, [], this);
   }
   static observer(target: HTMLElement | ShadowRoot, data: object) {
     Object.defineProperty(target, "__og__", {
@@ -52,11 +50,27 @@ export default class Reactive {
       configurable: false
     });
   }
-  static updateView(target, property, value, reveiver) {
-    if (target['__og_rawData'][property] == target[property]) {
-      return;
+  static deepGetObjectProperty(obj, propertyNames: string[]) {
+    if (obj[propertyNames[0]]) {
+      return this.deepGetObjectProperty(obj[propertyNames[0]], propertyNames.slice(1));
+    } else {
+      return obj;
     }
-    // console.log(target['__og_rawData'][property], target[property]);
+
+  }
+  static updateView(target, property, value, reveiver) {
+    // if (target['__og_rawData'][property] == target[property]) {
+    //   return;
+    // }
+
+    const refs = target.__og_root['refs'];
+    const propertyNames = Collect.parsePropertyString(target.__og_stateKey);
+    const r = this.deepGetObjectProperty(refs, propertyNames)
+    const els = r[property]['_els'];
+
+    els.forEach(el => {
+      el.textContent = value.toString() + "\n";
+    })
 
   }
   filterRawData(state, rawData) {
@@ -103,5 +117,10 @@ const data = {
   }
 }
 Reactive.observer(Query("#app"), data)
-data.user.numbers.push(1);
-console.log(data);
+// data.user.numbers.push(1);
+data.user.friends[0].name.firstName = "Time:";
+setInterval(() => {
+  const D = new Date();
+  const s = `${D.getFullYear()}年${D.getMonth() + 1}月${D.getDate()}号 ${D.getHours()}:${D.getMinutes()}:${D.getSeconds() < 10 ? '0' + D.getSeconds() : D.getSeconds()}`;
+  data.user.friends[1].name.firstName = s;
+}, 1000);
