@@ -41,9 +41,10 @@ export default class Reactive {
     this.rawData = JSON.parse(JSON.stringify(data));
     this.refs = Collect.reset(target, data);
     const filterData = this.filterRawData(this.refs, data);
-    const proxyData=OProxy.setProxy(filterData);
-    console.log(proxyData);
 
+    console.log(data, filterData);
+
+    OProxy.setProxy(data, filterData, []);
   }
   static observer(target: HTMLElement | ShadowRoot, data: object) {
     Object.defineProperty(target, "__og__", {
@@ -102,5 +103,5 @@ const data = {
   }
 }
 Reactive.observer(Query("#app"), data)
-// rd.user.friends[0].name.firstName = "C";
+data.user.numbers.push(1);
 console.log(data);
