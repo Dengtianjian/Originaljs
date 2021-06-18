@@ -158,8 +158,11 @@ export class Collect {
       const varItem = vars[index];
       const propertyNames = this.parsePropertyString(varItem);
       let replace: undefined | string = this.getPropertyData(propertyNames);
-      let replaceValue: string = replace.toString();
-      replaceValue += " ";
+      let replaceValue: string = "";
+      if (replace) {
+        replaceValue = replace.toString();
+        replaceValue += " ";
+      }
       const textEl = document.createTextNode(replaceValue);
       const obj = this.generateObject(propertyNames, this.data, textEl);
       this.obj = this.mergeObject(this.obj, obj)

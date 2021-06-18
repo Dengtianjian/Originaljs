@@ -40,6 +40,7 @@ export default class Reactive {
     this.data = data;
     this.rawData = JSON.parse(JSON.stringify(data));
     this.refs = Collect.reset(target, data);
+
     const filterData = this.filterRawData(this.refs, data);
 
     OProxy.setProxy(data, filterData, [], this);
@@ -66,19 +67,28 @@ export default class Reactive {
     const refs = target.__og_root['refs'];
     const propertyNames = Collect.parsePropertyString(target.__og_stateKey);
     const r = this.deepGetObjectProperty(refs, propertyNames)
-    const els = r[property]['_els'];
 
-    els.forEach(el => {
-      el.textContent = value.toString() + "\n";
-    })
+    if (r[property] && r[property].hasOwnProperty('_els')) {
+      const els = r[property]['_els'];
+      els.forEach(el => {
+        el.textContent = value.toString() + "\n";
+      })
+    } else {
+      if (Array.isArray(target) && property !== "length") {
+        r[property] = {
+          _els: []
+        }
+      }
 
+      console.log(r);
+    }
   }
   filterRawData(state, rawData) {
     const deps = JSON.parse(JSON.stringify(state));
     for (const key in deps) {
       if (Object.prototype.hasOwnProperty.call(deps, key)) {
         const element = deps[key];
-        if (typeof element === "object") {
+        if (typeof element === "object" && element) {
           if (element.hasOwnProperty("_els")) {
             deps[key] = rawData[key];
           } else {
@@ -119,8 +129,11 @@ const data = {
 Reactive.observer(Query("#app"), data)
 // data.user.numbers.push(1);
 data.user.friends[0].name.firstName = "Time:";
+data.user.numbers.push(2);
+data.user.numbers.push(3);
 setInterval(() => {
-  const D = new Date();
-  const s = `${D.getFullYear()}年${D.getMonth() + 1}月${D.getDate()}号 ${D.getHours()}:${D.getMinutes()}:${D.getSeconds() < 10 ? '0' + D.getSeconds() : D.getSeconds()}`;
-  data.user.friends[1].name.firstName = s;
+  // const D = new Date();
+  // const s = `${D.getFullYear()}年${D.getMonth() + 1}月${D.getDate()}号 ${D.getHours()}:${D.getMinutes()}:${D.getSeconds() < 10 ? '0' + D.getSeconds() : D.getSeconds()}`;
+  // data.user.friends[1].name.firstName = s;
+  // data.user.numbers[9] = Date.now();
 }, 1000);
