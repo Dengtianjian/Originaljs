@@ -43,6 +43,8 @@ export default class Reactive {
 
     const filterData = this.filterRawData(this.refs, data);
 
+    console.log(this.refs);
+
     OProxy.setProxy(data, filterData, [], this);
   }
   static observer(target: HTMLElement | ShadowRoot, data: object) {
@@ -68,19 +70,28 @@ export default class Reactive {
     const propertyNames = Collect.parsePropertyString(target.__og_stateKey);
     const r = this.deepGetObjectProperty(refs, propertyNames)
 
-    if (r[property] && r[property].hasOwnProperty('_els')) {
-      const els = r[property]['_els'];
-      els.forEach(el => {
-        el.textContent = value.toString() + "\n";
-      })
+    if (r[property]) {
+      const replaceValue: string = value.toString();
+      if (r[property]._els) {
+        const els = r[property]['_els'];
+
+        els.forEach(el => {
+          el.textContent = replaceValue + "\n";
+        })
+      }
+      if (r[property]._attrs) {
+        const attrs = r[property]['_attrs'];
+        attrs.forEach(attr => {
+          attr.nodeValue = replaceValue;
+        })
+      }
     } else {
       if (Array.isArray(target) && property !== "length") {
         r[property] = {
-          _els: []
+          _els: [],
+          _attrs: []
         }
       }
-
-      console.log(r);
     }
   }
   filterRawData(state, rawData) {
@@ -89,7 +100,7 @@ export default class Reactive {
       if (Object.prototype.hasOwnProperty.call(deps, key)) {
         const element = deps[key];
         if (typeof element === "object" && element) {
-          if (element.hasOwnProperty("_els")) {
+          if (element.hasOwnProperty("_els") || element.hasOwnProperty("_attrs")) {
             deps[key] = rawData[key];
           } else {
             deps[key] = this.filterRawData(element, rawData[key]);
@@ -128,12 +139,14 @@ const data = {
 }
 Reactive.observer(Query("#app"), data)
 // data.user.numbers.push(1);
-data.user.friends[0].name.firstName = "Time:";
-data.user.numbers.push(2);
-data.user.numbers.push(3);
-setInterval(() => {
-  // const D = new Date();
-  // const s = `${D.getFullYear()}年${D.getMonth() + 1}月${D.getDate()}号 ${D.getHours()}:${D.getMinutes()}:${D.getSeconds() < 10 ? '0' + D.getSeconds() : D.getSeconds()}`;
-  // data.user.friends[1].name.firstName = s;
-  // data.user.numbers[9] = Date.now();
-}, 1000);
+// data.user.friends[0].name.firstName = "Time:";
+// data.user.numbers.push(2);
+// data.user.numbers.push(3);
+data.user.numbers[0] = 666;
+// setInterval(() => {
+//   data.user.numbers[0] = Date.now();
+//   const D = new Date();
+//   const s = `${D.getFullYear()}年${D.getMonth() + 1}月${D.getDate()}号 ${D.getHours()}:${D.getMinutes()}:${D.getSeconds() < 10 ? '0' + D.getSeconds() : D.getSeconds()}`;
+//   data.user.friends[1].name.firstName = s;
+//   data.user.numbers[9] = Date.now();
+// }, 1000);

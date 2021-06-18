@@ -84,7 +84,7 @@ export class Collect {
     }
     return property;
   }
-  static generateObject(propertyNames: string[], data, El: HTMLElement | Text
+  static generateObject(propertyNames: string[], data, El: HTMLElement | Text | Attr
   ) {
     let obj = {};
     if (Array.isArray(data)) {
@@ -100,14 +100,30 @@ export class Collect {
       } else {
         obj[propertyNames[0]] = {};
       }
-      Object.defineProperty(obj[propertyNames[0]], "_els", {
-        value: [
+      if (El instanceof Attr) {
+        obj[propertyNames[0]]['_attrs'] = [
           El
-        ],
-        writable: true,
-        configurable: true,
-        enumerable: true
-      })
+        ]
+      } else {
+        obj[propertyNames[0]]['_els'] = [
+          El
+        ]
+      }
+      // obj[propertyNames[0]]['_type'] = "element";
+      // Object.defineProperty(obj[propertyNames[0]], "_els", {
+      //   value: [
+      //     El
+      //   ],
+      //   writable: true,
+      //   configurable: true,
+      //   enumerable: true
+      // })
+      // Object.defineProperty(obj[propertyNames[0]], "_type", {
+      //   value: "element",
+      //   writable: true,
+      //   configurable: true,
+      //   enumerable: true
+      // })
     }
     return obj;
   }
@@ -135,11 +151,34 @@ export class Collect {
     }
     return target;
   }
+  static collectAttrRef(El: HTMLElement) {
+    for (const attrItem of Array.from(El.attributes)) {
+      if (/(?<=\{\x20*).+?(?=\x20*\})/g.test(attrItem.nodeValue)) {
+        const refs: string[] = attrItem.nodeValue.match(/(?<=\{\x20*).+?(?=\x20*\})/g);
+        refs.forEach(refItem => {
+          const propertyNames: string[] = this.parsePropertyString(refItem);
+          let replace: undefined | string = this.getPropertyData(propertyNames);
+          let replaceValue: string = "";
+          if (replace) {
+            replaceValue = replace.toString();
+            replaceValue += " ";
+          }
+          attrItem.nodeValue = replace;
+          const obj = this.generateObject(propertyNames, this.data, attrItem);
+          this.obj = this.mergeObject(this.obj, obj)
+        })
+      }
+    }
+  }
   static collection(El: HTMLElement) {
     if (El.childNodes.length > 0) {
       for (const child of Array.from(El.childNodes)) {
         this.collection(child as HTMLElement);
       }
+    }
+
+    if (El.attributes && El.attributes.length > 0) {
+      this.collectAttrRef(El);
     }
 
     if (El.nodeType !== 3 && El !== this.El) {
