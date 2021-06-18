@@ -10,7 +10,10 @@
 
 <body>
   <div id="app" data-nums="{user.numbers[0]}">
-    <div>
+    <o-for num index in nums>
+      <div>{num}111</div>
+    </o-for>
+    <!-- <div>
       { user.friends[0].name.firstName }
       { user.friends[1].name.firstName }
       <p>{ user.friends[1].name.firstName }</p>
@@ -18,16 +21,18 @@
         {user.numbers}
       </div>
       <ul>
-        <li>{user.numbers[0]}</li>
-        <li>{user.numbers[1]}</li>
-        <li>{user.numbers[2]}</li>
-        <li>{user.numbers[3]}</li>
-        <li>{user.numbers[4]}</li>
-        <li>{user.numbers[7]}</li>
-        <li>{user.numbers[8]}</li>
-        <li>{user.numbers[9]}</li>
+        <o-for num index in nums>
+          <li>{user.numbers[0]}</li>
+          <li>{user.numbers[1]}</li>
+          <li>{user.numbers[2]}</li>
+          <li>{user.numbers[3]}</li>
+          <li>{user.numbers[4]}</li>
+          <li>{user.numbers[7]}</li>
+          <li>{user.numbers[8]}</li>
+          <li>{user.numbers[9]}</li>
+        </o-for>
       </ul>
-    </div>
+    </div> -->
   </div>
   <script type="module" src="./src/main.ts"></script>
   <!-- <c-button>Save</c-button> -->

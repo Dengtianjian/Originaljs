@@ -177,6 +177,12 @@ export class Collect {
       }
     }
 
+    if (String(El.tagName).toLowerCase() === "o-for") {
+      console.log(El);
+
+      return;
+    }
+
     if (El.attributes && El.attributes.length > 0) {
       this.collectAttrRef(El);
     }
@@ -197,7 +203,7 @@ export class Collect {
       const varItem = vars[index];
       const propertyNames = this.parsePropertyString(varItem);
       let replace: undefined | string = this.getPropertyData(propertyNames);
-      let replaceValue: string = "";
+      let replaceValue: string = `{${varItem}}`;
       if (replace) {
         replaceValue = replace.toString();
         replaceValue += " ";
