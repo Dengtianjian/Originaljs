@@ -72,18 +72,36 @@ function generateElRefTree(propertyNames: string[], rawData: object, El: HTMLEle
   if (typeof rawData[propertyNames[0]] === "object" && propertyNames.length > 1) {
     tree[propertyNames[0]] = generateElRefTree(propertyNames.slice(1), rawData[propertyNames[0]], El);
   } else {
-    if (Array.isArray(rawData[propertyNames[0]])) {
-      tree[propertyNames[0]] = [];
+    if (rawData[propertyNames[0]] === undefined) {
+      let temp = tree;
+      propertyNames.forEach((item, index) => {
+        if (propertyNames.length - 1 == index) {
+          let propertyName: string = "_els";
+          if (El instanceof Attr) {
+            propertyName = "_attrs";
+          }
+          temp[propertyName] = [
+            El
+          ]
+        } else {
+          temp = temp[item] = {};
+        }
+      })
     } else {
-      tree[propertyNames[0]] = {};
+      if (Array.isArray(rawData[propertyNames[0]])) {
+        tree[propertyNames[0]] = [];
+      } else {
+        tree[propertyNames[0]] = {};
+      }
+
+      let propertyName: string = "_els";
+      if (El instanceof Attr) {
+        propertyName = "_attrs";
+      }
+      tree[propertyNames[0]][propertyName] = [
+        El
+      ]
     }
-    let propertyName: string = "_els";
-    if (El instanceof Attr) {
-      propertyName = "_attrs";
-    }
-    tree[propertyNames[0]][propertyName] = [
-      El
-    ]
   }
   return tree;
 }
@@ -157,6 +175,7 @@ function collectTagRefs(El: HTMLElement): void {
     parentNode.insertBefore(el, El);
   });
 }
+
 function collectAttrRefs(El: HTMLElement): void {
   if (El.attributes.length === 0) {
     return;
