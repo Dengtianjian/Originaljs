@@ -26,7 +26,7 @@
  */
 
 import { Query } from "../selector";
-import { Collect } from "./collect";
+import Collect from "./collect";
 import OProxy from "./oproxy";
 
 export default class Reactive {
@@ -39,13 +39,14 @@ export default class Reactive {
     this.target = target;
     this.data = data;
     this.rawData = JSON.parse(JSON.stringify(data));
-    this.refs = Collect.reset(target, data);
+    Collect.reset(target, data);
+    // this.refs = Collect.reset(target, data);
 
-    const filterData = this.filterRawData(this.refs, data);
+    // const filterData = this.filterRawData(this.refs, data);
 
-    console.log(this.refs);
+    // console.log(this.refs);
 
-    OProxy.setProxy(data, filterData, [], this);
+    // OProxy.setProxy(data, filterData, [], this);
   }
   static observer(target: HTMLElement | ShadowRoot, data: object) {
     Object.defineProperty(target, "__og__", {
@@ -143,10 +144,10 @@ data.user.friends[0].name.firstName = "Time:";
 // data.user.numbers.push(2);
 // data.user.numbers.push(3);
 data.user.numbers[0] = 888;
-setInterval(() => {
-  // data.user.numbers[0] = Date.now();
-  const D = new Date();
-  const s = `${D.getFullYear()}年${D.getMonth() + 1}月${D.getDate()}号 ${D.getHours()}:${D.getMinutes()}:${D.getSeconds() < 10 ? '0' + D.getSeconds() : D.getSeconds()}`;
-  data.user.friends[1].name.firstName = s;
-  data.user.numbers[0] = s;
-}, 1000);
+// setInterval(() => {
+//   // data.user.numbers[0] = Date.now();
+//   const D = new Date();
+//   const s = `${D.getFullYear()}年${D.getMonth() + 1}月${D.getDate()}号 ${D.getHours()}:${D.getMinutes()}:${D.getSeconds() < 10 ? '0' + D.getSeconds() : D.getSeconds()}`;
+//   data.user.friends[1].name.firstName = s;
+//   data.user.numbers[0] = s;
+// }, 1000);

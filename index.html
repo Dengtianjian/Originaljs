@@ -10,14 +10,15 @@
 
 <body>
   <div id="app">
+    { user.friends[2].name.firstName }
     <div>
       { user.friends[0].name.firstName }
       { user.friends[1].name.firstName }
       <p>{ user.friends[1].name.firstName }</p>
-      <div class="a">
+      <div class="a" data-user="{user.numbers}">
         {user.numbers}
       </div>
-      <p>{user.numbers[0]}</p>
+      <p data-all="{user.numbers[0]} {user.numbers[1]}">{user.numbers[0]}</p>
       <ul>
         <p>{user.numbers[0]}</p>
         <o-for num index in user.numbers>
