@@ -120,9 +120,9 @@ const data = {
       firstName: "Admin"
     },
     numbers: [
-      1, 2, 3, 4, {
+      1, 666, 3, 4, {
         a: [2]
-      }, 6, 7, 8
+      }, 6, 7, 8, 9, 2021
     ],
     friends: [
       {
@@ -139,14 +139,14 @@ const data = {
 }
 Reactive.observer(Query("#app"), data)
 // data.user.numbers.push(1);
-// data.user.friends[0].name.firstName = "Time:";
+data.user.friends[0].name.firstName = "Time:";
 // data.user.numbers.push(2);
 // data.user.numbers.push(3);
-data.user.numbers[0] = 666;
-// setInterval(() => {
-//   data.user.numbers[0] = Date.now();
-//   const D = new Date();
-//   const s = `${D.getFullYear()}年${D.getMonth() + 1}月${D.getDate()}号 ${D.getHours()}:${D.getMinutes()}:${D.getSeconds() < 10 ? '0' + D.getSeconds() : D.getSeconds()}`;
-//   data.user.friends[1].name.firstName = s;
-//   data.user.numbers[9] = Date.now();
-// }, 1000);
+data.user.numbers[0] = 888;
+setInterval(() => {
+  // data.user.numbers[0] = Date.now();
+  const D = new Date();
+  const s = `${D.getFullYear()}年${D.getMonth() + 1}月${D.getDate()}号 ${D.getHours()}:${D.getMinutes()}:${D.getSeconds() < 10 ? '0' + D.getSeconds() : D.getSeconds()}`;
+  data.user.friends[1].name.firstName = s;
+  data.user.numbers[0] = s;
+}, 1000);

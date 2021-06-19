@@ -11,6 +11,7 @@ export class Collect {
   static data;
   static obj = {};
   static El;
+  static buildInComponentTagNames = ["o-for"];
   static parsePropertyString(propertyString: string): string[] {
     if (/(?<=\])\w/.test(propertyString) || /\W+^[\u4e00-\u9fa5]/.test(propertyString)) {
       throw new Error("🐻兄dei，语法错误：" + propertyString);
@@ -171,23 +172,21 @@ export class Collect {
     }
   }
   static collection(El: HTMLElement) {
+    if (this.buildInComponentTagNames.includes(String(El.tagName).toLowerCase())) {
+      this.handleBuildInComponent(El);
+    }
+
     if (El.childNodes.length > 0) {
       for (const child of Array.from(El.childNodes)) {
         this.collection(child as HTMLElement);
       }
     }
 
-    if (String(El.tagName).toLowerCase() === "o-for") {
-      console.log(El);
-
-      return;
-    }
-
     if (El.attributes && El.attributes.length > 0) {
       this.collectAttrRef(El);
     }
 
-    if (El.nodeType !== 3 && El !== this.El) {
+    if (El.nodeType !== 3) {
       return;
     }
 
@@ -213,8 +212,65 @@ export class Collect {
       this.obj = this.mergeObject(this.obj, obj)
       textEls.push(textEl);
     }
-
     parentNode.append(...textEls);
     parentNode.removeChild(El);
+  }
+  static handleBuildInComponent(El: HTMLElement) {
+    const tagName: string = El.tagName.toLowerCase();
+    switch (tagName) {
+      case "o-for":
+        this.handleOFor(El);
+        break;
+    }
+  }
+  static handleOFor(El: HTMLElement) {
+    const attributes: Attr[] = Array.from(El.attributes);
+    let InIndex: number = -1;
+    let indexName: string = "";
+    let propertyName: string = "";
+    let keyName: string = "";
+    let itemName: string = "";
+    const childNodes: Node[] = [];
+    El.childNodes.forEach(node => {
+      childNodes.push(node.cloneNode(true));
+    });
+
+    attributes.forEach((attr, index) => {
+      if (attr.nodeName === "in") {
+        InIndex = index;
+      }
+    });
+
+    propertyName = attributes[InIndex + 1]['nodeName'];
+    if (InIndex == 2) {
+      indexName = attributes[InIndex - 1]['nodeName'];
+      itemName = attributes[InIndex - 2]['nodeName'];
+    } else if (InIndex == 3) {
+      keyName = attributes[InIndex - 1]['nodeName'];
+      indexName = attributes[InIndex - 2]['nodeName'];
+      itemName = attributes[InIndex - 3]['nodeName'];
+    } else {
+      itemName = attributes[InIndex - 1]['nodeName'];
+    }
+
+    const propertyNames: string[] = this.parsePropertyString(propertyName);
+    const property: any[] = this.getPropertyData(propertyNames);
+
+    const newEls = [];
+    property.forEach((item, pindex) => {
+      const newEl = [...Array.from(childNodes)];
+      newEl.forEach((el, index) => {
+        newEl[index] = el.cloneNode(true);
+        newEl[index].textContent = newEl[index].textContent.replace(new RegExp(`(?<=\{)${itemName}`), `${propertyNames.join(".")}.${pindex}`);
+      })
+      newEls.push(newEl);
+    });
+
+    Array.from(El.children).forEach(node => {
+      El.removeChild(node);
+    })
+    newEls.forEach(els => {
+      El.append(...els);
+    });
   }
 }

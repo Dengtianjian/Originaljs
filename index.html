@@ -9,30 +9,25 @@
 </head>
 
 <body>
-  <div id="app" data-nums="{user.numbers[0]}">
-    <o-for num index in nums>
-      <div>{num}111</div>
-    </o-for>
-    <!-- <div>
+  <div id="app">
+    <div>
       { user.friends[0].name.firstName }
       { user.friends[1].name.firstName }
       <p>{ user.friends[1].name.firstName }</p>
       <div class="a">
         {user.numbers}
       </div>
+      <p>{user.numbers[0]}</p>
       <ul>
-        <o-for num index in nums>
-          <li>{user.numbers[0]}</li>
-          <li>{user.numbers[1]}</li>
-          <li>{user.numbers[2]}</li>
-          <li>{user.numbers[3]}</li>
-          <li>{user.numbers[4]}</li>
-          <li>{user.numbers[7]}</li>
-          <li>{user.numbers[8]}</li>
-          <li>{user.numbers[9]}</li>
+        <p>{user.numbers[0]}</p>
+        <o-for num index in user.numbers>
+          <li>{num}</li>
         </o-for>
       </ul>
-    </div> -->
+    </div>
+    <o-for num index key in user.numbers>
+      <div>{num}111</div>
+    </o-for>
   </div>
   <script type="module" src="./src/main.ts"></script>
   <!-- <c-button>Save</c-button> -->
