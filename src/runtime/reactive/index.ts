@@ -121,7 +121,7 @@ const data = {
       firstName: "Admin"
     },
     numbers: [
-      1, 666, 3, {
+      2, 666, 3, {
         name: 2
       }, {
         a: [2]
