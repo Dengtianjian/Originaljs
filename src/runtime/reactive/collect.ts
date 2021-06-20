@@ -278,7 +278,7 @@ function handleOFor(El: HTMLElement) {
     const newEl = [...Array.from(childNodes)];
     newEl.forEach((el, index) => {
       newEl[index] = el.cloneNode(true);
-      replaceRef(newEl[index] as HTMLElement, new RegExp(`(?<=\{)${itemName}`, "g"), `${propertyNames.join(".")}.${pindex}`);
+      replaceRef(newEl[index] as HTMLElement, new RegExp(`(?<=\{\x20*)${itemName}`, "g"), `${propertyNames.join(".")}.${pindex}`);
     })
     newEls.push(newEl);
   });
@@ -290,7 +290,6 @@ function handleOFor(El: HTMLElement) {
     El.append(...els);
   });
 }
-
 function replaceRef(El: HTMLElement, string: string | RegExp, replaceValue: string) {
   if (El.childNodes.length > 0) {
     El.childNodes.forEach(node => {
@@ -298,11 +297,26 @@ function replaceRef(El: HTMLElement, string: string | RegExp, replaceValue: stri
     })
   }
 
+  if (El.attributes && El.attributes.length > 0) {
+    replaceAttrRef(El, string, replaceValue);
+  }
+
   if (El.nodeType !== 3) {
     return;
   }
 
-  El.textContent = El.textContent.replace(/(?<={)\x20*num/g, replaceValue);
+  El.textContent = El.textContent.replace(string, replaceValue);
+}
+function replaceAttrRef(El: HTMLElement, string: string | RegExp, replaceValue: string) {
+  if (El.attributes.length === 0) {
+    return;
+  }
+  for (const attrItem of Array.from(El.attributes)) {
+    if (/(?<=\{\x20*).+?(?=\x20*\})/.test(attrItem.nodeValue)) {
+      attrItem.nodeValue = attrItem.nodeValue.replace(string, replaceValue);
+    }
+  }
+
 }
 
 export default {

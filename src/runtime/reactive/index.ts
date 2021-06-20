@@ -121,7 +121,9 @@ const data = {
       firstName: "Admin"
     },
     numbers: [
-      1, 666, 3, 4, {
+      1, 666, 3, {
+        name: 2
+      }, {
         a: [2]
       }, 6, 7, 8, 9, 2021
     ],
