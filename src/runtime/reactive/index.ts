@@ -40,7 +40,7 @@ export default class Reactive {
       configurable: false
     });
   }
-  static deepGetObjectProperty(obj, propertyNames: string[]): { [key: string]: any, _els: HTMLElement[], _attrs: Attr[] } {
+  static deepGetObjectProperty(obj, propertyNames: string[]): { [key: string]: any, __els: HTMLElement[], __attrs: Attr[] } {
     if (obj[propertyNames[0]]) {
       return this.deepGetObjectProperty(obj[propertyNames[0]], propertyNames.slice(1));
     } else {
@@ -50,16 +50,16 @@ export default class Reactive {
   static updateView(target, property, value, reveiver) {
     const refs = target.__og_root['refs'];
     const propertyNames: string[] = Collect.parsePropertyString(target.__og_stateKey);
-    const propertys: { [key: string]: any, _els: HTMLElement[], _attrs: Attr[] } = this.deepGetObjectProperty(refs, propertyNames)
+    const propertys: { [key: string]: any, __els: HTMLElement[], __attrs: Attr[] } = this.deepGetObjectProperty(refs, propertyNames)
 
     if (Array.isArray(target) && property !== "length") {
-      if (propertys._els && propertys._els.length > 0) {
-        propertys._els.forEach(el => {
+      if (propertys.__els && propertys.__els.length > 0) {
+        propertys.__els.forEach(el => {
           el.textContent = target.toString();
         })
       }
-      if (propertys._attrs && propertys._attrs.length > 0) {
-        propertys._attrs.forEach(attrItem => {
+      if (propertys.__attrs && propertys.__attrs.length > 0) {
+        propertys.__attrs.forEach(attrItem => {
           attrItem.nodeValue = target.toString();
         });
       }
@@ -67,16 +67,16 @@ export default class Reactive {
 
     if (propertys[property]) {
       const replaceValue: string = value.toString();
-      if (propertys[property]._els) {
+      if (propertys[property].__els) {
 
-        const els: HTMLElement[] = propertys[property]['_els'];
+        const els: HTMLElement[] = propertys[property]['__els'];
 
         els.forEach(el => {
           el.textContent = replaceValue + "\n";
         });
       }
-      if (propertys[property]._attrs) {
-        const attrs: Attr[] = propertys[property]['_attrs'];
+      if (propertys[property].__attrs) {
+        const attrs: Attr[] = propertys[property]['__attrs'];
         attrs.forEach(attr => {
           attr.nodeValue = replaceValue;
         });
@@ -84,9 +84,16 @@ export default class Reactive {
     } else {
       if (Array.isArray(target) && property !== "length") {
         console.log(target, propertys, property, value);
+        const stateKey: string[] = Collect.parsePropertyString(target['__og_stateKey']);
+        const rawData = Collect.getPropertyData(stateKey, target['__og_root']['rawData']);
+        if (rawData[property]) {
+
+        } else {
+
+        }
         propertys[property] = {
-          _els: [],
-          _attrs: []
+          __els: [],
+          __attrs: []
         }
       }
     }
@@ -106,7 +113,7 @@ export default class Reactive {
       if (Object.prototype.hasOwnProperty.call(deps, key)) {
         const element = deps[key];
         if (typeof element === "object" && element) {
-          if (element.hasOwnProperty("_els") || element.hasOwnProperty("_attrs")) {
+          if (element.hasOwnProperty("__els") || element.hasOwnProperty("__attrs")) {
             deps[key] = rawData[key];
           } else {
             if (rawData) {

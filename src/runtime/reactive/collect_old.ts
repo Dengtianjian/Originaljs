@@ -102,16 +102,16 @@ export class Collect {
         obj[propertyNames[0]] = {};
       }
       if (El instanceof Attr) {
-        obj[propertyNames[0]]['_attrs'] = [
+        obj[propertyNames[0]]['__attrs'] = [
           El
         ]
       } else {
-        obj[propertyNames[0]]['_els'] = [
+        obj[propertyNames[0]]['__els'] = [
           El
         ]
       }
       // obj[propertyNames[0]]['_type'] = "element";
-      // Object.defineProperty(obj[propertyNames[0]], "_els", {
+      // Object.defineProperty(obj[propertyNames[0]], "__els", {
       //   value: [
       //     El
       //   ],
@@ -140,7 +140,7 @@ export class Collect {
         const targetItem = target[key];
         const sourceItem = source[key];
         if (typeof targetItem === "object") {
-          if (key === "_els") {
+          if (key === "__els") {
             target[key] = target[key].concat(sourceItem);
           } else {
             target[key] = this.mergeObject(targetItem, sourceItem);

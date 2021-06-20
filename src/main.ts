@@ -41,7 +41,6 @@ button {
   </div>
 </button>`;
 template = `
-{nums}
 <button onclick="updateArr" data-nums="{nums}">Update arr</button>
 <o-for dataitem in nums>
 {dataitem}
@@ -68,7 +67,7 @@ class CButton extends createElement(["name"]) {
     return template;
   }
 
-  nums = [1, 2, 34, 5, 6, 7, 8];
+  nums = [1];
   numarr = [[123, 456], ["456"]];
   users = [{
     name: "admin"
