@@ -1,7 +1,7 @@
 let El: HTMLElement | ShadowRoot;
 let RefData: {} = {};
 let ElRefTree = {};
-const BuildInComponentTagNames: string[] = ["o-for"];
+const BuildInComponentTagNames: string[] = ["o-for", "o-if", "o-else", "o-else-if"];
 
 function parsePropertyString(rawString: string): string[] {
   if (/(?<=\])\w/.test(rawString) || /\W+^[\u4e00-\u9fa5]/.test(rawString)) {
@@ -63,6 +63,29 @@ function parsePropertyString(rawString: string): string[] {
   return propertys;
 }
 
+function getProperty(propertyStrs: string[], refData: object): any {
+  let property: any = refData;
+  for (const name of propertyStrs) {
+    property = property[name];
+    if (property === undefined) {
+      console.warn(`
+        CM:存在未定义的响应式变量: ${name} 。路径：${propertyStrs.join("-> ")}。
+        EN:undefined reactive variables: ${name} . Path:${propertyStrs.join("-> ")}.
+      `);
+      break;
+    }
+  }
+
+  return property;
+}
+function getPropertyData(propertyStrs: string[], refData: object) {
+  let property: any = getProperty(propertyStrs, refData);
+  if (typeof property === "function") {
+    property = property();
+  }
+  return property;
+}
+
 function generateElRefTree(propertyNames: string[], rawData: object, El: HTMLElement | Text | Attr): {} | [] {
   let tree: {} | [] = {};
   if (Array.isArray(rawData)) {
@@ -80,9 +103,18 @@ function generateElRefTree(propertyNames: string[], rawData: object, El: HTMLEle
           if (El instanceof Attr) {
             propertyName = "_attrs";
           }
-          temp[propertyName] = [
-            El
-          ]
+          if (temp[item] === undefined) {
+            temp[item] = {
+              [propertyName]: [
+                El
+              ]
+            }
+          } else {
+            temp[propertyName] = [
+              El
+            ]
+          }
+
         } else {
           temp = temp[item] = {};
         }
@@ -129,31 +161,37 @@ function reset(El: HTMLElement, data: {}) {
   El = El;
   RefData = data;
   collection(El);
-  console.log(ElRefTree);
+  // console.log(ElRefTree);
 }
 
 function collection(El: HTMLElement) {
-  collectTagRefs(El);
+  let RefTree = collectTagRefs(El);
+  console.log(RefTree);
 }
 
-function collectTagRefs(El: HTMLElement): void {
+function collectTagRefs(El: HTMLElement): object {
+  let ScopedElRefTree = {};
+  if (El.nodeType === 1 && BuildInComponentTagNames.includes(El.tagName.toLowerCase())) {
+    handleBuildInComponent(El);
+  }
+
   if (El.childNodes.length > 0) {
     for (const childNode of Array.from(El.childNodes)) {
-      collection(childNode as HTMLElement);
+      ScopedElRefTree = objectAssign(ScopedElRefTree, collectTagRefs(childNode as HTMLElement));
     }
   }
 
   if (El.attributes && El.attributes.length > 0 && !BuildInComponentTagNames.includes(El.tagName.toLowerCase())) {
-    collectAttrRefs(El);
+    ScopedElRefTree = objectAssign(ScopedElRefTree, collectAttrRefs(El));
   }
 
   if (El.nodeType !== 3) {
-    return;
+    return ScopedElRefTree;
   }
 
   let refs: RegExpMatchArray = El.textContent.match(/(?<=\{\x20*).+?(?=\x20*\})/g);
   if (refs === null) {
-    return;
+    return ScopedElRefTree;
   }
   const parentNode: HTMLElement = El.parentNode as HTMLElement;
   refs = Array.from(new Set(refs));
@@ -162,23 +200,23 @@ function collectTagRefs(El: HTMLElement): void {
     const refRawString: string = refs[index].trim();
     const newTextEl: Text = document.createTextNode("{" + refRawString + "}");
     const propertyNames: string[] = parsePropertyString(refRawString);
-    const RefTree = generateElRefTree(propertyNames, RefData, newTextEl);
+    ScopedElRefTree = objectAssign(ScopedElRefTree, generateElRefTree(propertyNames, RefData, newTextEl));
 
-    ElRefTree = objectAssign(ElRefTree, RefTree);
-
-    appendTextEls.push(newTextEl);
-    appendTextEls.push(document.createTextNode("\n"));
+    appendTextEls.push(newTextEl, document.createTextNode("\n"));
     const replaceRegString: string = "\{\x20*" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "\x20*\}";
     El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
   }
   appendTextEls.forEach(el => {
     parentNode.insertBefore(el, El);
   });
+
+  return ScopedElRefTree;
 }
 
-function collectAttrRefs(El: HTMLElement): void {
+function collectAttrRefs(El: HTMLElement): object {
+  let ScopedElRefTree = {};
   if (El.attributes.length === 0) {
-    return;
+    return ScopedElRefTree;
   }
   for (const attrItem of Array.from(El.attributes)) {
     if (/(?<=\{\x20*).+?(?=\x20*\})/.test(attrItem.nodeValue)) {
@@ -186,10 +224,85 @@ function collectAttrRefs(El: HTMLElement): void {
       refs.forEach(refItem => {
         const propertyNames: string[] = parsePropertyString(refItem);
         const RefTree = generateElRefTree(propertyNames, RefData, attrItem);
-        ElRefTree = objectAssign(ElRefTree, RefTree);
+        ScopedElRefTree = objectAssign(ScopedElRefTree, RefTree);
       });
     }
   }
+  return ScopedElRefTree;
+}
+
+function handleBuildInComponent(El: HTMLElement) {
+  const tagName: string = El.tagName.toLowerCase();
+  switch (tagName) {
+    case "o-for":
+      handleOFor(El);
+      break;
+  }
+}
+
+function handleOFor(El: HTMLElement) {
+  const attributes: Attr[] = Array.from(El.attributes);
+  let InIndex: number = -1;
+  let indexName: string = "";
+  let propertyName: string = "";
+  let keyName: string = "";
+  let itemName: string = "";
+  const childNodes: Node[] = [];
+  El.childNodes.forEach(node => {
+    childNodes.push(node.cloneNode(true));
+  });
+
+  attributes.forEach((attr, index) => {
+    if (attr.nodeName === "in") {
+      InIndex = index;
+    }
+  });
+
+  propertyName = attributes[InIndex + 1]['nodeName'];
+  if (InIndex == 2) {
+    indexName = attributes[InIndex - 1]['nodeName'];
+    itemName = attributes[InIndex - 2]['nodeName'];
+  } else if (InIndex == 3) {
+    keyName = attributes[InIndex - 1]['nodeName'];
+    indexName = attributes[InIndex - 2]['nodeName'];
+    itemName = attributes[InIndex - 3]['nodeName'];
+  } else {
+    itemName = attributes[InIndex - 1]['nodeName'];
+  }
+
+  const propertyNames: string[] = parsePropertyString(propertyName);
+  const property: any[] = getPropertyData(propertyNames, RefData);
+
+  const newEls = [];
+  property.forEach((item, pindex) => {
+    const newEl = [...Array.from(childNodes)];
+    newEl.forEach((el, index) => {
+      newEl[index] = el.cloneNode(true);
+      replaceRef(newEl[index] as HTMLElement, new RegExp(`(?<=\{)${itemName}`, "g"), `${propertyNames.join(".")}.${pindex}`);
+    })
+    newEls.push(newEl);
+  });
+
+  Array.from(El.children).forEach(node => {
+    El.removeChild(node);
+  })
+  newEls.forEach(els => {
+    El.append(...els);
+  });
+}
+
+function replaceRef(El: HTMLElement, string: string | RegExp, replaceValue: string) {
+  if (El.childNodes.length > 0) {
+    El.childNodes.forEach(node => {
+      replaceRef(node as HTMLElement, string, replaceValue);
+    })
+  }
+
+  if (El.nodeType !== 3) {
+    return;
+  }
+
+  El.textContent = El.textContent.replace(/(?<={)\x20*num/g, replaceValue);
 }
 
 export default {
