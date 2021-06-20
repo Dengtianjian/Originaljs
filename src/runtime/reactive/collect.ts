@@ -86,55 +86,21 @@ function getPropertyData(propertyStrs: string[], refData: object) {
   return property;
 }
 
-function generateElRefTree(propertyNames: string[], rawData: object, El: HTMLElement | Text | Attr): {} | [] {
-  let tree: {} | [] = {};
-  if (Array.isArray(rawData)) {
-    tree = [];
-  }
+function generateElRefTree(propertyNames: string[], El: HTMLElement | Text | Attr) {
+  let tree = {};
 
-  if (typeof rawData[propertyNames[0]] === "object" && propertyNames.length > 1) {
-    tree[propertyNames[0]] = generateElRefTree(propertyNames.slice(1), rawData[propertyNames[0]], El);
-  } else {
-    if (rawData[propertyNames[0]] === undefined) {
-      let temp = tree;
-      propertyNames.forEach((item, index) => {
-        if (propertyNames.length - 1 == index) {
-          let propertyName: string = "_els";
-          if (El instanceof Attr) {
-            propertyName = "_attrs";
-          }
-          if (temp[item] === undefined) {
-            temp[item] = {
-              [propertyName]: [
-                El
-              ]
-            }
-          } else {
-            temp[propertyName] = [
-              El
-            ]
-          }
-
-        } else {
-          temp = temp[item] = {};
-        }
-      })
-    } else {
-      if (Array.isArray(rawData[propertyNames[0]])) {
-        tree[propertyNames[0]] = [];
-      } else {
-        tree[propertyNames[0]] = {};
-      }
-
-      let propertyName: string = "_els";
-      if (El instanceof Attr) {
-        propertyName = "_attrs";
-      }
-      tree[propertyNames[0]][propertyName] = [
-        El
-      ]
+  if (propertyNames.length === 1) {
+    let propertyName: string = "_els";
+    if (El instanceof Attr) {
+      propertyName = "_attrs";
     }
+    tree[propertyNames[0]] = {
+      [propertyName]: [El]
+    }
+  } else {
+    tree[propertyNames[0]] = generateElRefTree(propertyNames.slice(1), El);
   }
+
   return tree;
 }
 
@@ -200,7 +166,7 @@ function collectTagRefs(El: HTMLElement): object {
     const refRawString: string = refs[index].trim();
     const newTextEl: Text = document.createTextNode("{" + refRawString + "}");
     const propertyNames: string[] = parsePropertyString(refRawString);
-    ScopedElRefTree = objectAssign(ScopedElRefTree, generateElRefTree(propertyNames, RefData, newTextEl));
+    ScopedElRefTree = objectAssign(ScopedElRefTree, generateElRefTree(propertyNames, newTextEl));
 
     appendTextEls.push(newTextEl, document.createTextNode("\n"));
     const replaceRegString: string = "\{\x20*" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "\x20*\}";
@@ -223,7 +189,7 @@ function collectAttrRefs(El: HTMLElement): object {
       const refs: string[] = attrItem.nodeValue.match(/(?<=\{\x20*).+?(?=\x20*\})/g);
       refs.forEach(refItem => {
         const propertyNames: string[] = parsePropertyString(refItem);
-        const RefTree = generateElRefTree(propertyNames, RefData, attrItem);
+        const RefTree = generateElRefTree(propertyNames, attrItem);
         ScopedElRefTree = objectAssign(ScopedElRefTree, RefTree);
       });
     }
