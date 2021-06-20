@@ -293,18 +293,18 @@ function parserRef(refTree: object, rawData: object, path: string[] = []) {
       if (rawData[branchName]) {
         if (typeof rawData[branchName] === "object") {
           path.push(branchName);
-          replaceValue(refTree, rawData, branchName, path);
+          replaceRefContent(refTree, rawData, branchName, path);
           parserRef(refTree[branchName], rawData[branchName], path);
           path.pop();
         } else {
-          replaceValue(refTree, rawData, branchName, path);
+          replaceRefContent(refTree, rawData, branchName, path);
         }
       }
     }
   }
 }
 
-function replaceValue(refTree, rawData, branchName, path) {
+function replaceRefContent(refTree, rawData, branchName, path) {
   const replaceValue: string = rawData[branchName].toString();
   if (refTree[branchName]['_els'] && refTree[branchName]['_els'].length > 0) {
     refTree[branchName]['_els'].forEach(el => {
