@@ -1,6 +1,5 @@
 let El: HTMLElement | ShadowRoot;
 let RefData: {} = {};
-let ElRefTree = {};
 const BuildInComponentTagNames: string[] = ["o-for", "o-if", "o-else", "o-else-if"];
 
 function parsePropertyString(rawString: string): string[] {
@@ -126,15 +125,13 @@ function objectAssign(target: object, source: object) {
 function reset(El: HTMLElement, data: {}) {
   El = El;
   RefData = data;
-  collection(El);
-  // console.log(ElRefTree);
+  return collection(El);
 }
 
 function collection(El: HTMLElement) {
   let RefTree = collectTagRefs(El);
-  console.log(RefTree);
-
   parserRef(RefTree, RefData);
+  return RefTree;
 }
 
 function collectTagRefs(El: HTMLElement): object {

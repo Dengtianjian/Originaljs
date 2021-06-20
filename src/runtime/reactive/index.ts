@@ -39,8 +39,9 @@ export default class Reactive {
     this.target = target;
     this.data = data;
     this.rawData = JSON.parse(JSON.stringify(data));
-    Collect.reset(target, data);
-    // this.refs = Collect.reset(target, data);
+    this.refs = Collect.reset(target as HTMLElement, data);
+    console.log(this.refs);
+
 
     // const filterData = this.filterRawData(this.refs, data);
 
