@@ -1,9 +1,8 @@
 import {
   defineElement,
-  createElement
+  createElement,
+  Reactive
 } from "./runtime";
-
-import "./runtime/reactive";
 
 // let template: string = await import("./components/templates/cbutton.html");
 // template = template.default;
@@ -43,17 +42,14 @@ button {
 </button>`;
 template = `
 {nums}
-<button onclick="updateArr">Update arr</button>
-<o-for dataitem in numarr>
+<button onclick="updateArr" data-nums="{nums}">Update arr</button>
+<o-for dataitem in nums>
 {dataitem}
 </o-for>`
 
 class CButton extends createElement(["name"]) {
   constructor() {
     super();
-  }
-  rendered() {
-    // DOMFor.call(this, this.$ref.querySelector("li"), this.nums);
   }
   show() {
     console.log(1);
@@ -77,8 +73,8 @@ class CButton extends createElement(["name"]) {
   users = [{
     name: "admin"
   }];
-  updateArr() {
-    console.log(this.nums);
+  updateArr(event) {
+    // console.log(event);
 
     this.nums.push(Math.round(Math.random() * 1000));
   }

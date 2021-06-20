@@ -1,5 +1,6 @@
 import { IElement, TMethodItem, TStateItem } from "../types/elementType";
 import { parserDom } from "./component";
+import Reactive from "./reactive";
 
 export default class Element extends HTMLElement implements IElement {
   _customElement: boolean = true;
@@ -20,7 +21,7 @@ export default class Element extends HTMLElement implements IElement {
     this.connected();
     this._render();
     this._collectionSlots();
-    // new Reactive(this.$ref, this);
+    Reactive.observer(this.$ref, this);
     this.rendered();
   }
   disconnectedCallback() {

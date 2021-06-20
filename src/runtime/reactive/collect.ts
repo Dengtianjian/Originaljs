@@ -333,5 +333,6 @@ export default {
   reset,
   collection,
   collectTagRefs,
-  collectAttrRefs
+  collectAttrRefs,
+  parsePropertyString
 };
