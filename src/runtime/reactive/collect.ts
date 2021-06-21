@@ -85,8 +85,7 @@ function getPropertyData(propertyStrs: string[], refData: object) {
   return property;
 }
 
-function generateElRefTree(propertyNames: string[], El: HTMLElement | Text | Attr, attach: object =
-  {}) {
+function generateElRefTree(propertyNames: string[], El: HTMLElement | Text | Attr) {
   let tree = {};
 
   if (propertyNames.length === 1) {
@@ -99,10 +98,8 @@ function generateElRefTree(propertyNames: string[], El: HTMLElement | Text | Att
       [propertyName]: [El]
     }
   } else {
-    tree[propertyNames[0]] = generateElRefTree(propertyNames.slice(1), El, attach);
+    tree[propertyNames[0]] = generateElRefTree(propertyNames.slice(1), El);
   }
-  tree[propertyNames[0]] = objectAssign(tree[propertyNames[0]], attach);
-
   return tree;
 }
 
@@ -134,15 +131,13 @@ function reset(El: HTMLElement, data: {}) {
 function collection(El: HTMLElement) {
   let RefTree = collectTagRefs(El);
   parserRef(RefTree, RefData);
-  console.log(RefTree);
-
   return RefTree;
 }
 
 function collectTagRefs(El: HTMLElement): object {
   let ScopedElRefTree = {};
   if (El.nodeType === 1 && BuildInComponentTagNames.includes(El.tagName.toLowerCase())) {
-    handleBuildInComponent(El);
+    handleBuildInComponent(El)
   }
 
   if (El.childNodes.length > 0) {
@@ -170,15 +165,7 @@ function collectTagRefs(El: HTMLElement): object {
     const refRawString: string = refs[index].trim();
     const newTextEl: Text = document.createTextNode("{" + refRawString + "}");
     const propertyNames: string[] = parsePropertyString(refRawString);
-    const attachAssign = {};
-    if (BuildInComponentTagNames.includes(parentNode.tagName.toLowerCase())) {
-      switch (parentNode.tagName.toLowerCase()) {
-        case "o-for":
-          attachAssign['__for-parent'] = parentNode;
-          break;
-      }
-    }
-    ScopedElRefTree = objectAssign(ScopedElRefTree, generateElRefTree(propertyNames, newTextEl, attachAssign));
+    ScopedElRefTree = objectAssign(ScopedElRefTree, generateElRefTree(propertyNames, newTextEl));
 
     appendTextEls.push(newTextEl, document.createTextNode("\n"));
     const replaceRegString: string = "\{\x20*" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "\x20*\}";
@@ -213,7 +200,7 @@ function handleBuildInComponent(El: HTMLElement) {
   const tagName: string = El.tagName.toLowerCase();
   switch (tagName) {
     case "o-for":
-      handleOFor(El);
+      return handleOFor(El);
       break;
   }
 }
@@ -267,6 +254,9 @@ function handleOFor(El: HTMLElement) {
   newEls.forEach(els => {
     El.append(...els);
   });
+  return {
+    __og_for: El
+  };
 }
 function replaceRef(El: HTMLElement, string: string | RegExp, replaceValue: string) {
   if (El.childNodes.length > 0) {

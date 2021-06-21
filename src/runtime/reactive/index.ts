@@ -87,13 +87,16 @@ export default class Reactive {
         const stateKey: string[] = Collect.parsePropertyString(target['__og_stateKey']);
         const rawData = Collect.getPropertyData(stateKey, target['__og_root']['rawData']);
         if (rawData[property]) {
+          console.log(rawData[property]);
 
         } else {
-
-        }
-        propertys[property] = {
-          __els: [],
-          __attrs: []
+          const newTextEl = document.createTextNode(value.toString() + "\n");
+          rawData[property] = value;
+          // propertys['__for-parent'].append(newTextEl);
+          propertys[property] = {
+            __els: [newTextEl],
+            __attrs: []
+          }
         }
       }
     }

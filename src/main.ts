@@ -43,7 +43,8 @@ button {
 template = `
 <button onclick="updateArr" data-nums="{nums}">Update arr</button>
 <o-for dataitem in nums>
-{dataitem}
+<li>
+{dataitem}</li>
 </o-for>`
 
 class CButton extends createElement(["name"]) {

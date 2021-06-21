@@ -1,0 +1,16 @@
+1. collection
+2. collecTagRefs
+3. middleware
+  3.1 -> MD.collectRef(El)
+    3.1.1 -> ?El.__og_isCollected
+    3.1.2 -> return RefTree:{}
+  3.2 -> objectAssign(ScopedRefTree,MD.return)
+4. if El.__og_isCollected And delete El.__og_isCollected  return ScopedRefTree
+5. if El.noteType !==3 return
+6. matchRefs
+7. for refs
+  -> 7.1 createTextNode
+  -> 7.2 parsePropertyString
+  -> 7.3 objectAssign(ScopedRefTree,generateElRefTree)
+  -> 7.4 replace
+8. insertBefore new Text Els
