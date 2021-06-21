@@ -1,6 +1,62 @@
+import { IPluginItem, IPlugins, TRefTree } from "../../types/pluginType";
+import Plguin from "../plugin";
+
 let El: HTMLElement | ShadowRoot;
 let RefData: {} = {};
 const BuildInComponentTagNames: string[] = ["o-for", "o-if", "o-else", "o-else-if"];
+
+Plguin.register("CollectAttrRefs", {
+  collectRef(El: HTMLElement) {
+    console.log(El);
+    return {};
+  }
+})
+
+Plguin.register("CollectTagRefs", {
+  collectRef(El: HTMLElement) {
+    let ScopedElRefTree = {};
+    if (El.nodeType === 1 && BuildInComponentTagNames.includes(El.tagName.toLowerCase())) {
+      handleBuildInComponent(El)
+    }
+
+    if (El.childNodes.length > 0) {
+      for (const childNode of Array.from(El.childNodes)) {
+        ScopedElRefTree = objectAssign(ScopedElRefTree, collectTagRefs(childNode as HTMLElement));
+      }
+    }
+
+    if (El.attributes && El.attributes.length > 0 && !BuildInComponentTagNames.includes(El.tagName.toLowerCase())) {
+      ScopedElRefTree = objectAssign(ScopedElRefTree, collectAttrRefs(El));
+    }
+
+    if (El.nodeType !== 3) {
+      return ScopedElRefTree;
+    }
+
+    let refs: RegExpMatchArray = El.textContent.match(/(?<=\{\x20*).+?(?=\x20*\})/g);
+    if (refs === null) {
+      return ScopedElRefTree;
+    }
+    const parentNode: HTMLElement = El.parentNode as HTMLElement;
+    refs = Array.from(new Set(refs));
+    const appendTextEls: Text[] = [];
+    for (let index = 0; index < refs.length; index++) {
+      const refRawString: string = refs[index].trim();
+      const newTextEl: Text = document.createTextNode("{" + refRawString + "}");
+      const propertyNames: string[] = parsePropertyString(refRawString);
+      ScopedElRefTree = objectAssign(ScopedElRefTree, generateElRefTree(propertyNames, newTextEl));
+
+      appendTextEls.push(newTextEl, document.createTextNode("\n"));
+      const replaceRegString: string = "\{\x20*" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "\x20*\}";
+      El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
+    }
+    appendTextEls.forEach(el => {
+      parentNode.insertBefore(el, El);
+    });
+
+    return ScopedElRefTree;
+  }
+})
 
 function parsePropertyString(rawString: string): string[] {
   if (/(?<=\])\w/.test(rawString) || /\W+^[\u4e00-\u9fa5]/.test(rawString)) {
@@ -128,10 +184,23 @@ function reset(El: HTMLElement, data: {}) {
   return collection(El);
 }
 
-function collection(El: HTMLElement) {
-  let RefTree = collectTagRefs(El);
-  parserRef(RefTree, RefData);
-  return RefTree;
+function collection(El: HTMLElement): TRefTree {
+  let ScopedElRefTree = {};
+
+  const Plugins: IPlugins = Plguin.use() as IPlugins;
+  for (const plugiName in Plugins) {
+    if (Object.prototype.hasOwnProperty.call(Plugins, plugiName)) {
+      const pluginItem: IPluginItem = Plugins[plugiName];
+      if (pluginItem.collectRef) {
+        ScopedElRefTree = objectAssign(ScopedElRefTree, pluginItem.collectRef(El));
+      }
+    }
+  }
+
+  console.log(ScopedElRefTree);
+
+  parserRef(ScopedElRefTree, RefData);
+  return ScopedElRefTree;
 }
 
 function collectTagRefs(El: HTMLElement): object {

@@ -17,17 +17,6 @@ export {
   defineElement,
   createElement,
   importTemplate,
-  Query
-}
-
-export default {
-  Reactive,
-  Transition,
-  Element,
-  ObserverNode,
-  ObserverNodeAttributes,
-  defineElement,
-  createElement,
-  importTemplate,
-  Query
+  Query,
+  Use
 }
