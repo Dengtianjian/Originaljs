@@ -83,8 +83,9 @@ export default class Reactive {
       }
     } else {
       if (Array.isArray(target) && property !== "length") {
-        console.log(target, propertys, property, value);
+        // console.log(target, propertys, property, value);
         const stateKey: string[] = Collect.parsePropertyString(target['__og_stateKey']);
+
         const rawData = Collect.getPropertyData(stateKey, target['__og_root']['rawData']);
         if (rawData[property]) {
           console.log(rawData[property]);
@@ -97,6 +98,11 @@ export default class Reactive {
             __els: [newTextEl],
             __attrs: []
           }
+          console.log(propertys);
+
+          propertys.__og_fors.forEach(forItem => {
+
+          })
         }
       }
     }
@@ -124,7 +130,9 @@ export default class Reactive {
             }
           }
         } else {
-          deps[key] = rawData[key];
+          if (rawData && rawData[key]) {
+            deps[key] = rawData[key];
+          }
         }
       }
     }

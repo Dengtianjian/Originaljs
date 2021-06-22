@@ -42,7 +42,7 @@ button {
 </button>`;
 template = `
 <button onclick="updateArr" data-nums="{nums}">Update arr</button>
-<o-for dataitem in nums>
+<o-for dataitem in arrs.nums>
 <li>
 {dataitem}</li>
 </o-for>`
@@ -67,16 +67,20 @@ class CButton extends createElement(["name"]) {
   render() {
     return template;
   }
-
-  nums = [1];
-  numarr = [[123, 456], ["456"]];
+  arrs = {
+    nums: [
+      9, 8, 7, 6, 5, 4, 3, 2, 1
+    ]
+  };
+  nums = [1, 2];
+  numarr = [[123, 456, 5], ["456"]];
   users = [{
     name: "admin"
   }];
   updateArr(event) {
     // console.log(event);
 
-    this.nums.push(Math.round(Math.random() * 1000));
+    this.arrs.nums.push(Math.round(Math.random() * 1000));
   }
 }
 
