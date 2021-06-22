@@ -1,8 +1,8 @@
-import { IElement, TMethodItem, TStateItem } from "../types/elementType";
+import { IOGElement, TMethodItem, TStateItem } from "../types/elementType";
 import { parserDom } from "./component";
 import Reactive from "./reactive";
 
-export default class Element extends HTMLElement implements IElement {
+export default class Element extends HTMLElement implements IOGElement {
   _customElement: boolean = true;
   $ref: Element | ShadowRoot | null = null;
   _slots: Record<string, HTMLElement[]> = {};

@@ -1,5 +1,9 @@
 import { Element } from "../runtime";
 
+export interface IElement extends HTMLElement {
+  __og_isCollected: boolean
+}
+
 export type TMethodItem = Array<{
   el: HTMLElement;
   type: keyof WindowEventMap;
@@ -11,7 +15,7 @@ export type TStateItem = { value: any; els: Set<{ el?: HTMLElement | Text, attri
 export interface IStateTypeMap {
   "attribute": 1, "element": 2, "for": 3
 };
-export interface IElement extends HTMLElement {
+export interface IOGElement extends HTMLElement {
   _customElement: boolean;
   $ref: Element | ShadowRoot | null;
   _state: Record<string, TStateItem>;

@@ -1,39 +1,43 @@
+import { IElement } from "../../types/elementType";
 import { IPluginItem, IPlugins, TRefTree } from "../../types/pluginType";
-import Plguin from "../plugin";
+import Plugin from "../plugin";
 
 let El: HTMLElement | ShadowRoot;
 let RefData: {} = {};
 const BuildInComponentTagNames: string[] = ["o-for", "o-if", "o-else", "o-else-if"];
 
-Plguin.register("CollectAttrRefs", {
-  collectRef(El: HTMLElement) {
-    console.log(El);
-    return {};
+Plugin.register("CollectAttrRefs", {
+  collectRef(El: IElement): TRefTree {
+    if (El.__og_isCollected) {
+      return {};
+    }
+    let ScopedElRefTree: TRefTree = {};
+    if (!El.attributes || El.attributes.length === 0) {
+      return ScopedElRefTree;
+    }
+    for (const attrItem of Array.from(El.attributes)) {
+      if (/(?<=\{\x20*).+?(?=\x20*\})/.test(attrItem.nodeValue)) {
+        const refs: string[] = attrItem.nodeValue.match(/(?<=\{\x20*).+?(?=\x20*\})/g);
+        refs.forEach(refItem => {
+          const propertyNames: string[] = parsePropertyString(refItem);
+          const RefTree = generateElRefTree(propertyNames, attrItem);
+          ScopedElRefTree = objectAssign(ScopedElRefTree, RefTree) as TRefTree;
+        });
+      }
+    }
+    return ScopedElRefTree;
   }
 })
 
-Plguin.register("CollectTagRefs", {
-  collectRef(El: HTMLElement) {
+Plugin.register("CollectTagRefs", {
+  collectTagRefs(El: IElement) {
     let ScopedElRefTree = {};
-    if (El.nodeType === 1 && BuildInComponentTagNames.includes(El.tagName.toLowerCase())) {
-      handleBuildInComponent(El)
-    }
-
-    if (El.childNodes.length > 0) {
-      for (const childNode of Array.from(El.childNodes)) {
-        ScopedElRefTree = objectAssign(ScopedElRefTree, collectTagRefs(childNode as HTMLElement));
-      }
-    }
-
-    if (El.attributes && El.attributes.length > 0 && !BuildInComponentTagNames.includes(El.tagName.toLowerCase())) {
-      ScopedElRefTree = objectAssign(ScopedElRefTree, collectAttrRefs(El));
-    }
-
     if (El.nodeType !== 3) {
       return ScopedElRefTree;
     }
 
     let refs: RegExpMatchArray = El.textContent.match(/(?<=\{\x20*).+?(?=\x20*\})/g);
+
     if (refs === null) {
       return ScopedElRefTree;
     }
@@ -54,9 +58,36 @@ Plguin.register("CollectTagRefs", {
       parentNode.insertBefore(el, El);
     });
 
+    El.__og_isCollected = true;
+    return ScopedElRefTree;
+  },
+  collectRef(El: IElement) {
+    let ScopedElRefTree = {};
+    // if (El.nodeType === 1 && BuildInComponentTagNames.includes(El.tagName.toLowerCase())) {
+    //   handleBuildInComponent(El)
+    // }
+
+
+    console.log(El);
+
+    if (El.childNodes.length > 0) {
+      for (const childNode of Array.from(El.childNodes)) {
+        ScopedElRefTree = objectAssign(ScopedElRefTree, this.collectTagRefs(childNode as IElement));
+      }
+    }
+
+
+    console.log(ScopedElRefTree);
+    if (El.nodeType !== 3) {
+      return ScopedElRefTree;
+    }
+
+
+    ScopedElRefTree = objectAssign(ScopedElRefTree, this.collectTagRefs(El));
+
     return ScopedElRefTree;
   }
-})
+} as IPluginItem & { collectTagRefs(): TRefTree })
 
 function parsePropertyString(rawString: string): string[] {
   if (/(?<=\])\w/.test(rawString) || /\W+^[\u4e00-\u9fa5]/.test(rawString)) {
@@ -184,10 +215,10 @@ function reset(El: HTMLElement, data: {}) {
   return collection(El);
 }
 
-function collection(El: HTMLElement): TRefTree {
+function collection(El: IElement): TRefTree {
   let ScopedElRefTree = {};
 
-  const Plugins: IPlugins = Plguin.use() as IPlugins;
+  const Plugins: IPlugins = Plugin.use() as IPlugins;
   for (const plugiName in Plugins) {
     if (Object.prototype.hasOwnProperty.call(Plugins, plugiName)) {
       const pluginItem: IPluginItem = Plugins[plugiName];
@@ -197,13 +228,11 @@ function collection(El: HTMLElement): TRefTree {
     }
   }
 
-  console.log(ScopedElRefTree);
-
   parserRef(ScopedElRefTree, RefData);
   return ScopedElRefTree;
 }
 
-function collectTagRefs(El: HTMLElement): object {
+function collectTagRefs(El: IElement): object {
   let ScopedElRefTree = {};
   if (El.nodeType === 1 && BuildInComponentTagNames.includes(El.tagName.toLowerCase())) {
     handleBuildInComponent(El)
@@ -211,7 +240,7 @@ function collectTagRefs(El: HTMLElement): object {
 
   if (El.childNodes.length > 0) {
     for (const childNode of Array.from(El.childNodes)) {
-      ScopedElRefTree = objectAssign(ScopedElRefTree, collectTagRefs(childNode as HTMLElement));
+      ScopedElRefTree = objectAssign(ScopedElRefTree, collectTagRefs(childNode as IElement));
     }
   }
 
