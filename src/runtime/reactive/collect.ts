@@ -64,7 +64,11 @@ Plugin.register("BuildInComponent", {
       __og_fors: [
         {
           el: El,
-          templateChildNodes: childNodes
+          templateChildNodes: childNodes,
+          indexName,
+          propertyName,
+          keyName,
+          itemName
         }
       ]
     }), ref);
@@ -121,9 +125,37 @@ Plugin.register("BuildInComponent", {
         break;
     }
 
-    console.log(ScopedElRefTree);
-
     return ScopedElRefTree;
+  },
+  updateView(target, propertys, property, value) {
+    if (!propertys[property]) {
+      if (Array.isArray(target) && property !== "length") {
+        // console.log(target, propertys, property, value);
+        const stateKey: string[] = parsePropertyString(target['__og_stateKey']);
+
+        const rawData = getPropertyData(stateKey, target['__og_root']['rawData']);
+        if (rawData[property]) {
+          // console.log(rawData[property]);
+
+        } else {
+          // const newTextEl = document.createTextNode(value.toString() + "\n");
+          // rawData[property] = value;
+          // propertys[property] = {
+          //   __els: [newTextEl],
+          //   __attrs: []
+          // }
+
+          console.log(propertys.__og_fors);
+
+          propertys.__og_fors.forEach(forItem => {
+            forItem.templateChildNodes.forEach(node => {
+              forItem.el.append(node.cloneNode(true));
+            })
+
+          })
+        }
+      }
+    }
   }
 } as IPluginItem & {})
 

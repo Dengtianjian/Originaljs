@@ -25,8 +25,32 @@
  * updateView
  */
 
+import { IPlugins } from "../../types/pluginType";
+import Plugin from "../plugin";
 import Collect from "./collect";
 import OProxy from "./oproxy";
+
+Plugin.register("UpdateView", {
+  updateView(target, propertys, property, value) {
+    if (propertys[property]) {
+      const replaceValue: string = value.toString();
+      if (propertys[property].__els) {
+
+        const els: HTMLElement[] = propertys[property]['__els'];
+
+        els.forEach(el => {
+          el.textContent = replaceValue + "\n";
+        });
+      }
+      if (propertys[property].__attrs) {
+        const attrs: Attr[] = propertys[property]['__attrs'];
+        attrs.forEach(attr => {
+          attr.nodeValue = replaceValue;
+        });
+      }
+    }
+  }
+})
 
 export default class Reactive {
   static data;
@@ -52,6 +76,16 @@ export default class Reactive {
     const propertyNames: string[] = Collect.parsePropertyString(target.__og_stateKey);
     const propertys: { [key: string]: any, __els: HTMLElement[], __attrs: Attr[] } = this.deepGetObjectProperty(refs, propertyNames)
 
+    const plugins: IPlugins = Plugin.use() as IPlugins;
+    for (const pluginName in plugins) {
+      if (Object.prototype.hasOwnProperty.call(plugins, pluginName)) {
+        const pluginItem = plugins[pluginName];
+        if (pluginItem.updateView) {
+          pluginItem.updateView(target, propertys, property, value);
+        }
+      }
+    }
+
     if (Array.isArray(target) && property !== "length") {
       if (propertys.__els && propertys.__els.length > 0) {
         propertys.__els.forEach(el => {
@@ -65,47 +99,6 @@ export default class Reactive {
       }
     }
 
-    if (propertys[property]) {
-      const replaceValue: string = value.toString();
-      if (propertys[property].__els) {
-
-        const els: HTMLElement[] = propertys[property]['__els'];
-
-        els.forEach(el => {
-          el.textContent = replaceValue + "\n";
-        });
-      }
-      if (propertys[property].__attrs) {
-        const attrs: Attr[] = propertys[property]['__attrs'];
-        attrs.forEach(attr => {
-          attr.nodeValue = replaceValue;
-        });
-      }
-    } else {
-      if (Array.isArray(target) && property !== "length") {
-        // console.log(target, propertys, property, value);
-        const stateKey: string[] = Collect.parsePropertyString(target['__og_stateKey']);
-
-        const rawData = Collect.getPropertyData(stateKey, target['__og_root']['rawData']);
-        if (rawData[property]) {
-          console.log(rawData[property]);
-
-        } else {
-          const newTextEl = document.createTextNode(value.toString() + "\n");
-          rawData[property] = value;
-          // propertys['__for-parent'].append(newTextEl);
-          propertys[property] = {
-            __els: [newTextEl],
-            __attrs: []
-          }
-          console.log(propertys);
-
-          propertys.__og_fors.forEach(forItem => {
-
-          })
-        }
-      }
-    }
   }
   constructor(target: HTMLElement | ShadowRoot, data: object) {
     this.target = target;

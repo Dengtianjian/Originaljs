@@ -6,9 +6,7 @@ export type TRefTree = {
 
 export interface IPluginItem {
   collectRef?(El: IElement): TRefTree,
-  updateView(El){
-
-}
+  updateView?(target: any, propertys: { [key: string]: any, __els: HTMLElement[], __attrs: Attr[] }, property: string, value: any): void
 }
 
 export interface IPlugins {
