@@ -1,3 +1,4 @@
+import { time } from "console";
 import {
   defineElement,
   createElement,
@@ -71,9 +72,9 @@ class CButton extends createElement(["name"]) {
     return template;
   }
   arrs = {
-    nums: [
-      9, 8, 7, 6, 5, 4, 3, 2, 1
-    ]
+    nums: {
+      0: 9, 1: 8
+    }
   };
   nums = [1, 2];
   numarr = [[123, 456, 5], ["456"]];
@@ -83,7 +84,7 @@ class CButton extends createElement(["name"]) {
   updateArr(event) {
     // console.log(event);
 
-    this.arrs.nums.push(Math.round(Math.random() * 1000));
+    this.arrs.nums[Date.now()] = Math.round(Math.random() * 1000);
   }
 }
 
