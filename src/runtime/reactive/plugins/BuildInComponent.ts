@@ -1,5 +1,6 @@
 import { IElement } from "../../../types/elementType";
 import { IPluginItem } from "../../../types/pluginType";
+import { IReactiveItem } from "../../../types/reactiveType";
 import plugin from "../../plugin";
 import Collect from "../collect";
 
@@ -36,17 +37,34 @@ export default {
     }
 
     const propertyNames: string[] = Collect.parsePropertyString(propertyName);
-    const property: any[] = Collect.getPropertyData(propertyNames, rawData);
+    const property: object | [] = Collect.getPropertyData(propertyNames, rawData);
 
+    // TODO 替换key index
     const newEls = [];
-    property.forEach((item, pindex) => {
-      const newEl = [...Array.from(childNodes)];
-      newEl.forEach((el, index) => {
-        newEl[index] = el.cloneNode(true);
-        this.replaceRef(newEl[index] as HTMLElement, new RegExp(`(?<=\{\x20*)${itemName}`, "g"), `${propertyNames.join(".")}.${pindex}`);
-      })
-      newEls.push(newEl);
-    });
+    if (Array.isArray(property)) {
+      property.forEach((item, pindex) => {
+        const newEl = [...Array.from(childNodes)];
+        newEl.forEach((el, index) => {
+          newEl[index] = el.cloneNode(true);
+          this.replaceRef(newEl[index] as HTMLElement, new RegExp(`(?<=\{\x20*)${itemName}`, "g"), `${propertyNames.join(".")}.${pindex}`);
+        })
+        newEls.push(newEl);
+      });
+    } else if (typeof property === "object") {
+      let index = 0;
+      for (const key in property) {
+        if (Object.prototype.hasOwnProperty.call(property, key)) {
+          const newEl = [...Array.from(childNodes)];
+          newEl.forEach((el, i) => {
+            newEl[i] = el.cloneNode(true);
+            this.replaceRef(newEl[i] as HTMLElement, new RegExp(`(?<=\{\x20*)${itemName}`, "g"), `${propertyNames.join(".")}.${index}`);
+          })
+          newEls.push(newEl);
+        }
+        index++;
+      }
+    }
+
 
     Array.from(El.children).forEach(node => {
       El.removeChild(node);
@@ -124,7 +142,9 @@ export default {
 
     return ScopedElRefTree;
   },
-  updateView(target, propertys, property, value) {
+  updateView(target: IReactiveItem, propertys, property, value) {
+    console.log(target, propertys, property);
+
     if (!propertys[property]) {
       if (Array.isArray(target) && property !== "length") {
         // console.log(target, propertys, property, value);
@@ -161,9 +181,10 @@ export default {
             scopeRefTree = Collect.objectAssign(scopeRefTree, refTree);
           });
           target.__og_root.refs = Collect.objectAssign(target.__og_root.refs, scopeRefTree);
-          console.log(target);
-
         }
+      } else {
+        console.log(propertys);
+
       }
     }
   }

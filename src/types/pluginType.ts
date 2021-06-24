@@ -1,12 +1,29 @@
 import { IElement } from "./elementType";
+import { IReactiveItem } from "./reactiveType";
 
 export type TRefTree = {
   [key: string]: TRefTree
 }
 
+export type TForItem = {
+  el: IElement,
+  indexName: string,
+  itemName: string,
+  keyName: string,
+  propertyName: string,
+  templateChildNodes: HTMLElement[] & Node[]
+}
+
+export type TPropertys = {
+  [key: string]: any,
+  __og_fors?: Array<TForItem>,
+  __els?: HTMLElement,
+  __attrs?: Attr[]
+}
+
 export interface IPluginItem {
   collectRef?(El: IElement, rawData: object | []): TRefTree,
-  updateView?(target: any, propertys: { [key: string]: any, __els: HTMLElement[], __attrs: Attr[] }, property: string, value: any): void
+  updateView?(target: IReactiveItem, propertys: TPropertys, property: string, value: any): void
 }
 
 export interface IPlugins {

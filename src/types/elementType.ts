@@ -1,7 +1,8 @@
-import { Element } from "../runtime";
+import { Element, Reactive } from "../runtime";
 
 export interface IElement extends HTMLElement {
-  __og_isCollected: boolean
+  __og_isCollected: boolean,
+  __og__: Reactive
 }
 
 export type TMethodItem = Array<{
