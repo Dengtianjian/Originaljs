@@ -4,30 +4,6 @@ import Plugin from "../plugin";
 
 let El: HTMLElement | ShadowRoot;
 let RefData: {} = {};
-const BuildInComponentTagNames: string[] = ["o-for", "o-if", "o-else", "o-else-if"];
-
-Plugin.register("CollectAttrRefs", {
-  collectRef(El: IElement): TRefTree {
-    if (El.__og_isCollected) {
-      return {};
-    }
-    let ScopedElRefTree: TRefTree = {};
-    if (!El.attributes || El.attributes.length === 0) {
-      return ScopedElRefTree;
-    }
-    for (const attrItem of Array.from(El.attributes)) {
-      if (/(?<=\{\x20*).+?(?=\x20*\})/.test(attrItem.nodeValue)) {
-        const refs: string[] = attrItem.nodeValue.match(/(?<=\{\x20*).+?(?=\x20*\})/g);
-        refs.forEach(refItem => {
-          const propertyNames: string[] = parsePropertyString(refItem);
-          const RefTree = generateElRefTree(propertyNames, attrItem);
-          ScopedElRefTree = objectAssign(ScopedElRefTree, RefTree) as TRefTree;
-        });
-      }
-    }
-    return ScopedElRefTree;
-  }
-})
 
 function parsePropertyString(rawString: string): string[] {
   if (/(?<=\])\w/.test(rawString) || /\W+^[\u4e00-\u9fa5]/.test(rawString)) {
@@ -178,158 +154,6 @@ function collection(El: IElement): TRefTree {
   return ScopedElRefTree;
 }
 
-function collectTagRefs(El: IElement): object {
-  let ScopedElRefTree = {};
-  if (El.nodeType === 1 && BuildInComponentTagNames.includes(El.tagName.toLowerCase())) {
-    handleBuildInComponent(El)
-  }
-
-  if (El.childNodes.length > 0) {
-    for (const childNode of Array.from(El.childNodes)) {
-      ScopedElRefTree = objectAssign(ScopedElRefTree, collectTagRefs(childNode as IElement));
-    }
-  }
-
-  if (El.attributes && El.attributes.length > 0 && !BuildInComponentTagNames.includes(El.tagName.toLowerCase())) {
-    ScopedElRefTree = objectAssign(ScopedElRefTree, collectAttrRefs(El));
-  }
-
-  if (El.nodeType !== 3) {
-    return ScopedElRefTree;
-  }
-
-  let refs: RegExpMatchArray = El.textContent.match(/(?<=\{\x20*).+?(?=\x20*\})/g);
-  if (refs === null) {
-    return ScopedElRefTree;
-  }
-  const parentNode: HTMLElement = El.parentNode as HTMLElement;
-  refs = Array.from(new Set(refs));
-  const appendTextEls: Text[] = [];
-  for (let index = 0; index < refs.length; index++) {
-    const refRawString: string = refs[index].trim();
-    const newTextEl: Text = document.createTextNode("{" + refRawString + "}");
-    const propertyNames: string[] = parsePropertyString(refRawString);
-    ScopedElRefTree = objectAssign(ScopedElRefTree, generateElRefTree(propertyNames, newTextEl));
-
-    appendTextEls.push(newTextEl, document.createTextNode("\n"));
-    const replaceRegString: string = "\{\x20*" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "\x20*\}";
-    El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
-  }
-  appendTextEls.forEach(el => {
-    parentNode.insertBefore(el, El);
-  });
-
-  return ScopedElRefTree;
-}
-
-function collectAttrRefs(El: HTMLElement): object {
-  let ScopedElRefTree = {};
-  if (El.attributes.length === 0) {
-    return ScopedElRefTree;
-  }
-  for (const attrItem of Array.from(El.attributes)) {
-    if (/(?<=\{\x20*).+?(?=\x20*\})/.test(attrItem.nodeValue)) {
-      const refs: string[] = attrItem.nodeValue.match(/(?<=\{\x20*).+?(?=\x20*\})/g);
-      refs.forEach(refItem => {
-        const propertyNames: string[] = parsePropertyString(refItem);
-        const RefTree = generateElRefTree(propertyNames, attrItem);
-        ScopedElRefTree = objectAssign(ScopedElRefTree, RefTree);
-      });
-    }
-  }
-  return ScopedElRefTree;
-}
-
-function handleBuildInComponent(El: HTMLElement) {
-  const tagName: string = El.tagName.toLowerCase();
-  switch (tagName) {
-    case "o-for":
-      return handleOFor(El);
-      break;
-  }
-}
-
-function handleOFor(El: HTMLElement) {
-  const attributes: Attr[] = Array.from(El.attributes);
-  let InIndex: number = -1;
-  let indexName: string = "";
-  let propertyName: string = "";
-  let keyName: string = "";
-  let itemName: string = "";
-  const childNodes: Node[] = [];
-  El.childNodes.forEach(node => {
-    childNodes.push(node.cloneNode(true));
-  });
-
-  attributes.forEach((attr, index) => {
-    if (attr.nodeName === "in") {
-      InIndex = index;
-    }
-  });
-
-  propertyName = attributes[InIndex + 1]['nodeName'];
-  if (InIndex == 2) {
-    indexName = attributes[InIndex - 1]['nodeName'];
-    itemName = attributes[InIndex - 2]['nodeName'];
-  } else if (InIndex == 3) {
-    keyName = attributes[InIndex - 1]['nodeName'];
-    indexName = attributes[InIndex - 2]['nodeName'];
-    itemName = attributes[InIndex - 3]['nodeName'];
-  } else {
-    itemName = attributes[InIndex - 1]['nodeName'];
-  }
-
-  const propertyNames: string[] = parsePropertyString(propertyName);
-  const property: any[] = getPropertyData(propertyNames, RefData);
-
-  const newEls = [];
-  property.forEach((item, pindex) => {
-    const newEl = [...Array.from(childNodes)];
-    newEl.forEach((el, index) => {
-      newEl[index] = el.cloneNode(true);
-      replaceRef(newEl[index] as HTMLElement, new RegExp(`(?<=\{\x20*)${itemName}`, "g"), `${propertyNames.join(".")}.${pindex}`);
-    })
-    newEls.push(newEl);
-  });
-
-  Array.from(El.children).forEach(node => {
-    El.removeChild(node);
-  })
-  newEls.forEach(els => {
-    El.append(...els);
-  });
-  return {
-    __og_for: El
-  };
-}
-function replaceRef(El: HTMLElement, string: string | RegExp, replaceValue: string) {
-  if (El.childNodes.length > 0) {
-    El.childNodes.forEach(node => {
-      replaceRef(node as HTMLElement, string, replaceValue);
-    })
-  }
-
-  if (El.attributes && El.attributes.length > 0) {
-    replaceAttrRef(El, string, replaceValue);
-  }
-
-  if (El.nodeType !== 3) {
-    return;
-  }
-
-  El.textContent = El.textContent.replace(string, replaceValue);
-}
-function replaceAttrRef(El: HTMLElement, string: string | RegExp, replaceValue: string) {
-  if (El.attributes.length === 0) {
-    return;
-  }
-  for (const attrItem of Array.from(El.attributes)) {
-    if (/(?<=\{\x20*).+?(?=\x20*\})/.test(attrItem.nodeValue)) {
-      attrItem.nodeValue = attrItem.nodeValue.replace(string, replaceValue);
-    }
-  }
-}
-
 function parserRef(refTree: object, rawData: object, path: string[] = []) {
   for (const branchName in refTree) {
     if (Object.prototype.hasOwnProperty.call(refTree, branchName)) {
@@ -377,8 +201,6 @@ function replaceRefContent(refTree, rawData, branchName, path) {
 export default {
   reset,
   collection,
-  collectTagRefs,
-  collectAttrRefs,
   parsePropertyString,
   getProperty,
   getPropertyData,

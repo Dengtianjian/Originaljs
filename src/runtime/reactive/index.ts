@@ -32,9 +32,11 @@ import OProxy from "./oproxy";
 import CollectTagRefs from "./plugins/CollecTagRefs";
 import UpdateView from "./plugins/UpdateView";
 import BuildInComponent from "./plugins/BuildInComponent";
+import CollectTagAttrRefs from "./plugins/CollectTagAttrRefs";
 
 Plugin.register("BuildInComponent", BuildInComponent);
 Plugin.register("CollectTagRefs", CollectTagRefs);
+Plugin.register("CollectTagAttrRefs", CollectTagAttrRefs);
 Plugin.register("UpdateView", UpdateView);
 
 export default class Reactive {

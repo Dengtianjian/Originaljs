@@ -18,7 +18,7 @@ export default {
     }
 
     if (El.attributes && El.attributes.length > 0) {
-      ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, (plugin.use("CollectAttrRefs") as IPluginItem).collectRef(El));
+      ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, (plugin.use("CollectTagAttrRefs") as IPluginItem).collectRef(El));
     }
 
     El.__og_isCollected = true;
@@ -62,4 +62,4 @@ export default {
 
     return ScopedElRefTree;
   }
-} as IPluginItem & { collectTagRefs(): TRefTree }
+} as IPluginItem & { collectTagRefs(El: IElement): TRefTree }
