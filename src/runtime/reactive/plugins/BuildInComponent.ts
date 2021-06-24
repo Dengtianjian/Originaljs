@@ -55,7 +55,7 @@ export default {
       El.append(...els);
     });
 
-    const ref = (plugin.use("CollectTagRefs") as IPluginItem).collectRef(El,);
+    const ref = (plugin.use("CollectTagRefs") as IPluginItem).collectRef(El, rawData);
 
     return Collect.objectAssign(Collect.deepGenerateTree(propertyNames, {
       __og_fors: [
@@ -118,7 +118,7 @@ export default {
     const tagName: string = El.tagName.toLowerCase();
     switch (tagName) {
       case "o-for":
-        ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, this.handleOFor(El,rawData));
+        ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, this.handleOFor(El, rawData));
         break;
     }
 
@@ -142,14 +142,27 @@ export default {
           //   __attrs: []
           // }
 
-          console.log(propertys.__og_fors);
+          const rawData = target.__og_root.rawData;
+          Collect.getPropertyData(Collect.parsePropertyString(target.__og_stateKey), rawData).push(value);
 
+          let scopeRefTree = {};
           propertys.__og_fors.forEach(forItem => {
+            const newEls = [];
+            const propertyNames = Collect.parsePropertyString(forItem.propertyName);
             forItem.templateChildNodes.forEach(node => {
-              forItem.el.append(node.cloneNode(true));
-            })
+              const newEl = node.cloneNode(true);
+              this.replaceRef(newEl as HTMLElement, new RegExp(`(?<=\{\x20*)${forItem.itemName}`, "g"), `${propertyNames.join(".")}.${Object.keys(propertys).length - 1}`);
+              newEls.push(newEl);
+            });
+            forItem.el.append(...newEls);
 
-          })
+            forItem.el.__og_isCollected = false;
+            const refTree = (plugin.use("CollectTagRefs") as IPluginItem).collectRef(forItem.el, rawData);
+            scopeRefTree = Collect.objectAssign(scopeRefTree, refTree);
+          });
+          target.__og_root.refs = Collect.objectAssign(target.__og_root.refs, scopeRefTree);
+          console.log(target);
+
         }
       }
     }

@@ -6,7 +6,7 @@ import { defineConfig, IndexHtmlTransformResult, Plugin } from "vite";
 export default defineConfig({
   plugins: [],
   build: {
-    minify: false,
+    minify: true,
     lib: {
       entry: "src/runtime/index.ts",
       name: "original",
