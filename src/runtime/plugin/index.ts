@@ -5,7 +5,7 @@ function register(name: string, hooks: IPluginItem) {
   Plugins[name] = hooks;
 }
 
-function use(pluginName?: string): IPluginItem | IPlugins {
+function use<T>(pluginName?: string): IPluginItem | IPlugins | T {
   if (pluginName) {
     return Plugins[pluginName];
   }

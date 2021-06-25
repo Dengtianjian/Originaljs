@@ -3,6 +3,7 @@ import { IPluginItem } from "../../../types/pluginType";
 import { IReactiveItem } from "../../../types/reactiveType";
 import plugin from "../../plugin";
 import Collect from "../collect";
+import Parser from "../parser";
 
 export default {
   buildInComponentTagNames: ["o-for", "o-if", "o-else", "o-else-if"] as string[],
@@ -143,48 +144,44 @@ export default {
     return ScopedElRefTree;
   },
   updateView(target: IReactiveItem, propertys, property, value) {
-    console.log(target, propertys, property);
+    // console.log(target, propertys, property);
 
     if (!propertys[property]) {
-      if (Array.isArray(target) && property !== "length") {
-        // console.log(target, propertys, property, value);
-        const stateKey: string[] = Collect.parsePropertyString(target['__og_stateKey']);
+      const stateKey: string[] = Collect.parsePropertyString(target['__og_stateKey']);
+      const rawDataPart = Collect.getPropertyData(stateKey, target['__og_root']['rawData']);
+      const rawData = target.__og_root.rawData;
 
-        const rawData = Collect.getPropertyData(stateKey, target['__og_root']['rawData']);
-        if (rawData[property]) {
-          // console.log(rawData[property]);
+      if (rawDataPart[property]) {
+        // console.log(rawData[property]);
 
-        } else {
-          // const newTextEl = document.createTextNode(value.toString() + "\n");
-          // rawData[property] = value;
-          // propertys[property] = {
-          //   __els: [newTextEl],
-          //   __attrs: []
-          // }
-
-          const rawData = target.__og_root.rawData;
-          Collect.getPropertyData(Collect.parsePropertyString(target.__og_stateKey), rawData).push(value);
-
-          let scopeRefTree = {};
-          propertys.__og_fors.forEach(forItem => {
-            const newEls = [];
-            const propertyNames = Collect.parsePropertyString(forItem.propertyName);
-            forItem.templateChildNodes.forEach(node => {
-              const newEl = node.cloneNode(true);
-              this.replaceRef(newEl as HTMLElement, new RegExp(`(?<=\{\x20*)${forItem.itemName}`, "g"), `${propertyNames.join(".")}.${Object.keys(propertys).length - 1}`);
-              newEls.push(newEl);
-            });
-            forItem.el.append(...newEls);
-
-            forItem.el.__og_isCollected = false;
-            const refTree = (plugin.use("CollectTagRefs") as IPluginItem).collectRef(forItem.el, rawData);
-            scopeRefTree = Collect.objectAssign(scopeRefTree, refTree);
-          });
-          target.__og_root.refs = Collect.objectAssign(target.__og_root.refs, scopeRefTree);
-        }
       } else {
-        console.log(propertys);
+        if (Array.isArray(rawDataPart)) {
+          Collect.getPropertyData(Collect.parsePropertyString(target.__og_stateKey), rawData).push(value);
+        } else {
+          Collect.getPropertyData(Collect.parsePropertyString(target.__og_stateKey), rawData)[property] = value;
+        }
 
+        let scopeRefTree = {};
+        propertys.__og_fors.forEach(forItem => {
+          const newEls = [];
+          const propertyNames = Collect.parsePropertyString(forItem.propertyName);
+          forItem.templateChildNodes.forEach(node => {
+            const newEl = node.cloneNode(true);
+            this.replaceRef(newEl as HTMLElement, new RegExp(`(?<=\{\x20*)${forItem.itemName}`, "g"), `${propertyNames.join(".")}.${property}`);
+            newEls.push(newEl);
+          });
+          forItem.el.append(...newEls);
+
+          forItem.el.__og_isCollected = false;
+          console.log(rawData);
+
+          const refTree = (plugin.use("CollectTagRefs") as IPluginItem).collectRef(forItem.el, rawData);
+
+          Parser.parseRef(refTree, rawData);
+
+          scopeRefTree = Collect.objectAssign(scopeRefTree, refTree);
+        });
+        target.__og_root.refs = Collect.objectAssign(target.__og_root.refs, scopeRefTree);
       }
     }
   }
