@@ -131,7 +131,6 @@ class CButton extends createElement(["name"]) {
   numarr = [[123, 456, 5], ["456"]];
   books = [];
   updateArr(event) {
-    // TODO 没有深度代理
     this.books[2]['base_info']['title'] = "配置文件解析";
 
     fetch("./mook/book_page2.json").then(res => res.json()).then(({ data }) => {
