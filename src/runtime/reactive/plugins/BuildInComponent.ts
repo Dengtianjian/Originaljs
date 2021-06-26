@@ -3,6 +3,7 @@ import { IPluginItem } from "../../../types/pluginType";
 import { IReactiveItem } from "../../../types/reactiveType";
 import plugin from "../../plugin";
 import Collect from "../collect";
+import OProxy from "../oproxy";
 import Parser from "../parser";
 
 export default {
@@ -145,14 +146,12 @@ export default {
   },
   updateView(target: IReactiveItem, propertys, property, value) {
     // console.log(target, propertys, property);
-
     if (!propertys[property]) {
       const stateKey: string[] = Collect.parsePropertyString(target['__og_stateKey']);
       const rawDataPart = Collect.getPropertyData(stateKey, target['__og_root']['rawData']);
       const rawData = target.__og_root.rawData;
 
       if (rawDataPart[property]) {
-        // console.log(rawData[property]);
 
       } else {
         if (Array.isArray(rawDataPart)) {
@@ -173,9 +172,12 @@ export default {
           forItem.el.append(...newEls);
 
           forItem.el.__og_isCollected = false;
-          console.log(rawData);
 
           const refTree = (plugin.use("CollectTagRefs") as IPluginItem).collectRef(forItem.el, rawData);
+
+          const filterData = this.filterRawData(refTree, rawData);
+
+          OProxy.setProxy(target.__og_root.data, filterData, [], target.__og_root);
 
           Parser.parseRef(refTree, rawData);
 
@@ -184,5 +186,27 @@ export default {
         target.__og_root.refs = Collect.objectAssign(target.__og_root.refs, scopeRefTree);
       }
     }
+  },
+  filterRawData(state, rawData) {
+    const deps = JSON.parse(JSON.stringify(state));
+    for (const key in deps) {
+      if (Object.prototype.hasOwnProperty.call(deps, key)) {
+        const element = deps[key];
+        if (typeof element === "object" && element) {
+          if (element.hasOwnProperty("__els") || element.hasOwnProperty("__attrs")) {
+            deps[key] = rawData[key];
+          } else {
+            if (rawData) {
+              deps[key] = this.filterRawData(element, rawData[key]);
+            }
+          }
+        } else {
+          if (rawData && rawData[key]) {
+            deps[key] = rawData[key];
+          }
+        }
+      }
+    }
+    return deps;
   }
 } as IPluginItem & {}

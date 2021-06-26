@@ -94,6 +94,7 @@ export default class Reactive {
     this.refs = Collect.reset(target as HTMLElement, data);
 
     const filterData = this.filterRawData(this.refs, data);
+
     OProxy.setProxy(data, filterData, [], this);
   }
   filterRawData(state, rawData) {

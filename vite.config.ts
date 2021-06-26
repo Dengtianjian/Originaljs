@@ -5,6 +5,8 @@ import { defineConfig, IndexHtmlTransformResult, Plugin } from "vite";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [],
+  server: {
+  },
   build: {
     minify: true,
     lib: {
