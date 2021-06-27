@@ -8,7 +8,7 @@ import Parser from "../parser";
 import { updateTargetView } from "../view";
 
 export default {
-  buildInComponentTagNames: ["o-for", "o-if", "o-else", "o-else-if"] as string[],
+  buildInComponentTagNames: ["o-for", "o-if", "o-else", "o-else-if", "ref"] as string[],
   handleOFor(El: IElement, rawData: {}) {
     const attributes: Attr[] = Array.from(El.attributes);
     let InIndex: number = -1;
