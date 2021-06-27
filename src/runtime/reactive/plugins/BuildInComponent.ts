@@ -1,10 +1,11 @@
 import { IElement } from "../../../types/elementType";
-import { IPluginItem } from "../../../types/pluginType";
+import { IPluginItem, TPropertys, TRefTree } from "../../../types/pluginType";
 import { IReactiveItem } from "../../../types/reactiveType";
 import plugin from "../../plugin";
 import Collect from "../collect";
 import OProxy from "../oproxy";
 import Parser from "../parser";
+import { updateTargetView } from "../view";
 
 export default {
   buildInComponentTagNames: ["o-for", "o-if", "o-else", "o-else-if"] as string[],
@@ -48,7 +49,7 @@ export default {
         const newEl = [...Array.from(childNodes)];
         newEl.forEach((el, index) => {
           newEl[index] = el.cloneNode(true);
-          this.replaceRef(newEl[index] as HTMLElement, new RegExp(`(?<=\{\x20*)${itemName}`, "g"), `${propertyNames.join(".")}.${pindex}`);
+          this.replaceRef(newEl[index] as HTMLElement, itemName, `${propertyNames.join(".")}.${pindex}`);
         })
         newEls.push(newEl);
       });
@@ -59,14 +60,13 @@ export default {
           const newEl = [...Array.from(childNodes)];
           newEl.forEach((el, i) => {
             newEl[i] = el.cloneNode(true);
-            this.replaceRef(newEl[i] as HTMLElement, new RegExp(`(?<=\{\x20*)${itemName}`, "g"), `${propertyNames.join(".")}.${index}`);
+            this.replaceRef(newEl[i] as HTMLElement, itemName, `${propertyNames.join(".")}.${key}`);
           })
           newEls.push(newEl);
         }
         index++;
       }
     }
-
 
     Array.from(El.children).forEach(node => {
       El.removeChild(node);
@@ -75,9 +75,21 @@ export default {
       El.append(...els);
     });
 
-    const ref = (plugin.use("CollectTagRefs") as IPluginItem).collectRef(El, rawData);
+    // const ref = (plugin.use("CollectTagRefs") as IPluginItem).collectRef(El, rawData);
+    // return Collect.objectAssign(Collect.deepGenerateTree(propertyNames, {
+    //   __og_fors: [
+    //     {
+    //       el: El,
+    //       templateChildNodes: childNodes,
+    //       indexName,
+    //       propertyName,
+    //       keyName,
+    //       itemName
+    //     }
+    //   ]
+    // }), ref);
 
-    return Collect.objectAssign(Collect.deepGenerateTree(propertyNames, {
+    return Collect.deepGenerateTree(propertyNames, {
       __og_fors: [
         {
           el: El,
@@ -88,32 +100,43 @@ export default {
           itemName
         }
       ]
-    }), ref);
+    });
   },
-  replaceRef(El: HTMLElement, string: string | RegExp, replaceValue: string) {
+  replaceRef(El: HTMLElement, sourceString: string, replaceValue: string) {
+
     if (El.childNodes.length > 0) {
       El.childNodes.forEach(node => {
-        this.replaceRef(node as HTMLElement, string, replaceValue);
+        this.replaceRef(node as HTMLElement, sourceString, replaceValue);
       })
     }
 
     if (El.attributes && El.attributes.length > 0) {
-      this.replaceAttrRef(El, string, replaceValue);
+      this.replaceAttrRef(El, sourceString, replaceValue);
     }
 
     if (El.nodeType !== 3) {
       return;
     }
 
-    El.textContent = El.textContent.replace(string, replaceValue);
+    El.textContent = El.textContent.replace(new RegExp(`(?<=\{\x20*)${sourceString}`, "g"), replaceValue);
   },
-  replaceAttrRef(El: HTMLElement, string: string | RegExp, replaceValue: string) {
+  replaceAttrRef(El: HTMLElement, sourceString: string, replaceValue: string) {
     if (El.attributes.length === 0) {
       return;
     }
+
+    if (El.nodeType === 1 && this.buildInComponentTagNames.includes(El.tagName.toLowerCase())) {
+      Array.from(El.attributes).reduce((prev, attrItem, index, attributes) => {
+        if (prev.nodeName === "in" && attrItem.nodeName === sourceString) {
+          prev.ownerElement.removeAttribute(attrItem.nodeName);
+          prev.ownerElement.setAttribute(replaceValue, "");
+        }
+        return attrItem;
+      })
+    }
     for (const attrItem of Array.from(El.attributes)) {
       if (/(?<=\{\x20*).+?(?=\x20*\})/.test(attrItem.nodeValue)) {
-        attrItem.nodeValue = attrItem.nodeValue.replace(string, replaceValue);
+        attrItem.nodeValue = attrItem.nodeValue.replace(new RegExp(`(?<=\{\x20*)${sourceString}`, "g"), replaceValue);
       }
     }
 
@@ -125,67 +148,34 @@ export default {
       return ScopedElRefTree;
     }
 
+    if (El.nodeType === 1 && this.buildInComponentTagNames.includes(El.tagName.toLowerCase())) {
+      const tagName: string = El.tagName.toLowerCase();
+      switch (tagName) {
+        case "o-for":
+          ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, this.handleOFor(El, rawData));
+          break;
+      }
+    }
+
     if (El.childNodes && El.childNodes.length > 0) {
       for (const node of Array.from(El.childNodes)) {
         ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, this.collectRef(node as IElement, rawData));
       }
     }
 
-    if (El.nodeType !== 1 || !this.buildInComponentTagNames.includes(El.tagName.toLowerCase())) {
-      return ScopedElRefTree;
-    }
-
-    const tagName: string = El.tagName.toLowerCase();
-    switch (tagName) {
-      case "o-for":
-        ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, this.handleOFor(El, rawData));
-        break;
-    }
-
     return ScopedElRefTree;
   },
-  updateView(target: IReactiveItem, propertys, property, value) {
-    // console.log(target, propertys, property);
-    if (!propertys[property]) {
-      const stateKey: string[] = Collect.parsePropertyString(target['__og_stateKey']);
-      const rawDataPart = Collect.getPropertyData(stateKey, target['__og_root']['rawData']);
-      const rawData = target.__og_root.rawData;
-
-      if (rawDataPart[property]) {
-
-      } else {
-        if (Array.isArray(rawDataPart)) {
-          Collect.getPropertyData(Collect.parsePropertyString(target.__og_stateKey), rawData).push(value);
-        } else {
-          Collect.getPropertyData(Collect.parsePropertyString(target.__og_stateKey), rawData)[property] = value;
-        }
-
-        let scopeRefTree = {};
-        propertys.__og_fors.forEach(forItem => {
-          const newEls = [];
-          const propertyNames = Collect.parsePropertyString(forItem.propertyName);
-          forItem.templateChildNodes.forEach(node => {
-            const newEl = node.cloneNode(true);
-            this.replaceRef(newEl as HTMLElement, new RegExp(`(?<=\{\x20*)${forItem.itemName}`, "g"), `${propertyNames.join(".")}.${property}`);
-            newEls.push(newEl);
-          });
-          forItem.el.append(...newEls);
-
-          forItem.el.__og_isCollected = false;
-
-          const refTree = (plugin.use("CollectTagRefs") as IPluginItem).collectRef(forItem.el, rawData);
-
-          const filterData = this.filterRawData(refTree, rawData);
-
-          OProxy.setProxy(target.__og_root.data, filterData, [], target.__og_root);
-
-          Parser.parseRef(refTree, rawData);
-
-          scopeRefTree = Collect.objectAssign(scopeRefTree, refTree);
-        });
-        target.__og_root.refs = Collect.objectAssign(target.__og_root.refs, scopeRefTree);
-      }
+  setUpdateView(target: IReactiveItem, propertys, property, value): Boolean {
+    if (propertys.__og_fors) {
+      return this.oForElUpdateView(...arguments);
     }
+  },
+  deleteUpdateView(target, refs, propertyKey): Boolean {
+    if (refs.__og_fors) {
+      return this.OForDeleteUpdateView(target, refs, propertyKey);
+    }
+
+    return true;
   },
   filterRawData(state, rawData) {
     const deps = JSON.parse(JSON.stringify(state));
@@ -208,5 +198,58 @@ export default {
       }
     }
     return deps;
+  },
+  oForElUpdateView(target: IReactiveItem, propertys, property, value): Boolean {
+    if (property === "length") {
+      return;
+    }
+    const stateKey: string[] = Collect.parsePropertyString(target['__og_stateKey']);
+    const rawDataPart = Collect.getPropertyData(stateKey, target['__og_root'].data);
+    const rawData = target.__og_root.data;
+
+    if (!propertys[property]) {
+      //* 已经是代理过了。 TODO：此处得优化
+      if (rawDataPart[property].__og_root) {
+        return;
+      }
+      let scopeRefTree = {};
+      propertys.__og_fors.forEach(forItem => {
+        const newEls = [];
+        const propertyNames = Collect.parsePropertyString(forItem.propertyName);
+        forItem.templateChildNodes.forEach(node => {
+          const newEl = node.cloneNode(true);
+          this.replaceRef(newEl as HTMLElement, forItem.itemName, `${propertyNames.join(".")}.${property}`);
+          newEls.push(newEl);
+        });
+        forItem.el.append(...newEls);
+
+        forItem.el.__og_isCollected = false;
+
+        const refTree = (plugin.use("CollectTagRefs") as IPluginItem).collectRef(forItem.el, rawData);
+
+        const filterData = this.filterRawData(refTree, rawData);
+
+        OProxy.setProxy(rawData, filterData, [], target.__og_root);
+
+        Parser.parseRef(refTree, rawData);
+
+        scopeRefTree = Collect.objectAssign(scopeRefTree, refTree);
+      });
+      target.__og_root.refs = Collect.objectAssign(target.__og_root.refs, scopeRefTree);
+    } else {
+      const filterData = this.filterRawData(target.__og_root.refs, target.__og_root.data);
+      stateKey.push(property)
+      const refTreePart = Collect.getProperty(stateKey, target.__og_root.refs);
+      OProxy.setProxy(rawData, filterData, [], target.__og_root);
+      updateTargetView(refTreePart, rawDataPart[property]);
+    }
+    return true;
+  },
+  OForDeleteUpdateView(target, refs, propertyKey) {
+    const fors = refs.__og_fors;
+    fors.forEach(forItem => {
+      forItem.el.removeChild(forItem.el.children[propertyKey]);
+    });
+    return true;
   }
 } as IPluginItem & {}

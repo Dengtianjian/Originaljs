@@ -2,7 +2,7 @@ import { IElement } from "./elementType";
 import { IReactiveItem } from "./reactiveType";
 
 export type TRefTree = {
-  [key: string]: TRefTree
+  [key: string]: TRefTree,
 }
 
 export type TForItem = {
@@ -23,7 +23,8 @@ export type TPropertys = {
 
 export interface IPluginItem {
   collectRef?(El: IElement, rawData: object | []): TRefTree,
-  updateView?(target: IReactiveItem, propertys: TPropertys, property: string, value: any): void
+  setUpdateView?(target: IReactiveItem, propertys: TPropertys, property: string, value: any): Boolean,
+  deleteUpdateView?(target: IReactiveItem, refs: TRefTree, propertyKey: PropertyKey): Boolean
 }
 
 export interface IPlugins {

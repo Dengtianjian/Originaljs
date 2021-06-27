@@ -43,6 +43,7 @@ button {
 </button>`;
 template = `
 <button onclick="updateArr" >Update arr</button>
+<button onclick="addProperty" >add Property</button>
 <style>
   .books {
     display: flex;
@@ -84,17 +85,40 @@ template = `
     color: #71777c;
   }
 </style>
-<o-for dataitem in books>
+{user}
+<o-for bookitem in books>
 <div class="books">
-  <img src="{dataitem.base_info.cover_img}" />
-  <div class="info">
-    <div class="title">{dataitem.base_info.title}</div>
-    <div class="desc">{ dataitem.base_info.summary }</div>
+  <img src="{bookitem.base_info.cover_img}" />
+  <div class="info" data-content="{bookitem.base_info.title}">
+    <div class="title">{bookitem.base_info.title}</div>
+    <div class="desc">{ bookitem.base_info.summary }</div>
   </div>
   <div>
   </div>
 </div>
-</o-for>`
+</o-for>
+<--<o-for dataitem in user>
+  <div>
+    <o-for data in dataitem>
+      <div title="{data}">
+      { data }
+      </div>
+    </o-for>
+    <br />
+  </div>
+  <o-for bookItem in books>
+    <div class="books">
+      <img src="{bookItem.base_info.cover_img}" />
+      <div class="info" data-content="{bookItem.base_info.title}">
+        <div class="title">{bookItem.base_info.title}</div>
+        <div class="desc">{ bookItem.base_info.summary }</div>
+      </div>
+      <div>
+      </div>
+    </div>
+  </o-for>
+</o-for>->
+`
 
 class CButton extends createElement(["name"]) {
   constructor() {
@@ -130,15 +154,39 @@ class CButton extends createElement(["name"]) {
   nums = [1, 2];
   numarr = [[123, 456, 5], ["456"]];
   books = [];
+  user = {
+    name: {
+      firstName: "Deng",
+      lastName: "Tianjian"
+    },
+    times: {
+      register: "2021-02-24",
+      lastLogin: "2021-06-28",
+    },
+    friends: ["Amy", "Bob", "Candy", "Daisy", "Eva"],
+    profile: {
+      address: "Guangzhou",
+      phone: "1328888999"
+    }
+  };
   updateArr(event) {
-    this.books[2]['base_info']['title'] = "配置文件解析";
-
+    // this.books[0].base_info.title = "";
+    // console.log(this.books);
+    // this.books[0].base_info.title = "";
+    this.books.splice(0, 2);
     fetch("./mook/book_page2.json").then(res => res.json()).then(({ data }) => {
-      this.books.push(...data);
+      // this.books.concat(...data);
+      // this.books.push(...data);
+      // setTimeout(() => {
+
+      // }, 5000);
     });
-    setTimeout(() => {
-      this.books[36]['base_info']['title'] = "深入了解区块链、挖矿、钱包、签名等技术原理，对未来的数字货币世界做好准备";
-    }, 10000);
+    // setTimeout(() => {
+    //   this.books[36]['base_info']['title'] = "深入了解区块链、挖矿、钱包、签名等技术原理，对未来的数字货币世界做好准备";
+    // }, 10000);
+  }
+  addProperty() {
+    this.books[0].base_info.time = Date.now();
   }
 }
 

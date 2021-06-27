@@ -30,14 +30,13 @@ import Plugin from "../plugin";
 import Collect from "./collect";
 import OProxy from "./oproxy";
 import CollectTagRefs from "./plugins/CollecTagRefs";
-import UpdateView from "./plugins/UpdateView";
 import BuildInComponent from "./plugins/BuildInComponent";
 import CollectTagAttrRefs from "./plugins/CollectTagAttrRefs";
+import { IElement } from "../../types/elementType";
 
 Plugin.register("BuildInComponent", BuildInComponent);
 Plugin.register("CollectTagRefs", CollectTagRefs);
 Plugin.register("CollectTagAttrRefs", CollectTagAttrRefs);
-Plugin.register("UpdateView", UpdateView);
 
 export default class Reactive {
   static data;
@@ -58,40 +57,11 @@ export default class Reactive {
       return obj;
     }
   }
-  static updateView(target, property, value, reveiver) {
-    const refs = target.__og_root['refs'];
-    const propertyNames: string[] = Collect.parsePropertyString(target.__og_stateKey);
-    const propertys: { [key: string]: any, __els: HTMLElement[], __attrs: Attr[] } = this.deepGetObjectProperty(refs, propertyNames)
-
-    const plugins: IPlugins = Plugin.use() as IPlugins;
-    for (const pluginName in plugins) {
-      if (Object.prototype.hasOwnProperty.call(plugins, pluginName)) {
-        const pluginItem = plugins[pluginName];
-        if (pluginItem.updateView) {
-          pluginItem.updateView(target, propertys, property, value);
-        }
-      }
-    }
-
-    if (Array.isArray(target) && property !== "length") {
-      if (propertys.__els && propertys.__els.length > 0) {
-        propertys.__els.forEach(el => {
-          el.textContent = target.toString();
-        })
-      }
-      if (propertys.__attrs && propertys.__attrs.length > 0) {
-        propertys.__attrs.forEach(attrItem => {
-          attrItem.nodeValue = target.toString();
-        });
-      }
-    }
-
-  }
   constructor(target: HTMLElement | ShadowRoot, data: object) {
     this.target = target;
     this.data = data;
-    this.rawData = JSON.parse(JSON.stringify(data));
-    this.refs = Collect.reset(target as HTMLElement, data);
+    // this.rawData = JSON.parse(JSON.stringify(data));
+    this.refs = Collect.reset(target as IElement, data);
 
     const filterData = this.filterRawData(this.refs, data);
 

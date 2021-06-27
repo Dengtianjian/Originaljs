@@ -1,7 +1,44 @@
 import { IElement } from "../../../types/elementType";
-import { IPluginItem, TRefTree } from "../../../types/pluginType";
+import { IPluginItem, TPropertys, TRefTree } from "../../../types/pluginType";
+import { IReactiveItem } from "../../../types/reactiveType";
 import plugin from "../../plugin";
 import Collect from "../collect";
+
+function cleanRef(refTree) {
+  if (typeof refTree === "object") {
+    for (const key in refTree) {
+      if (Object.prototype.hasOwnProperty.call(refTree, key)) {
+        cleanRef(refTree[key]);
+      }
+    }
+  }
+
+  if (refTree.__els) {
+    for (let index = 0; index < refTree.__els.length; index++) {
+      refTree.__els[index].parentNode.removeChild(refTree.__els[index]);
+      refTree.__els.splice(index, 1);
+    }
+  }
+  if (refTree.__attrs) {
+    for (let index = 0; index < refTree.__attrs.length; index++) {
+      refTree.__attrs[index].ownerElement.removeAttribute(refTree.__attrs[index].nodeName);
+      refTree.__attrs.splice(index, 1);
+    }
+  }
+}
+
+function deleteUpdateView(target: IReactiveItem, refs: TRefTree & TPropertys, propertyKey: PropertyKey): Boolean {
+  propertyKey = String(propertyKey);
+  const ref = refs[propertyKey];
+  if (ref === undefined) {
+    return true;
+  }
+
+  cleanRef(ref);
+
+  delete ref[propertyKey];
+  return true;
+}
 
 export default {
   collectTagRefs(El: IElement) {
@@ -23,31 +60,29 @@ export default {
 
     El.__og_isCollected = true;
 
-    if (El.nodeType !== 3) {
-      return ScopedElRefTree;
-    }
+    if (El.nodeType === 3) {
+      let refs: RegExpMatchArray = El.textContent.match(/(?<=\{\x20*).+?(?=\x20*\})/g);
 
-    let refs: RegExpMatchArray = El.textContent.match(/(?<=\{\x20*).+?(?=\x20*\})/g);
+      if (refs === null) {
+        return ScopedElRefTree;
+      }
+      const parentNode: HTMLElement = El.parentNode as HTMLElement;
+      refs = Array.from(new Set(refs));
+      const appendTextEls: Text[] = [];
+      for (let index = 0; index < refs.length; index++) {
+        const refRawString: string = refs[index].trim();
+        const newTextEl: Text = document.createTextNode("{" + refRawString + "}");
+        const propertyNames: string[] = Collect.parsePropertyString(refRawString);
+        ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, Collect.generateElRefTree(propertyNames, newTextEl));
 
-    if (refs === null) {
-      return ScopedElRefTree;
+        appendTextEls.push(newTextEl, document.createTextNode("\n"));
+        const replaceRegString: string = "\{\x20*" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "\x20*\}";
+        El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
+      }
+      appendTextEls.forEach(el => {
+        parentNode.insertBefore(el, El);
+      });
     }
-    const parentNode: HTMLElement = El.parentNode as HTMLElement;
-    refs = Array.from(new Set(refs));
-    const appendTextEls: Text[] = [];
-    for (let index = 0; index < refs.length; index++) {
-      const refRawString: string = refs[index].trim();
-      const newTextEl: Text = document.createTextNode("{" + refRawString + "}");
-      const propertyNames: string[] = Collect.parsePropertyString(refRawString);
-      ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, Collect.generateElRefTree(propertyNames, newTextEl));
-
-      appendTextEls.push(newTextEl, document.createTextNode("\n"));
-      const replaceRegString: string = "\{\x20*" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "\x20*\}";
-      El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
-    }
-    appendTextEls.forEach(el => {
-      parentNode.insertBefore(el, El);
-    });
 
     return ScopedElRefTree;
   },
@@ -62,7 +97,7 @@ export default {
 
     return ScopedElRefTree;
   },
-  updateView(target, propertys, property, value) {
+  setUpdateView(target, propertys, property, value) {
     if (propertys[property]) {
       const replaceValue: string = value.toString();
       if (propertys[property].__els) {
@@ -80,5 +115,7 @@ export default {
         });
       }
     }
-  }
-} as IPluginItem & { collectTagRefs(El: IElement): TRefTree }
+    return true;
+  },
+  deleteUpdateView
+} as IPluginItem

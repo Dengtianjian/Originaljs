@@ -1,4 +1,6 @@
+import { IReactiveItem } from "../../types/reactiveType";
 import Reactive from "./index";
+import View from "./view";
 
 export default class OProxy {
   static setProxy(rawData, filterData, path = [], reactiveInstance: Reactive) {
@@ -11,7 +13,8 @@ export default class OProxy {
             Object.defineProperty(rawData[key], "__og_stateKey", {
               value: path.join("."),
               writable: false,
-              configurable: false
+              configurable: false,
+              enumerable: false
             });
             Object.defineProperty(rawData[key], "__og_root", {
               value: reactiveInstance,
@@ -22,7 +25,16 @@ export default class OProxy {
             rawData[key] = new Proxy(rawData[key], {
               set(target: object, propertyKey: PropertyKey, value: any, receiver?: any) {
                 Reflect.set(target, propertyKey, value, receiver);
-                Reactive.updateView(target, propertyKey, value, receiver)
+                View.setUpdateView(target as IReactiveItem, propertyKey, value, receiver)
+                return true;
+              },
+              defineProperty(target, property, attrubutes) {
+                Reflect.defineProperty(target, property, attrubutes);
+                return true;
+              },
+              deleteProperty(target, property) {
+                View.deleteUpdateView(target, property);
+                Reflect.deleteProperty(target, property)
                 return true;
               }
             });
