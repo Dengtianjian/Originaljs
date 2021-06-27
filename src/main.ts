@@ -85,7 +85,7 @@ template = `
     color: #71777c;
   }
 </style>
-{user}
+{number}
 <o-for bookitem in books>
 <div class="books">
   <img src="{bookitem.base_info.cover_img}" />
@@ -97,7 +97,7 @@ template = `
   </div>
 </div>
 </o-for>
-<--<o-for dataitem in user>
+<o-for dataitem in user>
   <div>
     <o-for data in dataitem>
       <div title="{data}">
@@ -117,10 +117,10 @@ template = `
       </div>
     </div>
   </o-for>
-</o-for>->
+</o-for>
 `
 
-class CButton extends createElement(["name"]) {
+class CButton extends createElement(["name", "aa"]) {
   constructor() {
     super();
     const body = JSON.stringify({
@@ -148,6 +148,7 @@ class CButton extends createElement(["name"]) {
   render() {
     return template;
   }
+  number = 6;
   arrs = {
     nums: [0, 1, 2]
   };
@@ -170,16 +171,29 @@ class CButton extends createElement(["name"]) {
     }
   };
   updateArr(event) {
+    // this.update("number", 88);
+    // this.setAttribute("aa", "8");
+    // Object.defineProperty(this, "a", {
+    //   value: 8,
+    //   set(v) {
+    //     console.log(v);
+
+    //   }
+    // })
     // this.books[0].base_info.title = "";
     // console.log(this.books);
     // this.books[0].base_info.title = "";
-    this.books.splice(0, 2);
+    // this.books.splice(0, 2);
     fetch("./mook/book_page2.json").then(res => res.json()).then(({ data }) => {
-      // this.books.concat(...data);
-      // this.books.push(...data);
-      // setTimeout(() => {
+      this.update("books", data);
+      // this.books[0] = data[0];
+      // data.forEach((item, index) => {
+      //   this.books[index] = item;
+      // })
+      // this.books = data;
+      // console.log(this.books);
 
-      // }, 5000);
+      // this.books.push(...data);
     });
     // setTimeout(() => {
     //   this.books[36]['base_info']['title'] = "深入了解区块链、挖矿、钱包、签名等技术原理，对未来的数字货币世界做好准备";

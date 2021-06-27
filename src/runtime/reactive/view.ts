@@ -4,29 +4,50 @@ import { IReactiveItem } from "../../types/reactiveType";
 import collect from "./collect";
 import Plugin from "../plugin";
 
+export function updateRef(refTree: TPropertys, value: any) {
+  if (typeof value !== "string") {
+    value = value.toString();
+  }
+
+  if (refTree.__els) {
+    const els: HTMLElement[] = refTree['__els'];
+
+    els.forEach(el => {
+      el.textContent = value + "\n";
+    });
+  }
+  if (refTree.__attrs) {
+    const attrs: Attr[] = refTree['__attrs'];
+    attrs.forEach(attr => {
+      attr.nodeValue = value;
+    });
+  }
+}
+
 export function updateTargetView(refTree: TPropertys, rawData: {}): Boolean {
   for (const key in refTree) {
     if (Object.prototype.hasOwnProperty.call(refTree, key) && !['__attrs', "__els"].includes(key)) {
+
       if (typeof refTree[key] === "object") {
         updateTargetView(refTree[key], rawData[key]);
       }
 
-      const replaceValue = rawData[key].toString();
+      updateRef(refTree[key], rawData[key].toString());
+      // const replaceValue = rawData[key].toString();
 
+      // if (refTree[key].__els) {
+      //   const els: HTMLElement[] = refTree[key]['__els'];
 
-      if (refTree[key].__els) {
-        const els: HTMLElement[] = refTree[key]['__els'];
-
-        els.forEach(el => {
-          el.textContent = replaceValue + "\n";
-        });
-      }
-      if (refTree[key].__attrs) {
-        const attrs: Attr[] = refTree[key]['__attrs'];
-        attrs.forEach(attr => {
-          attr.nodeValue = replaceValue;
-        });
-      }
+      //   els.forEach(el => {
+      //     el.textContent = replaceValue + "\n";
+      //   });
+      // }
+      // if (refTree[key].__attrs) {
+      //   const attrs: Attr[] = refTree[key]['__attrs'];
+      //   attrs.forEach(attr => {
+      //     attr.nodeValue = replaceValue;
+      //   });
+      // }
     }
   }
   return true;
