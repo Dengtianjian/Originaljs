@@ -72,6 +72,18 @@ template = `
   .books .title {
     font-size: 16px;
     font-weight: 700;
+    animation:showTitle 0.5s ease-in-out;
+    transform-origin:50% 50%;
+  }
+  @keyframes showTitle {
+    0% {
+      opacity:0;
+      transform:scale(0);
+    }
+    100%{
+      opacity:1,
+      transform:scale(1);
+    }
   }
   .books .desc {
     margin-top: 5px;
@@ -92,8 +104,9 @@ template = `
   <div class="info" data-content="{bookitem.base_info.title}">
     <div class="title">{bookitem.base_info.title}</div>
     <div class="desc">{ bookitem.base_info.summary }</div>
-  </div>
-  <div>
+    <div>
+      { bookitem.user_info.user_name }
+     </div>
   </div>
 </div>
 </o-for>
@@ -114,6 +127,7 @@ template = `
         <div class="desc">{ bookItem.base_info.summary }</div>
       </div>
       <div>
+        { bookItem.user_info.user_name }
       </div>
     </div>
   </o-for>
@@ -129,6 +143,7 @@ class CButton extends createElement(["name", "aa"]) {
       limit: 20
     });
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
+      data[0]['test'] = Date.now();
       this.books.push(...data);
     });
   }
@@ -185,6 +200,12 @@ class CButton extends createElement(["name", "aa"]) {
     // this.books[0].base_info.title = "";
     // this.books.splice(0, 2);
     fetch("./mook/book_page2.json").then(res => res.json()).then(({ data }) => {
+      for (const key in data) {
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+          const element = data[key];
+          element.base_info.title = "";
+        }
+      }
       this.update("books", data);
       // this.books[0] = data[0];
       // data.forEach((item, index) => {
@@ -195,9 +216,9 @@ class CButton extends createElement(["name", "aa"]) {
 
       // this.books.push(...data);
     });
-    // setTimeout(() => {
-    //   this.books[36]['base_info']['title'] = "深入了解区块链、挖矿、钱包、签名等技术原理，对未来的数字货币世界做好准备";
-    // }, 10000);
+    setTimeout(() => {
+      this.books[0]['base_info']['title'] = "深入了解区块链、挖矿、钱包、签名等技术原理，对未来的数字货币世界做好准备";
+    }, 5000);
   }
   addProperty() {
     this.books[0].base_info.time = Date.now();

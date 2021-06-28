@@ -1,6 +1,7 @@
 import { IOGElement, TMethodItem, TStateItem } from "../types/elementType";
 import { parserDom } from "./component";
 import Reactive from "./reactive";
+import Diff from "./reactive/diff";
 import { updateRef, updateTargetView } from "./reactive/view";
 
 export default class Element extends HTMLElement implements IOGElement {
@@ -153,9 +154,12 @@ export default class Element extends HTMLElement implements IOGElement {
     }
   }
   update(attributeName: string, value: any): void {
-    // TODO 如果是可迭代数据 就diff
-    this[attributeName] = value;
-    const refTree = this.$ref.__og__.refs;
-    updateRef(refTree[attributeName], this[attributeName]);
+    if (typeof value === "object") {
+      Diff.compareMerge(value, this[attributeName]);
+    } else {
+      this[attributeName] = value;
+      const refTree = this.$ref.__og__.refs;
+      updateRef(refTree[attributeName], this[attributeName]);
+    }
   }
 }

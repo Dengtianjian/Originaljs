@@ -30,7 +30,7 @@ export interface IOGElement extends HTMLElement {
   adoptied(): void
   propChanged(name: string, newV: string, oldV: string): void
   render(): null | Node | NodeList | string;
-  setState<T>(key: string, value: T): void
+  // setState<T>(key: string, value: T): void
   setMethod(name: string, func: Function | AsyncGeneratorFunction): void
   update(attributeName: string, value: any): void
 }
