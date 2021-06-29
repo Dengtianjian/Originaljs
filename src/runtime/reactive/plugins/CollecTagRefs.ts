@@ -79,6 +79,7 @@ export default {
         const replaceRegString: string = "\{\x20*" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "\x20*\}";
         El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
       }
+
       appendTextEls.forEach(el => {
         parentNode.insertBefore(el, El);
       });
