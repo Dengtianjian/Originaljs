@@ -209,6 +209,12 @@ template = `
 </o-for>
 `
 
+// template = `
+// <button onclick="updateArr" >Update arr</button>
+// <button onclick="addProperty" >add Property</button>
+// <div>数字：{number} @ <p>{username}</p> 注册时间：{registerTime}</div>
+// `;
+
 class CButton extends createElement(["name", "aa"]) {
   constructor() {
     super();
@@ -260,7 +266,11 @@ class CButton extends createElement(["name", "aa"]) {
       phone: "1328888999"
     }
   };
+  username = "Admin";
+  registerTime = this.formatTime();
   updateArr(event) {
+    // this.username = "Tianjian";
+    // this.update("username", "Tianjian");
     // this.update("number", 88);
     // this.setAttribute("aa", "8");
     // Object.defineProperty(this, "a", {
@@ -281,8 +291,8 @@ class CButton extends createElement(["name", "aa"]) {
       //     element.base_info.title = "";
       //   }
       // }
-      this.books.push(...data);
-      // this.update("books", data);
+      // this.books.push(...data);
+      this.update("books", data);
       // this.books[0] = data[0];
       // data.forEach((item, index) => {
       //   this.books[index] = item;
@@ -297,7 +307,14 @@ class CButton extends createElement(["name", "aa"]) {
     // }, 5000);
   }
   addProperty() {
+    // setInterval(() => {
+    //   this.update("registerTime", this.formatTime());
+    // }, 1000);
     this.books[0].base_info.time = Date.now();
+  }
+  formatTime(timestamp = Date.now()) {
+    const d = new Date(timestamp);
+    return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
   }
 }
 
