@@ -83,8 +83,10 @@ export default {
 
         // TODO 因为有空格导致没替换掉的问题
         appendTextEls.push(newTextEl, document.createTextNode("\n"));
-        const replaceRegString: string = "\{\x20*" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "\x20*\}";
-        El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
+        const replaceRegString: string = "\{[\x20\r\n]*" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "[\x20\r\n]*\}";
+        console.log(replaceRegString);
+
+        // El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
       }
       appendTextEls.forEach(el => {
         parentNode.insertBefore(el, El);
