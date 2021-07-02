@@ -82,7 +82,6 @@ export default {
         const propertyNames: string[] = Collect.parsePropertyString(refRawString);
         ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, Collect.generateElRefTree(propertyNames, newTextEl));
 
-        // TODO 因为有空格导致没替换掉的问题
         appendTextEls.push(newTextEl, document.createTextNode("\n"));
         const replaceRegString: string = "\{[\x20\r\n]*" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "[\x20\r\n]*\}";
 
