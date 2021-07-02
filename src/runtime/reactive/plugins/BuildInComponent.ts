@@ -40,7 +40,7 @@ export default {
     }
 
     const propertyNames: string[] = Collect.parsePropertyString(propertyName);
-    const property: object | [] = Collect.getPropertyData(propertyNames, rawData);
+    const property: object | [] = rawData[propertyNames[0]]// Collect.getPropertyData(propertyNames, rawData);
 
     // TODO 替换key index
     const newEls = [];
@@ -144,9 +144,9 @@ export default {
   collectRef(El: IElement, rawData) {
     let ScopedElRefTree = {};
 
-    if (El.__og_isCollected) {
-      return ScopedElRefTree;
-    }
+    // if (El.__og_isCollected) {
+    //   return ScopedElRefTree;
+    // }
 
     if (El.nodeType === 1 && this.buildInComponentTagNames.includes(El.tagName.toLowerCase())) {
       const tagName: string = El.tagName.toLowerCase();

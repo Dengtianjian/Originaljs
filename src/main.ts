@@ -172,6 +172,9 @@ template = `
   </div>
 </div>
 </o-for>
+<p>{number}</p>
+<o-for bookitem in books>
+</o-for>
 <o-for dataitem in user>
   <div>
     <o-for data in dataitem>
@@ -218,6 +221,17 @@ template = `
 // <div>数字：{ number } @ <p>{  username  }</p> 注册时间：{registerTime}</div>
 // `;
 
+template=`
+<o-for bookitem in books>
+{bookitem}
+{bookitem}
+{bookitem}
+</o-for>
+<o-for bookitem in books>
+{bookitem}
+</o-for>
+`;
+
 class CButton extends createElement(["name", "aa"]) {
   constructor() {
     super();
@@ -228,7 +242,7 @@ class CButton extends createElement(["name", "aa"]) {
     });
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       // data[0]['test'] = Date.now();
-      this.books.push(...data);
+      this.books.push(data[0]);
     });
   }
   show() {

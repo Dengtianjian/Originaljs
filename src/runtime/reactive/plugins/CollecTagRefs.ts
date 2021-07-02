@@ -58,7 +58,7 @@ export default {
       ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, (plugin.use("CollectTagAttrRefs") as IPluginItem).collectRef(El, {}));
     }
 
-    El.__og_isCollected = true;
+    // El.__og_isCollected = true;
 
     if (El.nodeType === 3) {
 
@@ -98,9 +98,9 @@ export default {
   collectRef(El: IElement) {
     let ScopedElRefTree = {};
 
-    if (El.__og_isCollected) {
-      return ScopedElRefTree;
-    }
+    // if (El.__og_isCollected) {
+    //   return ScopedElRefTree;
+    // }
 
     ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, this.collectTagRefs(El));
 

@@ -7,7 +7,7 @@ export default class OProxy {
     for (const key in filterData) {
       if (Object.prototype.hasOwnProperty.call(filterData, key)) {
         path.push(key);
-        if (typeof rawData[key] === "object") {
+        if (typeof rawData[key] === "object" && rawData[key] !== null && rawData[key] !== undefined) {
           this.setProxy(rawData[key], filterData[key], path, reactiveInstance);
           if (!rawData[key].__og_root) {
             Object.defineProperty(rawData[key], "__og_stateKey", {
