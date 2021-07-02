@@ -151,7 +151,7 @@ function collection(El: IElement): TRefTree {
     }
   }
 
-  // Parser.parseRef(ScopedElRefTree, RefData);
+  Parser.parseRef(ScopedElRefTree, RefData);
   return ScopedElRefTree;
 }
 

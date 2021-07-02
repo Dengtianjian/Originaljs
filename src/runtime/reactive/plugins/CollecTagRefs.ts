@@ -62,7 +62,7 @@ export default {
 
     if (El.nodeType === 3) {
 
-      let refs: RegExpMatchArray = El.textContent.match(/(?<=\{\x20*).+?(?=\x20*\})/g);
+      let refs: RegExpMatchArray = El.textContent.match(/(?<=\{)\x20*.+?\x20*(?=\})/g);
 
       if (refs === null) {
         return ScopedElRefTree;
@@ -76,6 +76,7 @@ export default {
           appendTextEls.push(document.createTextNode(prependText));
           El.textContent = El.textContent.slice(El.textContent.indexOf(`{${refs[index]}}`));
         }
+
         const refRawString: string = refs[index].trim();
         const newTextEl: Text = document.createTextNode("{" + refRawString + "}");
         const propertyNames: string[] = Collect.parsePropertyString(refRawString);
@@ -84,9 +85,8 @@ export default {
         // TODO 因为有空格导致没替换掉的问题
         appendTextEls.push(newTextEl, document.createTextNode("\n"));
         const replaceRegString: string = "\{[\x20\r\n]*" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "[\x20\r\n]*\}";
-        console.log(replaceRegString);
 
-        // El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
+        El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
       }
       appendTextEls.forEach(el => {
         parentNode.insertBefore(el, El);

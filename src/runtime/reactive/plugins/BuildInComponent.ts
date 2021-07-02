@@ -231,7 +231,7 @@ export default {
 
         OProxy.setProxy(rawData, filterData, [], target.__og_root);
 
-        // Parser.parseRef(refTree, rawData);
+        Parser.parseRef(refTree, rawData);
 
         scopeRefTree = Collect.objectAssign(scopeRefTree, refTree);
       });
