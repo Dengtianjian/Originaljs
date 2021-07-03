@@ -119,7 +119,7 @@ function objectAssign(target: object, source: object) {
       const targetItem = target[key];
       const sourceItem = source[key];
       if (typeof targetItem === "object") {
-        if (key === "__els") {
+        if (Array.isArray(targetItem)) {
           target[key] = target[key].concat(sourceItem);
         } else {
           target[key] = objectAssign(targetItem, sourceItem);

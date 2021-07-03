@@ -58,18 +58,17 @@ export default {
       ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, (plugin.use("CollectTagAttrRefs") as IPluginItem).collectRef(El, {}));
     }
 
-    // El.__og_isCollected = true;
+    El.__og_isCollected = true;
 
     if (El.nodeType === 3) {
-
       let refs: RegExpMatchArray = El.textContent.match(/(?<=\{)\x20*.+?\x20*(?=\})/g);
 
       if (refs === null) {
         return ScopedElRefTree;
       }
       const parentNode: HTMLElement = El.parentNode as HTMLElement;
-      refs = Array.from(new Set(refs));
       const appendTextEls: Text[] = [];
+
       for (let index = 0; index < refs.length; index++) {
         const prependText: string = El.textContent.slice(0, El.textContent.indexOf(`{${refs[index]}}`));
         if (prependText) {
@@ -87,6 +86,7 @@ export default {
 
         El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
       }
+
       appendTextEls.forEach(el => {
         parentNode.insertBefore(el, El);
       });
@@ -97,9 +97,9 @@ export default {
   collectRef(El: IElement) {
     let ScopedElRefTree = {};
 
-    // if (El.__og_isCollected) {
-    //   return ScopedElRefTree;
-    // }
+    if (El.__og_isCollected) {
+      return ScopedElRefTree;
+    }
 
     ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, this.collectTagRefs(El));
 

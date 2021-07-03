@@ -221,14 +221,32 @@ template = `
 // <div>数字：{ number } @ <p>{  username  }</p> 注册时间：{registerTime}</div>
 // `;
 
-template=`
+template = `
+<div>
+  <button onclick="updateArr" >Update arr</button>
+</div>
+
 <o-for bookitem in books>
-{bookitem}
-{bookitem}
-{bookitem}
+  {bookitem}
+  {bookitem}
+  {bookitem}
 </o-for>
+
+<div>
+  <o-for bookitem in books>
+  {bookitem}
+  </o-for>
+</div>
+
+`;
+template = `
+<div>
+  <button onclick="updateArr" >Update arr</button>
+</div>
 <o-for bookitem in books>
-{bookitem}
+  <div>{bookitem.base_info.title}
+  {bookitem.base_info.title}
+  {bookitem.base_info.title}</div>
 </o-for>
 `;
 
@@ -242,7 +260,7 @@ class CButton extends createElement(["name", "aa"]) {
     });
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       // data[0]['test'] = Date.now();
-      this.books.push(data[0]);
+      // this.books.push(data[0]);
     });
   }
   show() {
@@ -285,6 +303,7 @@ class CButton extends createElement(["name", "aa"]) {
   };
   username = "Admin";
   registerTime = this.formatTime();
+  index = 0;
   updateArr(event) {
     // this.username = "Tianjian";
     // this.update("username", "Tianjian");
@@ -308,7 +327,7 @@ class CButton extends createElement(["name", "aa"]) {
       //     element.base_info.title = "";
       //   }
       // }
-      this.books.push(...data);
+      this.books.push(data[this.index++]);
       // this.books.unshift(...data);
       // this.update("books", data);
       // this.books[0] = data[0];

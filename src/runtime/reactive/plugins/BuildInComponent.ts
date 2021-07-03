@@ -40,7 +40,7 @@ export default {
     }
 
     const propertyNames: string[] = Collect.parsePropertyString(propertyName);
-    const property: object | [] = rawData[propertyNames[0]]// Collect.getPropertyData(propertyNames, rawData);
+    const property: object | [] = Collect.getPropertyData(propertyNames, rawData);
 
     // TODO 替换key index
     const newEls = [];
@@ -53,6 +53,7 @@ export default {
         })
         newEls.push(newEl);
       });
+
     } else if (typeof property === "object") {
       let index = 0;
       for (const key in property) {
@@ -67,6 +68,7 @@ export default {
         index++;
       }
     }
+    El.textContent = El.textContent.replaceAll(new RegExp(`\{\x20*${itemName}\x20*\}`, "g"), "");
 
     Array.from(El.children).forEach(node => {
       El.removeChild(node);
@@ -89,7 +91,10 @@ export default {
     //   ]
     // }), ref);
 
-    return Collect.deepGenerateTree(propertyNames, {
+    /**
+     * TODO 循环内直接 books里面没有0项元素时 {books[0]} 无效问题
+     */
+    const refs = Collect.deepGenerateTree(propertyNames, {
       __og_fors: [
         {
           el: El,
@@ -101,6 +106,8 @@ export default {
         }
       ]
     });
+
+    return refs;
   },
   replaceRef(El: HTMLElement, sourceString: string, replaceValue: string) {
 
@@ -144,9 +151,9 @@ export default {
   collectRef(El: IElement, rawData) {
     let ScopedElRefTree = {};
 
-    // if (El.__og_isCollected) {
-    //   return ScopedElRefTree;
-    // }
+    if (El.__og_isCollected) {
+      return ScopedElRefTree;
+    }
 
     if (El.nodeType === 1 && this.buildInComponentTagNames.includes(El.tagName.toLowerCase())) {
       const tagName: string = El.tagName.toLowerCase();
