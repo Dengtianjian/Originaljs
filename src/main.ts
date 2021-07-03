@@ -240,15 +240,20 @@ template = `
 
 `;
 template = `
-<div>
+div>
   <button onclick="updateArr" >Update arr</button>
 </div>
 <o-for bookitem in books>
-  <div>{bookitem.base_info.title}
+  <h1>\{ books.0.base_info.title\}</h1>
+  <div>
+  {bookitem.base_info.title} |
   {bookitem.base_info.title}
-  {bookitem.base_info.title}</div>
+  <p>\\{bookitem.base_info.title\\}</p>
+  </div>
 </o-for>
 `;
+
+template = "{ books.0.base_info.title }";
 
 class CButton extends createElement(["name", "aa"]) {
   constructor() {
@@ -327,6 +332,15 @@ class CButton extends createElement(["name", "aa"]) {
       //     element.base_info.title = "";
       //   }
       // }
+      if (this.index == 3) {
+        this.books[0].base_info.title = "新疆大爷用魔方拼出中国共产党万岁";
+      }
+      if (this.index == 6) {
+        this.books[0].base_info.title = "汪文斌:抹黑让新疆棉花更供不应求";
+      }
+      if (this.index == 9) {
+        this.books[0].base_info.title = "96岁老党员跨时空对话牺牲战友 ";
+      }
       this.books.push(data[this.index++]);
       // this.books.unshift(...data);
       // this.update("books", data);

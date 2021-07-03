@@ -53,7 +53,6 @@ export default {
         })
         newEls.push(newEl);
       });
-
     } else if (typeof property === "object") {
       let index = 0;
       for (const key in property) {
@@ -68,7 +67,8 @@ export default {
         index++;
       }
     }
-    El.textContent = El.textContent.replaceAll(new RegExp(`\{\x20*${itemName}\x20*\}`, "g"), "");
+
+    El.textContent = "";
 
     Array.from(El.children).forEach(node => {
       El.removeChild(node);
@@ -125,7 +125,7 @@ export default {
       return;
     }
 
-    El.textContent = El.textContent.replace(new RegExp(`(?<=\{\x20*)${sourceString}`, "g"), replaceValue);
+    El.textContent = El.textContent.replace(new RegExp(`(?<=\{\x20*)${sourceString}?`, "g"), replaceValue);
   },
   replaceAttrRef(El: HTMLElement, sourceString: string, replaceValue: string) {
     if (El.attributes.length === 0) {

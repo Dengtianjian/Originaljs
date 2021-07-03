@@ -61,7 +61,7 @@ export default {
     El.__og_isCollected = true;
 
     if (El.nodeType === 3) {
-      let refs: RegExpMatchArray = El.textContent.match(/(?<=\{)\x20*.+?\x20*(?=\})/g);
+      let refs: RegExpMatchArray = El.textContent.match(/(?<=(?<!\\)\{\x20*).+?(?=\x20*(?<!\\)\})/g);
 
       if (refs === null) {
         return ScopedElRefTree;
@@ -82,9 +82,11 @@ export default {
         ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, Collect.generateElRefTree(propertyNames, newTextEl));
 
         appendTextEls.push(newTextEl, document.createTextNode("\n"));
+
         const replaceRegString: string = "\{[\x20\r\n]*" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "[\x20\r\n]*\}";
 
         El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
+
       }
 
       appendTextEls.forEach(el => {

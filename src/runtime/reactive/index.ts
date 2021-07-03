@@ -60,7 +60,7 @@ export default class Reactive {
   constructor(target: HTMLElement | ShadowRoot, data: object) {
     this.target = target;
     this.data = data;
-    // this.rawData = JSON.parse(JSON.stringify(data));
+    this.rawData = JSON.parse(JSON.stringify(data));
     this.refs = Collect.reset(target as IElement, data);
 
     const filterData = this.filterRawData(this.refs, data);
