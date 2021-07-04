@@ -253,7 +253,7 @@ div>
 </o-for>
 `;
 
-template = "!{number} !{ username } { number } !{ index }";
+template = "a{number} !{ username } { number } !{ index }";
 
 class CButton extends createElement(["name", "aa"]) {
   constructor() {

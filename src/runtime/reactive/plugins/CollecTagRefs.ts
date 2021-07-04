@@ -61,7 +61,7 @@ export default {
     El.__og_isCollected = true;
 
     if (El.nodeType === 3) {
-      let refs: RegExpMatchArray = El.textContent.match(/([^\\]!)?\{ *.+? *\}/g);
+      let refs: RegExpMatchArray = El.textContent.match(/!?\{ *.+? *\}/g);
 
       if (refs === null) {
         return ScopedElRefTree;
@@ -70,14 +70,14 @@ export default {
       const appendTextEls: Text[] = [];
 
       for (let index = 0; index < refs.length; index++) {
-        if (/\!\{.+\}/.test(refs[index])) {
-          //* 如果有 !{var}  转换成 {var} 也就去掉前面的 !
-          const replaceNotValue = refs[index].match(/(?<=\!)\{ *.+? *\}/);
-          if (replaceNotValue) {
-            El.textContent = El.textContent.replace(refs[index], replaceNotValue[0]);
-          }
-          continue;
-        }
+        // if (/\!\{.+\}/.test(refs[index])) {
+        //   //* 如果有 !{var}  转换成 {var} 也就去掉前面的 !
+        //   const replaceNotValue = refs[index].match(/(?<=\!)\{ *.+? *\}/);
+        //   if (replaceNotValue) {
+        //     El.textContent = El.textContent.replace(refs[index], replaceNotValue[0]);
+        //   }
+        //   continue;
+        // }
         let variableName: unknown = refs[index].match(/(?<=\{)\x20*.+?\x20*(?=(?<!\\)\})/g);
 
         if (variableName === null) {
@@ -98,7 +98,7 @@ export default {
 
         appendTextEls.push(newTextEl, document.createTextNode("\n"));
 
-        const replaceRegString: string = "(?!\\)\{ *" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "? *\}";
+        const replaceRegString: string = "[^a]\{ *" + refRawString.replace(/([\.\[\]])/, "\\$1") + "? *\}";
 
         console.log(replaceRegString, El.textContent.match(replaceRegString));
 
