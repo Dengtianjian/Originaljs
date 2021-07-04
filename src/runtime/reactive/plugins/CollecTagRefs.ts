@@ -61,7 +61,7 @@ export default {
     El.__og_isCollected = true;
 
     if (El.nodeType === 3) {
-      let refs: RegExpMatchArray = El.textContent.match(/(?<=(?<!\\)\{\x20*).+?(?=\x20*(?<!\\)\})/g);
+      let refs: RegExpMatchArray = El.textContent.match(/([^\\]!)?\{ *.+? *\}/g);
 
       if (refs === null) {
         return ScopedElRefTree;
@@ -70,22 +70,40 @@ export default {
       const appendTextEls: Text[] = [];
 
       for (let index = 0; index < refs.length; index++) {
-        const prependText: string = El.textContent.slice(0, El.textContent.indexOf(`{${refs[index]}}`));
+        if (/\!\{.+\}/.test(refs[index])) {
+          //* 如果有 !{var}  转换成 {var} 也就去掉前面的 !
+          const replaceNotValue = refs[index].match(/(?<=\!)\{ *.+? *\}/);
+          if (replaceNotValue) {
+            El.textContent = El.textContent.replace(refs[index], replaceNotValue[0]);
+          }
+          continue;
+        }
+        let variableName: unknown = refs[index].match(/(?<=\{)\x20*.+?\x20*(?=(?<!\\)\})/g);
+
+        if (variableName === null) {
+          continue;
+        }
+        variableName = variableName[0];
+        const prependText: string = El.textContent.slice(0, El.textContent.indexOf(`{${variableName}}`));
         if (prependText) {
           appendTextEls.push(document.createTextNode(prependText));
-          El.textContent = El.textContent.slice(El.textContent.indexOf(`{${refs[index]}}`));
+          El.textContent = El.textContent.slice(El.textContent.indexOf(`{${variableName}}`));
         }
 
-        const refRawString: string = refs[index].trim();
+        const refRawString: string = (variableName as string).trim();
+
         const newTextEl: Text = document.createTextNode("{" + refRawString + "}");
         const propertyNames: string[] = Collect.parsePropertyString(refRawString);
         ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, Collect.generateElRefTree(propertyNames, newTextEl));
 
         appendTextEls.push(newTextEl, document.createTextNode("\n"));
 
-        const replaceRegString: string = "\{[\x20\r\n]*" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "[\x20\r\n]*\}";
+        const replaceRegString: string = "(?!\\)\{ *" + refRawString.replace(/([\.\[\]])/g, "\\$1") + "? *\}";
+
+        console.log(replaceRegString, El.textContent.match(replaceRegString));
 
         El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
+        console.log(El.textContent);
 
       }
 
@@ -93,6 +111,7 @@ export default {
         parentNode.insertBefore(el, El);
       });
     }
+
 
     return ScopedElRefTree;
   },

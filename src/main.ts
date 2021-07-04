@@ -253,7 +253,7 @@ div>
 </o-for>
 `;
 
-template = "{ books.0.base_info.title }";
+template = "!{number} !{ username } { number } !{ index }";
 
 class CButton extends createElement(["name", "aa"]) {
   constructor() {
