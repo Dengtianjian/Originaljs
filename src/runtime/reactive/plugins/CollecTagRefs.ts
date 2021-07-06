@@ -61,7 +61,7 @@ export default {
     El.__og_isCollected = true;
 
     if (El.nodeType === 3) {
-      let refs: RegExpMatchArray = El.textContent.match(/!?\{ *.+? *\}/g);
+      let refs: RegExpMatchArray = El.textContent.match(/\{ *.+? *\}/g);
 
       if (refs === null) {
         return ScopedElRefTree;
@@ -70,15 +70,7 @@ export default {
       const appendTextEls: Text[] = [];
 
       for (let index = 0; index < refs.length; index++) {
-        // if (/\!\{.+\}/.test(refs[index])) {
-        //   //* 如果有 !{var}  转换成 {var} 也就去掉前面的 !
-        //   const replaceNotValue = refs[index].match(/(?<=\!)\{ *.+? *\}/);
-        //   if (replaceNotValue) {
-        //     El.textContent = El.textContent.replace(refs[index], replaceNotValue[0]);
-        //   }
-        //   continue;
-        // }
-        let variableName: unknown = refs[index].match(/(?<=\{)\x20*.+?\x20*(?=(?<!\\)\})/g);
+        let variableName: unknown = refs[index].match(/(?<=\{)\x20*.+?\x20*(?=\})/g);
 
         if (variableName === null) {
           continue;
@@ -98,20 +90,15 @@ export default {
 
         appendTextEls.push(newTextEl, document.createTextNode("\n"));
 
-        const replaceRegString: string = "[^a]\{ *" + refRawString.replace(/([\.\[\]])/, "\\$1") + "? *\}";
-
-        console.log(replaceRegString, El.textContent.match(replaceRegString));
+        const replaceRegString: string = "\{ *" + refRawString.replace(/([\.\[\]])/, "\\$1") + "? *\}";
 
         El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
-        console.log(El.textContent);
-
       }
 
       appendTextEls.forEach(el => {
         parentNode.insertBefore(el, El);
       });
     }
-
 
     return ScopedElRefTree;
   },
@@ -130,7 +117,6 @@ export default {
     if (propertys[property]) {
       const replaceValue: string = value.toString();
       if (propertys[property].__els) {
-
         const els: HTMLElement[] = propertys[property]['__els'];
 
         els.forEach(el => {

@@ -253,7 +253,7 @@ div>
 </o-for>
 `;
 
-template = "a{number} !{ username } { number } !{ index }";
+template = "{number} { username } { number } { indexnUmber }";
 
 class CButton extends createElement(["name", "aa"]) {
   constructor() {
@@ -309,6 +309,7 @@ class CButton extends createElement(["name", "aa"]) {
   username = "Admin";
   registerTime = this.formatTime();
   index = 0;
+  indexnUmber = 0;
   updateArr(event) {
     // this.username = "Tianjian";
     // this.update("username", "Tianjian");
