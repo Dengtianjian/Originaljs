@@ -172,7 +172,7 @@ template = `
   </div>
 </div>
 </o-for>
-<p>{number}</p>
+<p>{ number }</p>
 <o-for bookitem in books>
 </o-for>
 <o-for dataitem in user>
@@ -221,39 +221,41 @@ template = `
 // <div>数字：{ number } @ <p>{  username  }</p> 注册时间：{registerTime}</div>
 // `;
 
-template = `
-<div>
-  <button onclick="updateArr" >Update arr</button>
-</div>
+// template = `
+// <div>
+//   <button onclick="updateArr" >Update arr</button>
+// </div>
 
-<o-for bookitem in books>
-  {bookitem}
-  {bookitem}
-  {bookitem}
-</o-for>
+// <o-for bookitem in books>
+//   {bookitem}
+//   {bookitem}
+//   {bookitem}
+// </o-for>
 
-<div>
-  <o-for bookitem in books>
-  {bookitem}
-  </o-for>
-</div>
+// <div>
+//   <o-for bookitem in books>
+//   {bookitem}
+//   </o-for>
+// </div>
 
-`;
-template = `
-div>
-  <button onclick="updateArr" >Update arr</button>
-</div>
-<o-for bookitem in books>
-  <h1>\{ books.0.base_info.title\}</h1>
-  <div>
-  {bookitem.base_info.title} |
-  {bookitem.base_info.title}
-  <p>\\{bookitem.base_info.title\\}</p>
-  </div>
-</o-for>
-`;
+// `;
+// template = `
+// <div>
+//   <button onclick="updateArr" >Update arr</button>
+// </div>
+// <o-for bookitem in books>
+//   <h1>{ books.0.base_info.title}</h1>
+//   <div>
+//   {bookitem.base_info.title} |
+//   {bookitem.base_info.title}
+//   <p>{bookitem.base_info.title}</p>
+//   </div>
+// </o-for>
+// `;
 
-template = "{number} { username } { number } { indexnUmber }";
+template = `<div>
+<button onclick="updateArr" >Update arr</button>
+</div>{{ {number} }}`;
 
 class CButton extends createElement(["name", "aa"]) {
   constructor() {
@@ -265,7 +267,8 @@ class CButton extends createElement(["name", "aa"]) {
     });
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       // data[0]['test'] = Date.now();
-      // this.books.push(data[0]);
+      // this.books.push(...data);
+      this.books.push(data[0]);
     });
   }
   show() {
@@ -309,11 +312,10 @@ class CButton extends createElement(["name", "aa"]) {
   username = "Admin";
   registerTime = this.formatTime();
   index = 0;
-  indexnUmber = 0;
   updateArr(event) {
     // this.username = "Tianjian";
     // this.update("username", "Tianjian");
-    // this.update("number", 88);
+    this.update("number", 88);
     // this.setAttribute("aa", "8");
     // Object.defineProperty(this, "a", {
     //   value: 8,
@@ -326,6 +328,7 @@ class CButton extends createElement(["name", "aa"]) {
     // console.log(this.books);
     // this.books[0].base_info.title = "";
     // this.books.splice(0, 2);
+    // this.number = Date.now();
     fetch("./mook/book_page2.json").then(res => res.json()).then(({ data }) => {
       // for (const key in data) {
       //   if (Object.prototype.hasOwnProperty.call(data, key)) {
@@ -362,7 +365,8 @@ class CButton extends createElement(["name", "aa"]) {
     // setInterval(() => {
     //   this.update("registerTime", this.formatTime());
     // }, 1000);
-    this.books[0].base_info.time = Date.now();
+    this.number = Date.now();
+    // this.books[0].base_info.time = Date.now();
   }
   formatTime(timestamp = Date.now()) {
     const d = new Date(timestamp);
