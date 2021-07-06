@@ -3,7 +3,7 @@ import Collect from "./collect";
 function parseRef(refTree: object, rawData: object, path: string[] = []) {
   for (const branchName in refTree) {
     if (Object.prototype.hasOwnProperty.call(refTree, branchName)) {
-      if (rawData[branchName]) {
+      if (rawData[branchName] !== undefined) {
         if (typeof rawData[branchName] === "object") {
           path.push(branchName);
           replaceRefContent(refTree, rawData, branchName, path);
