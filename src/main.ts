@@ -250,9 +250,12 @@ template = `
 // </o-for>
 // `;
 
-// template = `<div>
-// <button onclick="updateArr" >Update arr</button>
-// </div>{{ {number} }}`;
+template = `
+<div>
+  <button onclick="updateArr" >Update arr</button>
+</div>
+<div data-d="{number} a {index}">{ number }</div>
+`;
 
 class CButton extends createElement(["name", "aa"]) {
   constructor() {

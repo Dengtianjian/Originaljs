@@ -14,6 +14,8 @@ export default {
     for (const attrItem of Array.from(El.attributes)) {
       if (/(?<=\{\x20*).+?(?=\x20*\})/.test(attrItem.nodeValue)) {
         const refs: string[] = attrItem.nodeValue.match(/(?<=\{\x20*).+?(?=\x20*\})/g);
+        console.log(refs);
+
         refs.forEach(refItem => {
           const propertyNames: string[] = Collect.parsePropertyString(refItem);
           const RefTree = Collect.generateElRefTree(propertyNames, attrItem);

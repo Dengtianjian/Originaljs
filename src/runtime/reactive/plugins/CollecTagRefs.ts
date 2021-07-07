@@ -3,6 +3,7 @@ import { IPluginItem, TPropertys, TRefTree } from "../../../types/pluginType";
 import { IReactiveItem } from "../../../types/reactiveType";
 import plugin from "../../plugin";
 import Collect from "../collect";
+import { ExtractVariableName, VariableItem, VariableName } from "../rules";
 
 function cleanRef(refTree) {
   if (typeof refTree === "object") {
@@ -61,7 +62,7 @@ export default {
     El.__og_isCollected = true;
 
     if (El.nodeType === 3) {
-      let refs: RegExpMatchArray = El.textContent.match(/\{ *[a-zA-z_][a-zA-z0-9_\.\[\]]+ *\}/g);
+      let refs: RegExpMatchArray = El.textContent.match(new RegExp(VariableItem, "g"));
 
       if (refs === null) {
         return ScopedElRefTree;
@@ -70,7 +71,7 @@ export default {
       const appendTextEls: Text[] = [];
 
       for (let index = 0; index < refs.length; index++) {
-        let variableName: unknown = refs[index].match(/(?<=\{)\x20*[a-zA-z_][a-zA-z0-9_\.\[\]]+?\x20*(?=\})/g);
+        let variableName: unknown = refs[index].match(new RegExp(ExtractVariableName, "g"));
 
         if (variableName === null) {
           continue;
@@ -121,7 +122,7 @@ export default {
         const els: HTMLElement[] = propertys[property]['__els'];
 
         els.forEach(el => {
-          el.textContent = replaceValue + "\n";
+          el.textContent = replaceValue;
         });
       }
       if (propertys[property].__attrs) {
