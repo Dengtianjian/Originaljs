@@ -151,7 +151,7 @@ template = `
     <div class="title">{bookitem.base_info.title}</div>
     <div class="desc">{ bookitem.base_info.summary }</div>
     <div>
-      { bookitem.user_info.user_name }
+      { books[0].base_info.title }
      </div>
      <div class="author">
      <div class="author-info"><object><a href="/user/1838039171075352" target="_blank" rel="" st:name="author"
@@ -190,9 +190,6 @@ template = `
     <div class="info" data-content="{bookitem.base_info.title}">
       <div class="title">{bookitem.base_info.title}</div>
       <div class="desc">{ bookitem.base_info.summary }</div>
-      <div>
-        { bookitem.user_info.user_name }
-       </div>
        <div class="author">
        <div class="author-info"><object><a href="/user/1838039171075352" target="_blank" rel="" st:name="author"
              st:state="1838039171075352" class="xiaoce-user"><img src="{bookitem.user_info.avatar_large}"
@@ -253,9 +250,9 @@ template = `
 // </o-for>
 // `;
 
-template = `<div>
-<button onclick="updateArr" >Update arr</button>
-</div>{{ {number} }}`;
+// template = `<div>
+// <button onclick="updateArr" >Update arr</button>
+// </div>{{ {number} }}`;
 
 class CButton extends createElement(["name", "aa"]) {
   constructor() {
@@ -267,8 +264,8 @@ class CButton extends createElement(["name", "aa"]) {
     });
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       // data[0]['test'] = Date.now();
-      // this.books.push(...data);
-      this.books.push(data[0]);
+      this.books.push(...data);
+      // this.books.push(data[0]);
     });
   }
   show() {
@@ -336,6 +333,8 @@ class CButton extends createElement(["name", "aa"]) {
       //     element.base_info.title = "";
       //   }
       // }
+      console.log(data);
+
       if (this.index == 3) {
         this.books[0].base_info.title = "新疆大爷用魔方拼出中国共产党万岁";
       }

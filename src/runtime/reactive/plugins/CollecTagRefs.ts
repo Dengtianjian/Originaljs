@@ -61,7 +61,7 @@ export default {
     El.__og_isCollected = true;
 
     if (El.nodeType === 3) {
-      let refs: RegExpMatchArray = El.textContent.match(/\{ *\S+ *\}/g);
+      let refs: RegExpMatchArray = El.textContent.match(/\{ *[a-zA-z_][a-zA-z0-9_\.\[\]]+ *\}/g);
 
       if (refs === null) {
         return ScopedElRefTree;
@@ -69,16 +69,13 @@ export default {
       const parentNode: HTMLElement = El.parentNode as HTMLElement;
       const appendTextEls: Text[] = [];
 
-      console.log(refs);
-
       for (let index = 0; index < refs.length; index++) {
-        let variableName: unknown = refs[index].match(/(?<=\{)\x20*\S+?\x20*(?=\})/g);
+        let variableName: unknown = refs[index].match(/(?<=\{)\x20*[a-zA-z_][a-zA-z0-9_\.\[\]]+?\x20*(?=\})/g);
 
         if (variableName === null) {
           continue;
         }
         variableName = variableName[0];
-        console.log(variableName);
 
         const prependText: string = El.textContent.slice(0, El.textContent.indexOf(`{${variableName}}`));
         if (prependText) {
