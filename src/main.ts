@@ -254,7 +254,7 @@ template = `
 <div>
   <button onclick="updateArr" >Update arr</button>
 </div>
-<div data-d="{number} a {index}">{ number }</div>
+<div data-d="{number} a {{ index }} b">{ number }</div>
 `;
 
 class CButton extends createElement(["name", "aa"]) {
