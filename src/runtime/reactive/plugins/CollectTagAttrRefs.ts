@@ -26,10 +26,8 @@ export default {
 
           if (proviousString) {
             attrStrings.set(String(attrStrings.size), proviousString);
-            // attrStrings[Object.keys(attrStrings).length] = proviousString;
           }
           attrStrings.set(variabledName[0].trim(), refItem);
-          // attrStrings[variabledName[0].trim()] = refItem;
 
           if (variabledName) {
             const propertyNames: string[] = Collect.parsePropertyString(variabledName[0].trim());
@@ -38,7 +36,6 @@ export default {
           }
 
         });
-        // attrStrings[Object.keys(attrStrings).length] = rawString;
         attrStrings.set(String(attrStrings.size), rawString);
         Object.defineProperty(attrItem, "__og_attrs", {
           value: attrStrings,
@@ -46,7 +43,6 @@ export default {
           enumerable: false,
           writable: false
         });
-        console.log(attrStrings.entries());
 
       }
     }

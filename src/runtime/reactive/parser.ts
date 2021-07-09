@@ -1,4 +1,5 @@
 import Collect from "./collect";
+import { ExtractVariableName } from "./rules";
 
 function parseRef(refTree: object, rawData: object, path: string[] = []) {
   for (const branchName in refTree) {
@@ -27,7 +28,8 @@ function replaceRefContent(refTree, rawData, branchName, path) {
   if (refTree[branchName]['__attrs'] && refTree[branchName]['__attrs'].length > 0) {
     const attrs: Attr[] = refTree[branchName]['__attrs'];
     for (const attr of attrs) {
-      let refs = attr.nodeValue.match(/(?<=\{\x20*).+?(?=\x20*\})/g);
+      let refs = attr.nodeValue.match(new RegExp(ExtractVariableName, "g"));
+
       if (refs === null) {
         continue;
       }
