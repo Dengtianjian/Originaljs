@@ -47,7 +47,20 @@ function replaceRefContent(refTree, rawData, branchName, path) {
   }
 }
 
+function parseString(sourceString: string, rawData: any): string {
+  const refs = sourceString.match(new RegExp(ExtractVariableName, "g"));
+
+  refs.forEach(ref => {
+    const propertyStrings = Collect.parsePropertyString(ref);
+    const replaceValue = Collect.getPropertyData(propertyStrings, rawData);
+
+    sourceString = sourceString.replaceAll(`{${ref}}`, replaceValue.toString());
+  });
+  return sourceString;
+}
+
 export default {
   parseRef,
-  replaceRefContent
+  replaceRefContent,
+  parseString
 }
