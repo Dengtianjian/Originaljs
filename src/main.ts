@@ -254,7 +254,8 @@ template = `
 <div>
   <button onclick="updateArr" >Update arr</button>
 </div>
-<div data-d="{number} a {{ index }} b">{ number }</div>
+{ books[0].base_info.title }
+<div data-d="{books[0].base_info.title} a {{ index }} b">{ number }</div>
 `;
 
 class CButton extends createElement(["name", "aa"]) {
@@ -313,9 +314,11 @@ class CButton extends createElement(["name", "aa"]) {
   registerTime = this.formatTime();
   index = 0;
   updateArr(event) {
+    console.log(this.books);
+
     // this.username = "Tianjian";
     // this.update("username", "Tianjian");
-    this.update("number", 88);
+    // this.update("number", 88);
     // this.setAttribute("aa", "8");
     // Object.defineProperty(this, "a", {
     //   value: 8,
@@ -336,18 +339,19 @@ class CButton extends createElement(["name", "aa"]) {
       //     element.base_info.title = "";
       //   }
       // }
-      console.log(data);
+      // console.log(data);
 
-      if (this.index == 3) {
-        this.books[0].base_info.title = "新疆大爷用魔方拼出中国共产党万岁";
-      }
-      if (this.index == 6) {
-        this.books[0].base_info.title = "汪文斌:抹黑让新疆棉花更供不应求";
-      }
-      if (this.index == 9) {
-        this.books[0].base_info.title = "96岁老党员跨时空对话牺牲战友 ";
-      }
-      this.books.push(data[this.index++]);
+      this.books[0].base_info.title = "新疆大爷用魔方拼出中国共产党万岁";
+      // if (this.index == 3) {
+      //   this.books[0].base_info.title = "新疆大爷用魔方拼出中国共产党万岁";
+      // }
+      // if (this.index == 6) {
+      //   this.books[0].base_info.title = "汪文斌:抹黑让新疆棉花更供不应求";
+      // }
+      // if (this.index == 9) {
+      //   this.books[0].base_info.title = "96岁老党员跨时空对话牺牲战友 ";
+      // }
+      // this.books.push(data[this.index++]);
       // this.books.unshift(...data);
       // this.update("books", data);
       // this.books[0] = data[0];

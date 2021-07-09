@@ -13,37 +13,28 @@ export default {
       return ScopedElRefTree;
     }
 
-    let rawString: string = "";
     for (const attrItem of Array.from(El.attributes)) {
       if (/(?<=\{\x20*).+?(?=\x20*\})/.test(attrItem.nodeValue)) {
-        rawString = attrItem.nodeValue;
         const refs: string[] = attrItem.nodeValue.match(new RegExp(VariableItem, "g"));
-        const attrStrings = new Map<string, string>();
-        refs.forEach(refItem => {
-          const proviousString = rawString.slice(0, rawString.indexOf(refItem));
-          rawString = rawString.slice(proviousString.length + refItem.length);
-          const variabledName: RegExpMatchArray = refItem.match(ExtractVariableName);
 
-          if (proviousString) {
-            attrStrings.set(String(attrStrings.size), proviousString);
-          }
-          attrStrings.set(variabledName[0].trim(), refItem);
+        refs.forEach(refItem => {
+          const variabledName: RegExpMatchArray = refItem.match(ExtractVariableName);
 
           if (variabledName) {
             const propertyNames: string[] = Collect.parsePropertyString(variabledName[0].trim());
             const RefTree = Collect.generateElRefTree(propertyNames, attrItem);
             ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, RefTree) as TRefTree;
           }
-
         });
-        attrStrings.set(String(attrStrings.size), rawString);
+
         Object.defineProperty(attrItem, "__og_attrs", {
-          value: attrStrings,
+          value: {
+            rawNodeValue: attrItem.nodeValue
+          },
           configurable: false,
           enumerable: false,
           writable: false
         });
-
       }
     }
     return ScopedElRefTree;

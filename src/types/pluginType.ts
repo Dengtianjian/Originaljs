@@ -18,7 +18,7 @@ export type TPropertys = {
   [key: string]: any,
   __og_fors?: Array<TForItem>,
   __els?: HTMLElement,
-  __attrs?: Attr[]
+  __attrs?: Array<Attr & { __og_attrs: any }>
 }
 
 export interface IPluginItem {

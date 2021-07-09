@@ -159,7 +159,7 @@ export default class Element extends HTMLElement implements IOGElement {
     } else {
       this[attributeName] = value;
       const refTree = this.$ref.__og__.refs;
-      updateRef(refTree[attributeName], this[attributeName]);
+      updateRef(refTree[attributeName], this[attributeName], this);
     }
   }
 }

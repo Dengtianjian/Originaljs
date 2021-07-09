@@ -127,12 +127,12 @@ export default {
       }
       if (propertys[property].__attrs) {
         const attrs: Attr[] = propertys[property]['__attrs'];
+
         attrs.forEach(attr => {
           attr.nodeValue = replaceValue;
         });
       }
     }
     return true;
-  },
-  deleteUpdateView
+  }
 } as IPluginItem

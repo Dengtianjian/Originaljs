@@ -3,8 +3,10 @@ import { IPlugins, TPropertys, TRefTree } from "../../types/pluginType";
 import { IReactiveItem } from "../../types/reactiveType";
 import collect from "./collect";
 import Plugin from "../plugin";
+import parser from "./parser";
+import { ExtractVariableName } from "./rules";
 
-export function updateRef(refTree: TPropertys, value: any) {
+export function updateRef(refTree: TPropertys, value: any, rawData: {}) {
   if (typeof value !== "string") {
     value = value.toString();
   }
@@ -13,13 +15,20 @@ export function updateRef(refTree: TPropertys, value: any) {
     const els: HTMLElement[] = refTree['__els'];
 
     els.forEach(el => {
-      el.textContent = value + "\n";
+      el.textContent = value;
     });
   }
+
+  console.log(refTree);
+
   if (refTree.__attrs) {
     const attrs: Attr[] = refTree['__attrs'];
     attrs.forEach(attr => {
-      attr.nodeValue = value;
+      if (attr.__og_attrs) {
+        attr.nodeValue = parser.parseString(attr.__og_attrs.rawNodeValue, rawData);
+      } else {
+        attr.nodeValue = value;
+      }
     });
   }
 }
@@ -33,21 +42,6 @@ export function updateTargetView(refTree: TPropertys, rawData: {}): Boolean {
       }
 
       updateRef(refTree[key], rawData[key].toString());
-      // const replaceValue = rawData[key].toString();
-
-      // if (refTree[key].__els) {
-      //   const els: HTMLElement[] = refTree[key]['__els'];
-
-      //   els.forEach(el => {
-      //     el.textContent = replaceValue + "\n";
-      //   });
-      // }
-      // if (refTree[key].__attrs) {
-      //   const attrs: Attr[] = refTree[key]['__attrs'];
-      //   attrs.forEach(attr => {
-      //     attr.nodeValue = replaceValue;
-      //   });
-      // }
     }
   }
   return true;
