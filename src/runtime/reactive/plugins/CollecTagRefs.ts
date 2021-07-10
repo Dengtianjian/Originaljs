@@ -3,7 +3,9 @@ import { IPluginItem, TPropertys, TRefTree } from "../../../types/pluginType";
 import { IReactiveItem } from "../../../types/reactiveType";
 import plugin from "../../plugin";
 import Collect from "../collect";
+import parser from "../parser";
 import { ExtractVariableName, VariableItem, VariableName } from "../rules";
+import OProxy from "../oproxy";
 
 function cleanRef(refTree) {
   if (typeof refTree === "object") {
@@ -96,7 +98,6 @@ export default {
 
         El.textContent = El.textContent.replace(new RegExp(replaceRegString), "");
       }
-
       appendTextEls.forEach(el => {
         parentNode.insertBefore(el, El);
       });
@@ -115,8 +116,11 @@ export default {
 
     return ScopedElRefTree;
   },
-  setUpdateView(target, propertys, property, value) {
-    if (propertys[property]) {
+  setUpdateView(target, propertys, property, value, rawData, paths = []) {
+    if (propertys[property] !== undefined) {
+      paths.push(target.__og_stateKey)
+
+      OProxy.setProxy(target, propertys, paths, target.__og_root);
       const replaceValue: string = value.toString();
       if (propertys[property].__els) {
         const els: HTMLElement[] = propertys[property]['__els'];
@@ -129,8 +133,15 @@ export default {
         const attrs: Attr[] = propertys[property]['__attrs'];
 
         attrs.forEach(attr => {
-          attr.nodeValue = replaceValue;
+          attr.nodeValue = parser.parseString(attr.__og_attrs.rawNodeValue, rawData);
         });
+      }
+      if (typeof propertys[property] === "object" && target[property]) {
+        for (const key in propertys[property]) {
+          if (target[property][key] !== undefined) {
+            this.setUpdateView(target[property], propertys[property], key, target[property][key], rawData, paths);
+          }
+        }
       }
     }
     return true;

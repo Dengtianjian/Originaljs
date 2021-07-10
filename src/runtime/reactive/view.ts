@@ -6,7 +6,7 @@ import Plugin from "../plugin";
 import parser from "./parser";
 import { ExtractVariableName } from "./rules";
 
-export function updateRef(refTree: TPropertys, value: any, rawData: {}) {
+export function updateRef(refTree: TPropertys, value: any, rawData?: {}) {
   if (typeof value !== "string") {
     value = value.toString();
   }
@@ -18,8 +18,6 @@ export function updateRef(refTree: TPropertys, value: any, rawData: {}) {
       el.textContent = value;
     });
   }
-
-  console.log(refTree);
 
   if (refTree.__attrs) {
     const attrs: Attr[] = refTree['__attrs'];
@@ -57,23 +55,10 @@ export function setUpdateView(target: IReactiveItem, propertyKey: PropertyKey, v
     if (Object.prototype.hasOwnProperty.call(plugins, pluginName)) {
       const pluginItem = plugins[pluginName];
       if (pluginItem.setUpdateView) {
-        pluginItem.setUpdateView(target, propertys, propertyKey, value);
+        pluginItem.setUpdateView(target, propertys, propertyKey, value, target.__og_root.data);
       }
     }
   }
-
-  // if (Array.isArray(target) && property !== "length") {
-  //   if (propertys.__els && propertys.__els.length > 0) {
-  //     propertys.__els.forEach(el => {
-  //       el.textContent = target.toString();
-  //     })
-  //   }
-  //   if (propertys.__attrs && propertys.__attrs.length > 0) {
-  //     propertys.__attrs.forEach(attrItem => {
-  //       attrItem.nodeValue = target.toString();
-  //     });
-  //   }
-  // }
 }
 
 export function deleteUpdateView(target: IReactiveItem, propertyKey: PropertyKey) {

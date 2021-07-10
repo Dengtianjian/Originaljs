@@ -261,11 +261,6 @@ template = `
 class CButton extends createElement(["name", "aa"]) {
   constructor() {
     super();
-    const body = JSON.stringify({
-      category_id: "0",
-      cursor: "20",
-      limit: 20
-    });
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       // data[0]['test'] = Date.now();
       this.books.push(...data);
@@ -314,7 +309,7 @@ class CButton extends createElement(["name", "aa"]) {
   registerTime = this.formatTime();
   index = 0;
   updateArr(event) {
-    console.log(this.books);
+    // console.log(this.books);
 
     // this.username = "Tianjian";
     // this.update("username", "Tianjian");
