@@ -1,9 +1,8 @@
-import { time } from "console";
 import {
   defineElement,
   createElement,
   Reactive
-} from "./runtime";
+} from "./src";
 
 // let template: string = await import("./components/templates/cbutton.html");
 // template = template.default;

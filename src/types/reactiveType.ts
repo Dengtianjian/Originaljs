@@ -1,4 +1,4 @@
-import { Reactive } from "../runtime";
+import { Reactive } from "../";
 
 export interface IReactiveItem {
   [key: string]: any,

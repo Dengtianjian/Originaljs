@@ -1,4 +1,4 @@
-import { Element, Reactive } from "../runtime";
+import { Element, Reactive } from "../";
 
 export interface IElement extends HTMLElement {
   __og_isCollected: boolean,

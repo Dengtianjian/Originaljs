@@ -1,4 +1,4 @@
-import { IReactiveItem } from "../../types/reactiveType";
+import { IReactiveItem } from "../types/reactiveType";
 import Reactive from "./index";
 import View from "./view";
 

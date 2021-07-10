@@ -1,5 +1,5 @@
-import { IElement } from "../../types/elementType";
-import { IPluginItem, IPlugins, TRefTree } from "../../types/pluginType";
+import { IElement } from "../types/elementType";
+import { IPluginItem, IPlugins, TRefTree } from "../types/pluginType";
 import Plugin from "../plugin";
 import Parser from "./parser";
 

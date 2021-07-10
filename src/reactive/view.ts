@@ -1,6 +1,6 @@
 import Reactive from ".";
-import { IPlugins, TPropertys, TRefTree } from "../../types/pluginType";
-import { IReactiveItem } from "../../types/reactiveType";
+import { IPlugins, TPropertys, TRefTree } from "../types/pluginType";
+import { IReactiveItem } from "../types/reactiveType";
 import collect from "./collect";
 import Plugin from "../plugin";
 import parser from "./parser";

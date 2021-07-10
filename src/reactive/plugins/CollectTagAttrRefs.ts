@@ -1,5 +1,5 @@
-import { IElement } from "../../../types/elementType";
-import { TRefTree } from "../../../types/pluginType";
+import { IElement } from "../../types/elementType";
+import { TRefTree } from "../../types/pluginType";
 import Collect from "../collect";
 import { ExtractVariableName, VariableItem } from "../rules";
 

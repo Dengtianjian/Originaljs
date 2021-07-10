@@ -1,4 +1,4 @@
-import { IPluginItem, IPlugins } from "../../types/pluginType";
+import { IPluginItem, IPlugins } from "../types/pluginType";
 
 const Plugins: IPlugins = {};
 function register(name: string, hooks: IPluginItem) {

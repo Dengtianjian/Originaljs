@@ -1,5 +1,5 @@
 import { Query } from "./selector";
-import { ITransitionProperty, ITrantionItem } from "../types/transitionTypes";
+import { ITransitionProperty, ITrantionItem } from "./types/transitionTypes";
 
 class Transition {
   private $el: null | HTMLElement = null;

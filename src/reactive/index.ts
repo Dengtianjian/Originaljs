@@ -25,14 +25,14 @@
  * updateView
  */
 
-import { IPlugins } from "../../types/pluginType";
+import { IPlugins } from "../types/pluginType";
 import Plugin from "../plugin";
 import Collect from "./collect";
 import OProxy from "./oproxy";
 import CollectTagRefs from "./plugins/CollecTagRefs";
 import BuildInComponent from "./plugins/BuildInComponent";
 import CollectTagAttrRefs from "./plugins/CollectTagAttrRefs";
-import { IElement } from "../../types/elementType";
+import { IElement } from "../types/elementType";
 
 Plugin.register("BuildInComponent", BuildInComponent);
 Plugin.register("CollectTagRefs", CollectTagRefs);

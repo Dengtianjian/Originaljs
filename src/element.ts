@@ -1,4 +1,4 @@
-import { IOGElement, TMethodItem, TStateItem } from "../types/elementType";
+import { IOGElement, TMethodItem, TStateItem } from "./types/elementType";
 import { parserDom } from "./component";
 import Reactive from "./reactive";
 import Diff from "./reactive/diff";
