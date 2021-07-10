@@ -1,7 +1,6 @@
 import Transition from "./transition";
 
 import { defineElement, createElement } from "./component";
-import { importTemplate } from "./template";
 import { Query } from "./selector";
 import Element from "./element";
 import Reactive from "./reactive";
@@ -16,7 +15,5 @@ export {
   ObserverNodeAttributes,
   defineElement,
   createElement,
-  importTemplate,
-  Query,
-  Use
+  Query
 }
