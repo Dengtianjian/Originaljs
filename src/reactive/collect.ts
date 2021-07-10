@@ -30,7 +30,7 @@ function getPropertyData(propertyStrs: string[], refData: object) {
   return property;
 }
 
-function generateElRefTree(propertyNames: string[], El: HTMLElement | Text | Attr) {
+function generateElRefTree(propertyNames: string[], El: HTMLElement | Text | Attr): object {
   let tree = {};
 
   let propertyName: string = "__els";

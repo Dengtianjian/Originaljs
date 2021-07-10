@@ -1,3 +1,5 @@
+import { TPropertys } from "./types/pluginType";
+
 function deepCopy(obj) {
   if (typeof obj !== 'object') return;
 
@@ -40,8 +42,17 @@ function generateObjectTree(branchs: string[], lastBranch: {} = {}): object {
   return tree;
 }
 
+function deepGetObjectProperty(obj: object, propertyNames: string[]): TPropertys {
+  if (obj[propertyNames[0]]) {
+    return deepGetObjectProperty(obj[propertyNames[0]], propertyNames.slice(1));
+  } else {
+    return obj;
+  }
+}
+
 export default {
   deepCopy,
   objectAssign,
-  generateObjectTree
+  generateObjectTree,
+  deepGetObjectProperty
 }
