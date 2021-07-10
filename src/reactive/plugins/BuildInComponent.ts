@@ -8,6 +8,7 @@ import Parser from "../parser";
 import { updateTargetView } from "../view";
 import parser from "../parser";
 import utils from "../../utils";
+import collect from "../collect";
 
 export default {
   buildInComponentTagNames: ["o-for", "o-if", "o-else", "o-else-if", "ref"] as string[],
@@ -168,28 +169,6 @@ export default {
 
     return true;
   },
-  filterRawData(state, rawData) {
-    const deps = JSON.parse(JSON.stringify(state));
-    for (const key in deps) {
-      if (Object.prototype.hasOwnProperty.call(deps, key)) {
-        const element = deps[key];
-        if (typeof element === "object" && element) {
-          if (element.hasOwnProperty("__els") || element.hasOwnProperty("__attrs")) {
-            deps[key] = rawData[key];
-          } else {
-            if (rawData) {
-              deps[key] = this.filterRawData(element, rawData[key]);
-            }
-          }
-        } else {
-          if (rawData && rawData[key]) {
-            deps[key] = rawData[key];
-          }
-        }
-      }
-    }
-    return deps;
-  },
   oForElUpdateView(target: IReactiveItem, propertys, property, value): Boolean {
     if (property === "length") {
       return;
@@ -218,7 +197,7 @@ export default {
 
         const refTree = (plugin.use("CollectTagRefs") as IPluginItem).collectRef(forItem.el, rawData);
 
-        const filterData = this.filterRawData(refTree, rawData);
+        const filterData = collect.filterHasRefData(refTree, rawData);
 
         OProxy.setProxy(rawData, filterData, [], target.__og_root);
 
@@ -228,7 +207,7 @@ export default {
       });
       target.__og_root.refs = utils.objectAssign(target.__og_root.refs, scopeRefTree);
     } else {
-      const filterData = this.filterRawData(target.__og_root.refs, target.__og_root.data);
+      const filterData = collect.filterHasRefData(target.__og_root.refs, target.__og_root.data);
       stateKey.push(property)
       const refTreePart = Collect.getProperty(stateKey, target.__og_root.refs);
       OProxy.setProxy(rawData, filterData, [], target.__og_root);

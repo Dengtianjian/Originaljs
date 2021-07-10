@@ -77,11 +77,35 @@ function collection(El: IElement): TRefTree {
   return ScopedElRefTree;
 }
 
+function filterHasRefData(refTree, rawData): Record<string, any> {
+  refTree = utils.deepCopy(refTree);
+  for (const key in refTree) {
+    if (Object.prototype.hasOwnProperty.call(refTree, key)) {
+      const element = refTree[key];
+      if (typeof element === "object" && element) {
+        if (element.hasOwnProperty("__els") || element.hasOwnProperty("__attrs")) {
+          refTree[key] = rawData[key];
+        } else {
+          if (rawData) {
+            refTree[key] = filterHasRefData(element, rawData[key]);
+          }
+        }
+      } else {
+        if (rawData && rawData[key]) {
+          refTree[key] = rawData[key];
+        }
+      }
+    }
+  }
+  return refTree;
+}
+
 export default {
   reset,
   collection,
   getProperty,
   getPropertyData,
   generateElRefTree,
-  deepGenerateTree
+  deepGenerateTree,
+  filterHasRefData
 };

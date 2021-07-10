@@ -33,6 +33,7 @@ import CollectTagRefs from "./plugins/CollecTagRefs";
 import BuildInComponent from "./plugins/BuildInComponent";
 import CollectTagAttrRefs from "./plugins/CollectTagAttrRefs";
 import { IElement } from "../types/elementType";
+import collect from "./collect";
 
 Plugin.register("BuildInComponent", BuildInComponent);
 Plugin.register("CollectTagRefs", CollectTagRefs);
@@ -63,30 +64,8 @@ export default class Reactive {
     this.rawData = JSON.parse(JSON.stringify(data));
     this.refs = Collect.reset(target as IElement, data);
 
-    const filterData = this.filterRawData(this.refs, data);
+    const filterData = collect.filterHasRefData(this.refs, data);
 
     OProxy.setProxy(data, filterData, [], this);
-  }
-  filterRawData(state, rawData) {
-    const deps = JSON.parse(JSON.stringify(state));
-    for (const key in deps) {
-      if (Object.prototype.hasOwnProperty.call(deps, key)) {
-        const element = deps[key];
-        if (typeof element === "object" && element) {
-          if (element.hasOwnProperty("__els") || element.hasOwnProperty("__attrs")) {
-            deps[key] = rawData[key];
-          } else {
-            if (rawData) {
-              deps[key] = this.filterRawData(element, rawData[key]);
-            }
-          }
-        } else {
-          if (rawData && rawData[key]) {
-            deps[key] = rawData[key];
-          }
-        }
-      }
-    }
-    return deps;
   }
 }

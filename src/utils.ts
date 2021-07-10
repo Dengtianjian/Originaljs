@@ -10,7 +10,7 @@ function deepCopy(obj) {
   return newObj;
 }
 
-function objectAssign(target: object, source: object) {
+function objectAssign(target: object, source: object): object {
   for (const key in source) {
     if (Object.prototype.hasOwnProperty.call(source, key)) {
       const targetItem = target[key];
