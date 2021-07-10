@@ -79,7 +79,7 @@ export default {
     newEls.forEach(els => {
       El.append(...els);
     });
-    const refs = Collect.deepGenerateTree(propertyNames, {
+    const refs = utils.generateObjectTree(propertyNames, {
       __og_fors: [
         {
           el: El,

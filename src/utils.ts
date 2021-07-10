@@ -29,7 +29,19 @@ function objectAssign(target: object, source: object): object {
   return target;
 }
 
+function generateObjectTree(branchs: string[], lastBranch: {} = {}): object {
+  let tree = {};
+
+  if (branchs.length === 1) {
+    tree[branchs[0]] = lastBranch;
+  } else {
+    tree[branchs[0]] = generateObjectTree(branchs.slice(1), lastBranch);
+  }
+  return tree;
+}
+
 export default {
   deepCopy,
-  objectAssign
+  objectAssign,
+  generateObjectTree
 }

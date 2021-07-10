@@ -30,16 +30,6 @@ function getPropertyData(propertyStrs: string[], refData: object) {
   return property;
 }
 
-function deepGenerateTree(branchs: string[], lastBranch: {} = {}) {
-  let tree = {};
-
-  if (branchs.length === 1) {
-    tree[branchs[0]] = lastBranch;
-  } else {
-    tree[branchs[0]] = deepGenerateTree(branchs.slice(1), lastBranch);
-  }
-  return tree;
-}
 function generateElRefTree(propertyNames: string[], El: HTMLElement | Text | Attr) {
   let tree = {};
 
@@ -48,7 +38,7 @@ function generateElRefTree(propertyNames: string[], El: HTMLElement | Text | Att
     propertyName = "__attrs";
   }
 
-  tree = deepGenerateTree(propertyNames, {
+  tree = utils.generateObjectTree(propertyNames, {
     [propertyName]: [El]
   });
   return tree;
@@ -106,6 +96,5 @@ export default {
   getProperty,
   getPropertyData,
   generateElRefTree,
-  deepGenerateTree,
   filterHasRefData
 };
