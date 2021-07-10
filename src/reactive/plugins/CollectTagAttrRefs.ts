@@ -1,6 +1,7 @@
 import { IElement } from "../../types/elementType";
 import { TRefTree } from "../../types/pluginType";
 import Collect from "../collect";
+import parser from "../parser";
 import { ExtractVariableName, VariableItem } from "../rules";
 
 export default {
@@ -21,7 +22,7 @@ export default {
           const variabledName: RegExpMatchArray = refItem.match(ExtractVariableName);
 
           if (variabledName) {
-            const propertyNames: string[] = Collect.parsePropertyString(variabledName[0].trim());
+            const propertyNames: string[] = parser.parseRefString(variabledName[0].trim());
             const RefTree = Collect.generateElRefTree(propertyNames, attrItem);
             ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, RefTree) as TRefTree;
           }

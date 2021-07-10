@@ -30,19 +30,6 @@ function cleanRef(refTree) {
   }
 }
 
-function deleteUpdateView(target: IReactiveItem, refs: TRefTree & TPropertys, propertyKey: PropertyKey): Boolean {
-  propertyKey = String(propertyKey);
-  const ref = refs[propertyKey];
-  if (ref === undefined) {
-    return true;
-  }
-
-  cleanRef(ref);
-
-  delete ref[propertyKey];
-  return true;
-}
-
 export default {
   collectTagRefs(El: IElement) {
     let ScopedElRefTree = {};
@@ -89,7 +76,7 @@ export default {
         const refRawString: string = (variableName as string).trim();
 
         const newTextEl: Text = document.createTextNode("{" + refRawString + "}");
-        const propertyNames: string[] = Collect.parsePropertyString(refRawString);
+        const propertyNames: string[] = parser.parseRefString(refRawString);
         ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, Collect.generateElRefTree(propertyNames, newTextEl));
 
         appendTextEls.push(newTextEl);

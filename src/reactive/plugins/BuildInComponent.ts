@@ -6,6 +6,7 @@ import Collect from "../collect";
 import OProxy from "../oproxy";
 import Parser from "../parser";
 import { updateTargetView } from "../view";
+import parser from "../parser";
 
 export default {
   buildInComponentTagNames: ["o-for", "o-if", "o-else", "o-else-if", "ref"] as string[],
@@ -39,7 +40,7 @@ export default {
       itemName = attributes[InIndex - 1]['nodeName'];
     }
 
-    const propertyNames: string[] = Collect.parsePropertyString(propertyName);
+    const propertyNames: string[] = parser.parseRefString(propertyName);
     const property: object | [] = Collect.getPropertyData(propertyNames, rawData);
 
     // TODO 替换key index
@@ -76,24 +77,6 @@ export default {
     newEls.forEach(els => {
       El.append(...els);
     });
-
-    // const ref = (plugin.use("CollectTagRefs") as IPluginItem).collectRef(El, rawData);
-    // return Collect.objectAssign(Collect.deepGenerateTree(propertyNames, {
-    //   __og_fors: [
-    //     {
-    //       el: El,
-    //       templateChildNodes: childNodes,
-    //       indexName,
-    //       propertyName,
-    //       keyName,
-    //       itemName
-    //     }
-    //   ]
-    // }), ref);
-
-    /**
-     * TODO 循环内直接 books里面没有0项元素时 {books[0]} 无效问题
-     */
     const refs = Collect.deepGenerateTree(propertyNames, {
       __og_fors: [
         {
@@ -210,7 +193,7 @@ export default {
     if (property === "length") {
       return;
     }
-    const stateKey: string[] = Collect.parsePropertyString(target['__og_stateKey']);
+    const stateKey: string[] = parser.parseRefString(target['__og_stateKey']);
     const rawDataPart = Collect.getPropertyData(stateKey, target['__og_root'].data);
     const rawData = target.__og_root.data;
 
@@ -222,7 +205,7 @@ export default {
       let scopeRefTree = {};
       propertys.__og_fors.forEach(forItem => {
         const newEls = [];
-        const propertyNames = Collect.parsePropertyString(forItem.propertyName);
+        const propertyNames = parser.parseRefString(forItem.propertyName);
         forItem.templateChildNodes.forEach(node => {
           const newEl = node.cloneNode(true);
           this.replaceRef(newEl as HTMLElement, forItem.itemName, `${propertyNames.join(".")}.${property}`);
