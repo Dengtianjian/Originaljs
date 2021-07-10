@@ -6,7 +6,6 @@ import BuildInComponent from "./plugins/BuildInComponent";
 import CollectTagAttrRefs from "./plugins/CollectTagAttrRefs";
 import { IElement } from "../types/elementType";
 import collect from "./collect";
-import { TPropertys } from "../types/pluginType";
 
 Plugin.register("BuildInComponent", BuildInComponent);
 Plugin.register("CollectTagRefs", CollectTagRefs);
@@ -21,7 +20,9 @@ export default class Reactive {
   static observer(target: HTMLElement | ShadowRoot, data: object) {
     Object.defineProperty(target, "__og__", {
       value: new Reactive(target, data),
-      configurable: false
+      configurable: false,
+      enumerable: false,
+      writable: false
     });
   }
   constructor(target: HTMLElement | ShadowRoot, data: object) {
