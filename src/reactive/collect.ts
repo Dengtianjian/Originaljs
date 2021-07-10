@@ -2,6 +2,7 @@ import { IElement } from "../types/elementType";
 import { IPluginItem, IPlugins, TRefTree } from "../types/pluginType";
 import Plugin from "../plugin";
 import Parser from "./parser";
+import utils from "../utils";
 
 let El: HTMLElement | ShadowRoot;
 let RefData: {} = {};
@@ -53,25 +54,6 @@ function generateElRefTree(propertyNames: string[], El: HTMLElement | Text | Att
   return tree;
 }
 
-function objectAssign(target: object, source: object) {
-  for (const key in source) {
-    if (Object.prototype.hasOwnProperty.call(source, key)) {
-      const targetItem = target[key];
-      const sourceItem = source[key];
-      if (typeof targetItem === "object") {
-        if (Array.isArray(targetItem)) {
-          target[key] = target[key].concat(sourceItem);
-        } else {
-          target[key] = objectAssign(targetItem, sourceItem);
-        }
-      } else {
-        target[key] = source[key];
-      }
-    }
-  }
-  return target;
-}
-
 function reset(El: IElement, data: {}) {
   El = El;
   RefData = data;
@@ -86,7 +68,7 @@ function collection(El: IElement): TRefTree {
     if (Object.prototype.hasOwnProperty.call(Plugins, plugiName)) {
       const pluginItem: IPluginItem = Plugins[plugiName];
       if (pluginItem.collectRef) {
-        ScopedElRefTree = objectAssign(ScopedElRefTree, pluginItem.collectRef(El, RefData));
+        ScopedElRefTree = utils.objectAssign(ScopedElRefTree, pluginItem.collectRef(El, RefData));
       }
     }
   }
@@ -100,7 +82,6 @@ export default {
   collection,
   getProperty,
   getPropertyData,
-  objectAssign,
   generateElRefTree,
   deepGenerateTree
 };

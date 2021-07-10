@@ -7,6 +7,7 @@ import OProxy from "../oproxy";
 import Parser from "../parser";
 import { updateTargetView } from "../view";
 import parser from "../parser";
+import utils from "../../utils";
 
 export default {
   buildInComponentTagNames: ["o-for", "o-if", "o-else", "o-else-if", "ref"] as string[],
@@ -142,14 +143,14 @@ export default {
       const tagName: string = El.tagName.toLowerCase();
       switch (tagName) {
         case "o-for":
-          ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, this.handleOFor(El, rawData));
+          ScopedElRefTree = utils.objectAssign(ScopedElRefTree, this.handleOFor(El, rawData));
           break;
       }
     }
 
     if (El.childNodes && El.childNodes.length > 0) {
       for (const node of Array.from(El.childNodes)) {
-        ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, this.collectRef(node as IElement, rawData));
+        ScopedElRefTree = utils.objectAssign(ScopedElRefTree, this.collectRef(node as IElement, rawData));
       }
     }
 
@@ -223,9 +224,9 @@ export default {
 
         Parser.parseRef(refTree, rawData);
 
-        scopeRefTree = Collect.objectAssign(scopeRefTree, refTree);
+        scopeRefTree = utils.objectAssign(scopeRefTree, refTree);
       });
-      target.__og_root.refs = Collect.objectAssign(target.__og_root.refs, scopeRefTree);
+      target.__og_root.refs = utils.objectAssign(target.__og_root.refs, scopeRefTree);
     } else {
       const filterData = this.filterRawData(target.__og_root.refs, target.__og_root.data);
       stateKey.push(property)

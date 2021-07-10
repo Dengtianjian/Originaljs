@@ -6,6 +6,7 @@ import Collect from "../collect";
 import parser from "../parser";
 import { ExtractVariableName, VariableItem, VariableName } from "../rules";
 import OProxy from "../oproxy";
+import utils from "../../utils";
 
 function cleanRef(refTree) {
   if (typeof refTree === "object") {
@@ -40,12 +41,12 @@ export default {
 
     if (El.childNodes.length > 0) {
       for (const childNode of Array.from(El.childNodes)) {
-        ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, this.collectTagRefs(childNode as IElement));
+        ScopedElRefTree = utils.objectAssign(ScopedElRefTree, this.collectTagRefs(childNode as IElement));
       }
     }
 
     if (El.attributes && El.attributes.length > 0) {
-      ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, (plugin.use("CollectTagAttrRefs") as IPluginItem).collectRef(El, {}));
+      ScopedElRefTree = utils.objectAssign(ScopedElRefTree, (plugin.use("CollectTagAttrRefs") as IPluginItem).collectRef(El, {}));
     }
 
     El.__og_isCollected = true;
@@ -77,7 +78,7 @@ export default {
 
         const newTextEl: Text = document.createTextNode("{" + refRawString + "}");
         const propertyNames: string[] = parser.parseRefString(refRawString);
-        ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, Collect.generateElRefTree(propertyNames, newTextEl));
+        ScopedElRefTree = utils.objectAssign(ScopedElRefTree, Collect.generateElRefTree(propertyNames, newTextEl));
 
         appendTextEls.push(newTextEl);
 
@@ -99,7 +100,7 @@ export default {
       return ScopedElRefTree;
     }
 
-    ScopedElRefTree = Collect.objectAssign(ScopedElRefTree, this.collectTagRefs(El));
+    ScopedElRefTree = utils.objectAssign(ScopedElRefTree, this.collectTagRefs(El));
 
     return ScopedElRefTree;
   },
