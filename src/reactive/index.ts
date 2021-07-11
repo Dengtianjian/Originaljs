@@ -7,16 +7,15 @@ import CollectTagAttrRefs from "./plugins/CollectTagAttrRefs";
 import { IElement } from "../types/elementType";
 import { TRefTree } from "../types/pluginType";
 import Parser from "./parser";
+import { IProperties } from "../types/reactiveType";
 
 Plugin.register("BuildInComponent", BuildInComponent);
 Plugin.register("CollectTagRefs", CollectTagRefs);
 Plugin.register("CollectTagAttrRefs", CollectTagAttrRefs);
 
 export default class Reactive {
-  static data;
   target: HTMLElement | ShadowRoot;
   data: object;
-  rawData: object;
   refs: TRefTree;
   static observer(target: HTMLElement | ShadowRoot, data: object) {
     Object.defineProperty(target, "__og__", {
@@ -26,15 +25,18 @@ export default class Reactive {
       writable: false
     });
   }
-  constructor(target: HTMLElement | ShadowRoot, data: object) {
+  constructor(target: HTMLElement | ShadowRoot, properties: IProperties) {
     this.target = target;
-    this.data = data;
-    // this.rawData = JSON.parse(JSON.stringify(data));
-    this.refs = Collect.collection(target as IElement, data);
+    this.data = properties;
 
-    Parser.parseRef(this.refs, data);
-    const filterData = Collect.filterHasRefProperties(this.refs, data);
+    //* 收集 ref 引用 转换成 引用树
+    this.refs = Collect.collection(target as IElement, properties);
 
-    OProxy.setProxy(data, filterData, [], this);
+    //* 编译模板语法
+    Parser.parseRef(this.refs, properties);
+
+    //* 过滤被模板引用的数据，并且设置为proxy对象
+    const filterData = Collect.filterHasRefProperties(this.refs, properties);
+    OProxy.setProxy(properties, filterData, [], this);
   }
 }
