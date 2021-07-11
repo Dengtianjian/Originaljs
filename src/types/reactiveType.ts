@@ -5,3 +5,7 @@ export interface IReactiveItem {
   __og_root: Reactive,
   __og_stateKey: string
 }
+
+export interface IProperties {
+  [key: string]: any
+}

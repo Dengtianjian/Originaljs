@@ -1,29 +1,23 @@
 import { IElement } from "../types/elementType";
 import { IPluginItem, IPlugins, TRefTree } from "../types/pluginType";
 import Plugin from "../plugin";
-import Parser from "./parser";
 import utils from "../utils";
+import { IProperties } from "../types/reactiveType";
 
-let El: HTMLElement | ShadowRoot;
-let RefData: {} = {};
-
-function getProperty(propertyStrs: string[], refData: object): any {
-  let property: any = refData;
+function getProperty(propertyStrs: string[], properties: IProperties): any {
+  let property: any = properties;
   for (const name of propertyStrs) {
     property = property[name];
     if (property === undefined) {
-      console.warn(`
-        CM:存在未定义的响应式变量: ${name} 。路径：${propertyStrs.join("-> ")}。
-        EN:undefined reactive variables: ${name} . Path:${propertyStrs.join("-> ")}.
-      `);
+      console.warn(`undefined reactive variables: ${name} . Path:${propertyStrs.join("-> ")}.`);
       break;
     }
   }
 
   return property;
 }
-function getPropertyData(propertyStrs: string[], refData: object) {
-  let property: any = getProperty(propertyStrs, refData);
+function getPropertyData(propertyStrs: string[], properties: IProperties): any {
+  let property: any = getProperty(propertyStrs, properties);
   if (typeof property === "function") {
     property = property();
   }
@@ -44,13 +38,7 @@ function generateElRefTree(propertyNames: string[], El: HTMLElement | Text | Att
   return tree;
 }
 
-function reset(El: IElement, data: {}) {
-  El = El;
-  RefData = data;
-  return collection(El);
-}
-
-function collection(El: IElement): TRefTree {
+function collection(El: IElement, properties: IProperties): TRefTree {
   let ScopedElRefTree = {};
 
   const Plugins: IPlugins = Plugin.use() as IPlugins;
@@ -58,31 +46,30 @@ function collection(El: IElement): TRefTree {
     if (Object.prototype.hasOwnProperty.call(Plugins, plugiName)) {
       const pluginItem: IPluginItem = Plugins[plugiName];
       if (pluginItem.collectRef) {
-        ScopedElRefTree = utils.objectAssign(ScopedElRefTree, pluginItem.collectRef(El, RefData));
+        ScopedElRefTree = utils.objectAssign(ScopedElRefTree, pluginItem.collectRef(El, properties));
       }
     }
   }
 
-  Parser.parseRef(ScopedElRefTree, RefData);
   return ScopedElRefTree;
 }
 
-function filterHasRefData(refTree, rawData): Record<string, any> {
+function filterHasRefProperties(refTree: TRefTree, properties: IProperties): Record<string, any> {
   refTree = utils.deepCopy(refTree);
   for (const key in refTree) {
     if (Object.prototype.hasOwnProperty.call(refTree, key)) {
       const element = refTree[key];
       if (typeof element === "object" && element) {
         if (element.hasOwnProperty("__els") || element.hasOwnProperty("__attrs")) {
-          refTree[key] = rawData[key];
+          refTree[key] = properties[key];
         } else {
-          if (rawData) {
-            refTree[key] = filterHasRefData(element, rawData[key]);
+          if (properties) {
+            refTree[key] = filterHasRefProperties(element, properties[key]);
           }
         }
       } else {
-        if (rawData && rawData[key]) {
-          refTree[key] = rawData[key];
+        if (properties && properties[key]) {
+          refTree[key] = properties[key];
         }
       }
     }
@@ -91,10 +78,9 @@ function filterHasRefData(refTree, rawData): Record<string, any> {
 }
 
 export default {
-  reset,
   collection,
   getProperty,
   getPropertyData,
   generateElRefTree,
-  filterHasRefData
+  filterHasRefProperties
 };

@@ -5,6 +5,8 @@ import CollectTagRefs from "./plugins/CollecTagRefs";
 import BuildInComponent from "./plugins/BuildInComponent";
 import CollectTagAttrRefs from "./plugins/CollectTagAttrRefs";
 import { IElement } from "../types/elementType";
+import { TRefTree } from "../types/pluginType";
+import Parser from "./parser";
 
 Plugin.register("BuildInComponent", BuildInComponent);
 Plugin.register("CollectTagRefs", CollectTagRefs);
@@ -15,7 +17,7 @@ export default class Reactive {
   target: HTMLElement | ShadowRoot;
   data: object;
   rawData: object;
-  refs: object;
+  refs: TRefTree;
   static observer(target: HTMLElement | ShadowRoot, data: object) {
     Object.defineProperty(target, "__og__", {
       value: new Reactive(target, data),
@@ -28,9 +30,10 @@ export default class Reactive {
     this.target = target;
     this.data = data;
     // this.rawData = JSON.parse(JSON.stringify(data));
-    this.refs = Collect.reset(target as IElement, data);
+    this.refs = Collect.collection(target as IElement, data);
 
-    const filterData = Collect.filterHasRefData(this.refs, data);
+    Parser.parseRef(this.refs, data);
+    const filterData = Collect.filterHasRefProperties(this.refs, data);
 
     OProxy.setProxy(data, filterData, [], this);
   }

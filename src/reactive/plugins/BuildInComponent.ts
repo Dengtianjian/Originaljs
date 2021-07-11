@@ -197,7 +197,7 @@ export default {
 
         const refTree = (plugin.use("CollectTagRefs") as IPluginItem).collectRef(forItem.el, rawData);
 
-        const filterData = collect.filterHasRefData(refTree, rawData);
+        const filterData = collect.filterHasRefProperties(refTree, rawData);
 
         OProxy.setProxy(rawData, filterData, [], target.__og_root);
 
@@ -207,7 +207,7 @@ export default {
       });
       target.__og_root.refs = utils.objectAssign(target.__og_root.refs, scopeRefTree);
     } else {
-      const filterData = collect.filterHasRefData(target.__og_root.refs, target.__og_root.data);
+      const filterData = collect.filterHasRefProperties(target.__og_root.refs, target.__og_root.data);
       stateKey.push(property)
       const refTreePart = Collect.getProperty(stateKey, target.__og_root.refs);
       OProxy.setProxy(rawData, filterData, [], target.__og_root);
