@@ -1,7 +1,8 @@
+import { TPropertys, TRefTree } from "../types/pluginType";
 import Collect from "./collect";
 import { ExtractVariableName } from "./rules";
 
-function parseRef(refTree: object, rawData: object, path: string[] = []) {
+function parseRef(refTree: TPropertys, rawData: object, path: string[] = []): void {
   for (const branchName in refTree) {
     if (Object.prototype.hasOwnProperty.call(refTree, branchName)) {
       if (rawData[branchName] !== undefined) {
@@ -18,7 +19,7 @@ function parseRef(refTree: object, rawData: object, path: string[] = []) {
   }
 }
 
-function replaceRefContent(refTree, rawData, branchName, path) {
+function replaceRefContent(refTree: TPropertys, rawData: object, branchName: string, path: string[] = []): void {
   const replaceValue: string = rawData[branchName].toString();
   if (refTree[branchName]['__els'] && refTree[branchName]['__els'].length > 0) {
     refTree[branchName]['__els'].forEach(el => {

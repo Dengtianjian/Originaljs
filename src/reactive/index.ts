@@ -5,7 +5,6 @@ import CollectTagRefs from "./plugins/CollecTagRefs";
 import BuildInComponent from "./plugins/BuildInComponent";
 import CollectTagAttrRefs from "./plugins/CollectTagAttrRefs";
 import { IElement } from "../types/elementType";
-import collect from "./collect";
 
 Plugin.register("BuildInComponent", BuildInComponent);
 Plugin.register("CollectTagRefs", CollectTagRefs);
@@ -31,7 +30,7 @@ export default class Reactive {
     // this.rawData = JSON.parse(JSON.stringify(data));
     this.refs = Collect.reset(target as IElement, data);
 
-    const filterData = collect.filterHasRefData(this.refs, data);
+    const filterData = Collect.filterHasRefData(this.refs, data);
 
     OProxy.setProxy(data, filterData, [], this);
   }

@@ -1,5 +1,5 @@
 import { IElement } from "../../types/elementType";
-import { IPluginItem, TPropertys, TRefTree } from "../../types/pluginType";
+import { IPluginItem } from "../../types/pluginType";
 import { IReactiveItem } from "../../types/reactiveType";
 import plugin from "../../plugin";
 import Collect from "../collect";

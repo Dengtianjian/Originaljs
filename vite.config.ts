@@ -6,9 +6,9 @@ export default defineConfig({
   server: {
   },
   build: {
-    minify: false,
+    // minify: false,
     lib: {
-      entry: "src/runtime/index.ts",
+      entry: "src/index.ts",
       name: "original",
       formats: ["es", "iife"],
       fileName: "original",
