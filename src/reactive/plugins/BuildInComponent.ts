@@ -95,7 +95,6 @@ export default {
     return refs;
   },
   replaceRef(El: HTMLElement, sourceString: string, replaceValue: string) {
-
     if (El.childNodes.length > 0) {
       El.childNodes.forEach(node => {
         this.replaceRef(node as HTMLElement, sourceString, replaceValue);
