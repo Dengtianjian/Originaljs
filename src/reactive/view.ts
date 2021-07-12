@@ -7,7 +7,7 @@ import parser from "./parser";
 import { ExtractVariableName } from "./rules";
 import utils from "../utils";
 
-export function updateRef(refTree: TPropertys, value: any, rawData?: {}) {
+export function updateRef(refTree: TPropertys, value: any, rawData?: {}): void {
   if (typeof value !== "string") {
     value = value.toString();
   }
@@ -46,7 +46,7 @@ export function updateTargetView(refTree: TPropertys, rawData: {}): Boolean {
   return true;
 }
 
-export function setUpdateView(target: IReactiveItem, propertyKey: PropertyKey, value: any, receiver?: any) {
+export function setUpdateView(target: IReactiveItem, propertyKey: PropertyKey, value: any, receiver?: any): void {
   const refs = target.__og_root['refs'];
   const propertyNames: string[] = parser.parseRefString(target.__og_stateKey);
   const propertys: TPropertys = utils.deepGetObjectProperty(refs, propertyNames)
@@ -62,7 +62,7 @@ export function setUpdateView(target: IReactiveItem, propertyKey: PropertyKey, v
   }
 }
 
-export function deleteUpdateView(target: IReactiveItem, propertyKey: PropertyKey) {
+export function deleteUpdateView(target: IReactiveItem, propertyKey: PropertyKey): void {
   const propertyNames: string[] = parser.parseRefString(target.__og_stateKey);
   const refs: TRefTree = utils.deepGetObjectProperty(target.__og_root['refs'], propertyNames)
 
