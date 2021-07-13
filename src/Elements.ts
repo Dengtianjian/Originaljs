@@ -1,10 +1,9 @@
 import { Element } from "./element";
 import { IElement } from "./types/ElementType";
 
-function createElement(props: string[]) {
-  return class extends Element implements IElement {
+export function createElement(props: string[] = []) {
+  return class extends Element {
     static observedAttributes: string[] = props;
-    _OGElement: boolean = true;
     _Props: string[] = props;
     constructor() {
       super();
