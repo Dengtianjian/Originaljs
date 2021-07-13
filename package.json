@@ -9,7 +9,8 @@
   "types": "dist/types.d.ts",
   "version": "0.0.28",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite --host --open",
+    "open": "vite --host",
     "build": "vite build && npm-dts generate --output dist/types.d.ts",
     "serve": "vite preview",
     "dts": "npm-dts generate --output dist/types.d.ts",
