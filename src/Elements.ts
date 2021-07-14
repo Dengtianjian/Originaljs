@@ -1,8 +1,7 @@
-import { Element } from "./Element";
-import { IElement } from "./types/ElementType";
+import { OGElement } from "./OGElement";
 
 export function createElement(props: string[] = []) {
-  return class extends Element {
+  return class extends OGElement {
     static observedAttributes: string[] = props;
     _Props: string[] = props;
     constructor() {

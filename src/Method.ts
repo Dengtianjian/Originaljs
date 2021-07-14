@@ -5,7 +5,7 @@ function parseMethodParams(name): string[] {
   return [];
 }
 
-export function bindMethods(target: IEl, methods: Record<string, Function | AsyncGeneratorFunction>): boolean {
+export function bindMethods(target: IEl, methods: Record<string, Function | AsyncGeneratorFunction | any>): boolean {
   if (target.childNodes.length > 0) {
     Array.from(target.children).forEach((childNode) => {
       bindMethods(childNode, methods);
@@ -21,7 +21,7 @@ export function bindMethods(target: IEl, methods: Record<string, Function | Asyn
         if (methodNames === null) continue;
 
         //* 清除已有方法
-        target[attrItem.name]=null;
+        target[attrItem.name] = null;
 
         for (const methodNameItem of methodNames) {
           const params: string[] = parseMethodParams(methodNameItem);

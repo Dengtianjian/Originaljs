@@ -1,6 +1,6 @@
 export type IEl = ShadowRoot | HTMLElement | Element;
 
-export interface IElement {
+export interface IOGElement {
   OGElement: boolean;
   props: string[];
   el: IEl,

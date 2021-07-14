@@ -1,14 +1,14 @@
-import { Element } from "./Element";
+import { OGElement } from "./OGElement";
 import { createElement } from "./Elements";
 
 export {
-  Element,
+  OGElement,
 
   createElement
 };
 
 export default {
-  Element,
+  OGElement,
 
   createElement
 };

@@ -1,9 +1,9 @@
 import { bindMethods } from "./Method";
 import { parseDom } from "./Parser";
 import { Reactive } from "./reactive";
-import { IEl, IElement } from "./types/ElementType";
+import { IEl, IOGElement } from "./types/ElementType";
 
-export class Element extends HTMLElement implements IElement {
+export class OGElement extends HTMLElement implements IOGElement {
   OGElement: boolean = true;
   props: string[] = [];
   el: IEl = null;
