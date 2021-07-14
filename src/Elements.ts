@@ -1,4 +1,4 @@
-import { Element } from "./element";
+import { Element } from "./Element";
 import { IElement } from "./types/ElementType";
 
 export function createElement(props: string[] = []) {

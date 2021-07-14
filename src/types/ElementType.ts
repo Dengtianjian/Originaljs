@@ -1,4 +1,4 @@
-export type IEl = ShadowRoot | HTMLElement;
+export type IEl = ShadowRoot | HTMLElement | Element;
 
 export interface IElement {
   OGElement: boolean;

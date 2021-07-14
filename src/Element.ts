@@ -1,3 +1,6 @@
+import { bindMethods } from "./Method";
+import { parseDom } from "./Parser";
+import { Reactive } from "./reactive";
 import { IEl, IElement } from "./types/ElementType";
 
 export class Element extends HTMLElement implements IElement {
@@ -13,7 +16,8 @@ export class Element extends HTMLElement implements IElement {
     this.connected();
     this.templateMount();
     this.collectSlots();
-    // TODO 响应式
+    bindMethods(this.el, this);
+    Reactive.observer(this.el, this);
     this.rendered();
   }
   private disconnectedCallback(): void {
@@ -26,7 +30,18 @@ export class Element extends HTMLElement implements IElement {
     this.propChanged(name, newValue, oldValue);
   }
   private templateMount(): void {
+    let template: string | Node | Node[] | NodeList = this.render();
+    if (template === null) return;
 
+    if (typeof template === "string") {
+      template = parseDom(template);
+    } else if (template instanceof Node) {
+      template = [template];
+    } else if (template instanceof NodeList) {
+      template = Array.from(template);
+    }
+
+    this.el.append(...template);
   }
   private collectSlots(): void { }
   propChanged(name: string, newValue: string, oldValue: string): void { }
