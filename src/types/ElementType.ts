@@ -1,10 +1,14 @@
-export type IEl = ShadowRoot | HTMLElement | Element;
+import { IRefTree } from "./Ref";
 
-export interface IOGElement {
+export type IEl = IOGElement;
+
+export interface IOGElement extends HTMLElement {
+  __og__: any;
   OGElement: boolean;
   props: string[];
   el: IEl,
-  slots: Record<string, HTMLElement[]>;
+  slots: Record<string, Node[]>;
+  refs: IRefTree,
   connected(): void;
   rendered(): void;
   disconnected(): void;

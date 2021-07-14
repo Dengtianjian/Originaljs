@@ -1,13 +1,15 @@
+import { compareMerge } from "./Diff";
 import { bindMethods } from "./Method";
 import { parseDom } from "./Parser";
 import { Reactive } from "./reactive";
 import { IEl, IOGElement } from "./types/ElementType";
+import { IRefTree } from "./types/Ref";
 
 export class OGElement extends HTMLElement implements IOGElement {
   OGElement: boolean = true;
   props: string[] = [];
   el: IEl = null;
-  slots: Record<string, HTMLElement[]> = {};
+  slots: Record<string, Node[]> = {};
   constructor() {
     super();
     this.el = this.attachShadow({ mode: "closed" });
@@ -43,12 +45,37 @@ export class OGElement extends HTMLElement implements IOGElement {
 
     this.el.append(...template);
   }
-  private collectSlots(): void { }
+  private collectSlots(): void {
+    const slotEls: NodeListOf<HTMLSlotElement> = this.el.querySelectorAll("slot");
+
+    for (const slotElItem of Array.from(slotEls)) {
+      const slotName: string = slotElItem.name || "default";
+
+      if (!this.slots[slotName]) {
+        this.slots[slotName] = []
+      };
+
+      slotElItem.addEventListener("slotchange", () => {
+        if (slotName === "default") {
+          this.slots[slotName].push(...(this.el.querySelector("slot:not(name)") as HTMLSlotElement).assignedNodes());
+        } else {
+          this.slots[slotName].push(...(this.el.querySelector(`slot[name=${slotName}]`) as HTMLSlotElement).assignedNodes());
+        }
+      })
+    }
+  }
   propChanged(name: string, newValue: string, oldValue: string): void { }
   connected(): void { };
+  render(): null | Node | NodeList | string { return null; }
   rendered(): void { };
   adopted(): void { }
   disconnected(): void { };
-  update<T>(propertyName: string, newValue: T | any): void { }
-  render(): null | Node | NodeList | string { return null; }
+  update<T>(propertyName: string, newValue: T | any): void {
+    if (typeof newValue === "object") {
+      compareMerge(newValue, this[propertyName]);
+    } else {
+      this[propertyName] = newValue;
+      const refTree: IRefTree = this.el.__og__.refs;
+    }
+  }
 }
