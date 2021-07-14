@@ -2,6 +2,7 @@ import { Methods } from "./rules";
 import { IEl } from "./types/ElementType";
 
 function parseMethodParams(name): string[] {
+  // TODO 解析params
   return [];
 }
 
@@ -33,8 +34,9 @@ export function bindMethods(target: IEl, methods: Record<string, Function | Asyn
           const type: RegExpMatchArray = attrItem.name.match(new RegExp(Methods.MethodType, "g"));
           if (type === null) continue;
 
-
+          target.addEventListener(type[0], listener);
         }
+        target.removeAttribute(attrItem.name);
       }
     }
   }
