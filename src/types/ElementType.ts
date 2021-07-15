@@ -1,9 +1,10 @@
 import { IRefTree } from "./Ref";
 
-export type IEl = IOGElement;
+export type IEl = (HTMLElement | ShadowRoot | Element) & {
+  __og__?: any
+};
 
 export interface IOGElement extends HTMLElement {
-  __og__: any;
   OGElement: boolean;
   props: string[];
   el: IEl,

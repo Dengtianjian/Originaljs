@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "vite --host --open",
     "open": "vite --host",
-    "build": "vite build && npm-dts generate --output dist/types.d.ts",
+    "build": "vite build",
     "serve": "vite preview",
     "dts": "npm-dts generate --output dist/types.d.ts",
     "docs:dev": "vitepress dev docs --host",

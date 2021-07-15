@@ -10,6 +10,12 @@ export function createElement(props: string[] = []) {
   }
 }
 
+
+export function defineElement(name: string, constructor: CustomElementConstructor, options: ElementDefinitionOptions = {}): void {
+  window.customElements.define(name, constructor, options);
+}
+
 export default {
-  createElement
+  createElement,
+  defineElement
 }

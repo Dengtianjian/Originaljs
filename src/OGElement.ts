@@ -10,6 +10,7 @@ export class OGElement extends HTMLElement implements IOGElement {
   props: string[] = [];
   el: IEl = null;
   slots: Record<string, Node[]> = {};
+  refs: IRefTree = {};
   constructor() {
     super();
     this.el = this.attachShadow({ mode: "closed" });
@@ -18,7 +19,7 @@ export class OGElement extends HTMLElement implements IOGElement {
     this.connected();
     this.templateMount();
     this.collectSlots();
-    bindMethods(this.el, this);
+    bindMethods(this.el, this, this);
     Reactive.observer(this.el, this);
     this.rendered();
   }
@@ -76,6 +77,7 @@ export class OGElement extends HTMLElement implements IOGElement {
     } else {
       this[propertyName] = newValue;
       const refTree: IRefTree = this.el.__og__.refs;
+      // TODO updateRef
     }
   }
 }

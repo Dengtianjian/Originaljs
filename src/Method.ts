@@ -1,15 +1,17 @@
-import { Methods } from "./rules";
+import { OGElement } from "./OGElement";
+import { Methods } from "./Rules";
 import { IEl } from "./types/ElementType";
 
-function parseMethodParams(name): string[] {
-  // TODO 解析params
-  return [];
+function parseMethodParams(rawString: string): string[] {
+  const paramsRawString: RegExpMatchArray = rawString.match(Methods.MethodParams);
+  if (paramsRawString === null) return [];
+  return paramsRawString[0].split(",");
 }
 
-export function bindMethods(target: IEl, methods: Record<string, Function | AsyncGeneratorFunction | any>): boolean {
+export function bindMethods(target: IEl, methods: Record<string, Function | AsyncGeneratorFunction | any>, thisDirection: object = target): boolean {
   if (target.childNodes.length > 0) {
     Array.from(target.children).forEach((childNode) => {
-      bindMethods(childNode, methods);
+      bindMethods(childNode, methods, thisDirection);
     });
   }
   target = target as HTMLElement | Element;
@@ -25,11 +27,17 @@ export function bindMethods(target: IEl, methods: Record<string, Function | Asyn
         target[attrItem.name] = null;
 
         for (const methodNameItem of methodNames) {
-          const params: string[] = parseMethodParams(methodNameItem);
+          const params: Array<string | HTMLElement | Element | OGElement> = parseMethodParams(methodNameItem);
+
           const methodName: RegExpMatchArray = methodNameItem.match(Methods.MethodName);
           if (methodName === null) continue;
+          if (!methods[methodName[0]]) {
+            console.warn(`缺失 ${methodName[0]} 方法`);
+            continue;
+          }
 
-          const listener = methodName[methodName[0]].bind(target, ...params);
+          params.push(target);
+          const listener = methods[methodName[0]].bind(thisDirection, ...params);
 
           const type: RegExpMatchArray = attrItem.name.match(new RegExp(Methods.MethodType, "g"));
           if (type === null) continue;

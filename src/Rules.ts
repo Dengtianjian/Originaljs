@@ -4,4 +4,5 @@ export namespace Methods {
   export const MatchMethodName: RegExp = /\w+(\(.+\))?;?/;
   export const MethodName: RegExp = /\w+(?=\(.+\))?/;
   export const MethodType: RegExp = /(?<=on)\w+/;
+  export const MethodParams: RegExp = /(?<=\().+(?=\))/;
 }
