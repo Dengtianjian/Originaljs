@@ -14,7 +14,12 @@ export function use(name: string): TPluginItem {
   return Plugins[name];
 }
 
+export function all(): Record<string, TPluginItem> {
+  return Plugins;
+}
+
 export default {
   register,
-  use
+  use,
+  all
 }
