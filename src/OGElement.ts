@@ -20,7 +20,7 @@ export class OGElement extends HTMLElement implements IOGElement {
     this.templateMount();
     this.collectSlots();
     bindMethods(this.el, this, this);
-    Reactive.observer(this.el, this);
+    Reactive.observe(this.el, this);
     this.rendered();
   }
   private disconnectedCallback(): void {
@@ -76,7 +76,7 @@ export class OGElement extends HTMLElement implements IOGElement {
       compareMerge(newValue, this[propertyName]);
     } else {
       this[propertyName] = newValue;
-      const refTree: IRefTree = this.el.__og__.refs;
+      const refTree: IRefTree = this.el.__og__.refTree;
       // TODO updateRef
     }
   }

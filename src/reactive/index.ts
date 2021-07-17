@@ -1,7 +1,28 @@
+import Plugin from "../Plugin";
 import { IEl } from "../types/ElementType";
+import { IProperties } from "../types/Properties";
+import { IRefTree } from "../types/Ref";
+import Collect from "./Collect";
+
+Plugin.register("Tags",{});
 
 export class Reactive {
-  static observer(target: IEl, refData: {}): void {
+  target: IEl = null;
+  properties: IProperties = null;
+  refTree: IRefTree = null;
+  static observe(target: IEl, refData: IProperties): void {
+    Object.defineProperty(target, "__og__", {
+      value: new Reactive(target, refData),
+      configurable: false,
+      enumerable: false,
+      writable: false
+    });
+  }
+  constructor(target: IEl, properties: IProperties) {
+    this.target = target;
+    this.properties = properties;
 
+    //* 1. 收集引用
+    this.refTree = Collect.collection(target, properties);
   }
 }
