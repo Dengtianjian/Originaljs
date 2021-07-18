@@ -4,6 +4,7 @@ import { parseDom } from "./Parser";
 import { Reactive } from "./reactive";
 import { IEl, IOGElement } from "./types/ElementType";
 import { IRefTree } from "./types/Ref";
+import { updateRef } from "./View";
 
 export class OGElement extends HTMLElement implements IOGElement {
   OGElement: boolean = true;
@@ -34,7 +35,7 @@ export class OGElement extends HTMLElement implements IOGElement {
   }
   private templateMount(): void {
     let template: string | Node | Node[] | NodeList = this.render();
-    
+
     if (template === null) return;
 
     if (typeof template === "string") {
@@ -44,7 +45,7 @@ export class OGElement extends HTMLElement implements IOGElement {
     } else if (template instanceof NodeList) {
       template = Array.from(template);
     }
-    
+
     this.el.append(...template);
   }
   private collectSlots(): void {
@@ -78,9 +79,7 @@ export class OGElement extends HTMLElement implements IOGElement {
     } else {
       this[propertyName] = newValue;
       const refTree: IRefTree = this.el.__og__.refTree;
-      console.log(refTree);
-      
-      // TODO updateRef
+      updateRef(refTree, this);
     }
   }
 }

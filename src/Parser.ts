@@ -2,6 +2,7 @@ import { getPropertyData } from "./Property";
 import { Ref } from "./Rules";
 import { IProperties } from "./types/Properties";
 import { IRefTree, TAttr } from "./types/Ref";
+import { updateRef } from "./View";
 
 export function parseDom(DOMString): Node[] {
   const DP: DOMParser = new DOMParser();
@@ -78,15 +79,15 @@ export function transformPropertyName(propertyNameString: string): string[] {
 }
 
 export function parseRef(refTree: IRefTree, properties: IProperties, refProperty: IProperties =
-  {}, paths: string[] = []): void {
+  {}): void {
   for (const branchName in refTree) {
     if (!Object.prototype.hasOwnProperty.call(refTree, branchName)) continue;
     if (refProperty[branchName] === undefined) continue;
 
     if (typeof refProperty[branchName] === "object") {
-      parseRef(refTree[branchName], properties, refProperty[branchName], paths);
+      parseRef(refTree[branchName], properties, refProperty[branchName]);
     }
-    replaceRef(refTree, properties, branchName, paths);
+    updateRef(refTree, properties, branchName);
   }
 }
 
@@ -122,21 +123,4 @@ export function parse(sourceString: string, properties: IProperties): string {
   });
 
   return sourceString;
-}
-
-export function replaceRef(refTree: IRefTree, properties: IProperties, branchName?: string, paths: string[] = []): void {
-  const els: Text[] = refTree[branchName].__els;
-  const attrs: TAttr[] = refTree[branchName].__attrs;
-
-  if (els && els.length > 0) {
-    els.forEach(el => {
-      el.textContent = parse(el.textContent, properties);
-    })
-  }
-
-  if (attrs && attrs.length > 0) {
-    for (const attr of attrs) {
-      attr.nodeValue = parse(attr.__og__attrs.nodeRawValue, properties);
-    }
-  }
 }
