@@ -28,7 +28,8 @@ class CButton extends OG.createElement() {
   }
   updateObj() {
     // this.number = 456;
-    this.update("number", 456);
+    // this.update("number", 456);
+    this.obj.nums[2]=3;
   }
 }
 
