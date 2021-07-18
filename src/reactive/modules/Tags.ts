@@ -1,4 +1,5 @@
 import { transformPropertyName } from "../../Parser";
+import Plugin from "../../Plugin";
 import { Ref } from "../../Rules";
 import { IEl } from "../../types/ElementType";
 import { TPluginItem } from "../../types/Plugin";
@@ -23,6 +24,7 @@ export default {
     if (target.childNodes.length > 0) {
       for (const childNode of Array.from(target.childNodes)) {
         refTree = Utils.objectAssign(refTree, this.collectRef(childNode));
+        refTree = Utils.objectAssign(refTree, Plugin.use("Attrs").collectElAttrRef(childNode))
       }
     }
 
@@ -62,6 +64,8 @@ export default {
       parentNode.insertBefore(newTextChildNode, target);
     }
 
+    refTree = Utils.objectAssign(refTree, Plugin.use("Attrs").collectElAttrRef(target));
+    
     return refTree;
   }
 } as TPluginItem

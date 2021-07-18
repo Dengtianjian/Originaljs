@@ -7,17 +7,14 @@ import Utils from "../../Utils";
 import Collect from "../Collect";
 
 export default {
-  collectRef(target: IEl): IRefTree {
-    if (target.__og__attrCollected) return {};
-
+  collectElAttrRef(target: IEl): IRefTree {
     let attrRefTree: IRefTree = {};
-
-    if (target.childNodes && target.childNodes.length > 0) {
-      for (const childNode of Array.from(target.childNodes)) {
-        attrRefTree = Utils.objectAssign(attrRefTree, this.collectRef(childNode));
-      }
-    }
-
+    Object.defineProperty(target, "__og__attrCollected", {
+      value: true,
+      configurable: false,
+      writable: false,
+      enumerable: false
+    });
     if (!(target as HTMLElement).attributes || (target as HTMLElement).attributes.length === 0) return attrRefTree;
 
     for (const attrItem of Array.from((target as HTMLElement).attributes)) {
@@ -43,6 +40,21 @@ export default {
         writable: false
       });
     }
+    return attrRefTree;
+  },
+  collectRef(target: IEl): IRefTree {
+    if (target.__og__attrCollected) return {};
+
+    let attrRefTree: IRefTree = {};
+
+    if (target.childNodes && target.childNodes.length > 0) {
+      for (const childNode of Array.from(target.childNodes)) {
+        attrRefTree = Utils.objectAssign(attrRefTree, this.collectRef(childNode));
+      }
+    }
+
+    attrRefTree = this.collectElAttrRef(target);
+
     return attrRefTree;
   }
 } as TPluginItem
