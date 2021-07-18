@@ -1,3 +1,4 @@
+import { setProxy } from "../OGProxy";
 import { parseRef } from "../Parser";
 import Plugin from "../Plugin";
 import { IEl } from "../types/ElementType";
@@ -30,6 +31,9 @@ export class Reactive {
     this.refTree = Collect.collection(target, properties);
 
     //* 2. 引用转换实体值
-    parseRef(this.refTree, properties);
+    parseRef(this.refTree, properties, properties);
+
+    //* 3. 设置Proxy
+    setProxy(this.refTree, properties, this);
   }
 }

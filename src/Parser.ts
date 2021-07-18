@@ -1,6 +1,7 @@
+import { getPropertyData } from "./Property";
 import { Ref } from "./Rules";
 import { IProperties } from "./types/Properties";
-import { IRefTree } from "./types/Ref";
+import { IRefTree, TAttr } from "./types/Ref";
 
 export function parseDom(DOMString): Node[] {
   const DP: DOMParser = new DOMParser();
@@ -76,17 +77,14 @@ export function transformPropertyName(propertyNameString: string): string[] {
   return propertys;
 }
 
-export function parseRef(refTree: IRefTree, properties: IProperties, paths: string[] = []): void {
+export function parseRef(refTree: IRefTree, properties: IProperties, refProperty: IProperties =
+  {}, paths: string[] = []): void {
   for (const branchName in refTree) {
     if (!Object.prototype.hasOwnProperty.call(refTree, branchName)) continue;
-    if (properties[branchName] === undefined) continue;
+    if (refProperty[branchName] === undefined) continue;
 
-    if (typeof properties[branchName] === "object") {
-      paths.push(branchName);
-
-      parseRef(refTree[branchName], properties[branchName], paths);
-
-      paths.pop();
+    if (typeof refProperty[branchName] === "object") {
+      parseRef(refTree[branchName], properties, refProperty[branchName], paths);
     }
     replaceRef(refTree, properties, branchName, paths);
   }
@@ -113,33 +111,32 @@ export function transformValueToString(value: any): string {
   return value.toString();
 }
 
-export function replaceRef(refTree: IRefTree, properties: IProperties, branchName: string, paths: string[] = []): void {
-  const replaceValue: string = transformValueToString(properties[branchName]);
+export function parse(sourceString: string, properties: IProperties): string {
+  const refs = sourceString.match(new RegExp(Ref.ExtractVariableName, "g"));
 
+  refs.forEach(ref => {
+    const propertyNames: string[] = transformPropertyName(ref);
+    const replaceValue: string = transformValueToString(getPropertyData(propertyNames, properties));
+
+    sourceString = sourceString.replaceAll(`{${ref}}`, replaceValue)
+  });
+
+  return sourceString;
+}
+
+export function replaceRef(refTree: IRefTree, properties: IProperties, branchName?: string, paths: string[] = []): void {
   const els: Text[] = refTree[branchName].__els;
-  const attrs: Attr[] = refTree[branchName].__attrs;
+  const attrs: TAttr[] = refTree[branchName].__attrs;
 
   if (els && els.length > 0) {
     els.forEach(el => {
-      el.textContent = replaceValue;
+      el.textContent = parse(el.textContent, properties);
     })
   }
 
   if (attrs && attrs.length > 0) {
     for (const attr of attrs) {
-      const refs: RegExpMatchArray = attr.nodeValue.match(new RegExp(Ref.ExtractVariableName, "g"));
-      if (refs === null) continue;
-
-      paths.push(branchName);
-
-      let pathString: string = paths.join(".");
-      refs.forEach(ref => {
-        if (pathString === transformPropertyName(ref).join(".")) {
-          ref = ref.replace(/([\[\]\.])/g, "\\$1");
-          attr.nodeValue = attr.nodeValue.replace(new RegExp(`\{ *${ref} *\}`), replaceValue);
-        }
-      });
-      paths.pop();
+      attr.nodeValue = parse(attr.__og__attrs.nodeRawValue, properties);
     }
   }
 }

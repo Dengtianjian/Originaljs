@@ -7,3 +7,9 @@ export type TRefTreeBranch = {
 export interface IRefTree {
   [key: string]: TRefTreeBranch | any,
 }
+
+export type TAttr = Attr & {
+  __og__attrs: {
+    nodeRawValue: string
+  }
+}
