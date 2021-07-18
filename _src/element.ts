@@ -1,6 +1,6 @@
 import { IOGElement, TMethodItem, TStateItem } from "./types/elementType";
 import { parserDom } from "./component";
-import Reactive from "./reactive";
+import { Reactive } from "./index";
 import Diff from "./reactive/diff";
 import { updateRef, updateTargetView } from "./reactive/view";
 

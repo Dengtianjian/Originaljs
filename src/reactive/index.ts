@@ -3,8 +3,9 @@ import { IEl } from "../types/ElementType";
 import { IProperties } from "../types/Properties";
 import { IRefTree } from "../types/Ref";
 import Collect from "./Collect";
+import Tags from "./modules/Tags";
 
-Plugin.register("Tags",{});
+Plugin.register("Tags", Tags);
 
 export class Reactive {
   target: IEl = null;

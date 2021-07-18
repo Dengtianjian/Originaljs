@@ -1,3 +1,5 @@
+import { createElement, defineElement } from "./src";
+
 let template: string = `<style>
 button {
     padding: 5px;

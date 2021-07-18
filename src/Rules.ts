@@ -1,8 +1,14 @@
-export namespace Methods {
-  export const OnAttributeName: RegExp = /^on[a-z]+$/;
-  export const MethodNameAttibuteValue: RegExp = /^\w+(\(\))?/;
-  export const MatchMethodName: RegExp = /\w+(\(.+\))?;?/;
-  export const MethodName: RegExp = /\w+(?=\(.+\))?/;
-  export const MethodType: RegExp = /(?<=on)\w+/;
-  export const MethodParams: RegExp = /(?<=\().+(?=\))/;
+export const Methods: Record<string, RegExp> = {
+  OnAttributeName: /^on[a-z]+$/,
+  MethodNameAttibuteValue: /^\w+(\(\))?/,
+  MatchMethodName: /\w+(\(.+\))?;?/,
+  MethodName: /\w+(?=\(.+\))?/,
+  MethodType: /(?<=on)\w+/,
+  MethodParams: /(?<=\().+(?=\))/
+}
+
+export const Ref: Record<string, RegExp> = {
+  VariableName: /[a-zA-z_][a-zA-z0-9_\.\[\]]/, //* 获取变量
+  variableItem: /\{ *[a-zA-z_][a-zA-z0-9_\.\[\]]+ *\}/, //* 获取 包含 {} 的变量
+  ExtractVariableName: /(?<=\{) *[a-zA-z_][a-zA-z0-9_\.\[\]]+? *(?=\})/ //* 从 {} 中提取
 }

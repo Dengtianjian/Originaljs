@@ -3,6 +3,7 @@ import { IEl } from "../types/ElementType";
 import { TPluginItem, TPlugins } from "../types/Plugin";
 import { IProperties } from "../types/Properties";
 import { IRefTree } from "../types/Ref";
+import Utils from "../Utils";
 
 export function collection(target: IEl, properties: IProperties): IRefTree {
   let elRefTree: IRefTree = {};
@@ -12,12 +13,20 @@ export function collection(target: IEl, properties: IProperties): IRefTree {
     if (Object.prototype.hasOwnProperty.call(Plugins, pluginName)) {
       const pluginItem: TPluginItem = Plugins[pluginName];
       if (pluginItem.collectRef) {
-        elRefTree = utils.objectAssign(elRefTree, pluginItem.collectRef(target, properties));
+        elRefTree = Utils.objectAssign(elRefTree, pluginItem.collectRef(target, properties));
       }
     }
   }
 
   return elRefTree;
+}
+
+//*
+export function splitStringBasedVariable(refs:string[]): string[] {
+  const strings = [];
+
+
+  return [];
 }
 
 export default {

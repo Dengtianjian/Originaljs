@@ -2,7 +2,8 @@ import { Reactive } from "../reactive";
 import { IRefTree } from "./Ref";
 
 export type IEl = (HTMLElement | ShadowRoot | Element) & {
-  __og__?: Reactive
+  __og__?: Reactive,
+  __og__isCollected: boolean
 };
 
 export interface IOGElement extends HTMLElement {
