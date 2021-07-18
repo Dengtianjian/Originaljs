@@ -21,14 +21,21 @@ export function collection(target: IEl, properties: IProperties): IRefTree {
   return elRefTree;
 }
 
-//*
-export function splitStringBasedVariable(refs:string[]): string[] {
-  const strings = [];
+export function generateElRefTree(propertyNames: string[], refEl: Attr | Text): IRefTree {
+  let tree: IRefTree = {};
 
+  let branchName: string = "__els";
+  if (refEl instanceof Attr) {
+    branchName = "__attrs";
+  }
+  tree = Utils.generateObjectTree(propertyNames, {
+    [branchName]: refEl
+  });
 
-  return [];
+  return tree;
 }
 
 export default {
-  collection
+  collection,
+  generateElRefTree
 }
