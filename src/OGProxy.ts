@@ -11,7 +11,7 @@ export function setProxy(refTree: IRefTree, properties: IProperties, reactiveIns
       if (!(typeof properties[branchName] === "object" && properties[branchName] !== null && properties[branchName] !== undefined)) continue;
       setProxy(refTree[branchName], properties[branchName], reactiveInstance);
 
-      if (properties[branchName].hasOwnProperty("__og__")) continue;
+      if (properties[branchName].hasOwnProperty("__og__reactive")) continue;
 
       Object.defineProperty(properties[branchName], "__og__propertiesPath", {
         value: paths,
@@ -19,7 +19,7 @@ export function setProxy(refTree: IRefTree, properties: IProperties, reactiveIns
         configurable: false,
         enumerable: false
       });
-      Object.defineProperty(properties[branchName], "__og__", {
+      Object.defineProperty(properties[branchName], "__og__reactive", {
         value: reactiveInstance,
         writable: false,
         configurable: false,

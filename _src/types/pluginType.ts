@@ -23,7 +23,7 @@ export type TPropertys = {
 
 export interface IPluginItem {
   collectRef?(El: IElement, rawData: object | []): TRefTree,
-  setUpdateView?(target: IReactiveItem, propertys: TPropertys, property: string, value: any, rawData: object): Boolean,
+  setUpdateView?(target: IReactiveItem, propertys: TPropertys, property: PropertyKey, value: any, rawData: object): Boolean,
   deleteUpdateView?(target: IReactiveItem, refs: TRefTree, propertyKey: PropertyKey): Boolean
 }
 

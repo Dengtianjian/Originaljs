@@ -15,13 +15,15 @@ export class Reactive {
   target: IEl = null;
   properties: IProperties = null;
   refTree: IRefTree = null;
-  static observe(target: IEl, refData: IProperties): void {
-    Object.defineProperty(target, "__og__", {
-      value: new Reactive(target, refData),
+  static observe(target: IEl, refData: IProperties): Reactive {
+    const reactiveInstance = new Reactive(target, refData);
+    Object.defineProperty(target, "__og__reactive", {
+      value: reactiveInstance,
       configurable: false,
       enumerable: false,
       writable: false
     });
+    return reactiveInstance;
   }
   constructor(target: IEl, properties: IProperties) {
     this.target = target;

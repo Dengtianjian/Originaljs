@@ -4,11 +4,11 @@ import { parseDom } from "./Parser";
 import { Reactive } from "./reactive";
 import { IEl, IOGElement } from "./types/ElementType";
 import { IRefTree } from "./types/Ref";
-import { updateRef } from "./View";
+import { setUpdateView, updateRef } from "./View";
 
 export class OGElement extends HTMLElement implements IOGElement {
+  __og__reactive: Reactive = null;
   OGElement: boolean = true;
-  props: string[] = [];
   el: IEl = null;
   slots: Record<string, Node[]> = {};
   refs: IRefTree = {};
@@ -21,7 +21,7 @@ export class OGElement extends HTMLElement implements IOGElement {
     this.templateMount();
     this.collectSlots();
     bindMethods(this.el, this, this);
-    Reactive.observe(this.el, this);
+    this.__og__reactive = Reactive.observe(this.el, this);
     this.rendered();
   }
   private disconnectedCallback(): void {
@@ -77,9 +77,10 @@ export class OGElement extends HTMLElement implements IOGElement {
     if (typeof newValue === "object") {
       compareMerge(newValue, this[propertyName]);
     } else {
-      this[propertyName] = newValue;
-      const refTree: IRefTree = this.el.__og__.refTree;
-      updateRef(refTree, this, propertyName);
+      setUpdateView(this, propertyName, newValue, this);
+      // this[propertyName] = newValue;
+      // const refTree: IRefTree = this.el.__og__reactive.refTree;
+      // updateRef(refTree, this, propertyName);
     }
   }
 }
