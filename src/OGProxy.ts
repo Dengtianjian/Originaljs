@@ -1,6 +1,7 @@
 import { Reactive } from "./reactive";
 import { IProperties } from "./types/Properties";
 import { IRefTree } from "./types/Ref";
+import { deleteUpdateView, setUpdateView } from "./View";
 
 export function setProxy(refTree: IRefTree, properties: IProperties, reactiveInstance: Reactive, paths: string[] = []): void {
   for (const branchName in refTree) {
@@ -28,15 +29,11 @@ export function setProxy(refTree: IRefTree, properties: IProperties, reactiveIns
       properties[branchName] = new Proxy(properties[branchName], {
         set(target: any, propertyKey: string | symbol, value: any, receiver: any): boolean {
           Reflect.set(target, propertyKey, value, receiver);
-          return true;
-        },
-        defineProperty(target: any, propertyKey: string | symbol, attributes: PropertyDescriptor): boolean {
-          Reflect.defineProperty(target, propertyKey, attributes);
-          return true;
+          return setUpdateView(target, propertyKey, value, receiver);
         },
         deleteProperty(target: any, propertyKey: PropertyKey): boolean {
           Reflect.deleteProperty(target, propertyKey);
-          return true;
+          return deleteUpdateView(target, propertyKey);
         }
       })
 
