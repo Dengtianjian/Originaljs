@@ -8,7 +8,8 @@ export const Methods: Record<string, RegExp> = {
 }
 
 export const Ref: Record<string, RegExp> = {
-  VariableName: /[a-zA-z_][a-zA-z0-9_\.\[\]]/, //* 获取变量
-  variableItem: /\{ *[a-zA-z_][a-zA-z0-9_\.\[\]]+ *\}/, //* 获取 包含 {} 的变量
+  VariableName: /[a-zA-z_][a-zA-z0-9_\.\[\]]/, //* 匹配变量
+  variableItem: /\{ *[a-zA-z_][a-zA-z0-9_\.\[\]]+ *\}/, //* 匹配 包含 {} 的变量
   ExtractVariableName: /(?<=\{) *[a-zA-z_][a-zA-z0-9_\.\[\]]+? *(?=\})/ //* 从 {} 中提取
+
 }

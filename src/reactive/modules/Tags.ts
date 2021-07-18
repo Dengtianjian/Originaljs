@@ -10,10 +10,10 @@ export default {
   collectRef(target): IRefTree {
     let refTree: IRefTree = {};
 
-    if (target.__og__isCollected) {
+    if (target.__og__tagCollected) {
       return refTree
     }
-    Object.defineProperty(target, "__og__isCollected", {
+    Object.defineProperty(target, "__og__tagCollected", {
       value: true,
       configurable: false,
       writable: true,
@@ -55,7 +55,7 @@ export default {
       newTextChildNodes.push(newTextEl);
 
       const replaceRefString: string = "\{ *" + variableName.replace(/([\.\[\]])/g, "\\$1") + "? *\}";
-      
+
       target.textContent = target.textContent.replace(new RegExp(replaceRefString), "");
     }
     for (const newTextChildNode of newTextChildNodes) {

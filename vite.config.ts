@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
   },
   build: {
-    // minify: false,
+    minify: true,
     lib: {
       entry: "src/index.ts",
       name: "original",

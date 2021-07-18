@@ -1,8 +1,8 @@
 import OG, { defineElement } from "./src";
 
 let template: string = `
-<div>
-A{ number } { a.b[12] }B
+<div data-number="{number}">
+A{ number }B
 </div>
 `;
 

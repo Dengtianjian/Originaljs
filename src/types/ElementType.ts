@@ -3,7 +3,8 @@ import { IRefTree } from "./Ref";
 
 export type IEl = (HTMLElement | ShadowRoot | Element) & {
   __og__?: Reactive,
-  __og__isCollected: boolean
+  __og__tagCollected: boolean,
+  __og__attrCollected: boolean
 };
 
 export interface IOGElement extends HTMLElement {

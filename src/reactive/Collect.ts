@@ -29,7 +29,7 @@ export function generateElRefTree(propertyNames: string[], refEl: Attr | Text): 
     branchName = "__attrs";
   }
   tree = Utils.generateObjectTree(propertyNames, {
-    [branchName]: refEl
+    [branchName]: [refEl]
   });
 
   return tree;

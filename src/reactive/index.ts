@@ -1,11 +1,14 @@
+import { parseRef } from "../Parser";
 import Plugin from "../Plugin";
 import { IEl } from "../types/ElementType";
 import { IProperties } from "../types/Properties";
 import { IRefTree } from "../types/Ref";
 import Collect from "./Collect";
+import Attrs from "./modules/Attrs";
 import Tags from "./modules/Tags";
 
 Plugin.register("Tags", Tags);
+Plugin.register("Attrs", Attrs);
 
 export class Reactive {
   target: IEl = null;
@@ -25,5 +28,8 @@ export class Reactive {
 
     //* 1. 收集引用
     this.refTree = Collect.collection(target, properties);
+
+    //* 2. 引用转换实体值
+    parseRef(this.refTree, properties);
   }
 }

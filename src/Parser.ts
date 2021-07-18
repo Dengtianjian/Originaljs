@@ -1,3 +1,6 @@
+import { IProperties } from "./types/Properties";
+import { IRefTree } from "./types/Ref";
+
 export function parseDom(DOMString): Node[] {
   const DP: DOMParser = new DOMParser();
   const document: Document = DP.parseFromString(DOMString, "text/html");
@@ -70,4 +73,47 @@ export function transformPropertyName(propertyNameString: string): string[] {
   }
 
   return propertys;
+}
+
+export function parseRef(refTree: IRefTree, properties: IProperties, paths: string[] = []): void {
+  for (const branchName in refTree) {
+    if (!Object.prototype.hasOwnProperty.call(refTree, branchName)) continue;
+    if (properties[branchName] === undefined) continue;
+
+    if (typeof properties[branchName] === "object") {
+      paths.push(branchName);
+
+      parseRef(refTree[branchName], properties[branchName], paths);
+
+      paths.pop();
+    }
+    replaceRef(refTree, properties, branchName, paths);
+  }
+}
+
+export function transformValueToString(value: any): string {
+  // if (typeof value === "object"&&!Array.isArray(value)) {
+  //   forin
+  // }
+  return value.toString();
+}
+
+export function replaceRef(refTree: IRefTree, properties: IProperties, branchName: string, paths: string[] = []): void {
+  const replaceValue: string = transformValueToString(properties[branchName]);
+
+  const els: Text[] = refTree[branchName].__els;
+  const attrs: Attr[] = refTree[branchName].__attrs;
+
+  if (els && els.length > 0) {
+    els.forEach(el => {
+      el.textContent = replaceValue;
+    })
+  }
+  
+  if(attrs&&attrs.length>0){
+    for (const attr of attrs) {
+      
+    }
+  }
+
 }
