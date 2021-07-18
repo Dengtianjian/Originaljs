@@ -27,7 +27,7 @@ export function setProxy(refTree: IRefTree, properties: IProperties, reactiveIns
       });
 
       properties[branchName] = new Proxy(properties[branchName], {
-        set(target: any, propertyKey: string | symbol, value: any, receiver: any): boolean {
+        set(target: any, propertyKey: string, value: any, receiver: any): boolean {
           Reflect.set(target, propertyKey, value, receiver);
           return setUpdateView(target, propertyKey, value, receiver);
         },
