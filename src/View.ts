@@ -1,14 +1,25 @@
-import { parse } from "./Parser";
+import { parse, transformPropertyName, transformValueToString } from "./Parser";
+import { getPropertyData } from "./Property";
 import { IProperties } from "./types/Properties";
-import { IRefTree, TAttr } from "./types/Ref";
+import { IRefTree, TAttr, TText } from "./types/Ref";
 
-export function updateRef(refTree: IRefTree, properties: IProperties, branchName?: string): void {
-  const els: Text[] = refTree[branchName].__els;
-  const attrs: TAttr[] = refTree[branchName].__attrs;
+export function updateRef(refTree: IRefTree, properties: IProperties, propertyKey: string): void {
+  const els: TText[] = refTree[propertyKey].__els;
+  const attrs: TAttr[] = refTree[propertyKey].__attrs;
 
   if (els && els.length > 0) {
     els.forEach(el => {
-      el.textContent = parse(el.textContent, properties);
+      if (el.__og__parsed) {
+        el.textContent = transformValueToString(getPropertyData(propertyKey, properties));
+      } else {
+        el.textContent = parse(el.textContent, properties);
+        Object.defineProperty(el, "__og__parsed", {
+          value: true,
+          configurable: false,
+          writable: false,
+          enumerable: false
+        })
+      }
     })
   }
 

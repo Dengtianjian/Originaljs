@@ -116,8 +116,7 @@ export function parse(sourceString: string, properties: IProperties): string {
   const refs = sourceString.match(new RegExp(Ref.ExtractVariableName, "g"));
 
   refs.forEach(ref => {
-    const propertyNames: string[] = transformPropertyName(ref);
-    const replaceValue: string = transformValueToString(getPropertyData(propertyNames, properties));
+    const replaceValue: string = transformValueToString(getPropertyData(ref, properties));
 
     sourceString = sourceString.replaceAll(`{${ref}}`, replaceValue)
   });

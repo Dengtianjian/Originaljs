@@ -79,7 +79,7 @@ export class OGElement extends HTMLElement implements IOGElement {
     } else {
       this[propertyName] = newValue;
       const refTree: IRefTree = this.el.__og__.refTree;
-      updateRef(refTree, this);
+      updateRef(refTree, this, propertyName);
     }
   }
 }
