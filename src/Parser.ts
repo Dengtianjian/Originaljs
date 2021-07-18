@@ -1,3 +1,4 @@
+import { Ref } from "./Rules";
 import { IProperties } from "./types/Properties";
 import { IRefTree } from "./types/Ref";
 
@@ -109,11 +110,22 @@ export function replaceRef(refTree: IRefTree, properties: IProperties, branchNam
       el.textContent = replaceValue;
     })
   }
-  
-  if(attrs&&attrs.length>0){
+
+  if (attrs && attrs.length > 0) {
     for (const attr of attrs) {
-      
+      const refs: RegExpMatchArray = attr.nodeValue.match(new RegExp(Ref.ExtractVariableName, "g"));
+      if (refs === null) continue;
+
+      paths.push(branchName);
+
+      let pathString: string = paths.join(".");
+      refs.forEach(ref => {
+        if (pathString === transformPropertyName(ref).join(".")) {
+          ref = ref.replace(/([\[\]\.])/g, "\\$1");
+          attr.nodeValue = attr.nodeValue.replace(new RegExp(`\{ *${ref} *\}`), replaceValue);
+        }
+      });
+      paths.pop();
     }
   }
-
 }
