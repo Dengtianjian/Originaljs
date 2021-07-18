@@ -93,9 +93,23 @@ export function parseRef(refTree: IRefTree, properties: IProperties, paths: stri
 }
 
 export function transformValueToString(value: any): string {
-  // if (typeof value === "object"&&!Array.isArray(value)) {
-  //   forin
-  // }
+  if (typeof value === "object" && !Array.isArray(value)) {
+    let objItems: string[] = [];
+
+    for (const key in value) {
+      if (Object.prototype.hasOwnProperty.call(value, key)) {
+        if (Array.isArray(value[key])) {
+          objItems.push(key + ":[" + value[key].toString() + "]");
+        } else if (typeof value[key] === "object" && !Array.isArray(value)) {
+          objItems.push(key + ":" + transformValueToString(value[key]));
+        } else {
+          objItems.push(key + ":" + value[key].toString())
+        }
+      }
+    }
+
+    return "{" + objItems.join(",") + "}";
+  }
   return value.toString();
 }
 
