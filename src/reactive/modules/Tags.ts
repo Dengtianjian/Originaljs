@@ -7,7 +7,7 @@ import Utils from "../../Utils";
 import Collect from "../Collect";
 
 export default {
-  collectRef(target, properties): IRefTree {
+  collectRef(target): IRefTree {
     let refTree: IRefTree = {};
 
     if (target.__og__isCollected) {
