@@ -14,6 +14,7 @@ export class OGElement extends HTMLElement implements IOGElement {
   refs: IRefTree = {};
   constructor() {
     super();
+    // @ts-ignore
     this.el = this.attachShadow({ mode: "closed" });
   }
   private connectedCallback(): void {
@@ -78,9 +79,6 @@ export class OGElement extends HTMLElement implements IOGElement {
       compareMerge(newValue, this[propertyName]);
     } else {
       setUpdateView(this, propertyName, newValue, this);
-      // this[propertyName] = newValue;
-      // const refTree: IRefTree = this.el.__og__reactive.refTree;
-      // updateRef(refTree, this, propertyName);
     }
   }
 }
