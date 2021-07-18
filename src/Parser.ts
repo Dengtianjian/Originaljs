@@ -114,7 +114,7 @@ export function transformValueToString(value: any): string {
 
 export function parse(sourceString: string, properties: IProperties): string {
   const refs = sourceString.match(new RegExp(Ref.ExtractVariableName, "g"));
-
+  
   refs.forEach(ref => {
     const replaceValue: string = transformValueToString(getPropertyData(ref, properties));
 

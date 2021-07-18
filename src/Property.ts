@@ -10,8 +10,11 @@ export function getPropertyData(propertyNames: string[] | number[] | string | nu
     property = property[name];
     if (property === undefined) {
       console.warn(`undefined reactive variables: ${name} . Path:${(propertyNames as string[] | number[]).join("-> ")}.`);
+      property = "";
       break;
     }
   }
+  console.log(property);
+  
   return property;
 }
