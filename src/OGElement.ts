@@ -75,7 +75,7 @@ export class OGElement extends HTMLElement implements IOGElement {
   adopted(): void { }
   disconnected(): void { };
   update<T>(propertyName: string, newValue: T | any): void {
-    if (typeof newValue === "object") {
+    if (typeof newValue === "object" && newValue !== null && newValue !== undefined) {
       compareMerge(newValue, this[propertyName]);
     } else {
       setUpdateView(this, propertyName, newValue, this);

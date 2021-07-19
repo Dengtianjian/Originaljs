@@ -29,19 +29,24 @@ class CButton extends OG.createElement() {
 
     }
   }
+  count = 1;
   updateObj() {
     // this.number = 456;
-    // this.update("number", 456);
+    this.update("number", null);
     // this.obj.nums[2] = this.formatTime().toString();
-    this.obj.a = {
-      b: {
-        c: 2,
-        d: [1, 2, 3, 4, 5],
-        e: {
-          f: 2
-        }
-      }
-    }
+    // this.obj.a = {
+    //   b: {
+    //     c: 2,
+    //     d: [1, 2, 3, 4, 5],
+    //     e: {
+    //       f: 2
+    //     }
+    //   }
+    // }
+    // this.count++;
+    // if (this.count == 3) {
+    //   this.obj = null;
+    // }
     // setInterval(() => {
     //   this.obj.user.lastName = this.formatTime();
     // }, 1000);

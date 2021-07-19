@@ -15,7 +15,7 @@ export function deepUpdateRef(refTree: IRefTree, properties: IProperties): void 
         deepUpdateRef(properties, property);
       }
 
-      updateRef(refTree, properties[propertyName].__og__reactive.properties, propertyName,properties[propertyName].__og__propertiesPath);
+      updateRef(refTree, properties[propertyName].__og__reactive.properties, propertyName, properties[propertyName].__og__propertiesPath);
     }
   }
   return;
@@ -28,7 +28,7 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
   if (els && els.length > 0) {
     els.forEach(el => {
       if (el.__og__parsed) {
-        el.textContent = transformValueToString(getPropertyData(propertyKeyPaths, properties));
+        el.textContent = transformValueToString(getPropertyData(propertyKeyPaths || propertyKey, properties));
       } else {
         el.textContent = parse(el.textContent, properties);
         Object.defineProperty(el, "__og__parsed", {
