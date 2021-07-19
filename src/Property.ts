@@ -14,7 +14,6 @@ export function getPropertyData(propertyNames: string[] | number[] | string | nu
       break;
     }
   }
-  console.log(property);
-  
+
   return property;
 }

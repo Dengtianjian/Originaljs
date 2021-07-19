@@ -72,7 +72,9 @@ export default {
   },
   setUpdateView(target, refTree, propertyKey, value): boolean {
     if (typeof value === "object") {
-      setProxy(refTree, target, target.__og__reactive, target.__og__propertiesPath.split("."));
+      let paths: string[] = target.__og__propertiesPath.split(".");
+      paths.push(String(propertyKey))
+      setProxy(refTree[propertyKey], target[propertyKey], target.__og__reactive, paths);
 
       deepUpdateRef(refTree[propertyKey], target[propertyKey]);
     }

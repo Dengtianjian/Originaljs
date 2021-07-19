@@ -15,20 +15,20 @@ export function deepUpdateRef(refTree: IRefTree, properties: IProperties): void 
         deepUpdateRef(properties, property);
       }
 
-      updateRef(refTree, properties[propertyName].__og__reactive.properties, propertyName);
+      updateRef(refTree, properties[propertyName].__og__reactive.properties, propertyName,properties[propertyName].__og__propertiesPath);
     }
   }
   return;
 }
 
-export function updateRef(refTree: IRefTree, properties: IProperties, propertyKey: string | number): void {
+export function updateRef(refTree: IRefTree, properties: IProperties, propertyKey: string | number, propertyKeyPaths?: string | string[]): void {
   const els: TText[] = refTree[propertyKey].__els;
   const attrs: TAttr[] = refTree[propertyKey].__attrs;
 
   if (els && els.length > 0) {
     els.forEach(el => {
       if (el.__og__parsed) {
-        el.textContent = transformValueToString(getPropertyData(propertyKey, properties));
+        el.textContent = transformValueToString(getPropertyData(propertyKeyPaths, properties));
       } else {
         el.textContent = parse(el.textContent, properties);
         Object.defineProperty(el, "__og__parsed", {

@@ -82,7 +82,6 @@ export function parseRef(refTree: IRefTree, properties: IProperties, refProperty
   {}): void {
   for (const branchName in refTree) {
     if (!Object.prototype.hasOwnProperty.call(refTree, branchName)) continue;
-    if (refProperty[branchName] === undefined) continue;
 
     if (typeof refProperty[branchName] === "object") {
       parseRef(refTree[branchName], properties, refProperty[branchName]);
@@ -114,7 +113,7 @@ export function transformValueToString(value: any): string {
 
 export function parse(sourceString: string, properties: IProperties): string {
   const refs = sourceString.match(new RegExp(Ref.ExtractVariableName, "g"));
-  
+
   refs.forEach(ref => {
     const replaceValue: string = transformValueToString(getPropertyData(ref, properties));
 
