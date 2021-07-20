@@ -54,19 +54,12 @@ export function setUpdateView(target: any, propertyKey: string | number, value: 
   const propertyNames: string[] = target.__og__propertiesPath.split(".");
   const refTreePart: IRefTree = Utils.deepGetObjectProperty(refTree, propertyNames);
 
-  const plugins: TPlugins = Plugin.all();
-  for (const pluginName in plugins) {
-    if (Object.prototype.hasOwnProperty.call(plugins, pluginName)) {
-      if (plugins[pluginName].setUpdateView) {
-        plugins[pluginName].setUpdateView(target, refTreePart, propertyKey, value);
-      }
-    }
-  }
+  Plugin.useAll("setUpdateView", [target, refTreePart, propertyKey, value]);
 
   return true;
 }
 
 export function deleteUpdateView(target: any, propertyKey: PropertyKey): boolean {
-
+  Plugin.useAll("deleteUpdateView", [target, propertyKey]);
   return true;
 }
