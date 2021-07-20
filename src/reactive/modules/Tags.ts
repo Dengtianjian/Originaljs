@@ -6,7 +6,7 @@ import { IEl } from "../../types/ElementType";
 import { TPluginItem } from "../../types/Plugin";
 import { IRefTree } from "../../types/Ref";
 import Utils from "../../Utils";
-import { deepUpdateRef, updateRef } from "../../View";
+import { deepUpdateRef, removeRefTree, updateRef } from "../../View";
 import Collect from "../Collect";
 
 export default {
@@ -83,9 +83,12 @@ export default {
 
     return true;
   },
-  deleteUpdateView(target, propertyKey): Boolean {
-    // TODO 删除refTree 下的propertyKey
-    console.log(target, propertyKey);
+  deleteUpdateView(target: IEl, propertyKey): Boolean {
+    let refTree: IRefTree = Utils.deepGetObjectProperty(target.__og__reactive.refTree, target.__og__propertiesPath.split("."));
+
+    removeRefTree(refTree, true);
+    delete refTree[propertyKey];
+
     return true;
   }
 } as TPluginItem

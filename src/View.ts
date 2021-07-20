@@ -61,3 +61,32 @@ export function deleteUpdateView(target: any, propertyKey: PropertyKey): boolean
   Plugin.useAll("deleteUpdateView", [target, propertyKey]);
   return true;
 }
+
+export function removeRefTree(refTree: IRefTree, isDeep: boolean = false): boolean {
+  if (isDeep) {
+    if (typeof refTree === "object") {
+      for (const branchName in refTree) {
+        if (refTree.hasOwnProperty(branchName)) {
+          removeRefTree(refTree[branchName]);
+        }
+      }
+    }
+  }
+  let attrs: TAttr[] = refTree['__attrs'];
+  let els: TText[] = refTree['__els'];
+
+  if (attrs && attrs.length > 0) {
+    attrs.forEach(attr => {
+      attr.ownerElement.removeAttribute(attr.nodeName);
+    });
+    refTree['__attrs'] = [];
+  }
+  if (els && els.length > 0) {
+    els.forEach(el => {
+      el.parentNode.removeChild(el);
+    })
+    refTree['__els'] = [];
+  }
+
+  return true;
+}
