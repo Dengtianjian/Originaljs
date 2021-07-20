@@ -1,8 +1,6 @@
 import { parse, transformValueToString } from "./Parser";
 import Plugin from "./Plugin";
 import { getPropertyData } from "./Property";
-import { Ref } from "./Rules";
-import { TPlugins } from "./types/Plugin";
 import { IProperties } from "./types/Properties";
 import { IRefTree, TAttr, TText } from "./types/Ref";
 import Utils from "./Utils";

@@ -22,7 +22,7 @@ export function useAll(hookName: keyof TPluginItem, args: any[] = []): void {
   const plugins: TPlugins = all();
   for (const pluginName in plugins) {
     if (Object.prototype.hasOwnProperty.call(plugins, pluginName)) {
-      if (plugins[pluginName].setUpdateView) {
+      if (plugins[pluginName][hookName]) {
         plugins[pluginName][hookName](...args);
       }
     }
