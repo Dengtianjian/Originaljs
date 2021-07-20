@@ -33,7 +33,7 @@ export class Reactive {
     this.refTree = Collect.collection(target, properties);
 
     //* 2. 引用转换实体值
-    parseRef(this.refTree, properties, properties);
+    parseRef(this.refTree, properties);
 
     //* 3. 设置Proxy
     setProxy(this.refTree, properties, this);

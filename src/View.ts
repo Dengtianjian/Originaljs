@@ -1,6 +1,7 @@
 import { parse, transformValueToString } from "./Parser";
 import Plugin from "./Plugin";
 import { getPropertyData } from "./Property";
+import { Ref } from "./Rules";
 import { TPlugins } from "./types/Plugin";
 import { IProperties } from "./types/Properties";
 import { IRefTree, TAttr, TText } from "./types/Ref";
@@ -15,28 +16,23 @@ export function deepUpdateRef(refTree: IRefTree, properties: IProperties): void 
         deepUpdateRef(properties, property);
       }
 
-      updateRef(refTree, properties[propertyName].__og__reactive.properties, propertyName, properties[propertyName].__og__propertiesPath);
+      updateRef(refTree[propertyName], property.__og__reactive.properties, property.__og__propertiesPath);
     }
   }
   return;
 }
 
-export function updateRef(refTree: IRefTree, properties: IProperties, propertyKey: string | number, propertyKeyPaths?: string | string[]): void {
-  const els: TText[] = refTree[propertyKey].__els;
-  const attrs: TAttr[] = refTree[propertyKey].__attrs;
+export function updateRef(refTree: IRefTree, properties: IProperties, propertyKeyPaths: number | string | string[]): void {
+  const els: TText[] = refTree.__els;
+  const attrs: TAttr[] = refTree.__attrs;
 
   if (els && els.length > 0) {
     els.forEach(el => {
       if (el.__og__parsed) {
-        el.textContent = transformValueToString(getPropertyData(propertyKeyPaths || propertyKey, properties));
+        el.textContent = transformValueToString(getPropertyData(propertyKeyPaths, properties));
       } else {
         el.textContent = parse(el.textContent, properties);
-        Object.defineProperty(el, "__og__parsed", {
-          value: true,
-          configurable: false,
-          writable: false,
-          enumerable: false
-        })
+        el.__og__parsed = true;
       }
     })
   }
@@ -52,7 +48,7 @@ export function setUpdateView(target: any, propertyKey: string | number, value: 
   const refTree: IRefTree = target.__og__reactive.refTree;
   if (!target.__og__propertiesPath) {
     target[propertyKey] = value;
-    updateRef(refTree, target, propertyKey);
+    updateRef(refTree[propertyKey], target, propertyKey);
     return true;
   }
   const propertyNames: string[] = target.__og__propertiesPath.split(".");

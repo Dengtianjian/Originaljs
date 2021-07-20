@@ -8,8 +8,7 @@ export function getPropertyData(propertyNames: string[] | number[] | string | nu
   let property: any = properties;
   for (const name of propertyNames as string[] | number[]) {
     property = property[name];
-    if (property === undefined) {
-      console.warn(`undefined reactive variables: ${name} . Path:${(propertyNames as string[] | number[]).join("-> ")}.`);
+    if (property === undefined || property === null) {
       property = "";
       break;
     }

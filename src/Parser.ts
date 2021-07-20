@@ -78,15 +78,16 @@ export function transformPropertyName(propertyNameString: string): string[] {
   return propertys;
 }
 
-export function parseRef(refTree: IRefTree, properties: IProperties, refProperty: IProperties =
-  {}): void {
+export function parseRef(refTree: IRefTree, properties: IProperties, refProperty?: IProperties): void {
+  refProperty = refProperty || properties;
   for (const branchName in refTree) {
-    if (!Object.prototype.hasOwnProperty.call(refTree, branchName)) continue;
+    if (!refTree.hasOwnProperty(branchName)) continue;
 
     if (typeof refProperty[branchName] === "object") {
-      parseRef(refTree[branchName], properties, refProperty[branchName]);
+      parseRef(refTree[branchName], properties, properties[branchName]);
     }
-    updateRef(refTree, properties, branchName);
+
+    updateRef(refTree[branchName], properties, refProperty[branchName] ? refProperty[branchName].__og__propertiesPath : branchName);
   }
 }
 

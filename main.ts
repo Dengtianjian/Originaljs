@@ -4,8 +4,8 @@ let template: string = `
 <div data-number="{number} {obj.nums}">
 <div><button onclick="updateObj" >Update</button></div>
 A{ number }B {obj.name} {obj.user.lastName}
-<p tilte="{obj.a.b} {number}">
-  {obj.a.b}
+<p tilte="{obj.a.b} {number} ">
+  {number}
 </p>
 </div>
 `;
@@ -32,7 +32,7 @@ class CButton extends OG.createElement() {
   count = 1;
   updateObj() {
     // this.number = 456;
-    this.update("number", null);
+    // this.update("number", null);
     // this.obj.nums[2] = this.formatTime().toString();
     // this.obj.a = {
     //   b: {
@@ -45,8 +45,9 @@ class CButton extends OG.createElement() {
     // }
     // this.count++;
     // if (this.count == 3) {
-    //   this.obj = null;
+    //   this.update("number", 456);
     // }
+    this.obj.user.lastName = "666";
     // setInterval(() => {
     //   this.obj.user.lastName = this.formatTime();
     // }, 1000);

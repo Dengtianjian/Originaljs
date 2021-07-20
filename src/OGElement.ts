@@ -4,7 +4,7 @@ import { parseDom } from "./Parser";
 import { Reactive } from "./reactive";
 import { IEl, IOGElement } from "./types/ElementType";
 import { IRefTree } from "./types/Ref";
-import { setUpdateView, updateRef } from "./View";
+import { setUpdateView } from "./View";
 
 export class OGElement extends HTMLElement implements IOGElement {
   __og__reactive: Reactive = null;

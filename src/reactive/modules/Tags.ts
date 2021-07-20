@@ -71,15 +71,15 @@ export default {
     return refTree;
   },
   setUpdateView(target, refTree, propertyKey, value): boolean {
+    let paths: string[] = target.__og__propertiesPath.split(".");
+    paths.push(String(propertyKey))
     if (typeof value === "object") {
-      let paths: string[] = target.__og__propertiesPath.split(".");
-      paths.push(String(propertyKey))
       setProxy(refTree[propertyKey], target[propertyKey], target.__og__reactive, paths);
 
       deepUpdateRef(refTree[propertyKey], target[propertyKey]);
     }
 
-    updateRef(refTree, target.__og__reactive.properties, propertyKey);
+    updateRef(refTree[propertyKey], target.__og__reactive.properties, paths);
 
     return true;
   }
