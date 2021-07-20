@@ -82,5 +82,10 @@ export default {
     updateRef(refTree[propertyKey], target.__og__reactive.properties, paths);
 
     return true;
+  },
+  deleteUpdateView(target, propertyKey): Boolean {
+    // TODO 删除refTree 下的propertyKey
+    console.log(target, propertyKey);
+    return true;
   }
 } as TPluginItem

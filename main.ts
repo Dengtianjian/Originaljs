@@ -11,6 +11,11 @@ A{ number }B {obj.name} {obj.user.lastName}
 `;
 
 class CButton extends OG.createElement() {
+  connected() {
+    setInterval(() => {
+      this.update("number", this.formatTime());
+    }, 1000);
+  }
   render() {
     return template;
   }
@@ -31,8 +36,9 @@ class CButton extends OG.createElement() {
   }
   count = 1;
   updateObj() {
+    delete this.obj.name;
     // this.number = 456;
-    // this.update("number", null);
+    // this.update("number", 789);
     // this.obj.nums[2] = this.formatTime().toString();
     // this.obj.a = {
     //   b: {
@@ -47,10 +53,7 @@ class CButton extends OG.createElement() {
     // if (this.count == 3) {
     //   this.update("number", 456);
     // }
-    this.obj.user.lastName = "666";
-    // setInterval(() => {
-    //   this.obj.user.lastName = this.formatTime();
-    // }, 1000);
+    // this.obj.user.lastName = "666";
   }
   formatTime(): string {
     const d = new Date();
