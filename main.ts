@@ -7,7 +7,17 @@ A{ number }B {obj.name} {obj.user.lastName}
 <p tilte="{number} {obj.user.firstName}">
   {number}
 </p>
-<o-for item in obj.nums></o-for>
+{users.0.luckNums}
+<o-for useritem in="users">
+  <p>{useritem.name}</p>
+  <p data-index="{useritem}">{useritem}</p>
+  <div>
+    <p data-a="{useritem}"></p>
+    <o-for lucknum in="useritem.luckNums">
+      {lucknum}
+    </o-for>
+  </div>
+</o-for>
 </div>
 `;
 
@@ -35,6 +45,15 @@ class CButton extends OG.createElement() {
 
     }
   }
+  users = [
+    {
+      name: "admin",
+      luckNums: [1, 2, 3]
+    }, {
+      name: "Test",
+      luckNums: [4, 5, 6, 7, 8, 9]
+    }
+  ];
   count = 1;
   updateObj() {
     delete this.obj.user;

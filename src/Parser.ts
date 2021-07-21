@@ -2,6 +2,7 @@ import { getPropertyData } from "./Property";
 import { Ref } from "./Rules";
 import { IProperties } from "./types/Properties";
 import { IRefTree, TAttr } from "./types/Ref";
+import Utils from "./Utils";
 import { updateRef } from "./View";
 
 export function parseDom(DOMString): Node[] {
@@ -79,11 +80,14 @@ export function transformPropertyName(propertyNameString: string): string[] {
 }
 
 export function parseRef(refTree: IRefTree, properties: IProperties, refProperty?: IProperties): void {
+  const refP=Utils.deepCopy(refProperty);
   refProperty = refProperty || properties;
   for (const branchName in refTree) {
     if (!refTree.hasOwnProperty(branchName)) continue;
 
     if (typeof refProperty[branchName] === "object") {
+      console.log(properties,branchName);
+      
       parseRef(refTree[branchName], properties, properties[branchName]);
     }
 

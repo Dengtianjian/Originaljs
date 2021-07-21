@@ -6,7 +6,7 @@ import { IProperties } from "../types/Properties";
 import { IRefTree } from "../types/Ref";
 import Collect from "./Collect";
 import Attrs from "./modules/Attrs";
-import Buildin from "./modules/Buildin";
+import Buildin from "./modules/buildin";
 import Tags from "./modules/Tags";
 
 Plugin.register('Buildin', Buildin);
