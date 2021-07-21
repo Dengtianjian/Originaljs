@@ -4,9 +4,10 @@ let template: string = `
 <div data-number="{number} {obj.nums}">
 <div><button onclick="updateObj" >Update</button></div>
 A{ number }B {obj.name} {obj.user.lastName}
-<p tilte="{number} {obj.name} ">
+<p tilte="{number} {obj.user.firstName}">
   {number}
 </p>
+<o-for item in obj.nums></o-for>
 </div>
 `;
 
@@ -36,7 +37,7 @@ class CButton extends OG.createElement() {
   }
   count = 1;
   updateObj() {
-    delete this.obj.name;
+    delete this.obj.user;
     // this.number = 456;
     // this.update("number", 789);
     // this.obj.nums[2] = this.formatTime().toString();

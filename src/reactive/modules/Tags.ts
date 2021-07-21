@@ -84,11 +84,13 @@ export default {
     return true;
   },
   deleteUpdateView(target: IEl, propertyKey): Boolean {
-    let refTree: IRefTree = Utils.deepGetObjectProperty(target.__og__reactive.refTree, target.__og__propertiesPath.split("."));
+    // TODO 全局 target.__og__propertiesPath改为数组。paths用数组存储
+    let paths: string[] = target.__og__propertiesPath.split(".");
+    let refTree: IRefTree = Utils.deepGetObjectProperty(target.__og__reactive.refTree,paths);
 
-    let paths: any[] = target.__og__propertiesPath.split(".");
-    paths.push(propertyKey);
-    removeRefTree(refTree, paths, true);
+    paths.push(String(propertyKey));
+    removeRefTree(refTree[propertyKey], paths, true);
+
     delete refTree[propertyKey];
 
     return true;
