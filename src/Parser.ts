@@ -80,15 +80,13 @@ export function transformPropertyName(propertyNameString: string): string[] {
 }
 
 export function parseRef(refTree: IRefTree, properties: IProperties, refProperty?: IProperties): void {
-  const refP=Utils.deepCopy(refProperty);
   refProperty = refProperty || properties;
+  
   for (const branchName in refTree) {
     if (!refTree.hasOwnProperty(branchName)) continue;
 
     if (typeof refProperty[branchName] === "object") {
-      console.log(properties,branchName);
-      
-      parseRef(refTree[branchName], properties, properties[branchName]);
+      parseRef(refTree[branchName], properties, refProperty[branchName]);
     }
 
     updateRef(refTree[branchName], properties, refProperty[branchName] ? refProperty[branchName].__og__propertiesPath : branchName);
