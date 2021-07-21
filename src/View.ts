@@ -62,22 +62,34 @@ export function deleteUpdateView(target: any, propertyKey: PropertyKey): boolean
   return true;
 }
 
-export function removeRefTree(refTree: IRefTree, isDeep: boolean = false): boolean {
+export function removeRefTree(refTree: IRefTree, branchName: string[], isDeep: boolean = false): boolean {
   if (isDeep) {
     if (typeof refTree === "object") {
-      for (const branchName in refTree) {
-        if (refTree.hasOwnProperty(branchName)) {
-          removeRefTree(refTree[branchName]);
+      for (const name in refTree) {
+        if (refTree.hasOwnProperty(name)) {
+          branchName.push(name);
+          removeRefTree(refTree[name], branchName, true);
+          branchName.pop();
         }
       }
     }
   }
+
+  let propertiesPaths = branchName.join(".");
+  console.log(propertiesPaths);
+
+
   let attrs: TAttr[] = refTree['__attrs'];
   let els: TText[] = refTree['__els'];
 
   if (attrs && attrs.length > 0) {
     attrs.forEach(attr => {
-      attr.ownerElement.removeAttribute(attr.nodeName);
+      console.log(branchName);
+
+      attr.__og__attrs.nodeRawValue = attr.__og__attrs.nodeRawValue.replace(`{${propertiesPaths}}`, "");
+      console.log(attr.__og__attrs.nodeRawValue);
+
+      // attr.ownerElement.removeAttribute(attr.nodeName);
     });
     refTree['__attrs'] = [];
   }

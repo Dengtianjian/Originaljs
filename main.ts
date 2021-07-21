@@ -4,7 +4,7 @@ let template: string = `
 <div data-number="{number} {obj.nums}">
 <div><button onclick="updateObj" >Update</button></div>
 A{ number }B {obj.name} {obj.user.lastName}
-<p tilte="{obj.a.b} {number} ">
+<p tilte="{number} {obj.name} ">
   {number}
 </p>
 </div>

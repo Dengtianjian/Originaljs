@@ -86,7 +86,9 @@ export default {
   deleteUpdateView(target: IEl, propertyKey): Boolean {
     let refTree: IRefTree = Utils.deepGetObjectProperty(target.__og__reactive.refTree, target.__og__propertiesPath.split("."));
 
-    removeRefTree(refTree, true);
+    let paths: any[] = target.__og__propertiesPath.split(".");
+    paths.push(propertyKey);
+    removeRefTree(refTree, paths, true);
     delete refTree[propertyKey];
 
     return true;
