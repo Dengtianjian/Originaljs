@@ -3,6 +3,7 @@ import { getPropertyData } from "../../../Property";
 import { Ref } from "../../../Rules";
 import { IProperties } from "../../../types/Properties";
 import { IRefTree } from "../../../types/Ref";
+import Utils from "../../../Utils";
 
 function replaceRef(target: Node | HTMLElement, sourceString: string, replaceString: string): void {
   for (const nodeItem of Array.from(target.childNodes)) {
@@ -38,10 +39,10 @@ function handleOFor(target: HTMLElement, properties: IProperties): IRefTree {
   const attributes: Attr[] = Array.from(target.attributes);
   if (attributes.length === 0) return {};
   let InIndex: number = -1;
-  let IndexName: string = "";
-  let PropertyName: string = target.attributes['in'].nodeValue;
-  let KeyName: string = "";
-  let ItemName: string = "";
+  let indexName: string = "";
+  let propertyName: string = target.attributes['in'].nodeValue;
+  let keyName: string = "";
+  let itemName: string = "";
   const childNodes: Node[] = [];
   target.childNodes.forEach(node => {
     childNodes.push(node.cloneNode(true));
@@ -55,17 +56,17 @@ function handleOFor(target: HTMLElement, properties: IProperties): IRefTree {
   });
 
   if (InIndex == 2) {
-    IndexName = attributes[InIndex - 1]['nodeName'];
-    ItemName = attributes[InIndex - 2]['nodeName'];
+    indexName = attributes[InIndex - 1]['nodeName'];
+    itemName = attributes[InIndex - 2]['nodeName'];
   } else if (InIndex == 3) {
-    KeyName = attributes[InIndex - 1]['nodeName'];
-    IndexName = attributes[InIndex - 2]['nodeName'];
-    ItemName = attributes[InIndex - 3]['nodeName'];
+    keyName = attributes[InIndex - 1]['nodeName'];
+    indexName = attributes[InIndex - 2]['nodeName'];
+    itemName = attributes[InIndex - 3]['nodeName'];
   } else {
-    ItemName = attributes[InIndex - 1]['nodeName'];
+    itemName = attributes[InIndex - 1]['nodeName'];
   }
 
-  const propertyNames: string[] | number[] = transformPropertyName(PropertyName);
+  const propertyNames: string[] | number[] = transformPropertyName(propertyName);
   const property: IProperties = getPropertyData(propertyNames, properties);
 
   const newEls: Array<Node[]> = [];
@@ -77,7 +78,7 @@ function handleOFor(target: HTMLElement, properties: IProperties): IRefTree {
       newEl.forEach((el, index) => {
         newEl[index] = el.cloneNode(true);
         propertyNames.push(key);
-        replaceRef(newEl[index], ItemName, propertyNames.join("."));
+        replaceRef(newEl[index], itemName, propertyNames.join("."));
         propertyNames.pop();
       });
       newEls.push(newEl);
@@ -90,7 +91,18 @@ function handleOFor(target: HTMLElement, properties: IProperties): IRefTree {
     target.append(...els);
   });
 
-  return {};
+  return Utils.generateObjectTree(propertyNames, {
+    __fors: [
+      {
+        el: target,
+        templateChildNodes: childNodes,
+        indexName,
+        propertyName,
+        keyName,
+        itemName
+      }
+    ]
+  } as IRefTree);
 }
 
 export {
