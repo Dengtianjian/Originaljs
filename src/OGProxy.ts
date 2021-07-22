@@ -5,12 +5,15 @@ import { deleteUpdateView, setUpdateView } from "./View";
 
 export function setProxy(refTree: IRefTree, properties: IProperties, reactiveInstance: Reactive, paths: string[] = []): void {
   for (const branchName in refTree) {
-    if (Object.prototype.hasOwnProperty.call(refTree, branchName)) {
+    if (refTree.hasOwnProperty(branchName)) {
       if (!(typeof properties[branchName] === "object" && properties[branchName] !== null && properties[branchName] !== undefined)) continue;
       paths.push(branchName);
       setProxy(refTree[branchName], properties[branchName], reactiveInstance, paths);
 
-      if (properties[branchName].hasOwnProperty("__og__reactive")) continue;
+      if (properties[branchName].hasOwnProperty("__og__reactive")) {
+        paths.pop();
+        continue;
+      };
 
       Object.defineProperty(properties[branchName], "__og__propertiesPath", {
         value: paths.join("."),

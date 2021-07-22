@@ -28,7 +28,7 @@ export default {
 
         const propertyNames: string[] = transformPropertyName(variabledName[0]);
 
-        attrRefTree = Utils.objectAssign(attrRefTree, Collect.generateElRefTree(propertyNames, attrItem));
+        Utils.objectAssign(attrRefTree, Collect.generateElRefTree(propertyNames, attrItem));
       }
 
       Object.defineProperty(attrItem, "__og__attrs", {
@@ -49,7 +49,7 @@ export default {
 
     if (target.childNodes && target.childNodes.length > 0) {
       for (const childNode of Array.from(target.childNodes)) {
-        attrRefTree = Utils.objectAssign(attrRefTree, this.collectRef(childNode));
+        Utils.objectAssign(attrRefTree, this.collectRef(childNode));
       }
     }
 

@@ -14,7 +14,7 @@ function collectRef(target: IEl, properties: IProperties): IRefTree {
   if (target.nodeType === 1 && buildInTagName.includes((target as HTMLElement).tagName.toLowerCase())) {
     switch ((target as HTMLElement).tagName.toLowerCase()) {
       case "o-for":
-        refTree = Utils.objectAssign(refTree, handleOFor(target as HTMLElement, properties));
+       Utils.objectAssign(refTree, handleOFor(target as HTMLElement, properties));
         break;
     }
   }
@@ -22,7 +22,7 @@ function collectRef(target: IEl, properties: IProperties): IRefTree {
   if (target.childNodes.length > 0) {
     for (const key in target.childNodes) {
       if (target.childNodes.hasOwnProperty(key)) {
-        refTree = Utils.objectAssign(refTree, collectRef(target.childNodes[key] as IEl, properties));
+        Utils.objectAssign(refTree, collectRef(target.childNodes[key] as IEl, properties));
       }
     }
   }
@@ -30,9 +30,9 @@ function collectRef(target: IEl, properties: IProperties): IRefTree {
   return refTree;
 }
 
-function setUpdateView(target: IProperties, refTree: IRefTree, propertyKey: string | number, value: any): boolean {
+function setUpdateView(properties: IProperties, refTree: IRefTree, propertyKey: string | number, value: any): boolean {
   if (refTree.hasOwnProperty("__fors")) {
-    return oForElUpdateView(target, refTree, propertyKey, value);
+    return oForElUpdateView(properties, refTree, propertyKey, value);
   }
   return true;
 }

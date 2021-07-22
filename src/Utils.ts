@@ -12,7 +12,7 @@ function deepCopy(obj): object {
   return newObj;
 }
 
-function objectAssign(target: object, source: object): object {
+function objectAssign(target: object, source: object) {
   for (const key in source) {
     if (Object.prototype.hasOwnProperty.call(source, key)) {
       const targetItem = target[key];
@@ -21,14 +21,13 @@ function objectAssign(target: object, source: object): object {
         if (Array.isArray(targetItem)) {
           target[key] = target[key].concat(sourceItem);
         } else {
-          target[key] = objectAssign(targetItem, sourceItem);
+          objectAssign(targetItem, sourceItem);
         }
       } else {
         target[key] = source[key];
       }
     }
   }
-  return target;
 }
 
 function generateObjectTree(branchs: string[], lastBranch: {} = {}): object {

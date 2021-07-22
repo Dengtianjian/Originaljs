@@ -81,7 +81,7 @@ export function transformPropertyName(propertyNameString: string): string[] {
 
 export function parseRef(refTree: IRefTree, properties: IProperties, refProperty?: IProperties): void {
   refProperty = refProperty || properties;
-  
+
   for (const branchName in refTree) {
     if (!refTree.hasOwnProperty(branchName)) continue;
 

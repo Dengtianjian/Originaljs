@@ -13,6 +13,13 @@ export default {
   collectRef(target): IRefTree {
     let refTree: IRefTree = {};
 
+    if (Array.isArray(target)) {
+      for (const nodeItem of target) {
+        Utils.objectAssign(refTree, this.collectRef(nodeItem));
+      }
+      return refTree;
+    }
+
     if (target.__og__tagCollected) {
       return refTree
     }
@@ -25,8 +32,8 @@ export default {
 
     if (target.childNodes.length > 0) {
       for (const childNode of Array.from(target.childNodes)) {
-        refTree = Utils.objectAssign(refTree, this.collectRef(childNode));
-        refTree = Utils.objectAssign(refTree, Plugin.use("Attrs").collectElAttrRef(childNode))
+        Utils.objectAssign(refTree, this.collectRef(childNode));
+        Utils.objectAssign(refTree, Plugin.use("Attrs").collectElAttrRef(childNode))
       }
     }
 
@@ -54,7 +61,7 @@ export default {
       const newTextEl: Text = document.createTextNode(`{${variableName}}`);
       const propertyNames: string[] = transformPropertyName(variableName);
 
-      refTree = Utils.objectAssign(refTree, Collect.generateElRefTree(propertyNames, newTextEl));
+      Utils.objectAssign(refTree, Collect.generateElRefTree(propertyNames, newTextEl));
 
       newTextChildNodes.push(newTextEl);
 
@@ -66,7 +73,7 @@ export default {
       parentNode.insertBefore(newTextChildNode, target);
     }
 
-    refTree = Utils.objectAssign(refTree, Plugin.use("Attrs").collectElAttrRef(target));
+    Utils.objectAssign(refTree, Plugin.use("Attrs").collectElAttrRef(target));
 
     return refTree;
   },
@@ -86,7 +93,7 @@ export default {
   deleteUpdateView(target: IEl, propertyKey): Boolean {
     // TODO 全局 target.__og__propertiesPath改为数组。paths用数组存储
     let paths: string[] = target.__og__propertiesPath.split(".");
-    let refTree: IRefTree = Utils.deepGetObjectProperty(target.__og__reactive.refTree,paths);
+    let refTree: IRefTree = Utils.deepGetObjectProperty(target.__og__reactive.refTree, paths);
 
     paths.push(String(propertyKey));
     removeRefTree(refTree[propertyKey], paths, true);

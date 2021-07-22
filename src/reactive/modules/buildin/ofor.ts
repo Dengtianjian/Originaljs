@@ -1,4 +1,6 @@
+import { setProxy } from "../../../OGProxy";
 import { transformPropertyName, transformValueToString } from "../../../Parser";
+import Plugin from "../../../Plugin";
 import { getPropertyData } from "../../../Property";
 import { Ref } from "../../../Rules";
 import { IEl } from "../../../types/ElementType";
@@ -14,8 +16,9 @@ function replaceRef(target: Node | HTMLElement, sourceString: string, replaceStr
   replaceAttrRef(target as HTMLElement, sourceString, replaceString);
 
   if (target.nodeType !== 3) return;
+  const sourceStringRegExp: RegExp = new RegExp(`(?<=\x20*)${sourceString}?`, "g");
 
-  target.textContent = target.textContent.replace(new RegExp(`(?<=\{\x20*)${sourceString}?`), replaceString);
+  target.textContent = target.textContent.replace(sourceStringRegExp, replaceString);
 }
 
 function replaceAttrRef(target: HTMLElement, sourceString: string, replaceString: string): void {
@@ -24,13 +27,14 @@ function replaceAttrRef(target: HTMLElement, sourceString: string, replaceString
   const attributes: Attr[] = Array.from(target.attributes);
 
   const testHasVariableRegExp: RegExp = new RegExp(Ref.variableItem, "g");
+  const sourceStringRegExp: RegExp = new RegExp(`(?<=\x20*)${sourceString}?`, "g");
 
   attributes.reduce((prev, attrItem, index) => {
     if (testHasVariableRegExp.test(attrItem.nodeValue)) {
-      attrItem.nodeValue = attrItem.nodeValue.replace(new RegExp(`(?<=\{\x20*)${sourceString}`, "g"), replaceString);
+      attrItem.nodeValue = attrItem.nodeValue.replace(sourceStringRegExp, replaceString);
     }
     if (attrItem.nodeName === "in" && attrItem.nodeValue.indexOf(sourceString) > -1) {
-      attrItem.nodeValue = attrItem.nodeValue.replace(new RegExp(`(?<=\x20*)${sourceString}?`), replaceString);
+      attrItem.nodeValue = attrItem.nodeValue.replace(sourceStringRegExp, replaceString);
     }
     return attrItem;
   }, attributes[0]);
@@ -107,30 +111,31 @@ function handleOFor(target: HTMLElement, properties: IProperties): IRefTree {
   } as IRefTree);
 }
 
-function oForElUpdateView(target: IProperties, refTree: IRefTree, propertyKey: string | number, value: any): boolean {
-  console.log(target, refTree, propertyKey, value);
+function oForElUpdateView(properties: IProperties, refTree: IRefTree, propertyKey: string, value: any): boolean {
+  if (propertyKey === "length") return true;
   const fors: TRefTreeFors[] = refTree.__fors;
+  const propertyNames: string[] = transformPropertyName(properties.__og__propertiesPath);
+  propertyNames.push(propertyKey);
+  const propertyNameSting: string = propertyNames.join(".");
 
   for (const forItem of fors) {
-    const propertyNames: string[] | number[] = transformPropertyName(forItem.propertyName);
-
     const newEl: Node[] = forItem.templateChildNodes;
     let forIndex = 0;
-    for (const key in target) {
-      if (target.hasOwnProperty(key) && !target[key].hasOwnProperty("__og__reactive")) {
 
-        propertyNames.push(key);
-        const propertyNameSting: string = propertyNames.join(".")
-        newEl.forEach((el, index) => {
-          newEl[index] = el.cloneNode(true);
-          replaceRef(newEl[index], forItem.itemName, propertyNameSting);
-        });
-        propertyNames.pop();
-      }
-    }
+    newEl.forEach((el, index) => {
+      newEl[index] = el.cloneNode(true);
+      replaceRef(newEl[index], forItem.itemName, propertyNameSting);
+    });
+
     forItem.el.append(...newEl);
     forIndex++;
+
+
+    Utils.objectAssign(properties.__og__reactive.refTree, Plugin.use("Tags").collectRef(newEl, properties.__og__reactive.properties));
   }
+
+  propertyNames.pop();
+  setProxy(refTree, properties, properties.__og__reactive, propertyNames);
 
   return true;
 }

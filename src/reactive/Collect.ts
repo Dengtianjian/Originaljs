@@ -13,7 +13,7 @@ export function collection(target: IEl, properties: IProperties): IRefTree {
     if (Object.prototype.hasOwnProperty.call(Plugins, pluginName)) {
       const pluginItem: TPluginItem = Plugins[pluginName];
       if (pluginItem.collectRef) {
-        elRefTree = Utils.objectAssign(elRefTree, pluginItem.collectRef(target, properties));
+        Utils.objectAssign(elRefTree, pluginItem.collectRef(target, properties));
       }
     }
   }

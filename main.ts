@@ -23,9 +23,9 @@ A { number } B {obj.name} {obj.user.lastName}
 
 class CButton extends OG.createElement() {
   connected() {
-    setInterval(() => {
-      this.update("number", this.formatTime());
-    }, 1000);
+    // setInterval(() => {
+    //   this.update("number", this.formatTime());
+    // }, 1000);
   }
   render() {
     return template;

@@ -14,13 +14,14 @@ export function deepUpdateRef(refTree: IRefTree, properties: IProperties): void 
         deepUpdateRef(properties, property);
       }
 
-      updateRef(refTree[propertyName], property.__og__reactive.properties, property.__og__propertiesPath);
+      updateRef(refTree[propertyName], properties.__og__reactive.properties, property.__og__propertiesPath);
     }
   }
   return;
 }
 
 export function updateRef(refTree: IRefTree, properties: IProperties, propertyKeyPaths: number | string | string[]): void {
+  if (!refTree) return;
   const els: TText[] = refTree.__els;
   const attrs: TAttr[] = refTree.__attrs;
 
