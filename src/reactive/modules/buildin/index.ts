@@ -3,11 +3,9 @@ import { TPluginItem } from "../../../types/Plugin";
 import { IProperties } from "../../../types/Properties";
 import { IRefTree } from "../../../types/Ref";
 import Utils from "../../../Utils";
-import { handleOFor } from "./ofor";
+import { handleOFor, oForElUpdateView } from "./ofor";
 
 const buildInTagName: string[] = ["o-for", "o-if"];
-
-
 
 function collectRef(target: IEl, properties: IProperties): IRefTree {
   if (target.nodeType === 3 || target.__og__tagCollected) return {};
@@ -32,6 +30,14 @@ function collectRef(target: IEl, properties: IProperties): IRefTree {
   return refTree;
 }
 
+function setUpdateView(target: IProperties, refTree: IRefTree, propertyKey: string | number, value: any): boolean {
+  if (refTree.hasOwnProperty("__fors")) {
+    return oForElUpdateView(target, refTree, propertyKey, value);
+  }
+  return true;
+}
+
 export default {
-  collectRef
+  collectRef,
+  setUpdateView
 } as TPluginItem

@@ -1,21 +1,26 @@
 import { IEl } from "./ElementType"
 
-export type TRefTreeBranch = {
-  [key: string]: IRefTree | any,
-  __els: TText[],
-  __attrs: TAttr[],
-  __fors: Array<{
-    el: HTMLElement,
-    templateChildNodes: Node[],
-    indexName: string,
-    propertyName: string,
-    keyName: string,
-    itemName: string
-  }>
+export type TRefTreeFors = {
+  el: HTMLElement,
+  templateChildNodes: Node[],
+  indexName: string,
+  propertyName: string,
+  keyName: string,
+  itemName: string
 }
 
+// export type TRefTreeBranch = {
+//   [key: string]: IRefTree | any,
+//   __els: TText[],
+//   __attrs: TAttr[],
+//   __fors?: TRefTreeFors[]
+// }
+
 export interface IRefTree {
-  [key: string]: TRefTreeBranch | any,
+  [key: string]: IRefTree | any,
+  __els?: TText[],
+  __attrs?: TAttr[],
+  __fors?: TRefTreeFors[]
 }
 
 export type TAttr = Attr & {

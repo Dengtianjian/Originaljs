@@ -1,8 +1,9 @@
-import { transformPropertyName } from "../../../Parser";
+import { transformPropertyName, transformValueToString } from "../../../Parser";
 import { getPropertyData } from "../../../Property";
 import { Ref } from "../../../Rules";
+import { IEl } from "../../../types/ElementType";
 import { IProperties } from "../../../types/Properties";
-import { IRefTree } from "../../../types/Ref";
+import { IRefTree, TRefTreeFors } from "../../../types/Ref";
 import Utils from "../../../Utils";
 
 function replaceRef(target: Node | HTMLElement, sourceString: string, replaceString: string): void {
@@ -75,12 +76,13 @@ function handleOFor(target: HTMLElement, properties: IProperties): IRefTree {
   for (const key in property) {
     if (property.hasOwnProperty(key)) {
       const newEl: Node[] = [...Array.from(childNodes)];
+      propertyNames.push(key);
+      const propertyNameSting: string = propertyNames.join(".")
       newEl.forEach((el, index) => {
         newEl[index] = el.cloneNode(true);
-        propertyNames.push(key);
-        replaceRef(newEl[index], itemName, propertyNames.join("."));
-        propertyNames.pop();
+        replaceRef(newEl[index], itemName, propertyNameSting);
       });
+      propertyNames.pop();
       newEls.push(newEl);
     }
     forIndex++;
@@ -105,6 +107,35 @@ function handleOFor(target: HTMLElement, properties: IProperties): IRefTree {
   } as IRefTree);
 }
 
+function oForElUpdateView(target: IProperties, refTree: IRefTree, propertyKey: string | number, value: any): boolean {
+  console.log(target, refTree, propertyKey, value);
+  const fors: TRefTreeFors[] = refTree.__fors;
+
+  for (const forItem of fors) {
+    const propertyNames: string[] | number[] = transformPropertyName(forItem.propertyName);
+
+    const newEl: Node[] = forItem.templateChildNodes;
+    let forIndex = 0;
+    for (const key in target) {
+      if (target.hasOwnProperty(key) && !target[key].hasOwnProperty("__og__reactive")) {
+
+        propertyNames.push(key);
+        const propertyNameSting: string = propertyNames.join(".")
+        newEl.forEach((el, index) => {
+          newEl[index] = el.cloneNode(true);
+          replaceRef(newEl[index], forItem.itemName, propertyNameSting);
+        });
+        propertyNames.pop();
+      }
+    }
+    forItem.el.append(...newEl);
+    forIndex++;
+  }
+
+  return true;
+}
+
 export {
-  handleOFor
+  handleOFor,
+  oForElUpdateView
 }
