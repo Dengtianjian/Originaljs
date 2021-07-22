@@ -7,14 +7,22 @@ import { handleOFor, oForElUpdateView } from "./ofor";
 
 const buildInTagName: string[] = ["o-for", "o-if"];
 
-function collectRef(target: IEl, properties: IProperties): IRefTree {
+function collectRef(target: IEl | Node[], properties: IProperties): IRefTree {
+  let refTree = {};
+
+  if (Array.isArray(target)) {
+    for (const node of target) {
+      Utils.objectAssign(refTree, collectRef(node as IEl, properties));
+    }
+    return refTree;
+  }
+
   if (target.nodeType === 3 || target.__og__tagCollected) return {};
 
-  let refTree = {};
   if (target.nodeType === 1 && buildInTagName.includes((target as HTMLElement).tagName.toLowerCase())) {
     switch ((target as HTMLElement).tagName.toLowerCase()) {
       case "o-for":
-       Utils.objectAssign(refTree, handleOFor(target as HTMLElement, properties));
+        Utils.objectAssign(refTree, handleOFor(target as HTMLElement, properties));
         break;
     }
   }
