@@ -1,5 +1,5 @@
 import { setProxy } from "../../../OGProxy";
-import { transformPropertyName, transformValueToString } from "../../../Parser";
+import { parseRef, transformPropertyName, transformValueToString } from "../../../Parser";
 import Plugin from "../../../Plugin";
 import { getPropertyData } from "../../../Property";
 import { Ref } from "../../../Rules";
@@ -7,6 +7,7 @@ import { IEl } from "../../../types/ElementType";
 import { IProperties } from "../../../types/Properties";
 import { IRefTree, TRefTreeFors } from "../../../types/Ref";
 import Utils from "../../../Utils";
+import Collect from "../../Collect";
 
 function replaceRef(target: Node | HTMLElement, sourceString: string, replaceString: string): void {
   for (const nodeItem of Array.from(target.childNodes)) {
@@ -29,7 +30,7 @@ function replaceAttrRef(target: HTMLElement, sourceString: string, replaceString
   const testHasVariableRegExp: RegExp = new RegExp(Ref.variableItem, "g");
   const sourceStringRegExp: RegExp = new RegExp(`(?<=\x20*)${sourceString}?`, "g");
 
-  attributes.reduce((prev, attrItem, index) => {
+  attributes.reduce((prev, attrItem) => {
     if (testHasVariableRegExp.test(attrItem.nodeValue)) {
       attrItem.nodeValue = attrItem.nodeValue.replace(sourceStringRegExp, replaceString);
     }
@@ -127,11 +128,13 @@ function oForElUpdateView(properties: IProperties, refTree: IRefTree, propertyKe
       replaceRef(newEl[index], forItem.itemName, propertyNameSting);
     });
 
+    let partReftree: IRefTree = Collect.collection(newEl, properties.__og__reactive.properties);
+    Utils.objectAssign(properties.__og__reactive.refTree, partReftree);
+
+    parseRef(partReftree, properties.__og__reactive.properties);
+
     forItem.el.append(...newEl);
     forIndex++;
-
-
-    Utils.objectAssign(properties.__og__reactive.refTree, Plugin.use("Tags").collectRef(newEl, properties.__og__reactive.properties));
   }
 
   propertyNames.pop();
