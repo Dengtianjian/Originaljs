@@ -5,7 +5,7 @@ import { IProperties } from "../types/Properties";
 import { IRefTree } from "../types/Ref";
 import Utils from "../Utils";
 
-export function collection(target: IEl, properties: IProperties): IRefTree {
+export function collection(target: IEl | Node[], properties: IProperties): IRefTree {
   let elRefTree: IRefTree = {};
 
   const Plugins: TPlugins = Plugin.all();
