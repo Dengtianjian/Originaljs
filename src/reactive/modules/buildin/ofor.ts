@@ -128,6 +128,7 @@ function oForElUpdateView(properties: IProperties, refTree: IRefTree, propertyKe
       replaceRef(newEl[index], forItem.itemName, propertyNameSting);
     });
 
+    // TODO 把index.ts的 三部曲封装成一个方法
     let partReftree: IRefTree = Collect.collection(newEl, properties.__og__reactive.properties);
     Utils.objectAssign(properties.__og__reactive.refTree, partReftree);
 
