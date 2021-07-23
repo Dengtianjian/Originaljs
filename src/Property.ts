@@ -6,6 +6,7 @@ export function getPropertyData(propertyNames: string[] | number[] | string | nu
     propertyNames = transformPropertyName(propertyNames);
   }
   let property: any = properties;
+
   for (const name of propertyNames as string[] | number[]) {
     property = property[name];
     if (property === undefined || property === null) {

@@ -7,13 +7,11 @@ import Utils from "./Utils";
 
 export function deepUpdateRef(refTree: IRefTree, properties: IProperties): void {
   for (const propertyName in refTree) {
-    if (Object.prototype.hasOwnProperty.call(properties, propertyName)) {
+    if (properties.hasOwnProperty(propertyName)) {
       const property = properties[propertyName];
-      if (property === undefined || refTree[propertyName] === undefined) continue;
-      if (typeof property === "object") {
-        deepUpdateRef(properties, property);
-      }
+      if (property === undefined || refTree[propertyName] === undefined || typeof property !== "object") continue;
 
+      deepUpdateRef(refTree[propertyName], property);
       updateRef(refTree[propertyName], properties.__og__reactive.properties, property.__og__propertiesPath);
     }
   }
