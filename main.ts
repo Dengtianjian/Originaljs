@@ -57,9 +57,11 @@ class CButton extends OG.createElement() {
   count = 1;
   updateObj() {
     // delete this.obj.user;
+    let luckNums = [1, 2, 3];
+    luckNums.fill(Math.round(Math.random() * 1000), Math.round(Math.random() * 10), Math.round(Math.random() * 15));
     this.users.push({
       name: "Joe",
-      luckNums: [8, 7, 6]
+      luckNums
     })
     // this.number = 456;
     // this.update("number", 789);

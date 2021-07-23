@@ -75,26 +75,26 @@ function handleOFor(target: HTMLElement, properties: IProperties): IRefTree {
   const propertyNames: string[] | number[] = transformPropertyName(propertyName);
   const property: IProperties = getPropertyData(propertyNames, properties);
 
-  const newEls: Array<Node[]> = [];
+  const newChildNodes: Array<Node[]> = [];
 
   let forIndex = 0;
   for (const key in property) {
     if (property.hasOwnProperty(key)) {
-      const newEl: Node[] = [...Array.from(childNodes)];
+      const newEls: Node[] = [];
       propertyNames.push(key);
       const propertyNameSting: string = propertyNames.join(".")
-      newEl.forEach((el, index) => {
-        newEl[index] = el.cloneNode(true);
-        replaceRef(newEl[index], itemName, propertyNameSting);
+      Array.from(childNodes).forEach((el, index) => {
+        newEls.push(el.cloneNode(true));
+        replaceRef(newEls[index], itemName, propertyNameSting);
       });
       propertyNames.pop();
-      newEls.push(newEl);
+      newChildNodes.push(newEls);
     }
     forIndex++;
   }
   target.textContent = "";
 
-  newEls.forEach(els => {
+  newChildNodes.forEach(els => {
     target.append(...els);
   });
 
@@ -120,21 +120,21 @@ function oForElUpdateView(properties: IProperties, refTree: IRefTree, propertyKe
   const propertyNameSting: string = propertyNames.join(".");
 
   for (const forItem of fors) {
-    const newEl: Node[] = forItem.templateChildNodes;
+    const newEls: Node[] = [];
     let forIndex = 0;
 
-    newEl.forEach((el, index) => {
-      newEl[index] = el.cloneNode(true);
-      replaceRef(newEl[index], forItem.itemName, propertyNameSting);
+    forItem.templateChildNodes.forEach((el, index) => {
+      newEls.push(el.cloneNode(true));
+      replaceRef(newEls[index], forItem.itemName, propertyNameSting);
     });
 
     // TODO 把index.ts的 三部曲封装成一个方法
-    let partReftree: IRefTree = Collect.collection(newEl, properties.__og__reactive.properties);
+    let partReftree: IRefTree = Collect.collection(newEls, properties.__og__reactive.properties);
     Utils.objectAssign(properties.__og__reactive.refTree, partReftree);
 
     parseRef(partReftree, properties.__og__reactive.properties);
 
-    forItem.el.append(...newEl);
+    forItem.el.append(...newEls);
     forIndex++;
   }
 
