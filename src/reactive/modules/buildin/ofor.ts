@@ -115,9 +115,10 @@ function handleOFor(target: HTMLElement, properties: IProperties): IRefTree {
 function oForElUpdateView(properties: IProperties, refTree: IRefTree, propertyKey: string, value: any): boolean {
   if (propertyKey === "length") return true;
   const fors: TRefTreeFors[] = refTree.__fors;
-  const propertyNames: string[] = transformPropertyName(properties.__og__propertiesPath);
+  const propertyNames: string[] =  transformPropertyName(properties.__og__propertiesPath);;
   propertyNames.push(propertyKey);
   const propertyNameSting: string = propertyNames.join(".");
+  const partRefTree: IRefTree = {};
 
   for (const forItem of fors) {
     const newEls: Node[] = [];
@@ -128,17 +129,16 @@ function oForElUpdateView(properties: IProperties, refTree: IRefTree, propertyKe
       replaceRef(newEls[index], forItem.itemName, propertyNameSting);
     });
 
-    // TODO 把index.ts的 三部曲封装成一个方法
-    let partReftree: IRefTree = Collect.collection(newEls, properties.__og__reactive.properties);
-    Utils.objectAssign(properties.__og__reactive.refTree, partReftree);
-
-    parseRef(partReftree, properties.__og__reactive.properties);
+    Utils.objectAssign(partRefTree, Collect.collection(newEls, properties.__og__reactive.properties));
 
     forItem.el.append(...newEls);
     forIndex++;
   }
 
   propertyNames.pop();
+  Utils.objectAssign(properties.__og__reactive.refTree, partRefTree);
+  parseRef(partRefTree, properties.__og__reactive.properties);
+
   setProxy(refTree, properties, properties.__og__reactive, propertyNames);
 
   return true;
