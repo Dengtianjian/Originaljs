@@ -12,13 +12,13 @@ export function deepUpdateRef(refTree: IRefTree, properties: IProperties): void 
       if (property === undefined || refTree[propertyName] === undefined || typeof property !== "object") continue;
 
       deepUpdateRef(refTree[propertyName], property);
-      updateRef(refTree[propertyName], properties.__og__reactive.properties, property.__og__propertiesPath);
+      updateRef(refTree[propertyName], properties.__og__reactive.properties, property.__og__propertiesPath.split("."));
     }
   }
   return;
 }
 
-export function updateRef(refTree: IRefTree, properties: IProperties, propertyKeyPaths: number | string | string[]): void {
+export function updateRef(refTree: IRefTree, properties: IProperties, propertyKeyPaths: string[]): void {
   if (!refTree) return;
   const els: TText[] = refTree.__els;
   const attrs: TAttr[] = refTree.__attrs;
@@ -41,11 +41,11 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
   }
 }
 
-export function setUpdateView(target: any, propertyKey: string | number, value: any, receiver: any): boolean {
+export function setUpdateView(target: any, propertyKey: string, value: any, receiver: any): boolean {
   const refTree: IRefTree = target.__og__reactive.refTree;
   if (!target.__og__propertiesPath) {
     target[propertyKey] = value;
-    updateRef(refTree[propertyKey], target, propertyKey);
+    updateRef(refTree[propertyKey], target, propertyKey.split("."));
     return true;
   }
   const propertyNames: string[] = target.__og__propertiesPath.split(".");

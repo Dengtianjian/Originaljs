@@ -89,7 +89,7 @@ export function parseRef(refTree: IRefTree, properties: IProperties, refProperty
       parseRef(refTree[branchName], properties, refProperty[branchName]);
     }
 
-    updateRef(refTree[branchName], properties, refProperty[branchName] ? refProperty[branchName].__og__propertiesPath : branchName);
+    updateRef(refTree[branchName], properties, refProperty[branchName] && refProperty[branchName].__og__propertiesPath ? refProperty[branchName].__og__propertiesPath.split(".") : branchName);
   }
 }
 

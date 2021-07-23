@@ -115,7 +115,7 @@ function handleOFor(target: HTMLElement, properties: IProperties): IRefTree {
 function oForElUpdateView(properties: IProperties, refTree: IRefTree, propertyKey: string, value: any): boolean {
   if (propertyKey === "length") return true;
   const fors: TRefTreeFors[] = refTree.__fors;
-  const propertyNames: string[] = transformPropertyName(properties.__og__propertiesPath);;
+  const propertyNames: string[] = transformPropertyName(properties.__og__propertiesPath);
   propertyNames.push(propertyKey);
   const propertyNameSting: string = propertyNames.join(".");
   const partRefTree: IRefTree = {};
