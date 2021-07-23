@@ -31,13 +31,24 @@ export class Reactive {
     this.target = target;
     this.properties = properties;
 
-    //* 1. 收集引用
-    this.refTree = Collect.collection(target, properties);
-
-    //* 2. 引用转换实体值
-    parseRef(this.refTree, properties);
-
-    //* 3. 设置Proxy
-    setProxy(this.refTree, properties, this);
+    this.refTree = collectEl(target, properties, this);
   }
+}
+
+function collectEl(target: IEl | Node[], properties: IProperties, reactiveInstance: Reactive): IRefTree {
+  let refTree: IRefTree = {};
+  //* 1. 收集引用
+  refTree = Collect.collection(target, properties);
+
+  //* 2. 引用转换实体值
+  parseRef(refTree, properties);
+
+  //* 3. 设置Proxy
+  setProxy(refTree, properties, reactiveInstance);
+
+  return refTree;
+}
+
+export default {
+  collectEl
 }
