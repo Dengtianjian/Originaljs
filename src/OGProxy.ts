@@ -16,8 +16,8 @@ export function setProxy(refTree: IRefTree, properties: IProperties, reactiveIns
         continue;
       };
 
-      Utils.defineProperty(properties, "__og__propertiesPath", paths.join("."));
-      Utils.defineProperty(properties, "__og__reactive", reactiveInstance);
+      Utils.defineProperty(properties[branchName], "__og__propertiesPath", paths.join("."));
+      Utils.defineProperty(properties[branchName], "__og__reactive", reactiveInstance);
 
       properties[branchName] = new Proxy(properties[branchName], {
         set(target: any, propertyKey: string, value: any, receiver: any): boolean {

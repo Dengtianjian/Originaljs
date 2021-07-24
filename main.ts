@@ -21,9 +21,9 @@ A { number } B {obj.name} {obj.user.lastName}
 </div>
 `;
 
-template=`
-{number}
-`;
+// template=`
+// {number}
+// `;
 
 class CButton extends OG.createElement() {
   connected() {

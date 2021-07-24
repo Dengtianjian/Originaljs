@@ -49,7 +49,18 @@ function deepGetObjectProperty(obj: object, propertyNames: string[]): IPropertie
   }
 }
 
-function defineProperty(obj, propertyKey: PropertyKey, value: any, configurable: boolean = false, writable: boolean = false, enumerable: boolean = false): void {
+function defineProperty(obj, propertyKey: string, value: any, configurable: boolean = false, writable: boolean = false, enumerable: boolean = false): void {
+  if (obj.hasOwnProperty(propertyKey)) {
+    const target: {
+      [x: string]: TypedPropertyDescriptor<any>;
+    } & {
+      [x: string]: PropertyDescriptor;
+    } = Object.getOwnPropertyDescriptors(obj);
+    if (target[propertyKey].writable === true) {
+      obj[propertyKey] = value;
+    }
+    return;
+  }
   Object.defineProperty(obj, propertyKey, {
     value,
     configurable,
