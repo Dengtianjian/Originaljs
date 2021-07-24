@@ -5,20 +5,23 @@ import { IProperties } from "./types/Properties";
 import { IRefTree, TAttr, TText } from "./types/Ref";
 import Utils from "./Utils";
 
-export function deepUpdateRef(refTree: IRefTree, properties: IProperties): void {
+export function deepUpdateRef(refTree: IRefTree, refProperty?: IProperties): void {
   for (const propertyName in refTree) {
-    if (properties.hasOwnProperty(propertyName)) {
-      const property = properties[propertyName];
-      if (property === undefined || refTree[propertyName] === undefined || typeof property !== "object") continue;
+    if (!refProperty.hasOwnProperty(propertyName)) continue;
 
-      deepUpdateRef(refTree[propertyName], property);
-      updateRef(refTree[propertyName], properties.__og__reactive.properties, property.__og__propertiesPath.split("."));
+    let path: string = refProperty.__og__propertiesPath;
+    if (typeof refProperty[propertyName] === "object") {
+      deepUpdateRef(refTree[propertyName], refProperty[propertyName]);
+    } else {
+      path += "."+propertyName;
     }
+
+    updateRef(refTree[propertyName], refProperty.__og__reactive.properties, path);
   }
   return;
 }
 
-export function updateRef(refTree: IRefTree, properties: IProperties, propertyKeyPaths: string[]): void {
+export function updateRef(refTree: IRefTree, properties: IProperties, propertyKeyPaths: string): void {
   if (!refTree) return;
   const els: TText[] = refTree.__els;
   const attrs: TAttr[] = refTree.__attrs;
@@ -45,7 +48,7 @@ export function setUpdateView(target: any, propertyKey: string, value: any, rece
   const refTree: IRefTree = target.__og__reactive.refTree;
   if (!target.__og__propertiesPath) {
     target[propertyKey] = value;
-    updateRef(refTree[propertyKey], target, propertyKey.split("."));
+    updateRef(refTree[propertyKey], target, propertyKey);
     return true;
   }
   const propertyNames: string[] = target.__og__propertiesPath.split(".");

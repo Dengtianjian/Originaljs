@@ -1,12 +1,11 @@
 import { setProxy } from "../../../OGProxy";
-import { parseRef, transformPropertyName, transformValueToString } from "../../../Parser";
-import Plugin from "../../../Plugin";
+import { transformPropertyName } from "../../../Parser";
 import { getPropertyData } from "../../../Property";
 import { Ref } from "../../../Rules";
-import { IEl } from "../../../types/ElementType";
 import { IProperties } from "../../../types/Properties";
 import { IRefTree, TRefTreeFors } from "../../../types/Ref";
 import Utils from "../../../Utils";
+import { deepUpdateRef } from "../../../View";
 import Collect from "../../Collect";
 
 function replaceRef(target: Node | HTMLElement, sourceString: string, replaceString: string): void {
@@ -113,9 +112,9 @@ function handleOFor(target: HTMLElement, properties: IProperties): IRefTree {
 }
 
 function oForElUpdateView(properties: IProperties, refTree: IRefTree, propertyKey: string, value: any): boolean {
-  if (propertyKey === "length") return true;
+  if (Array.isArray(properties) && propertyKey === "length") return true;
   const fors: TRefTreeFors[] = refTree.__fors;
-  const propertyNames: string[] = transformPropertyName(properties.__og__propertiesPath);
+  const propertyNames: string[] =  properties.__og__propertiesPath.split(".");
   propertyNames.push(propertyKey);
   const propertyNameSting: string = propertyNames.join(".");
   const partRefTree: IRefTree = {};
@@ -137,9 +136,8 @@ function oForElUpdateView(properties: IProperties, refTree: IRefTree, propertyKe
 
   propertyNames.pop();
   Utils.objectAssign(properties.__og__reactive.refTree, partRefTree);
-  parseRef(partRefTree, properties.__og__reactive.properties);
-
   setProxy(refTree, properties, properties.__og__reactive, propertyNames);
+  deepUpdateRef(partRefTree, properties.__og__reactive.properties);
 
   return true;
 }

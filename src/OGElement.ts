@@ -22,7 +22,7 @@ export class OGElement extends HTMLElement implements IOGElement {
     this.templateMount();
     this.collectSlots();
     bindMethods(this.el, this, this);
-    this.__og__reactive = Reactive.observe(this.el, this);
+    Reactive.observe(this.el, this);
     this.rendered();
   }
   private disconnectedCallback(): void {

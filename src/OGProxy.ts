@@ -1,6 +1,7 @@
 import { Reactive } from "./reactive";
 import { IProperties } from "./types/Properties";
 import { IRefTree } from "./types/Ref";
+import Utils from "./Utils";
 import { deleteUpdateView, setUpdateView } from "./View";
 
 export function setProxy(refTree: IRefTree, properties: IProperties, reactiveInstance: Reactive, paths: string[] = []): void {
@@ -16,7 +17,7 @@ export function setProxy(refTree: IRefTree, properties: IProperties, reactiveIns
       };
 
       Object.defineProperty(properties[branchName], "__og__propertiesPath", {
-        value: paths.join("."),
+        value:paths.join("."),
         writable: false,
         configurable: false,
         enumerable: false

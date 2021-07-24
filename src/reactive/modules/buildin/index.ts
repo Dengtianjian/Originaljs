@@ -38,7 +38,7 @@ function collectRef(target: IEl | Node[], properties: IProperties): IRefTree {
   return refTree;
 }
 
-function setUpdateView(properties: IProperties, refTree: IRefTree, propertyKey: string | number, value: any): boolean {
+function setUpdateView(properties: IProperties, refTree: IRefTree, propertyKey: string, value: any): boolean {
   if (refTree.hasOwnProperty("__fors")) {
     return oForElUpdateView(properties, refTree, propertyKey, value);
   }

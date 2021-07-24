@@ -1,9 +1,9 @@
 import { setProxy } from "../OGProxy";
-import { parseRef } from "../Parser";
 import Plugin from "../Plugin";
 import { IEl } from "../types/ElementType";
 import { IProperties } from "../types/Properties";
 import { IRefTree } from "../types/Ref";
+import { deepUpdateRef } from "../View";
 import Collect from "./Collect";
 import Attrs from "./modules/Attrs";
 import Buildin from "./modules/buildin";
@@ -19,17 +19,20 @@ export class Reactive {
   refTree: IRefTree = null;
   static observe(target: IEl, refData: IProperties): Reactive {
     const reactiveInstance = new Reactive(target, refData);
-    Object.defineProperty(target, "__og__reactive", {
-      value: reactiveInstance,
-      configurable: false,
-      enumerable: false,
-      writable: false
-    });
     return reactiveInstance;
   }
   constructor(target: IEl, properties: IProperties) {
     this.target = target;
     this.properties = properties;
+
+    if (!properties.__og__reactive) {
+      Object.defineProperty(properties, "__og__reactive", {
+        value: this,
+        writable: false,
+        configurable: false,
+        enumerable: false
+      });
+    }
 
     this.refTree = collectEl(target, properties, this);
   }
@@ -40,11 +43,11 @@ function collectEl(target: IEl | Node[], properties: IProperties, reactiveInstan
   //* 1. 收集引用
   refTree = Collect.collection(target, properties);
 
-  //* 2. 引用转换实体值
-  parseRef(refTree, properties);
-
-  //* 3. 设置Proxy
+  //* 2. 设置Proxy
   setProxy(refTree, properties, reactiveInstance);
+
+  //* 3. 引用转换实体值
+  deepUpdateRef(refTree, properties);
 
   return refTree;
 }
