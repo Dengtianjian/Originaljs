@@ -163,6 +163,188 @@ template = template = `
   </div>
 </div>
 </o-for>
+
+<o-for bookitem in="books">
+<div class="books">
+  <img class="poster" src="{bookitem.base_info.cover_img}" />
+  <div class="info" data-content="{bookitem.base_info.title}">
+    <div class="title">{bookitem.base_info.title}</div>
+    <div class="desc">{ bookitem.base_info.summary }</div>
+     <div class="author">
+     <div class="author-info"><object><a href="/user/1838039171075352" target="_blank" rel="" st:name="author"
+           st:state="1838039171075352" class="xiaoce-user"><img src="{bookitem.user_info.avatar_large}"
+             alt="{bookitem.user_info.user_name}的头像" class="lazy avatar hero"
+             data-src="{bookitem.user_info.avatar_large}"> <a data-v-2ecffe9f="" href="/user/1838039171075352"
+             target="_blank" rel="" class="username author-name"><span data-v-2ecffe9f="" class="name"
+               style="max-width: 128px;">
+               {bookitem.user_info.user_name}
+             </span> <span data-v-3ac5fa19="" data-v-2ecffe9f="" blank="true" class="rank"><img
+                 data-v-3ac5fa19=""
+                 src="//sf3-scmcdn2-tos.pstatp.com/xitu_juejin_web/e108c685147dfe1fb03d4a37257fb417.svg"
+                 alt="lv-3"></span> </a></a></object></div>
+      <div class="author-desc"><span class="selfDescription">
+          {bookitem.user_info.job_title} @ {bookitem.user_info.company}
+        </span></div>
+    </div>
+  </div>
+</div>
+</o-for>
+
+<o-for bookitem in="books">
+<div class="books">
+  <img class="poster" src="{bookitem.base_info.cover_img}" />
+  <div class="info" data-content="{bookitem.base_info.title}">
+    <div class="title">{bookitem.base_info.title}</div>
+    <div class="desc">{ bookitem.base_info.summary }</div>
+     <div class="author">
+     <div class="author-info"><object><a href="/user/1838039171075352" target="_blank" rel="" st:name="author"
+           st:state="1838039171075352" class="xiaoce-user"><img src="{bookitem.user_info.avatar_large}"
+             alt="{bookitem.user_info.user_name}的头像" class="lazy avatar hero"
+             data-src="{bookitem.user_info.avatar_large}"> <a data-v-2ecffe9f="" href="/user/1838039171075352"
+             target="_blank" rel="" class="username author-name"><span data-v-2ecffe9f="" class="name"
+               style="max-width: 128px;">
+               {bookitem.user_info.user_name}
+             </span> <span data-v-3ac5fa19="" data-v-2ecffe9f="" blank="true" class="rank"><img
+                 data-v-3ac5fa19=""
+                 src="//sf3-scmcdn2-tos.pstatp.com/xitu_juejin_web/e108c685147dfe1fb03d4a37257fb417.svg"
+                 alt="lv-3"></span> </a></a></object></div>
+      <div class="author-desc"><span class="selfDescription">
+          {bookitem.user_info.job_title} @ {bookitem.user_info.company}
+        </span></div>
+    </div>
+  </div>
+</div>
+</o-for>
+
+<o-for bookitem in="books">
+<div class="books">
+  <img class="poster" src="{bookitem.base_info.cover_img}" />
+  <div class="info" data-content="{bookitem.base_info.title}">
+    <div class="title">{bookitem.base_info.title}</div>
+    <div class="desc">{ bookitem.base_info.summary }</div>
+     <div class="author">
+     <div class="author-info"><object><a href="/user/1838039171075352" target="_blank" rel="" st:name="author"
+           st:state="1838039171075352" class="xiaoce-user"><img src="{bookitem.user_info.avatar_large}"
+             alt="{bookitem.user_info.user_name}的头像" class="lazy avatar hero"
+             data-src="{bookitem.user_info.avatar_large}"> <a data-v-2ecffe9f="" href="/user/1838039171075352"
+             target="_blank" rel="" class="username author-name"><span data-v-2ecffe9f="" class="name"
+               style="max-width: 128px;">
+               {bookitem.user_info.user_name}
+             </span> <span data-v-3ac5fa19="" data-v-2ecffe9f="" blank="true" class="rank"><img
+                 data-v-3ac5fa19=""
+                 src="//sf3-scmcdn2-tos.pstatp.com/xitu_juejin_web/e108c685147dfe1fb03d4a37257fb417.svg"
+                 alt="lv-3"></span> </a></a></object></div>
+      <div class="author-desc"><span class="selfDescription">
+          {bookitem.user_info.job_title} @ {bookitem.user_info.company}
+        </span></div>
+    </div>
+  </div>
+</div>
+</o-for>
+
+<o-for bookitem in="books">
+<div class="books">
+  <img class="poster" src="{bookitem.base_info.cover_img}" />
+  <div class="info" data-content="{bookitem.base_info.title}">
+    <div class="title">{bookitem.base_info.title}</div>
+    <div class="desc">{ bookitem.base_info.summary }</div>
+     <div class="author">
+     <div class="author-info"><object><a href="/user/1838039171075352" target="_blank" rel="" st:name="author"
+           st:state="1838039171075352" class="xiaoce-user"><img src="{bookitem.user_info.avatar_large}"
+             alt="{bookitem.user_info.user_name}的头像" class="lazy avatar hero"
+             data-src="{bookitem.user_info.avatar_large}"> <a data-v-2ecffe9f="" href="/user/1838039171075352"
+             target="_blank" rel="" class="username author-name"><span data-v-2ecffe9f="" class="name"
+               style="max-width: 128px;">
+               {bookitem.user_info.user_name}
+             </span> <span data-v-3ac5fa19="" data-v-2ecffe9f="" blank="true" class="rank"><img
+                 data-v-3ac5fa19=""
+                 src="//sf3-scmcdn2-tos.pstatp.com/xitu_juejin_web/e108c685147dfe1fb03d4a37257fb417.svg"
+                 alt="lv-3"></span> </a></a></object></div>
+      <div class="author-desc"><span class="selfDescription">
+          {bookitem.user_info.job_title} @ {bookitem.user_info.company}
+        </span></div>
+    </div>
+  </div>
+</div>
+</o-for>
+
+<o-for bookitem in="books">
+<div class="books">
+  <img class="poster" src="{bookitem.base_info.cover_img}" />
+  <div class="info" data-content="{bookitem.base_info.title}">
+    <div class="title">{bookitem.base_info.title}</div>
+    <div class="desc">{ bookitem.base_info.summary }</div>
+     <div class="author">
+     <div class="author-info"><object><a href="/user/1838039171075352" target="_blank" rel="" st:name="author"
+           st:state="1838039171075352" class="xiaoce-user"><img src="{bookitem.user_info.avatar_large}"
+             alt="{bookitem.user_info.user_name}的头像" class="lazy avatar hero"
+             data-src="{bookitem.user_info.avatar_large}"> <a data-v-2ecffe9f="" href="/user/1838039171075352"
+             target="_blank" rel="" class="username author-name"><span data-v-2ecffe9f="" class="name"
+               style="max-width: 128px;">
+               {bookitem.user_info.user_name}
+             </span> <span data-v-3ac5fa19="" data-v-2ecffe9f="" blank="true" class="rank"><img
+                 data-v-3ac5fa19=""
+                 src="//sf3-scmcdn2-tos.pstatp.com/xitu_juejin_web/e108c685147dfe1fb03d4a37257fb417.svg"
+                 alt="lv-3"></span> </a></a></object></div>
+      <div class="author-desc"><span class="selfDescription">
+          {bookitem.user_info.job_title} @ {bookitem.user_info.company}
+        </span></div>
+    </div>
+  </div>
+</div>
+</o-for>
+
+<o-for bookitem in="books">
+<div class="books">
+  <img class="poster" src="{bookitem.base_info.cover_img}" />
+  <div class="info" data-content="{bookitem.base_info.title}">
+    <div class="title">{bookitem.base_info.title}</div>
+    <div class="desc">{ bookitem.base_info.summary }</div>
+     <div class="author">
+     <div class="author-info"><object><a href="/user/1838039171075352" target="_blank" rel="" st:name="author"
+           st:state="1838039171075352" class="xiaoce-user"><img src="{bookitem.user_info.avatar_large}"
+             alt="{bookitem.user_info.user_name}的头像" class="lazy avatar hero"
+             data-src="{bookitem.user_info.avatar_large}"> <a data-v-2ecffe9f="" href="/user/1838039171075352"
+             target="_blank" rel="" class="username author-name"><span data-v-2ecffe9f="" class="name"
+               style="max-width: 128px;">
+               {bookitem.user_info.user_name}
+             </span> <span data-v-3ac5fa19="" data-v-2ecffe9f="" blank="true" class="rank"><img
+                 data-v-3ac5fa19=""
+                 src="//sf3-scmcdn2-tos.pstatp.com/xitu_juejin_web/e108c685147dfe1fb03d4a37257fb417.svg"
+                 alt="lv-3"></span> </a></a></object></div>
+      <div class="author-desc"><span class="selfDescription">
+          {bookitem.user_info.job_title} @ {bookitem.user_info.company}
+        </span></div>
+    </div>
+  </div>
+</div>
+</o-for>
+
+<o-for bookitem in="books">
+<div class="books">
+  <img class="poster" src="{bookitem.base_info.cover_img}" />
+  <div class="info" data-content="{bookitem.base_info.title}">
+    <div class="title">{bookitem.base_info.title}</div>
+    <div class="desc">{ bookitem.base_info.summary }</div>
+     <div class="author">
+     <div class="author-info"><object><a href="/user/1838039171075352" target="_blank" rel="" st:name="author"
+           st:state="1838039171075352" class="xiaoce-user"><img src="{bookitem.user_info.avatar_large}"
+             alt="{bookitem.user_info.user_name}的头像" class="lazy avatar hero"
+             data-src="{bookitem.user_info.avatar_large}"> <a data-v-2ecffe9f="" href="/user/1838039171075352"
+             target="_blank" rel="" class="username author-name"><span data-v-2ecffe9f="" class="name"
+               style="max-width: 128px;">
+               {bookitem.user_info.user_name}
+             </span> <span data-v-3ac5fa19="" data-v-2ecffe9f="" blank="true" class="rank"><img
+                 data-v-3ac5fa19=""
+                 src="//sf3-scmcdn2-tos.pstatp.com/xitu_juejin_web/e108c685147dfe1fb03d4a37257fb417.svg"
+                 alt="lv-3"></span> </a></a></object></div>
+      <div class="author-desc"><span class="selfDescription">
+          {bookitem.user_info.job_title} @ {bookitem.user_info.company}
+        </span></div>
+    </div>
+  </div>
+</div>
+</o-for>
 `;
 
 // template=`
