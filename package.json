@@ -32,5 +32,8 @@
     "vite": "^2.3.5",
     "vite-plugin-dts": "^0.4.3",
     "vitepress": "^0.14.0"
+  },
+  "publishConfig": {
+    "registry":"https://npm.pkg.github.com"
   }
 }
