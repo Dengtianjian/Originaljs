@@ -13,7 +13,7 @@ export function deepUpdateRef(refTree: IRefTree, refProperty?: IProperties): voi
     if (typeof refProperty[propertyName] === "object") {
       deepUpdateRef(refTree[propertyName], refProperty[propertyName]);
     } else {
-      path += "."+propertyName;
+      path = path ? `${path}.${propertyName}` : propertyName;
     }
 
     updateRef(refTree[propertyName], refProperty.__og__reactive.properties, path);

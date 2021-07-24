@@ -20,15 +20,9 @@ export default {
       return refTree;
     }
 
-    if (target.__og__tagCollected) {
-      return refTree
-    }
-    Object.defineProperty(target, "__og__tagCollected", {
-      value: true,
-      configurable: false,
-      writable: true,
-      enumerable: false
-    });
+    if (target.__og__tagCollected) return refTree;
+    
+    Utils.defineProperty(target, "__og__tagCollected", true);
 
     if (target.childNodes.length > 0) {
       for (const childNode of Array.from(target.childNodes)) {

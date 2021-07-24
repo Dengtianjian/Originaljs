@@ -49,9 +49,19 @@ function deepGetObjectProperty(obj: object, propertyNames: string[]): IPropertie
   }
 }
 
+function defineProperty(obj, propertyKey: PropertyKey, value: any, configurable: boolean = false, writable: boolean = false, enumerable: boolean = false): void {
+  Object.defineProperty(obj, propertyKey, {
+    value,
+    configurable,
+    writable,
+    enumerable
+  })
+}
+
 export default {
   deepCopy,
   objectAssign,
   generateObjectTree,
-  deepGetObjectProperty
+  deepGetObjectProperty,
+  defineProperty
 }

@@ -9,12 +9,7 @@ import Collect from "../Collect";
 export default {
   collectElAttrRef(target: IEl): IRefTree {
     let attrRefTree: IRefTree = {};
-    Object.defineProperty(target, "__og__attrCollected", {
-      value: true,
-      configurable: false,
-      writable: false,
-      enumerable: false
-    });
+    Utils.defineProperty(target, "__og__attrCollected", true);
     if (!(target as HTMLElement).attributes || (target as HTMLElement).attributes.length === 0) return attrRefTree;
 
     for (const attrItem of Array.from((target as HTMLElement).attributes)) {
@@ -31,13 +26,8 @@ export default {
         Utils.objectAssign(attrRefTree, Collect.generateElRefTree(propertyNames, attrItem));
       }
 
-      Object.defineProperty(attrItem, "__og__attrs", {
-        value: {
-          nodeRawValue: attrItem.nodeValue
-        },
-        configurable: false,
-        enumerable: false,
-        writable: false
+      Utils.defineProperty(attrItem, "__og__attrs", {
+        nodeRawValue: attrItem.nodeValue
       });
     }
     return attrRefTree;

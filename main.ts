@@ -21,6 +21,10 @@ A { number } B {obj.name} {obj.user.lastName}
 </div>
 `;
 
+template=`
+{number}
+`;
+
 class CButton extends OG.createElement() {
   connected() {
     // setInterval(() => {
