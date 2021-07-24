@@ -253,7 +253,9 @@ class CButton extends createElement(["name", "aa"]) {
     super();
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       // data[0]['test'] = Date.now();
+      console.time();
       this.books.push(...data);
+      console.timeEnd();
       // this.books.push(data[0]);
     });
   }
@@ -326,7 +328,9 @@ class CButton extends createElement(["name", "aa"]) {
       // }
       // console.log(data);
 
-      this.books[0].base_info.title = "新疆大爷用魔方拼出中国共产党万岁";
+      // console.time();
+      // this.books[0].base_info.title = "新疆大爷用魔方拼出中国共产党万岁";
+      // console.timeEnd();
       // if (this.index == 3) {
       //   this.books[0].base_info.title = "新疆大爷用魔方拼出中国共产党万岁";
       // }
@@ -337,7 +341,10 @@ class CButton extends createElement(["name", "aa"]) {
       //   this.books[0].base_info.title = "96岁老党员跨时空对话牺牲战友 ";
       // }
       // this.books.push(data[this.index++]);
+      console.time();
       // this.books.unshift(...data);
+      // this.books.unshift(...data);
+      console.timeEnd();
       // this.update("books", data);
       // this.books[0] = data[0];
       // data.forEach((item, index) => {
