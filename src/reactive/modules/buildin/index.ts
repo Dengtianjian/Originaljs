@@ -19,7 +19,6 @@ function collectRef(target: IEl | Node[], properties: IProperties): IRefTree {
 
   if (target.nodeType === 3 || target.__og__tagCollected) return {};
 
-  console.time();
   if (target.nodeType === 1 && buildInTagName.includes((target as HTMLElement).tagName.toLowerCase())) {
     switch ((target as HTMLElement).tagName.toLowerCase()) {
       case "o-for":
@@ -35,9 +34,6 @@ function collectRef(target: IEl | Node[], properties: IProperties): IRefTree {
       }
     }
   }
-  console.timeEnd();
-  console.log(refTree);
-  
 
   return refTree;
 }

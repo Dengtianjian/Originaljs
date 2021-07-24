@@ -24,7 +24,7 @@ A { number } B {obj.name} {obj.user.lastName}
 template = template = `
 <div class="fixed">
 <button onclick="updateArr" >Update arr</button>
-<button onclick="addProperty" >add Property</button>
+<button >add Property</button>
 </div>
 <div class="fixed-placeholder"></div>
 <style>
@@ -138,16 +138,12 @@ template = template = `
     vertical-align: middle;
   }
 </style>
-{number}
 <o-for bookitem in="books">
 <div class="books">
   <img class="poster" src="{bookitem.base_info.cover_img}" />
   <div class="info" data-content="{bookitem.base_info.title}">
     <div class="title">{bookitem.base_info.title}</div>
     <div class="desc">{ bookitem.base_info.summary }</div>
-    <div>
-      { books[0].base_info.title }
-     </div>
      <div class="author">
      <div class="author-info"><object><a href="/user/1838039171075352" target="_blank" rel="" st:name="author"
            st:state="1838039171075352" class="xiaoce-user"><img src="{bookitem.user_info.avatar_large}"
@@ -270,7 +266,7 @@ class CButton extends OG.createElement() {
       // }
       // this.books.push(data[this.index++]);
       console.time();
-      this.books.push(...data);
+      this.books.unshift(...data);
       console.timeEnd();
       // this.update("books", data);
       // this.books[0] = data[0];
