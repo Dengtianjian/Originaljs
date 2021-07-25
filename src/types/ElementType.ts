@@ -11,7 +11,7 @@ export type IEl = (HTMLElement | ShadowRoot | Element) & {
 
 export interface IOGElement extends HTMLElement {
   __og__reactive: Reactive,
-  __og__transitions: Record<string, Transition>,
+  transitions: Record<string, Transition>,
   OGElement: boolean;
   el: IEl,
   slots: Record<string, Node[]>;

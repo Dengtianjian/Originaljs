@@ -9,7 +9,7 @@ import { setUpdateView } from "./View";
 
 export class OGElement extends HTMLElement implements IOGElement {
   __og__reactive: Reactive = null;
-  __og__transitions: Record<string, Transition> = {};
+  transitions: Record<string, Transition> = {};
   OGElement: boolean = true;
   el: IEl = null;
   slots: Record<string, Node[]> = {};
@@ -84,6 +84,6 @@ export class OGElement extends HTMLElement implements IOGElement {
     }
   };
   transition(transitionName: string): Transition | undefined {
-    return this.__og__transitions[transitionName];
+    return this.transition[transitionName];
   }
 }
