@@ -194,6 +194,8 @@ class CButton extends OG.createElement() {
     return template;
   }
   rendered() {
+    console.log(1);
+    
   }
   books = [];
   number = 123;

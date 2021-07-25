@@ -83,7 +83,7 @@ export class OGElement extends HTMLElement implements IOGElement {
       setUpdateView(this, propertyName, newValue, this);
     }
   };
-  transition(transitionName: string): Transition | null {
+  transition(transitionName: string): Transition | undefined {
     return this.__og__transitions[transitionName];
   }
 }
