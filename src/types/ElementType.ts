@@ -1,4 +1,5 @@
 import { Reactive } from "../reactive";
+import Transition from "../Transition";
 import { IRefTree } from "./Ref";
 
 export type IEl = (HTMLElement | ShadowRoot | Element) & {
@@ -10,6 +11,7 @@ export type IEl = (HTMLElement | ShadowRoot | Element) & {
 
 export interface IOGElement extends HTMLElement {
   __og__reactive: Reactive,
+  __og__transitions: Record<string, Transition>,
   OGElement: boolean;
   el: IEl,
   slots: Record<string, Node[]>;
@@ -21,4 +23,5 @@ export interface IOGElement extends HTMLElement {
   propChanged(name: string, newValue: string, oldValue: string): void;
   render(): null | Node | NodeList | string;
   update(propertyName: string, newValue: any): void;
+  transition(transitionName: string): Transition
 }

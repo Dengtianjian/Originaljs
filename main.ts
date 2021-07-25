@@ -141,10 +141,10 @@ template = template = `
 </style>
 <o-for bookitem in="books">
 
+<div>
+<o-transition name="showBook">
 <div class="books">
-<o-transition function="coverTransiton">
-<div style="color:white;" show="{show}" >
-    <img class="poster" src="{bookitem.base_info.cover_img}" style="display:{show}" />
+  <img class="poster" src="{bookitem.base_info.cover_img}" />
   <div class="info" data-content="{bookitem.base_info.title}" >
     <div class="title">{bookitem.base_info.title}</div>
     <div class="desc">{ bookitem.base_info.summary }</div>
@@ -166,7 +166,6 @@ template = template = `
     </div>
   </div>
   </div>
-  123
   </o-transition>
 </div>
 
@@ -194,9 +193,10 @@ class CButton extends OG.createElement() {
   render() {
     return template;
   }
+  rendered() {
+  }
   books = [];
   number = 123;
-  show = "block";
   obj = {
     name: "Admin",
     nums: [0, 1],
@@ -236,8 +236,33 @@ class CButton extends OG.createElement() {
     }
   };
   count = 1;
+  show = true;
   updateArr(event) {
-    this.update("show", this.show === "none" ? 'block' : 'none');
+    console.log(this.show);
+    
+    if (this.show) {
+      this.transition("showBook").step({
+        transform: "translateY(-50px)",
+        opacity: "0"
+      }).step({
+        display: "none"
+      }, 0).end(() => {
+        this.show = false;
+      })
+    } else {
+      this.transition("showBook").step({
+        display: "flex",
+        transform: "translateY(-50px)",
+        opacity: "0"
+      }).step({
+        transform: "translateY(0px)",
+        opacity: "1"
+      }).end(() => {
+        this.show = true;
+      })
+    }
+
+    // this.update("show", this.show === "none" ? 'flex' : 'none');
     // console.log(this.books);
 
     // this.username = "Tianjian";
@@ -328,23 +353,24 @@ class CButton extends OG.createElement() {
     return rawString < 10 ? `0${rawString}` : rawString;
   }
   coverTransiton(t: Transition, ...rest) {
+    console.log(this.show);
+
     if (this.show === "none") {
       t.step({
         transform: "translateY(-50px)",
         opacity: "0"
       }, 0.1, "ease-in-out").step({
         display: "none"
-      }).end(() => {
       })
-    } else if (this.show === "block") {
+    } else if (this.show === "flex") {
       t.step({
         display: "flex",
         transform: "translateX(-100px)",
         opacity: "0"
-      }).step({
+      }, 0).step({
         transform: "translateX(0px)",
-        opacity:"1"
-      }, 0.3);
+        opacity: "1"
+      }, 1);
     }
 
   }

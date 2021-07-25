@@ -463,7 +463,6 @@ export interface ICSSStyleDeclaration {
 }
 
 export interface ITransition {
-  mutationDisabled: boolean;
   step: (styles: ICSSStyleDeclaration, duration: number, timingFunction: string, delay: number, callBack?: () => void) => Transition;
   end: (callBack: () => void) => Transition;
   clear: () => Transition;

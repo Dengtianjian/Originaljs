@@ -2,12 +2,14 @@ import { compareMerge } from "./Diff";
 import { bindMethods } from "./Method";
 import { parseDom } from "./Parser";
 import { Reactive } from "./reactive";
+import Transition from "./Transition";
 import { IEl, IOGElement } from "./types/ElementType";
 import { IRefTree } from "./types/Ref";
 import { setUpdateView } from "./View";
 
 export class OGElement extends HTMLElement implements IOGElement {
   __og__reactive: Reactive = null;
+  __og__transitions: Record<string, Transition> = {};
   OGElement: boolean = true;
   el: IEl = null;
   slots: Record<string, Node[]> = {};
@@ -80,5 +82,8 @@ export class OGElement extends HTMLElement implements IOGElement {
     } else {
       setUpdateView(this, propertyName, newValue, this);
     }
+  };
+  transition(transitionName: string): Transition | null {
+    return this.__og__transitions[transitionName];
   }
 }

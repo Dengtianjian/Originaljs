@@ -1,7 +1,6 @@
 import { ICSSStyleDeclaration, ITransition, TTransitionItem } from "./types/TransitionType";
 
 class Transition implements ITransition {
-  mutationDisabled: boolean = false;
   private els: HTMLElement[] & Element[] = null;
   private transitions: TTransitionItem[] = [];
   private RAFId: number = null;
@@ -42,7 +41,6 @@ class Transition implements ITransition {
       ...transition.styles
     });
 
-    this.mutationDisabled = true; //* 过渡动画会触发MuataionObserver 让触发时 return;
     if (elapsed < transition.duration * 1000) {
       this.RAFId = window.requestAnimationFrame(this.trigger.bind(this));
     } else {
@@ -70,7 +68,6 @@ class Transition implements ITransition {
         window.cancelAnimationFrame(this.RAFId);
         this.RAFId = window.requestAnimationFrame(() => {
           window.cancelAnimationFrame(this.RAFId);
-          this.mutationDisabled = false;
           if (this.endCallBack) this.endCallBack();
         });
       }
