@@ -26,12 +26,12 @@ export default {
 
     if (target.childNodes.length > 0) {
       for (const childNode of Array.from(target.childNodes)) {
-        Plugin.useAll("el", [childNode, properties]);
         Utils.objectAssign(refTree, this.collectRef(childNode, properties));
         Utils.objectAssign(refTree, Plugin.use("Attrs").collectElAttrRef(childNode))
       }
     }
 
+    Plugin.useAll("el", [target, properties]);
     if (target.nodeType !== 3) return refTree;
 
     let refs: RegExpMatchArray = target.textContent.match(new RegExp(Ref.variableItem, "g"));
@@ -69,7 +69,6 @@ export default {
     }
 
     Utils.objectAssign(refTree, Plugin.use("Attrs").collectElAttrRef(target));
-
     return refTree;
   },
   setUpdateView(target, refTree, propertyKey, value): boolean {

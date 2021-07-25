@@ -14,15 +14,17 @@ export default {
 
     // @ts-ignore
     const targetTransition: Transition = new Transition(Array.from(tag.children));
-    properties[transitionFunctionName](targetTransition)
-    const mo: MutationObserver = new MutationObserver(() => {
+    properties[transitionFunctionName](targetTransition);
+    const mo: MutationObserver = new MutationObserver((mutationsList, observer) => {
       if (targetTransition.mutationDisabled) return;
-      properties[transitionFunctionName](targetTransition, tag, ...arguments)
+
+      properties[transitionFunctionName](targetTransition, mutationsList, observer)
     });
     mo.observe(tag, {
-      childList: false,
+      childList: true,
       attributes: true,
-      subtree: false
+      subtree: true,
+      attributeFilter: ['style']
     });
 
     return {};

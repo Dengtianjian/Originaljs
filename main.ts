@@ -143,7 +143,7 @@ template = template = `
 
 <div class="books">
 <o-transition function="coverTransiton">
-<div style="display:{show};" >
+<div style="color:white;" show="{show}" >
     <img class="poster" src="{bookitem.base_info.cover_img}" style="display:{show}" />
   <div class="info" data-content="{bookitem.base_info.title}" >
     <div class="title">{bookitem.base_info.title}</div>
@@ -237,7 +237,7 @@ class CButton extends OG.createElement() {
   };
   count = 1;
   updateArr(event) {
-    this.update("show", "none");
+    this.update("show", this.show === "none" ? 'block' : 'none');
     // console.log(this.books);
 
     // this.username = "Tianjian";
@@ -327,12 +327,26 @@ class CButton extends OG.createElement() {
   patchZero(rawString: string | number): string | number {
     return rawString < 10 ? `0${rawString}` : rawString;
   }
-  coverTransiton(t: Transition, el, ...rest) {
-    t.step({
-      transform: "translateX(150px)"
-    }).step({
-      transform: "translateX(0px)"
-    }, 1, "cubic-bezier(0.51, -0.82, 0.36, 1.98)")
+  coverTransiton(t: Transition, ...rest) {
+    if (this.show === "none") {
+      t.step({
+        transform: "translateY(-50px)",
+        opacity: "0"
+      }, 0.1, "ease-in-out").step({
+        display: "none"
+      }).end(() => {
+      })
+    } else if (this.show === "block") {
+      t.step({
+        display: "flex",
+        transform: "translateX(-100px)",
+        opacity: "0"
+      }).step({
+        transform: "translateX(0px)",
+        opacity:"1"
+      }, 0.3);
+    }
+
   }
 }
 
