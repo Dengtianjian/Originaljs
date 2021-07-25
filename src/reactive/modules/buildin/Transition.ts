@@ -13,7 +13,11 @@ export default {
 
     const childrens: HTMLElement[] = Array.from(tag.children) as HTMLElement[];
     const targetTransition: Transition = new Transition(childrens);
-    rootEl.__og__transitions[transitionName] = targetTransition;
+    if (rootEl.transitions[transitionName]) {
+      rootEl.transitions[transitionName].els.push(...childrens);
+    } else {
+      rootEl.transitions[transitionName] = targetTransition;
+    }
 
     return {};
   }

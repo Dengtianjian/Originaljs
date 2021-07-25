@@ -25,7 +25,7 @@ A { number } B {obj.name} {obj.user.lastName}
 template = template = `
 <div class="fixed">
 <button onclick="updateArr" >Update arr</button>
-<button >add Property</button>
+<button onclick="updateObj" >add Property</button>
 </div>
 <div class="fixed-placeholder"></div>
 <style>
@@ -143,7 +143,7 @@ template = template = `
 
 <div>
 <o-transition name="showBook">
-<div class="books">
+<div class="books" style="display:none;">
   <img class="poster" src="{bookitem.base_info.cover_img}" />
   <div class="info" data-content="{bookitem.base_info.title}" >
     <div class="title">{bookitem.base_info.title}</div>
@@ -183,11 +183,19 @@ class CButton extends OG.createElement() {
     //   this.update("number", this.formatTime());
     // }, 1000);
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
-      // data[0]['test'] = Date.now();
       console.time("total");
-      this.books.push(data[0]);
+      this.books.push(...data);
       console.timeEnd("total");
-      // this.books.push(data[0]);
+      this.transition("showBook").step({
+        display: "flex",
+        transform: "translateY(-50px)",
+        opacity: "0"
+      }).step({
+        transform: "translateY(0px)",
+        opacity: "1"
+      }).end(() => {
+        this.show = true;
+      })
     });
   }
   render() {
@@ -195,7 +203,7 @@ class CButton extends OG.createElement() {
   }
   rendered() {
     console.log(1);
-    
+
   }
   books = [];
   number = 123;
@@ -240,30 +248,6 @@ class CButton extends OG.createElement() {
   count = 1;
   show = true;
   updateArr(event) {
-    console.log(this.show);
-    
-    if (this.show) {
-      this.transition("showBook").step({
-        transform: "translateY(-50px)",
-        opacity: "0"
-      }).step({
-        display: "none"
-      }, 0).end(() => {
-        this.show = false;
-      })
-    } else {
-      this.transition("showBook").step({
-        display: "flex",
-        transform: "translateY(-50px)",
-        opacity: "0"
-      }).step({
-        transform: "translateY(0px)",
-        opacity: "1"
-      }).end(() => {
-        this.show = true;
-      })
-    }
-
     // this.update("show", this.show === "none" ? 'flex' : 'none');
     // console.log(this.books);
 
@@ -305,7 +289,17 @@ class CButton extends OG.createElement() {
       // }
       // this.books.push(data[this.index++]);
       // console.time();
-      // this.books.push(...data);
+      this.books.push(...data);
+      this.transition("showBook").step({
+        display: "flex",
+        transform: "translateY(-50px)",
+        opacity: "0"
+      },1).step({
+        transform: "translateY(0px)",
+        opacity: "1"
+      }, 1).end(() => {
+        this.show = true;
+      })
       // console.timeEnd();
       // this.update("books", data);
       // this.books[0] = data[0];
@@ -322,30 +316,27 @@ class CButton extends OG.createElement() {
     // }, 5000);
   }
   updateObj() {
-    // delete this.obj.user;
-    let luckNums = [1, 2, 3];
-    luckNums.push(Date.now());
-    this.users.push({
-      name: "Joe",
-      luckNums
-    })
-    // this.number = 456;
-    // this.update("number", 789);
-    // this.obj.nums[2] = this.formatTime().toString();
-    // this.obj.a = {
-    //   b: {
-    //     c: 2,
-    //     d: [1, 2, 3, 4, 5],
-    //     e: {
-    //       f: 2
-    //     }
-    //   }
-    // }
-    // this.count++;
-    // if (this.count == 3) {
-    //   this.update("number", 456);
-    // }
-    // this.obj.user.lastName = "666";
+    if (this.show) {
+      this.transition("showBook").step({
+        transform: "translateY(-50px)",
+        opacity: "0"
+      }).step({
+        display: "none"
+      }, 0).end(() => {
+        this.show = false;
+      })
+    } else {
+      this.transition("showBook").step({
+        display: "flex",
+        transform: "translateY(-50px)",
+        opacity: "0"
+      }).step({
+        transform: "translateY(0px)",
+        opacity: "1"
+      }).end(() => {
+        this.show = true;
+      })
+    }
   }
   formatTime(): string {
     const d = new Date();
@@ -353,28 +344,6 @@ class CButton extends OG.createElement() {
   }
   patchZero(rawString: string | number): string | number {
     return rawString < 10 ? `0${rawString}` : rawString;
-  }
-  coverTransiton(t: Transition, ...rest) {
-    console.log(this.show);
-
-    if (this.show === "none") {
-      t.step({
-        transform: "translateY(-50px)",
-        opacity: "0"
-      }, 0.1, "ease-in-out").step({
-        display: "none"
-      })
-    } else if (this.show === "flex") {
-      t.step({
-        display: "flex",
-        transform: "translateX(-100px)",
-        opacity: "0"
-      }, 0).step({
-        transform: "translateX(0px)",
-        opacity: "1"
-      }, 1);
-    }
-
   }
 }
 

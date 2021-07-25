@@ -1,7 +1,7 @@
 import { ICSSStyleDeclaration, ITransition, TTransitionItem } from "./types/TransitionType";
 
 class Transition implements ITransition {
-  private els: HTMLElement[] & Element[] = null;
+  els: HTMLElement[] & Element[] = null;
   private transitions: TTransitionItem[] = [];
   private RAFId: number = null;
   private startTimestamp: number = null;

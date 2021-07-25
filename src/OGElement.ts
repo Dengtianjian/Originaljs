@@ -84,6 +84,6 @@ export class OGElement extends HTMLElement implements IOGElement {
     }
   };
   transition(transitionName: string): Transition | undefined {
-    return this.transition[transitionName];
+    return this.transitions[transitionName];
   }
 }
