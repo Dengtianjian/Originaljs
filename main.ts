@@ -1,4 +1,5 @@
 import OG, { defineElement } from "./src";
+import Transition from "./src/Transition";
 
 let template: string = `
 <div data-number="{number} {obj.nums}">
@@ -139,9 +140,12 @@ template = template = `
   }
 </style>
 <o-for bookitem in="books">
+
 <div class="books">
-  <img class="poster" src="{bookitem.base_info.cover_img}" />
-  <div class="info" data-content="{bookitem.base_info.title}">
+<o-transition function="coverTransiton">
+<div style="display:{show};" >
+    <img class="poster" src="{bookitem.base_info.cover_img}" style="display:{show}" />
+  <div class="info" data-content="{bookitem.base_info.title}" >
     <div class="title">{bookitem.base_info.title}</div>
     <div class="desc">{ bookitem.base_info.summary }</div>
      <div class="author">
@@ -161,7 +165,11 @@ template = template = `
         </span></div>
     </div>
   </div>
+  </div>
+  123
+  </o-transition>
 </div>
+
 </o-for>
 
 `;
@@ -178,7 +186,7 @@ class CButton extends OG.createElement() {
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       // data[0]['test'] = Date.now();
       console.time("total");
-      this.books.push(...data);
+      this.books.push(data[0]);
       console.timeEnd("total");
       // this.books.push(data[0]);
     });
@@ -188,6 +196,7 @@ class CButton extends OG.createElement() {
   }
   books = [];
   number = 123;
+  show = "block";
   obj = {
     name: "Admin",
     nums: [0, 1],
@@ -228,6 +237,7 @@ class CButton extends OG.createElement() {
   };
   count = 1;
   updateArr(event) {
+    this.update("show", "none");
     // console.log(this.books);
 
     // this.username = "Tianjian";
@@ -247,6 +257,7 @@ class CButton extends OG.createElement() {
     // this.books.splice(0, 2);
     // this.number = Date.now();
     fetch("./mook/book_page2.json").then(res => res.json()).then(({ data }) => {
+
       // for (const key in data) {
       //   if (Object.prototype.hasOwnProperty.call(data, key)) {
       //     const element = data[key];
@@ -266,9 +277,9 @@ class CButton extends OG.createElement() {
       //   this.books[0].base_info.title = "96岁老党员跨时空对话牺牲战友 ";
       // }
       // this.books.push(data[this.index++]);
-      console.time();
-      this.books.push(...data);
-      console.timeEnd();
+      // console.time();
+      // this.books.push(...data);
+      // console.timeEnd();
       // this.update("books", data);
       // this.books[0] = data[0];
       // data.forEach((item, index) => {
@@ -315,6 +326,13 @@ class CButton extends OG.createElement() {
   }
   patchZero(rawString: string | number): string | number {
     return rawString < 10 ? `0${rawString}` : rawString;
+  }
+  coverTransiton(t: Transition, el, ...rest) {
+    t.step({
+      transform: "translateX(150px)"
+    }).step({
+      transform: "translateX(0px)"
+    }, 1, "cubic-bezier(0.51, -0.82, 0.36, 1.98)");
   }
 }
 

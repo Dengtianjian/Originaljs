@@ -10,23 +10,24 @@ import { deepUpdateRef, removeRefTree, updateRef } from "../../View";
 import Collect from "../Collect";
 
 export default {
-  collectRef(target): IRefTree {
+  collectRef(target, properties): IRefTree {
     let refTree: IRefTree = {};
 
     if (Array.isArray(target)) {
       for (const nodeItem of target) {
-        Utils.objectAssign(refTree, this.collectRef(nodeItem));
+        Utils.objectAssign(refTree, this.collectRef(nodeItem, properties));
       }
       return refTree;
     }
 
     if (target.__og__tagCollected) return refTree;
-    
+
     Utils.defineProperty(target, "__og__tagCollected", true);
 
     if (target.childNodes.length > 0) {
       for (const childNode of Array.from(target.childNodes)) {
-        Utils.objectAssign(refTree, this.collectRef(childNode));
+        Plugin.useAll("el", [childNode, properties]);
+        Utils.objectAssign(refTree, this.collectRef(childNode, properties));
         Utils.objectAssign(refTree, Plugin.use("Attrs").collectElAttrRef(childNode))
       }
     }

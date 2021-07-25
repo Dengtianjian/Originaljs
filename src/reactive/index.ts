@@ -8,11 +8,13 @@ import { deepUpdateRef } from "../View";
 import Collect from "./Collect";
 import Attrs from "./modules/Attrs";
 import Buildin from "./modules/buildin";
+import Transition from "./modules/buildin/Transition";
 import Tags from "./modules/Tags";
 
 Plugin.register('Buildin', Buildin);
 Plugin.register("Tags", Tags);
 Plugin.register("Attrs", Attrs);
+Plugin.register("Transition", Transition);
 
 export class Reactive {
   target: IEl = null;

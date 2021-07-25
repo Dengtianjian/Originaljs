@@ -4,6 +4,7 @@ import { IRefTree } from "./Ref";
 
 export type TPluginItem = {
   [key: string]: any,
+  el?(target: IEl | Node[], properties: IProperties): void;
   collectRef?(target: IEl | Node[], properties: IProperties): IRefTree,
   setUpdateView?(target: IProperties, refTree: IRefTree, propertyKey: string | number, value: any): Boolean;
   deleteUpdateView?(target: IProperties, propertyKey: string | number): Boolean;
