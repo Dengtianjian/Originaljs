@@ -12,20 +12,19 @@ class Transition implements ITransition {
   constructor(el: HTMLElement | HTMLElement[]) {
     this.els = Array.isArray(el) ? el : [el];
   }
-  private updateStyle(transitionItem: TTransitionItem): void {
-    const stylePropertyNames: string[] = Object.keys(transitionItem.styles);
-    this.els.forEach(el => {
-      el.style.transitionProperty = stylePropertyNames.join(",");
-      el.style.transitionDuration = `${transitionItem.duration}s`;
-      el.style.transitionTimingFunction = transitionItem.timingFunction;
-      el.style.transitionDelay = `${transitionItem.delay}s`;
+  private batchChangeElStyle(els: HTMLElement[], property: string | Record<string, any>, value?: any): void {
+    els.forEach(el => {
+      this.changeElStyle(el, property, value);
     });
-    for (const propertyName in transitionItem.styles) {
-      const style: Record<string, string> = transitionItem.styles[propertyName];
-      this.els.forEach(el => {
-        el.style[propertyName] = style;
-      });
-      this.updatedStyles.add(propertyName);
+  }
+  private changeElStyle(target: HTMLElement, property: string | Record<string, any>, value?: any): void {
+    if (typeof property === "string") {
+      target.style[property] = value;
+    } else {
+      for (const propertyName in property) {
+        this.updatedStyles.add(propertyName);
+        target.style[propertyName] = property[propertyName];
+      }
     }
   }
   private trigger(): void {
@@ -35,7 +34,13 @@ class Transition implements ITransition {
     const elapsed: number = Date.now() - this.startTimestamp; //* 过去多久时间了
 
     const transition: TTransitionItem = this.transitions[0];
-    this.updateStyle(transition);
+    this.batchChangeElStyle(this.els, {
+      transitionProperty: Object.keys(transition.styles).join(","),
+      transitionDuration: `${transition.duration}s`,
+      transitionTimingFunction: transition.timingFunction,
+      transitionDelay: `${transition.delay}s`,
+      ...transition.styles
+    });
 
     this.mutationDisabled = true; //* 过渡动画会触发MuataionObserver 让触发时 return;
     if (elapsed < transition.duration * 1000) {
@@ -48,21 +53,20 @@ class Transition implements ITransition {
         transition.callBack();
       }
       if (this.transitions.length === 0) {
-        this.els.forEach(el => {
-          el.style.transitionProperty = "";
-          el.style.transitionDuration = "";
-          el.style.transitionTimingFunction = "";
-          el.style.transitionDelay = "";
-        });
+        let clearStyles: Record<string, any> = {
+          transitionProperty: "",
+          transitionDuration: "",
+          transitionTimingFunction: "",
+          transitionDelay: "",
+        };
         if (this.isClearStyle) {
           for (const propertyName of this.updatedStyles.keys()) {
-            this.els.forEach(el => {
-              el.style[propertyName] = "";
-            });
+            clearStyles[propertyName] = "";
           }
           this.updatedStyles.clear();
           this.isClearStyle = false;
         }
+        this.batchChangeElStyle(this.els, clearStyles);
         window.cancelAnimationFrame(this.RAFId);
         this.RAFId = window.requestAnimationFrame(() => {
           window.cancelAnimationFrame(this.RAFId);

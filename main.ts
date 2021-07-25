@@ -332,7 +332,7 @@ class CButton extends OG.createElement() {
       transform: "translateX(150px)"
     }).step({
       transform: "translateX(0px)"
-    }, 1, "cubic-bezier(0.51, -0.82, 0.36, 1.98)");
+    }, 1, "cubic-bezier(0.51, -0.82, 0.36, 1.98)")
   }
 }
 
