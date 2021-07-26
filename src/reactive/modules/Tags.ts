@@ -1,6 +1,7 @@
 import { setProxy } from "../../OGProxy";
 import { transformPropertyName } from "../../Parser";
 import Plugin from "../../Plugin";
+import { getPropertyData } from "../../Property";
 import { Ref } from "../../Rules";
 import { IEl } from "../../types/ElementType";
 import { TPluginItem } from "../../types/Plugin";
@@ -34,7 +35,24 @@ export default {
     Plugin.useAll("el", [target, properties]);
     if (target.nodeType !== 3) return refTree;
 
-    let refs: RegExpMatchArray = target.textContent.match(new RegExp(Ref.variableItem, "g"));
+    const matchRefRegExp: RegExp = new RegExp(Ref.variableItem, "g");
+    let variables: RegExpMatchArray = target.textContent.match(/\{ *.+ *\}/g);
+    let expressions: string[] = [];
+    let refs: string[] = variables.filter(value => {
+      if (matchRefRegExp.test(value)) {
+        return value;
+      } else {
+        expressions.push(value);
+      }
+    });
+    expressions[0] = expressions[0].replace(new RegExp("\{ *(.+) *\}"), "$1");
+    const propertys = expressions[0].match(new RegExp(Ref.VariableName, "g"));
+    const source = [];
+    propertys.forEach(item => {
+      source.push(getPropertyData(item, properties));
+    });
+    propertys.push("return "+expressions[0]);
+    console.log(new Function(...propertys)(...source));
 
     if (refs === null) return refTree;
 

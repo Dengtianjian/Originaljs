@@ -175,6 +175,7 @@ template = template = `
 `;
 
 template=`
+{ number }
 { number + 2 }
 `;
 
