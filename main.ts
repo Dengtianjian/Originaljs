@@ -174,9 +174,9 @@ template = template = `
 
 `;
 
-// template=`
-// {number}
-// `;
+template=`
+{ number + 2 }
+`;
 
 class CButton extends OG.createElement() {
   connected() {
@@ -187,6 +187,7 @@ class CButton extends OG.createElement() {
       console.time("total");
       this.books.push(...data);
       console.timeEnd("total");
+      return;
 
       console.time("transition");
       this.transition("showBook", {

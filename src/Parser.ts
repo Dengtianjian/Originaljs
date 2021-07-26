@@ -1,9 +1,6 @@
 import { getPropertyData } from "./Property";
 import { Ref } from "./Rules";
 import { IProperties } from "./types/Properties";
-import { IRefTree, TAttr } from "./types/Ref";
-import Utils from "./Utils";
-import { updateRef } from "./View";
 
 export function parseDom(DOMString): Node[] {
   const DP: DOMParser = new DOMParser();
