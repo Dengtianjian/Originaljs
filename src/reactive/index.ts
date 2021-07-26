@@ -8,7 +8,7 @@ import { deepUpdateRef } from "../View";
 import Collect from "./Collect";
 import Attrs from "./modules/Attrs";
 import Buildin from "./modules/buildin";
-import Transition from "./modules/buildin/Transition";
+import Transition from "./modules/Transition";
 import Tags from "./modules/Tags";
 
 Plugin.register('Buildin', Buildin);

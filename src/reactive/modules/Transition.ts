@@ -1,8 +1,8 @@
-import Transition from "../../../Transition";
-import { IEl, IOGElement } from "../../../types/ElementType";
-import { TPluginItem } from "../../../types/Plugin";
-import { IProperties } from "../../../types/Properties";
-import { IRefTree } from "../../../types/Ref";
+import Transition from "../../Transition";
+import { IEl, IOGElement } from "../../types/ElementType";
+import { TPluginItem } from "../../types/Plugin";
+import { IProperties } from "../../types/Properties";
+import { IRefTree } from "../../types/Ref";
 
 export default {
   el(target: IEl, rootEl: IOGElement): IRefTree {
