@@ -5,6 +5,7 @@ import { Reactive } from "./reactive";
 import Transition from "./Transition";
 import { IEl, IOGElement } from "./types/ElementType";
 import { IRefTree } from "./types/Ref";
+import { ICSSStyleDeclaration } from "./types/TransitionType";
 import { setUpdateView } from "./View";
 
 export class OGElement extends HTMLElement implements IOGElement {
@@ -83,7 +84,9 @@ export class OGElement extends HTMLElement implements IOGElement {
       setUpdateView(this, propertyName, newValue, this);
     }
   };
-  transition(transitionName: string): Transition | undefined {
-    return this.transitions[transitionName];
+  transition(transitionName: string, initStyles?: ICSSStyleDeclaration): Transition | undefined {
+    let transition = this.transitions[transitionName];
+    if (initStyles) transition.step(initStyles, 0.01);
+    return transition;
   }
 }

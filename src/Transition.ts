@@ -43,9 +43,10 @@ class Transition implements ITransition {
       transitionDelay: `${transition.delay}s`,
       ...transition.styles
     });
-
     if (elapsed < transition.duration * 1000) {
-      this.RAFId = window.requestAnimationFrame(this.trigger.bind(this));
+      this.RAFId = window.requestAnimationFrame(() => {
+        this.trigger();
+      });
     } else {
       this.transitions.shift();
       this.startTimestamp = null;
@@ -55,10 +56,10 @@ class Transition implements ITransition {
       }
       if (this.transitions.length === 0) {
         let clearStyles: Record<string, any> = {
-          transitionProperty: "",
-          transitionDuration: "",
-          transitionTimingFunction: "",
-          transitionDelay: "",
+          // transitionProperty: "",
+          // transitionDuration: "",
+          // transitionTimingFunction: "",
+          // transitionDelay: "",
         };
         if (this.isClearStyle) {
           for (const propertyName of this.updatedStyles.keys()) {

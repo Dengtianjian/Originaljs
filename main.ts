@@ -47,6 +47,7 @@ template = template = `
     box-sizing: border-box;
     background-color: #fff;
     position: relative;
+    transition:all 0.2s linear;
   }
   .books .poster {
     width: 100px;
@@ -68,7 +69,7 @@ template = template = `
   .books .title {
     font-size: 16px;
     font-weight: 700;
-    animation:showTitle 0.5s ease-in-out;
+    /*animation:showTitle 0.5s ease-in-out;*/
     transform-origin:50% 50%;
   }
   @keyframes showTitle {
@@ -143,7 +144,7 @@ template = template = `
 
 <div>
 <o-transition name="showBook">
-<div class="books" style="display:none;">
+<div class="books" style="transform:translateY(-50px);opacity:0;">
   <img class="poster" src="{bookitem.base_info.cover_img}" />
   <div class="info" data-content="{bookitem.base_info.title}" >
     <div class="title">{bookitem.base_info.title}</div>
@@ -184,26 +185,23 @@ class CButton extends OG.createElement() {
     // }, 1000);
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       console.time("total");
-      this.books.push(...data);
+      this.books.push(data[0]);
       console.timeEnd("total");
-      this.transition("showBook").step({
-        display: "flex",
-        transform: "translateY(-50px)",
+
+      console.time("transition");
+      this.transition("showBook", {
         opacity: "0"
       }).step({
         transform: "translateY(0px)",
         opacity: "1"
       }).end(() => {
         this.show = true;
-      })
+        console.timeEnd("transition");
+      });
     });
   }
   render() {
     return template;
-  }
-  rendered() {
-    console.log(1);
-
   }
   books = [];
   number = 123;
@@ -288,19 +286,22 @@ class CButton extends OG.createElement() {
       //   this.books[0].base_info.title = "96岁老党员跨时空对话牺牲战友 ";
       // }
       // this.books.push(data[this.index++]);
-      // console.time();
+      console.time();
       this.books.push(...data);
-      this.transition("showBook").step({
+      console.timeEnd();
+      console.time("transition");
+      this.transition("showBook", {
         display: "flex",
         transform: "translateY(-50px)",
         opacity: "0"
-      },1).step({
+      }).step({
         transform: "translateY(0px)",
         opacity: "1"
       }, 1).end(() => {
         this.show = true;
+        console.timeEnd("transition");
       })
-      // console.timeEnd();
+
       // this.update("books", data);
       // this.books[0] = data[0];
       // data.forEach((item, index) => {

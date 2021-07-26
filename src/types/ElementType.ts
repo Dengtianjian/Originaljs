@@ -1,6 +1,7 @@
 import { Reactive } from "../reactive";
 import Transition from "../Transition";
 import { IRefTree } from "./Ref";
+import { ICSSStyleDeclaration } from "./TransitionType";
 
 export type IEl = (HTMLElement | ShadowRoot | Element) & {
   __og__reactive?: Reactive,
@@ -23,5 +24,5 @@ export interface IOGElement extends HTMLElement {
   propChanged(name: string, newValue: string, oldValue: string): void;
   render(): null | Node | NodeList | string;
   update(propertyName: string, newValue: any): void;
-  transition(transitionName: string): Transition | undefined
+  transition(transitionName: string, initStyle?: ICSSStyleDeclaration): Transition | undefined
 }

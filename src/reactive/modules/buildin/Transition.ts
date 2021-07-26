@@ -13,6 +13,7 @@ export default {
     let transition: Transition = rootEl.transitions[transitionName];
 
     const childrens: HTMLElement[] = Array.from(tag.children) as HTMLElement[];
+
     if (transition) {
       transition.els.push(...childrens);
       if (transition.updatePart === null) {
