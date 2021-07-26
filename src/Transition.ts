@@ -56,10 +56,10 @@ class Transition implements ITransition {
       }
       if (this.transitions.length === 0) {
         let clearStyles: Record<string, any> = {
-          // transitionProperty: "",
-          // transitionDuration: "",
-          // transitionTimingFunction: "",
-          // transitionDelay: "",
+          transitionProperty: "",
+          transitionDuration: "",
+          transitionTimingFunction: "",
+          transitionDelay: "",
         };
         if (this.isClearStyle) {
           for (const propertyName of this.updatedStyles.keys()) {

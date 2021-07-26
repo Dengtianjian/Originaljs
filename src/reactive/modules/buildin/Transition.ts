@@ -23,6 +23,7 @@ export default {
       }
     } else {
       rootEl.transitions[transitionName] = new Transition(childrens);
+      rootEl.transitions[transitionName]['updatePart']=childrens;
     }
 
     return {};
