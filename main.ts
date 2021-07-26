@@ -325,7 +325,7 @@ class CButton extends OG.createElement() {
         display: "none"
       }, 0).end(() => {
         this.show = false;
-      })
+      });
     } else {
       this.transition("showBook").step({
         display: "flex",
