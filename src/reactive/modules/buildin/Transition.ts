@@ -10,13 +10,18 @@ export default {
     let tag: HTMLElement = target as HTMLElement;
     if (!tag.attributes['name']) return {};
     let transitionName: string = tag.attributes['name'].nodeValue;
+    let transition: Transition = rootEl.transitions[transitionName];
 
     const childrens: HTMLElement[] = Array.from(tag.children) as HTMLElement[];
-    const targetTransition: Transition = new Transition(childrens);
-    if (rootEl.transitions[transitionName]) {
-      rootEl.transitions[transitionName].els.push(...childrens);
+    if (transition) {
+      transition.els.push(...childrens);
+      if (transition.updatePart === null) {
+        transition.updatePart = childrens;
+      } else {
+        transition.updatePart.push(...childrens);
+      }
     } else {
-      rootEl.transitions[transitionName] = targetTransition;
+      rootEl.transitions[transitionName] = new Transition(childrens);
     }
 
     return {};

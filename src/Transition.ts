@@ -2,6 +2,7 @@ import { ICSSStyleDeclaration, ITransition, TTransitionItem } from "./types/Tran
 
 class Transition implements ITransition {
   els: HTMLElement[] & Element[] = null;
+  updatePart: HTMLElement[] = null;
   private transitions: TTransitionItem[] = [];
   private RAFId: number = null;
   private startTimestamp: number = null;
@@ -33,7 +34,9 @@ class Transition implements ITransition {
     const elapsed: number = Date.now() - this.startTimestamp; //* 过去多久时间了
 
     const transition: TTransitionItem = this.transitions[0];
-    this.batchChangeElStyle(this.els, {
+    const updateEls: HTMLElement[] = this.updatePart ? this.updatePart : this.els;
+
+    this.batchChangeElStyle(updateEls, {
       transitionProperty: Object.keys(transition.styles).join(","),
       transitionDuration: `${transition.duration}s`,
       transitionTimingFunction: transition.timingFunction,
@@ -64,7 +67,8 @@ class Transition implements ITransition {
           this.updatedStyles.clear();
           this.isClearStyle = false;
         }
-        this.batchChangeElStyle(this.els, clearStyles);
+        this.batchChangeElStyle(updateEls, clearStyles);
+        this.updatePart = null;
         window.cancelAnimationFrame(this.RAFId);
         this.RAFId = window.requestAnimationFrame(() => {
           window.cancelAnimationFrame(this.RAFId);
