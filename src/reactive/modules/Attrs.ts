@@ -32,7 +32,7 @@ export default {
     }
     return attrRefTree;
   },
-  collectRef(target: IEl | Node[]): IRefTree {
+  collectElRef(target: IEl | Node[]): IRefTree {
     let refTree: IRefTree = {};
 
     if (Array.isArray(target)) {
@@ -43,12 +43,6 @@ export default {
     }
 
     if (target.__og__attrCollected) return refTree;
-
-    if (target.childNodes && target.childNodes.length > 0) {
-      for (const childNode of Array.from(target.childNodes)) {
-        Utils.objectAssign(refTree, this.collectRef(childNode));
-      }
-    }
 
     Utils.objectAssign(refTree, this.collectElAttrRef(target));
 
