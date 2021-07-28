@@ -11,8 +11,8 @@ import { deepUpdateRef, removeRefTree, updateRef } from "../../View";
 import Collect from "../Collect";
 
 export default {
-  el(target: IEl, rootEl: IOGElement) {
-    return;
+  collectElRef(target: IEl, rootEl: IOGElement): IRefTree {
+    return {};
     if (target.__og__tagCollected) return;
     Utils.defineProperty(target, "__og__tagCollected", true);
 

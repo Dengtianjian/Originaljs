@@ -5,7 +5,7 @@ import { IProperties } from "../../types/Properties";
 import { IRefTree } from "../../types/Ref";
 
 export default {
-  el(target: IEl, rootEl: IOGElement): IRefTree {
+  collectElRef(target: IEl, rootEl: IOGElement): IRefTree {
     if ((target as HTMLElement).tagName !== "O-TRANSITION") return {};
     let tag: HTMLElement = target as HTMLElement;
     if (!tag.attributes['name']) return {};

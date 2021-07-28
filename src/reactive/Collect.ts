@@ -4,20 +4,26 @@ import { IProperties } from "../types/Properties";
 import { IRefTree } from "../types/Ref";
 import Utils from "../Utils";
 
-function useElHook(target: IEl | Node[], properties: IProperties): void {
+function useCollectElRefHook(target: IEl | Node[], properties: IProperties): IRefTree {
+  let refTree: IRefTree = {};
   if (Array.isArray(target)) {
     for (const nodeItem of target) {
-      useElHook(nodeItem as IEl, properties);
+      Utils.objectAssign(refTree, useCollectElRefHook(nodeItem as IEl, properties));
     }
     return;
-  } else if (target.nodeType !== 3 && target.childNodes.length > 0) useElHook(Array.from(target.childNodes), properties);
-  Plugin.useAll("el", [target, properties]);
+  } else if (target.nodeType !== 3 && target.childNodes.length > 0) {
+    Utils.objectAssign(refTree, useCollectElRefHook(Array.from(target.childNodes), properties));
+  };
+  for (const item of Plugin.useAll<IRefTree[]>("collectElRef", [target, properties])) {
+    Utils.objectAssign(refTree, item);
+  };
+  return refTree;
 }
 
 export function collection(target: IEl | Node[], properties: IProperties): IRefTree {
   let elRefTree: IRefTree = {};
 
-  useElHook(target, properties);
+  Utils.objectAssign(elRefTree, useCollectElRefHook(target, properties));
 
   for (const item of Plugin.useAll<IRefTree[]>("collectRef", [target, properties])) {
     Utils.objectAssign(elRefTree, item);
