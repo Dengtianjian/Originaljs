@@ -7,12 +7,10 @@ import Utils from "../Utils";
 import { deepUpdateRef } from "../View";
 import Collect from "./Collect";
 import Attrs from "./modules/Attrs";
-import Buildin from "./modules/buildin";
 import Transition from "./modules/Transition";
 import Tags from "./modules/Tags";
 import For from "./modules/For";
 
-// Plugin.register('Buildin', Buildin);
 Plugin.register('For', For);
 Plugin.register("Tags", Tags);
 Plugin.register("Attrs", Attrs);
