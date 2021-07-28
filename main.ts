@@ -289,7 +289,7 @@ class CButton extends OG.createElement() {
       // }
       // this.books.push(data[this.index++]);
       console.time();
-      this.books.unshift(...data);
+      this.books.push(...data);
       console.timeEnd();
       console.time("transition");
       this.transition("showBook", {

@@ -32,19 +32,26 @@ export default {
     }
     return attrRefTree;
   },
-  collectRef(target: IEl): IRefTree {
-    if (target.__og__attrCollected) return {};
+  collectRef(target: IEl | Node[]): IRefTree {
+    let refTree: IRefTree = {};
 
-    let attrRefTree: IRefTree = {};
+    if (Array.isArray(target)) {
+      for (const item of target) {
+        Utils.objectAssign(refTree, this.collectRef(item));
+      }
+      return refTree;
+    }
+
+    if (target.__og__attrCollected) return refTree;
 
     if (target.childNodes && target.childNodes.length > 0) {
       for (const childNode of Array.from(target.childNodes)) {
-        Utils.objectAssign(attrRefTree, this.collectRef(childNode));
+        Utils.objectAssign(refTree, this.collectRef(childNode));
       }
     }
 
-    attrRefTree = this.collectElAttrRef(target);
+    Utils.objectAssign(refTree, this.collectElAttrRef(target));
 
-    return attrRefTree;
+    return refTree;
   }
 } as TPluginItem
