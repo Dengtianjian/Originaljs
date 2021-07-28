@@ -1,21 +1,26 @@
 import Plugin from "../Plugin";
 import { IEl } from "../types/ElementType";
-import { TPluginItem, TPlugins } from "../types/Plugin";
 import { IProperties } from "../types/Properties";
 import { IRefTree } from "../types/Ref";
 import Utils from "../Utils";
 
+function useElHook(target: IEl | Node[], properties: IProperties): void {
+  if (Array.isArray(target)) {
+    for (const nodeItem of target) {
+      useElHook(nodeItem as IEl, properties);
+    }
+    return;
+  } else if (target.nodeType !== 3 && target.childNodes.length > 0) useElHook(Array.from(target.childNodes), properties);
+  Plugin.useAll("el", [target, properties]);
+}
+
 export function collection(target: IEl | Node[], properties: IProperties): IRefTree {
   let elRefTree: IRefTree = {};
 
-  const Plugins: TPlugins = Plugin.all();
-  for (const pluginName in Plugins) {
-    if (Object.prototype.hasOwnProperty.call(Plugins, pluginName)) {
-      const pluginItem: TPluginItem = Plugins[pluginName];
-      if (pluginItem.collectRef) {
-        Utils.objectAssign(elRefTree, pluginItem.collectRef(target, properties));
-      }
-    }
+  useElHook(target, properties);
+
+  for (const item of Plugin.useAll<IRefTree[]>("collectRef", [target, properties])) {
+    Utils.objectAssign(elRefTree, item);
   }
 
   return elRefTree;

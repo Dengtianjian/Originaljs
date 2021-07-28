@@ -18,15 +18,17 @@ export function all(): Record<string, TPluginItem> {
   return Plugins;
 }
 
-export function useAll(hookName: keyof TPluginItem, args: any[] = []): void {
+export function useAll<T>(hookName: keyof TPluginItem, args: any[] = []): T[] {
   const plugins: TPlugins = all();
+  const results: T[] = [];
   for (const pluginName in plugins) {
     if (Object.prototype.hasOwnProperty.call(plugins, pluginName)) {
       if (plugins[pluginName][hookName]) {
-        plugins[pluginName][hookName](...args);
+        results.push(plugins[pluginName][hookName](...args));
       }
     }
   }
+  return results;
 }
 
 export default {

@@ -144,7 +144,7 @@ template = template = `
 
 <div>
 <o-transition name="showBook">
-<div class="books" style="transform:translateY(-50px);opacity:0;">
+<div class="books">
   <img class="poster" src="{bookitem.base_info.cover_img}" />
   <div class="info" data-content="{bookitem.base_info.title}" >
     <div class="title">{bookitem.base_info.title}</div>
@@ -174,10 +174,10 @@ template = template = `
 
 `;
 
-template=`
-{ number }
-{ number + 2 }
-`;
+// template=`
+// { number }
+// { number + 2 }
+// `;
 
 class CButton extends OG.createElement() {
   connected() {

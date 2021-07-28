@@ -19,7 +19,7 @@ Plugin.register("Transition", Transition);
 export class Reactive {
   target: IEl = null;
   properties: IProperties = null;
-  refTree: IRefTree = null;
+  refTree: IRefTree = {};
   static observe(target: IEl, refData: IProperties): Reactive {
     const reactiveInstance = new Reactive(target, refData);
     return reactiveInstance;
@@ -40,9 +40,8 @@ export class Reactive {
 }
 
 function collectEl(target: IEl | Node[], properties: IProperties, reactiveInstance: Reactive): IRefTree {
-  let refTree: IRefTree = {};
   //* 1. 收集引用
-  refTree = Collect.collection(target, properties);
+  let refTree: IRefTree =Collect.collection(target, properties);
 
   //* 2. 设置Proxy
   setProxy(refTree, properties, reactiveInstance);
