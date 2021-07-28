@@ -58,7 +58,6 @@ export default {
     for (const newTextChildNode of newTextChildNodes) {
       parentNode.insertBefore(newTextChildNode, target);
     }
-    Utils.objectAssign(refTree, Plugin.use("Attrs").collectElAttrRef(target));
     
     return refTree;
   },
