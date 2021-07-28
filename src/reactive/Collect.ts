@@ -10,13 +10,14 @@ function useCollectElRefHook(target: IEl | Node[], properties: IProperties): IRe
     for (const nodeItem of target) {
       Utils.objectAssign(refTree, useCollectElRefHook(nodeItem as IEl, properties));
     }
-    return;
+    return refTree;
   } else if (target.nodeType !== 3 && target.childNodes.length > 0) {
     Utils.objectAssign(refTree, useCollectElRefHook(Array.from(target.childNodes), properties));
   };
   for (const item of Plugin.useAll<IRefTree[]>("collectElRef", [target, properties])) {
     Utils.objectAssign(refTree, item);
   };
+
   return refTree;
 }
 

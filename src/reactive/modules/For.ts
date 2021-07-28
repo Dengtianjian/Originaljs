@@ -42,22 +42,14 @@ function replaceAttrRef(target: HTMLElement, sourceString: string, replaceString
   }, attributes[0]);
 }
 
-function collectRef(target: HTMLElement | Node[], properties: IProperties): IRefTree {
+function collectElRef(target: HTMLElement | Node[], properties: IProperties): IRefTree {
   let refTree: IRefTree = {};
 
   if (Array.isArray(target)) {
     for (const node of target) {
-      Utils.objectAssign(refTree, collectRef(node as HTMLElement, properties));
+      Utils.objectAssign(refTree, collectElRef(node as HTMLElement, properties));
     }
     return refTree;
-  }
-
-  if (target.childNodes.length > 0) {
-    for (const key in target.childNodes) {
-      if (target.childNodes.hasOwnProperty(key)) {
-        Utils.objectAssign(refTree, collectRef(target.childNodes[key], properties));
-      }
-    }
   }
 
   if (target.nodeType === 3 || target.__og__tagCollected) return refTree;
@@ -71,10 +63,10 @@ function collectRef(target: HTMLElement | Node[], properties: IProperties): IRef
   let keyName: string = "";
   let itemName: string = "";
   const childNodes: Node[] = [];
+
   target.childNodes.forEach(node => {
     childNodes.push(node.cloneNode(true));
   });
-
 
   attributes.forEach((attr, index) => {
     if (attr.nodeName === "in") {
@@ -163,6 +155,6 @@ function setUpdateView(properties: IProperties, refTree: IRefTree, propertyKey: 
 }
 
 export default {
-  collectRef,
-  setUpdateView
+  setUpdateView,
+  collectElRef
 } as TPluginItem
