@@ -1,4 +1,5 @@
 import { IEl } from "./ElementType"
+import { IProperties } from "./Properties"
 
 export type TRefTreeFors = {
   el: HTMLElement,
@@ -7,6 +8,13 @@ export type TRefTreeFors = {
   propertyName: string,
   keyName: string,
   itemName: string
+}
+
+export type TExpressionItem = {
+  template: string,
+  propertyNames: string[],
+  target: Text,
+  propertyFirstKeys: string[]
 }
 
 // export type TRefTreeBranch = {
@@ -20,7 +28,8 @@ export interface IRefTree {
   [key: string]: IRefTree | any,
   __els?: TText[],
   __attrs?: TAttr[],
-  __fors?: TRefTreeFors[]
+  __fors?: TRefTreeFors[],
+  __expressions?: TExpressionItem[]
 }
 
 export type TAttr = Attr & {

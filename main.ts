@@ -174,16 +174,19 @@ template = template = `
 
 `;
 
-template=`
-{ number }
-{ number + 2 }
+template = `
+{ numbers.a+numbers.b+obj.nums[1]+number }
+<div>{number}</div>
 `;
+
+// template=`{ numbers.a+numbers.b }`;
 
 class CButton extends OG.createElement() {
   connected() {
-    // setInterval(() => {
-    //   this.update("number", this.formatTime());
-    // }, 1000);
+    setInterval(() => {
+      this.update("number", this.formatTime());
+    }, 1000);
+    return;
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       console.time("total");
       this.books.push(...data);
@@ -215,6 +218,10 @@ class CButton extends OG.createElement() {
   }
   books = [];
   number = 123;
+  numbers = {
+    a: 2,
+    b: 3
+  }
   obj = {
     name: "Admin",
     nums: [0, 1],
@@ -335,7 +342,7 @@ class CButton extends OG.createElement() {
         display: "none"
       }, 0).end(() => {
         console.log("end");
-        
+
         this.show = false;
       });
     } else {

@@ -5,6 +5,7 @@ import { getPropertyData } from "../../Property";
 import { Ref } from "../../Rules";
 import { IEl, IOGElement } from "../../types/ElementType";
 import { TPluginItem } from "../../types/Plugin";
+import { IProperties } from "../../types/Properties";
 import { IRefTree } from "../../types/Ref";
 import Utils from "../../Utils";
 import { deepUpdateRef, removeRefTree, updateRef } from "../../View";
@@ -26,22 +27,66 @@ export default {
 
     if (target.nodeType !== 3) return refTree;
 
-    let refs: RegExpMatchArray = target.textContent.match(new RegExp(Ref.variableItem, "g"));
-    if (refs === null) return;
+    let refs: RegExpMatchArray = target.textContent.match(new RegExp(Ref.Item, "g"));
+    if (refs === null) return refTree;
+    let variables: string[] = refs.filter(item => {
+      return Ref.variableItem.test(item);
+    });
+    let expressions: string[] = refs.filter(item => {
+      return !Ref.variableItem.test(item);
+    });
+    if (expressions.length > 0) {
+      const matchVariableNameRegExp: RegExp = new RegExp(Ref.VariableName, "g");
+      for (const expressionItem of expressions) {
+        const expressionItemString: string[] = expressionItem.match(/(?<=\{) *.+ *(?=\})/);
+
+        let variableNames: string[] = expressionItem.match(matchVariableNameRegExp);
+        if (variableNames === null) continue;
+        variableNames = Array.from(new Set(variableNames));
+        const pushedNames: string[] = [];
+        variableNames.forEach(name => {
+          let firstPropertyName: string = transformPropertyName(name)[0];
+          if (!pushedNames.includes(firstPropertyName)) {
+            pushedNames.push(firstPropertyName);
+          }
+        });
+        const expressionProperties: IProperties = {};
+        pushedNames.forEach(item => {
+          expressionProperties[item] = rootEl[item];
+        });
+
+        const template: string = 'return ' + expressionItemString[0].trim();
+
+        pushedNames.forEach(name => {
+          Utils.objectAssign(refTree, Utils.generateObjectTree(transformPropertyName(name), {
+            __expressions: [
+              {
+                propertyNames: variableNames,
+                template,
+                target,
+                propertyFirstKeys: [...pushedNames, template]
+              }
+            ]
+          }))
+        })
+      }
+    }
+
+    if (variables === null) return refTree;
 
     const parentNode: IEl = target.parentNode as IEl;
     const newTextChildNodes: Text[] = [];
 
-    for (let index = 0; index < refs.length; index++) {
-      let variableNameMatchs: unknown = refs[index].match(new RegExp(Ref.ExtractVariableName));
+    for (let index = 0; index < variables.length; index++) {
+      let variableNameMatchs: unknown = variables[index].match(new RegExp(Ref.ExtractVariableName));
       if (variableNameMatchs === null) continue;
 
       let variableName = String(variableNameMatchs[0]).trim();
 
-      const previousText: string = target.textContent.slice(0, target.textContent.indexOf(refs[index]));
+      const previousText: string = target.textContent.slice(0, target.textContent.indexOf(variables[index]));
       if (previousText) {
         newTextChildNodes.push(document.createTextNode(previousText));
-        target.textContent = target.textContent.slice(target.textContent.indexOf(refs[index]));
+        target.textContent = target.textContent.slice(target.textContent.indexOf(variables[index]));
       }
 
       const newTextEl: Text = document.createTextNode(`{${variableName}}`);
@@ -58,7 +103,7 @@ export default {
     for (const newTextChildNode of newTextChildNodes) {
       parentNode.insertBefore(newTextChildNode, target);
     }
-    
+
     return refTree;
   },
   setUpdateView(target, refTree, propertyKey, value): boolean {

@@ -1,8 +1,8 @@
-import { parse, transformValueToString } from "./Parser";
+import { parse, transformPropertyName, transformValueToString } from "./Parser";
 import Plugin from "./Plugin";
 import { getPropertyData } from "./Property";
 import { IProperties } from "./types/Properties";
-import { IRefTree, TAttr, TText } from "./types/Ref";
+import { IRefTree, TAttr, TExpressionItem, TText } from "./types/Ref";
 import Utils from "./Utils";
 
 export function deepUpdateRef(refTree: IRefTree, refProperty?: IProperties): void {
@@ -25,6 +25,7 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
   if (!refTree) return;
   const els: TText[] = refTree.__els;
   const attrs: TAttr[] = refTree.__attrs;
+  const expressions: TExpressionItem[] = refTree.__expressions;
 
   if (els && els.length > 0) {
     els.forEach(el => {
@@ -40,6 +41,18 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
   if (attrs && attrs.length > 0) {
     for (const attr of attrs) {
       attr.nodeValue = parse(attr.__og__attrs.nodeRawValue, properties);
+    }
+  }
+
+  if (expressions && expressions.length > 0) {
+    for (const expressionItem of expressions) {
+      let expressionProperties: IProperties[] = [];
+      let propertyFirstKeys: string[] = expressionItem.propertyFirstKeys;
+      for (let index = 0; index < propertyFirstKeys.length - 1; index++) {
+        expressionProperties.push(properties[propertyFirstKeys[index]]);
+      }
+
+      expressionItem.target.textContent = new Function(...expressionItem.propertyFirstKeys).apply(properties, expressionProperties);
     }
   }
 }
