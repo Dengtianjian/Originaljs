@@ -147,7 +147,7 @@ template = template = `
 <div class="books">
   <img class="poster" src="{bookitem.base_info.cover_img}" />
   <div class="info" data-content="{bookitem.base_info.title}" >
-    <div class="title">{bookitem.base_info.title}</div>
+    <div class="title">{bookitem.base_info.title +" | "+ bookitem.base_info.title}</div>
     <div class="desc">{ bookitem.base_info.summary }</div>
      <div class="author">
      <div class="author-info"><object><a href="/user/1838039171075352" target="_blank" rel="" st:name="author"
@@ -174,19 +174,19 @@ template = template = `
 
 `;
 
-template = `
-{ numbers.a+numbers.b+obj.nums[1]+number }
-<div>{number}</div>
-`;
+// template = `
+// { numbers.a+numbers.b+obj.nums[1]+number }
+// <div>{ show }</div>
+// `;
 
-// template=`{ numbers.a+numbers.b }`;
+// template = `{ multiNumbers[0]+multiNumbers[1] }`;
 
 class CButton extends OG.createElement() {
   connected() {
-    setInterval(() => {
-      this.update("number", this.formatTime());
-    }, 1000);
-    return;
+    // setInterval(() => {
+    //   this.update("number", this.formatTime());
+    // }, 1000);
+    // return;
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       console.time("total");
       this.books.push(...data);
@@ -222,6 +222,7 @@ class CButton extends OG.createElement() {
     a: 2,
     b: 3
   }
+  multiNumbers = [0, 1]
   obj = {
     name: "Admin",
     nums: [0, 1],
