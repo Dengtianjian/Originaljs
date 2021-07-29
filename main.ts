@@ -188,14 +188,17 @@ class CButton extends OG.createElement() {
       console.time("total");
       this.books.push(...data);
       console.timeEnd("total");
-      return;
 
       console.time("transition");
       this.transition("showBook", {
-        opacity: "0"
+        opacity: "0",
+        transform: "translateY(50px)",
       }).step({
         transform: "translateY(0px)",
         opacity: "1"
+      },1,"",0,()=>{
+        console.log("translateX end");
+        
       }).end(() => {
         this.show = true;
         console.timeEnd("transition");

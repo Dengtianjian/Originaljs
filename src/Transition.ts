@@ -4,11 +4,11 @@ class Transition implements ITransition {
   els: HTMLElement[] & Element[] = null;
   updatePart: HTMLElement[] = null;
   private transitions: TTransitionItem[] = [];
-  private RAFId: number = null;
   private startTimestamp: number = null;
   private endCallBack: () => void = null;
   private updatedStyles: Set<string> = new Set();
   private isClearStyle: boolean = false;
+  private runingTimer: number = null;
   constructor(el: HTMLElement | HTMLElement[]) {
     this.els = Array.isArray(el) ? el : [el];
   }
@@ -31,9 +31,9 @@ class Transition implements ITransition {
     if (this.transitions.length === 0 || this.els.length === 0) return;
     if (this.startTimestamp === null) this.startTimestamp = Date.now();
 
-    const elapsed: number = Date.now() - this.startTimestamp; //* 过去多久时间了
-
     const transition: TTransitionItem = this.transitions[0];
+    console.log(transition);
+
     const updateEls: HTMLElement[] = this.updatePart ? this.updatePart : this.els;
 
     this.batchChangeElStyle(updateEls, {
@@ -43,18 +43,16 @@ class Transition implements ITransition {
       transitionDelay: `${transition.delay}s`,
       ...transition.styles
     });
-    if (elapsed < transition.duration * 1000) {
-      this.RAFId = window.requestAnimationFrame(() => {
-        this.trigger();
-      });
-    } else {
+    this.runingTimer = window.setTimeout(() => {
       this.transitions.shift();
-      this.startTimestamp = null;
 
       if (transition.callBack) {
         transition.callBack();
       }
-      if (this.transitions.length === 0) {
+
+      if (this.transitions.length > 0) {
+        this.trigger();
+      } else {
         let clearStyles: Record<string, any> = {
           transitionProperty: "",
           transitionDuration: "",
@@ -68,15 +66,12 @@ class Transition implements ITransition {
           this.updatedStyles.clear();
           this.isClearStyle = false;
         }
+
         this.batchChangeElStyle(updateEls, clearStyles);
         this.updatePart = null;
-        window.cancelAnimationFrame(this.RAFId);
-        this.RAFId = window.requestAnimationFrame(() => {
-          window.cancelAnimationFrame(this.RAFId);
-          if (this.endCallBack) this.endCallBack();
-        });
-      }
-    }
+        if (this.endCallBack) this.endCallBack();
+      };
+    }, transition.duration * 1000);
   }
   step(styles: ICSSStyleDeclaration, duration: number = 0.3, timingFunction: string = "linear", delay: number = 0, callBack?: () => void): this {
     this.transitions.push({
@@ -86,7 +81,7 @@ class Transition implements ITransition {
       delay,
       callBack
     });
-    this.trigger();
+    if (this.runingTimer === null) this.trigger();
     return this;
   }
   end(callBack: () => void): this {

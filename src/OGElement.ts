@@ -86,7 +86,7 @@ export class OGElement extends HTMLElement implements IOGElement {
   };
   transition(transitionName: string, initStyles?: ICSSStyleDeclaration): Transition | undefined {
     let transition = this.transitions[transitionName];
-    if (initStyles) transition.step(initStyles, 0.01);
+    if (initStyles) transition.step(initStyles, 0);
     return transition;
   }
 }
