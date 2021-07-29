@@ -1,5 +1,5 @@
 import { setProxy } from "../../OGProxy";
-import { transformPropertyName } from "../../Parser";
+import { propertyNamesToPath, transformPropertyName } from "../../Parser";
 import Plugin from "../../Plugin";
 import { getPropertyData } from "../../Property";
 import { Ref } from "../../Rules";
@@ -115,7 +115,7 @@ export default {
       deepUpdateRef(refTree[propertyKey], target[propertyKey]);
     }
 
-    updateRef(refTree[propertyKey], target.__og__reactive.properties, paths.join("."));
+    updateRef(refTree[propertyKey], target.__og__reactive.properties, propertyNamesToPath(paths));
 
     return true;
   },

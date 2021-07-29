@@ -17,9 +17,9 @@ export function parseDom(DOMString): Node[] {
 }
 
 export function transformPropertyName(propertyNameString: string): string[] {
-  if (/(?<=\])\w/.test(propertyNameString) || /\W+^[\u4e00-\u9fa5]/.test(propertyNameString)) {
-    throw new Error("Template syntax error:" + propertyNameString);
-  }
+  // if (/(?<=\])\w/.test(propertyNameString) || /\W+^[\u4e00-\u9fa5]/.test(propertyNameString)) {
+  //   throw new Error("Template syntax error:" + propertyNameString);
+  // }
   const splitChars: string[] = propertyNameString.split("");
   const propertys: string[] = [];
   let fragment: string = ""; //* [] 段
@@ -95,6 +95,18 @@ export function transformValueToString(value: any): string {
     return "{" + objItems.join(",") + "}";
   }
   return value.toString();
+}
+
+export function propertyNamesToPath(propertyNames: string[] | number[]): string {
+  let propertyPath: string = "";
+  propertyNames.forEach(item => {
+    if (isNaN(item)) {
+      propertyPath += item;
+    } else {
+      propertyPath += `[${item}]`;
+    }
+  });
+  return propertyPath;
 }
 
 export function parse(sourceString: string, properties: IProperties): string {

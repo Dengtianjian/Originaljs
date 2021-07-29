@@ -1,4 +1,4 @@
-import { parse, transformPropertyName, transformValueToString } from "./Parser";
+import { parse, propertyNamesToPath, transformPropertyName, transformValueToString } from "./Parser";
 import Plugin from "./Plugin";
 import { getPropertyData } from "./Property";
 import { IProperties } from "./types/Properties";
@@ -96,7 +96,7 @@ export function removeRefTree(refTree: IRefTree, branchNames: string[], isDeep: 
 
   if (attrs && attrs.length > 0) {
     attrs.forEach(attr => {
-      attr.__og__attrs.nodeRawValue = attr.__og__attrs.nodeRawValue.replace(`{${branchNames.join(".")}}`, "").trim();
+      attr.__og__attrs.nodeRawValue = attr.__og__attrs.nodeRawValue.replace(`{${propertyNamesToPath(branchNames)}}`, "").trim();
     });
     refTree['__attrs'] = [];
   }

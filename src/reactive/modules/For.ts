@@ -1,5 +1,5 @@
 import { setProxy } from "../../OGProxy";
-import { transformPropertyName } from "../../Parser";
+import { propertyNamesToPath, transformPropertyName } from "../../Parser";
 import { getPropertyData } from "../../Property";
 import { Ref } from "../../Rules";
 import { IEl } from "../../types/ElementType";
@@ -95,7 +95,7 @@ function collectElRef(target: HTMLElement | Node[], properties: IProperties): IR
     if (property.hasOwnProperty(key)) {
       const newEls: Node[] = [];
       propertyNames.push(key);
-      const propertyNameSting: string = propertyNames.join(".")
+      const propertyNameSting: string = propertyNamesToPath(propertyNames);
       Array.from(childNodes).forEach((el, index) => {
         newEls.push(el.cloneNode(true));
         replaceRef(newEls[index], itemName, propertyNameSting);
@@ -129,7 +129,7 @@ function setUpdateView(properties: IProperties, refTree: IRefTree, propertyKey: 
   const fors: TRefTreeFors[] = refTree.__fors;
   const propertyNames: string[] = properties.__og__propertiesPath.split(".");
   propertyNames.push(propertyKey);
-  const propertyNameSting: string = propertyNames.join(".");
+  const propertyNameSting: string = propertyNamesToPath(propertyNames);
   const partRefTree: IRefTree = {};
 
   for (const forItem of fors) {

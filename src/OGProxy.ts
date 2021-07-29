@@ -1,3 +1,4 @@
+import { propertyNamesToPath } from "./Parser";
 import { Reactive } from "./reactive";
 import { IProperties } from "./types/Properties";
 import { IRefTree } from "./types/Ref";
@@ -16,7 +17,7 @@ export function setProxy(refTree: IRefTree, properties: IProperties, reactiveIns
         continue;
       };
 
-      Utils.defineProperty(properties[branchName], "__og__propertiesPath", paths.join("."));
+      Utils.defineProperty(properties[branchName], "__og__propertiesPath", propertyNamesToPath(paths));
       Utils.defineProperty(properties[branchName], "__og__reactive", reactiveInstance);
 
       properties[branchName] = new Proxy(properties[branchName], {
