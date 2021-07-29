@@ -66,6 +66,8 @@ class Transition implements ITransition {
 
         this.batchChangeElStyle(updateEls, clearStyles);
         this.updatePart = null;
+        clearTimeout(this.runingTimer);
+        this.runingTimer = null;
         if (this.endCallBack) this.endCallBack();
       };
     }, transition.duration * 1000);

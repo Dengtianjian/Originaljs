@@ -199,9 +199,9 @@ class CButton extends OG.createElement() {
         opacity: "1"
       }, 0.3, "", 0, () => {
         console.log("translateX end");
-        if(Date.now() % 2===0){
-          t.stop();
-        }
+        // if (Date.now() % 2 === 0) {
+        //   t.stop();
+        // }
       }).step({
         transform: "translateX(50px)"
       }).end(() => {
@@ -334,10 +334,12 @@ class CButton extends OG.createElement() {
       }).step({
         display: "none"
       }, 0).end(() => {
+        console.log("end");
+        
         this.show = false;
       });
     } else {
-      this.transition("showBook").step({
+      this.transition("showBook", {
         display: "flex",
         transform: "translateY(-50px)",
         opacity: "0"
