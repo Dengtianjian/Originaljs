@@ -174,10 +174,10 @@ template = template = `
 
 `;
 
-// template=`
-// { number }
-// { number + 2 }
-// `;
+template=`
+{ number }
+{ number + 2 }
+`;
 
 class CButton extends OG.createElement() {
   connected() {

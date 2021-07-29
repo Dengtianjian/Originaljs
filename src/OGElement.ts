@@ -86,6 +86,7 @@ export class OGElement extends HTMLElement implements IOGElement {
   };
   transition(transitionName: string, initStyles?: ICSSStyleDeclaration): Transition | undefined {
     let transition = this.transitions[transitionName];
+    if (transition === undefined) throw new Error("Undefined transition element：" + transitionName);
     if (initStyles) transition.step(initStyles, 0);
     return transition;
   }
