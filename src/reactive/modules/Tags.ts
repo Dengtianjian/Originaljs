@@ -1,12 +1,9 @@
 import { generateExpressionRefTree } from "../../Expression";
 import { setProxy } from "../../OGProxy";
 import { propertyNamesToPath, transformPropertyName } from "../../Parser";
-import Plugin from "../../Plugin";
-import { getPropertyData } from "../../Property";
 import { Ref } from "../../Rules";
 import { IEl, IOGElement } from "../../types/ElementType";
 import { TPluginItem } from "../../types/Plugin";
-import { IProperties } from "../../types/Properties";
 import { IRefTree } from "../../types/Ref";
 import Utils from "../../Utils";
 import { deepUpdateRef, removeRefTree, updateRef } from "../../View";
