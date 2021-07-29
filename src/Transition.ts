@@ -32,7 +32,6 @@ class Transition implements ITransition {
     if (this.startTimestamp === null) this.startTimestamp = Date.now();
 
     const transition: TTransitionItem = this.transitions[0];
-    console.log(transition);
 
     const updateEls: HTMLElement[] = this.updatePart ? this.updatePart : this.els;
 
@@ -46,9 +45,7 @@ class Transition implements ITransition {
     this.runingTimer = window.setTimeout(() => {
       this.transitions.shift();
 
-      if (transition.callBack) {
-        transition.callBack();
-      }
+      if (transition.callBack) transition.callBack();
 
       if (this.transitions.length > 0) {
         this.trigger();
@@ -90,6 +87,12 @@ class Transition implements ITransition {
   }
   clear(isClear: boolean = true): this {
     this.isClearStyle = isClear;
+    return this;
+  }
+  stop(): this {
+    clearTimeout(this.runingTimer);
+    this.runingTimer = null;
+    this.transitions = [];
     return this;
   }
 }
