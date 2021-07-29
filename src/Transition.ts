@@ -9,6 +9,7 @@ class Transition implements ITransition {
   private updatedStyles: Set<string> = new Set();
   private isClearStyle: boolean = false;
   private runingTimer: number = null;
+  private transitionQueue: TTransitionItem[] = [];
   constructor(el: HTMLElement | HTMLElement[]) {
     this.els = Array.isArray(el) ? el : [el];
   }
@@ -29,7 +30,6 @@ class Transition implements ITransition {
   }
   private trigger(): void {
     if (this.transitions.length === 0 || this.els.length === 0) return;
-    if (this.startTimestamp === null) this.startTimestamp = Date.now();
 
     const transition: TTransitionItem = this.transitions[0];
 
@@ -93,6 +93,11 @@ class Transition implements ITransition {
     clearTimeout(this.runingTimer);
     this.runingTimer = null;
     this.transitions = [];
+    return this;
+  }
+  continue(): this {
+    // TODO 继续下一个过渡
+    this.trigger();
     return this;
   }
 }
