@@ -7,7 +7,7 @@
     "dist/types.d.ts"
   ],
   "types": "dist/types.d.ts",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "scripts": {
     "dev": "vite --host --open",
     "open": "vite --host",
