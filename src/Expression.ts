@@ -5,7 +5,7 @@ import { IProperties } from "./types/Properties";
 import { IRefTree } from "./types/Ref";
 import Utils from "./Utils";
 
-export function generateExpressionRefTree(expressions: string[], target: IEl, rootEl: IOGElement): IRefTree {
+export function generateExpressionRefTree(expressions: string[], target: IEl | Attr, rootEl: IOGElement): IRefTree {
   let refTree: IRefTree = {};
 
   if (expressions.length > 0) {

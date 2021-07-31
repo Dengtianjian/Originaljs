@@ -78,7 +78,8 @@ export default {
       deepUpdateRef(refTree[propertyKey], target[propertyKey]);
     }
 
-    updateRef(refTree[propertyKey], target.__og__reactive.properties, propertyNamesToPath(paths));
+    refTree = Array.isArray(target) ? refTree : refTree[propertyKey];
+    updateRef(refTree, target.__og__reactive.properties, propertyNamesToPath(paths));
 
     return true;
   },

@@ -52,7 +52,13 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
         expressionProperties.push(properties[propertyFirstKeys[index]]);
       }
 
-      expressionItem.target.textContent = new Function(...expressionItem.propertyFirstKeys).apply(properties, expressionProperties);
+      const functionResult: any = new Function(...expressionItem.propertyFirstKeys).apply(properties, expressionProperties);
+
+      if (expressionItem.target instanceof Attr) {
+        expressionItem.target.nodeValue = functionResult;
+      } else {
+        expressionItem.target.textContent = functionResult;
+      }
     }
   }
 }

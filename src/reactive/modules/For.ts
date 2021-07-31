@@ -125,7 +125,7 @@ function collectElRef(target: HTMLElement | Node[], properties: IProperties): IR
   } as IRefTree);
 }
 function setUpdateView(properties: IProperties, refTree: IRefTree, propertyKey: string, value: any): boolean {
-  if (Array.isArray(properties) && propertyKey === "length") return true;
+  if (Array.isArray(properties) && propertyKey === "length" || refTree.__fors === undefined) return true;
   const fors: TRefTreeFors[] = refTree.__fors;
   const propertyNames: string[] = properties.__og__propertiesPath.split(".");
   propertyNames.push(propertyKey);

@@ -179,14 +179,17 @@ template = template = `
 // <div>{ show }</div>
 // `;
 
-// template = `{ multiNumbers[0]+multiNumbers[1] }`;
+template = `
+<button onclick="updateMultiNumbers">Update</button>
+<div data-exp="{ multiNumbers[0]+multiNumbers[1] }">{ multiNumbers[0]+multiNumbers[1] }</div>
+`;
 
 class CButton extends OG.createElement() {
   connected() {
     // setInterval(() => {
     //   this.update("number", this.formatTime());
     // }, 1000);
-    // return;
+    return;
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       console.time("total");
       this.books.push(...data);
@@ -263,6 +266,9 @@ class CButton extends OG.createElement() {
   };
   count = 1;
   show = true;
+  updateMultiNumbers() {
+    this.multiNumbers[0] = Math.round(Math.random() * 10000);
+  }
   updateArr(event) {
     // this.update("show", this.show === "none" ? 'flex' : 'none');
     // console.log(this.books);
