@@ -1,6 +1,8 @@
+import { executeExpression } from "./Expression";
 import { parse, propertyNamesToPath, transformPropertyName, transformValueToString } from "./Parser";
 import Plugin from "./Plugin";
 import { getPropertyData } from "./Property";
+import { TConditionElItem, TConditionItem } from "./types/ConditionElType";
 import { IProperties } from "./types/Properties";
 import { IRefTree, TAttr, TExpressionItem, TText } from "./types/Ref";
 import Utils from "./Utils";
@@ -26,6 +28,7 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
   const els: TText[] = refTree.__els;
   const attrs: TAttr[] = refTree.__attrs;
   const expressions: TExpressionItem[] = refTree.__expressions;
+  const conditions: TConditionItem[] = refTree.__conditions;
 
   if (els && els.length > 0) {
     els.forEach(el => {
@@ -60,6 +63,43 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
         expressionItem.target.textContent = functionResult;
       }
     }
+  }
+
+  for (const key in conditions) {
+    const conditionItem: TConditionItem = conditions[key];
+    let els: TConditionElItem[] = conditionItem.els;
+
+    for (let index = 0; index < els.length; index++) {
+      const el = els[index];
+      if (el.conditionAttr) {
+        const expressionResult: any = executeExpression(el.conditionAttr.nodeValue, properties);
+        if (expressionResult) {
+          conditionItem.current = index;
+          break;
+        }
+      }
+    }
+
+    if (conditionItem.current !== null) {
+      let old: TConditionElItem = els[conditionItem.current];
+      if (!old.substitute) old.substitute = new Comment();
+    }
+
+    for (let index = 0; index < els.length; index++) {
+      const el = els[index];
+      // if (conditionItem.current !== index) {
+      //   if (el.substitute === null) {
+      //     el.substitute = new Comment();
+      //   }
+      //   el.parentElement.appendChild(el.substitute);
+      //   el.parentElement.removeChild(el.target);
+      // } else {
+      //   el.parentElement.removeChild(el.substitute);
+      //   el.parentElement.append(el.target);
+      // }
+    }
+    console.log(els);
+
   }
 }
 

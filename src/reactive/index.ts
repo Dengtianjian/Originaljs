@@ -10,8 +10,10 @@ import Attrs from "./modules/Attrs";
 import Transition from "./modules/Transition";
 import Tags from "./modules/Tags";
 import For from "./modules/For";
+import Condition from "./modules/Condition";
 
 Plugin.register('For', For);
+Plugin.register('Condition', Condition);
 Plugin.register("Tags", Tags);
 Plugin.register("Attrs", Attrs);
 Plugin.register("Transition", Transition);
@@ -41,7 +43,7 @@ export class Reactive {
 
 function collectEl(target: IEl | Node[], properties: IProperties, reactiveInstance: Reactive): IRefTree {
   //* 1. 收集引用
-  let refTree: IRefTree =Collect.collection(target, properties);
+  let refTree: IRefTree = Collect.collection(target, properties);
 
   //* 2. 设置Proxy
   setProxy(refTree, properties, reactiveInstance);

@@ -1,3 +1,4 @@
+import { TConditionElItem, TConditionItem } from "./ConditionElType"
 import { IEl } from "./ElementType"
 import { IProperties } from "./Properties"
 
@@ -29,7 +30,8 @@ export interface IRefTree {
   __els?: TText[],
   __attrs?: TAttr[],
   __fors?: TRefTreeFors[],
-  __expressions?: TExpressionItem[]
+  __expressions?: TExpressionItem[],
+  __conditions?: TConditionItem[]
 }
 
 export type TAttr = Attr & {

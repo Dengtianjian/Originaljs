@@ -1,3 +1,4 @@
+import { transformPropertyName } from "../Parser";
 import Plugin from "../Plugin";
 import { IEl } from "../types/ElementType";
 import { IProperties } from "../types/Properties";
@@ -47,7 +48,22 @@ export function generateElRefTree(propertyNames: string[], refEl: Attr | Text): 
   return tree;
 }
 
+export function propertyHasKey(keys: string | string[], properties: IProperties): boolean {
+  if (typeof keys === "string") {
+    keys = transformPropertyName(keys);
+  }
+  if (properties[keys[0]] === undefined) {
+    return false
+  } else if (keys.length === 1) {
+    return true;
+  }
+  properties = properties[keys[0]];
+  keys.shift();
+  return propertyHasKey(keys, properties);
+}
+
 export default {
   collection,
-  generateElRefTree
+  generateElRefTree,
+  propertyHasKey
 }

@@ -184,6 +184,14 @@ template = `
 <div data-exp="{ multiNumbers[0]+multiNumbers[1] }">{ multiNumbers[0]+multiNumbers[1] }</div>
 `;
 
+template = `
+<div onclick="updateArr">Update</div>
+<o-if condition="show">1</o-if>
+<o-else-if condition="show===false">2</o-else-if>
+<o-else>3</o-else>
+<o-if condition="show">4</o-if>
+`;
+
 class CButton extends OG.createElement() {
   connected() {
     // setInterval(() => {
@@ -265,11 +273,13 @@ class CButton extends OG.createElement() {
     }
   };
   count = 1;
-  show = true;
+  show = false;
   updateMultiNumbers() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);
   }
   updateArr(event) {
+    this.update("show", true);
+    return;
     // this.update("show", this.show === "none" ? 'flex' : 'none');
     // console.log(this.books);
 
