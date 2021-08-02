@@ -11,12 +11,14 @@ import Transition from "./modules/Transition";
 import Tags from "./modules/Tags";
 import For from "./modules/For";
 import Condition from "./modules/Condition";
+import El from "./modules/El";
 
 Plugin.register('For', For);
 Plugin.register('Condition', Condition);
 Plugin.register("Tags", Tags);
 Plugin.register("Attrs", Attrs);
 Plugin.register("Transition", Transition);
+Plugin.register("El", El);
 
 export class Reactive {
   target: IEl = null;

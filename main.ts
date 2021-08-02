@@ -192,6 +192,10 @@ template = `
 <o-if condition="show">4</o-if>
 `;
 
+template = `
+<o-el html="{elHTML}"></o-el>
+`;
+
 class CButton extends OG.createElement() {
   connected() {
     // setInterval(() => {
@@ -227,6 +231,8 @@ class CButton extends OG.createElement() {
   render() {
     return template;
   }
+  elValue = `<>`;
+  elHTML = `<div>Hello world</div>`;
   books = [];
   number = 123;
   numbers = {
