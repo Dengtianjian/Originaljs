@@ -8,6 +8,8 @@ import { IRefTree } from "../../types/Ref";
 import Utils from "../../Utils";
 import Collect from "../Collect";
 
+const refItemRegExp:RegExp=new RegExp(Ref.Item, "g");
+
 export default {
   collectElAttrRef(target: IEl, rootEl: IOGElement): IRefTree {
     let attrRefTree: IRefTree = {};
@@ -18,7 +20,8 @@ export default {
     for (const attrItem of Array.from((target as HTMLElement).attributes)) {
       if (!Ref.Item.test(attrItem.nodeValue)) continue;
 
-      const refs: string[] = attrItem.nodeValue.match(new RegExp(Ref.Item, "g"));
+      const refs: string[] = attrItem.nodeValue.match(refItemRegExp);
+      
       if (refs === null) return attrRefTree;
       let variables: string[] = refs.filter(item => {
         return Ref.variableItem.test(item);

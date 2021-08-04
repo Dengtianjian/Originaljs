@@ -235,7 +235,7 @@ class CButton extends OG.createElement() {
     return template;
   }
   elValue = `<>`;
-  elHTML = `<div>Hello world</div>`;
+  elHTML = `<div>{number}</div>`;
   books = [];
   number = 123;
   numbers = {
@@ -287,9 +287,10 @@ class CButton extends OG.createElement() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);
   }
   updateArr(event) {
-    fetch("./elHTML.html").then(res => res.text()).then(res => {
-      this.update("elHTML", res);
-    });
+    // fetch("./elHTML.html").then(res => res.text()).then(res => {
+    //   this.update("elHTML", res);
+    // });
+    this.update("number",Date.now());
     return;
     // this.update("show", this.show === "none" ? 'flex' : 'none');
     // console.log(this.books);
