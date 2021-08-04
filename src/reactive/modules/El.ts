@@ -1,22 +1,18 @@
 import { IEl } from "../../types/ElementType";
 import { TPluginItem } from "../../types/Plugin";
+import { IProperties } from "../../types/Properties";
 import { IRefTree } from "../../types/Ref";
 import Utils from "../../Utils";
 
-function collectElRef(target: IEl | Node[], properties): IRefTree {
-  let refTree: IRefTree = {};
-  if (Array.isArray(target)) {
-    for (const nodeItem of target) {
-      Utils.objectAssign(refTree, collectElRef(nodeItem as IEl, properties));
-    }
+function updateRef(refTree: IRefTree):void {
+  let attrs: Attr[] = refTree.__attrs;
+  for (const attrItem of attrs) {
+    if (attrItem.ownerElement.tagName !== "O-EL" || attrItem.nodeName !== "html") continue;
+
+    attrItem.ownerElement.innerHTML = attrItem.nodeValue;
   }
-
-  if ((target as HTMLElement).tagName !== "O-EL") return refTree;
-  
-
-  return refTree;
 }
 
 export default {
-  collectElRef
+  updateRef
 } as TPluginItem

@@ -193,6 +193,7 @@ template = `
 `;
 
 template = `
+<button onclick="updateArr">Update</button>
 <o-el html="{elHTML}"></o-el>
 `;
 
@@ -284,7 +285,16 @@ class CButton extends OG.createElement() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);
   }
   updateArr(event) {
-    this.update("show", true);
+    this.update("elHTML", `
+    <style>
+      div {
+        margin:0 auto;
+        width:500px;
+        text-align:center;
+      }
+    </style>
+    <div>Hello Originaljs</div>
+    `);
     return;
     // this.update("show", this.show === "none" ? 'flex' : 'none');
     // console.log(this.books);

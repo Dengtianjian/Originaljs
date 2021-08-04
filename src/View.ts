@@ -98,9 +98,9 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
       //   el.parentElement.append(el.target);
       // }
     }
-    console.log(els);
 
   }
+  Plugin.useAll("updateRef",Array.from(arguments));
 }
 
 export function setUpdateView(target: any, propertyKey: string, value: any, receiver: any): boolean {
