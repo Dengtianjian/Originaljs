@@ -197,6 +197,8 @@ template = `
 <o-el html="{elHTML}"></o-el>
 `;
 
+template=await fetch("./cbutton.html").then(res=>res.text());
+
 class CButton extends OG.createElement() {
   connected() {
     // setInterval(() => {
@@ -285,16 +287,9 @@ class CButton extends OG.createElement() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);
   }
   updateArr(event) {
-    this.update("elHTML", `
-    <style>
-      div {
-        margin:0 auto;
-        width:500px;
-        text-align:center;
-      }
-    </style>
-    <div>Hello Originaljs</div>
-    `);
+    fetch("./elHTML.html").then(res => res.text()).then(res => {
+      this.update("elHTML", res);
+    });
     return;
     // this.update("show", this.show === "none" ? 'flex' : 'none');
     // console.log(this.books);
