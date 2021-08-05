@@ -235,7 +235,7 @@ class CButton extends OG.createElement() {
     return template;
   }
   elValue = `<>`;
-  elHTML = `<div>{number}</div>`;
+  elHTML = `<div data-nums="{number}">{number}</div>`;
   books = [];
   number = 123;
   numbers = {

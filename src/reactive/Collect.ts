@@ -41,9 +41,13 @@ export function generateElRefTree(propertyNames: string[], refEl: Attr | Text): 
   if (refEl instanceof Attr) {
     branchName = "__attrs";
   }
+
   tree = Utils.generateObjectTree(propertyNames, {
     [branchName]: [refEl]
   });
+  refEl['__og__branch']=tree;
+  console.log(tree);
+  
 
   return tree;
 }
