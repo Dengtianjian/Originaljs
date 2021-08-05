@@ -1,10 +1,6 @@
-import Plugin from "../../Plugin";
-import { IEl } from "../../types/ElementType";
 import { TPluginItem } from "../../types/Plugin";
-import { IProperties } from "../../types/Properties";
 import { IRefTree } from "../../types/Ref";
 import Utils from "../../Utils";
-import Collect from "../Collect";
 import Reactive from "../index";
 
 function updateRef(refTree: IRefTree, properties): void {

@@ -22,7 +22,7 @@ A { number } B {obj.name} {obj.user.lastName}
 </div>
 `;
 
-template = template = `
+ template = `
 <div class="fixed">
 <button onclick="updateArr" >Update arr</button>
 <button onclick="updateObj" >add Property</button>

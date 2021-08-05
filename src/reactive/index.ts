@@ -39,7 +39,7 @@ export class Reactive {
       Utils.defineProperty(properties, "__og__propertiesPath", "");
     }
 
-    this.refTree = collectEl(target, properties, this);
+    Utils.objectAssign(this.refTree, collectEl(target, properties, this));
   }
 }
 
