@@ -1,5 +1,6 @@
 import { transformPropertyName } from "../Parser";
 import Plugin from "../Plugin";
+import { getPropertyData } from "../Property";
 import { IEl } from "../types/ElementType";
 import { IProperties } from "../types/Properties";
 import { IRefTree } from "../types/Ref";
@@ -45,9 +46,15 @@ export function generateElRefTree(propertyNames: string[], refEl: Attr | Text): 
   tree = Utils.generateObjectTree(propertyNames, {
     [branchName]: [refEl]
   });
-  refEl['__og__branch']=tree;
-  console.log(tree);
-  
+  let propertyNamesMirroring:string[]=[...propertyNames];
+  let propertyName:string=propertyNamesMirroring.pop();
+  refEl['__og__branch']=[{
+    tree,
+    propertyNames,
+    propertyName,
+    branch:getPropertyData(propertyNames,tree),
+    parentBranch:getPropertyData(propertyNamesMirroring,tree)
+  }];
 
   return tree;
 }
