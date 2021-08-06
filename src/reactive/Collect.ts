@@ -4,7 +4,7 @@ import { getPropertyData } from "../Property";
 import { IEl } from "../types/ElementType";
 import { IProperties } from "../types/Properties";
 import { IRefTree, TAttr, TText } from "../types/Ref";
-import Utils from "../Utils";
+import Utils, { defineOGProperty } from "../Utils";
 
 function useCollectElRefHook(target: IEl | Node[], properties: IProperties): IRefTree {
   let refTree: IRefTree = {};
@@ -48,13 +48,15 @@ export function generateElRefTree(propertyNames: string[], refEl: TAttr | TText)
   });
   let propertyNamesMirroring: string[] = [...propertyNames];
   let propertyName: string = propertyNamesMirroring.pop();
-  refEl.__og__['ref'] = {
-    tree,
-    propertyNames,
-    propertyName,
-    branch: getPropertyData(propertyNames, tree),
-    parentBranch: getPropertyData(propertyNamesMirroring, tree)
-  };
+  defineOGProperty(refEl, {
+    ref: {
+      tree,
+      propertyNames,
+      propertyName,
+      branch: getPropertyData(propertyNames, tree),
+      parentBranch: getPropertyData(propertyNamesMirroring, tree)
+    }
+  });
 
   return tree;
 }
