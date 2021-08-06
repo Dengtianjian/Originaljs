@@ -4,8 +4,8 @@ import { propertyNamesToPath, transformPropertyName } from "../../Parser";
 import { Ref } from "../../Rules";
 import { IEl, IOGElement } from "../../types/ElementType";
 import { TPluginItem } from "../../types/Plugin";
-import { IRefTree } from "../../types/Ref";
-import Utils from "../../Utils";
+import { IRefTree, TText } from "../../types/Ref";
+import Utils, { defineOGProperty } from "../../Utils";
 import { deepUpdateRef, removeRefTree, updateRef } from "../../View";
 import Collect from "../Collect";
 
@@ -15,13 +15,15 @@ export default {
 
     if (Array.isArray(target)) {
       for (const nodeItem of target) {
-        Utils.objectAssign(refTree, this.collectRef(nodeItem, rootEl));
+        Utils.objectAssign(refTree, this.collectElRef(nodeItem, rootEl));
       }
       return refTree;
     }
 
-    if (target.__og__tagCollected) return;
-    Utils.defineProperty(target, "__og__tagCollected", true);
+    if (target?.__og__?.tagCollected) return;
+    defineOGProperty(target,{
+      tagCollected:true
+    });
 
     if (target.nodeType !== 3) return refTree;
 
@@ -52,7 +54,7 @@ export default {
         target.textContent = target.textContent.slice(target.textContent.indexOf(variables[index]));
       }
 
-      const newTextEl: Text = document.createTextNode(`{${variableName}}`);
+      const newTextEl: TText = document.createTextNode(`{${variableName}}`);
       const propertyNames: string[] = transformPropertyName(variableName);
       Utils.defineProperty(newTextEl, "__og__", {
         parsed: false

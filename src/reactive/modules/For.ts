@@ -52,7 +52,7 @@ function collectElRef(target: HTMLElement | Node[], properties: IProperties): IR
     return refTree;
   }
 
-  if (target.nodeType === 3 || target.__og__tagCollected) return refTree;
+  if (target.nodeType === 3 || target.__og__?.tagCollected) return refTree;
   if (target.tagName !== "O-FOR") return refTree;
 
   const attributes: Attr[] = Array.from(target.attributes);

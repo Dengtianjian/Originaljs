@@ -35,7 +35,7 @@ export interface IRefTree {
 }
 
 export type TAttr = Attr & {
-  __og__: TOGProperties & {
+  __og__?: TOGProperties & {
     attrs:{
       nodeRawValue: string
     }
@@ -43,7 +43,7 @@ export type TAttr = Attr & {
 }
 
 export type TText = Text & {
-  __og__:TOGProperties & {
+  __og__?:TOGProperties & {
     parsed:boolean
   }
 }

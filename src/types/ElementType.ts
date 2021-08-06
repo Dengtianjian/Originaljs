@@ -11,8 +11,6 @@ export type TOGProperties = {
 
 export type IEl = (HTMLElement | ShadowRoot | Element) & {
   __og__reactive?: Reactive,
-  __og__tagCollected: boolean,
-  __og__attrCollected: boolean,
   __og__propertiesPath: string
 } & TOGProperties;
 
