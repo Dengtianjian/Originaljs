@@ -2,7 +2,7 @@ import { propertyNamesToPath } from "./Parser";
 import { Reactive } from "./reactive";
 import { IProperties } from "./types/Properties";
 import { IRefTree } from "./types/Ref";
-import Utils from "./Utils";
+import Utils, { defineOGProperty } from "./Utils";
 import { deleteUpdateView, setUpdateView } from "./View";
 
 export function setProxy(refTree: IRefTree, properties: IProperties, reactiveInstance: Reactive, paths: string[] = []): void {
@@ -12,13 +12,18 @@ export function setProxy(refTree: IRefTree, properties: IProperties, reactiveIns
       paths.push(branchName);
       setProxy(refTree[branchName], properties[branchName], reactiveInstance, paths);
 
-      if (properties[branchName].hasOwnProperty("__og__reactive")) {
+      if (properties[branchName].hasOwnProperty("__og__")) {
         paths.pop();
         continue;
       };
 
+      defineOGProperty(properties[branchName],{
+        propertiesPath:propertyNamesToPath(paths),
+        reactive:reactiveInstance,
+        refTree:reactiveInstance.refTree,
+        properties:reactiveInstance.properties
+      });
       Utils.defineProperty(properties[branchName], "__og__propertiesPath", propertyNamesToPath(paths));
-      Utils.defineProperty(properties[branchName], "__og__reactive", reactiveInstance);
 
       properties[branchName] = new Proxy(properties[branchName], {
         set(target: any, propertyKey: string, value: any, receiver: any): boolean {

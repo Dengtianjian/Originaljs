@@ -10,12 +10,10 @@ export type TOGProperties = {
 }
 
 export type IEl = (HTMLElement | ShadowRoot | Element) & {
-  __og__reactive?: Reactive,
   __og__propertiesPath: string
 } & TOGProperties;
 
 export interface IOGElement extends HTMLElement {
-  __og__reactive: Reactive,
   __og__: {
     reactive: Reactive,
     transitions: Record<string, Transition>,

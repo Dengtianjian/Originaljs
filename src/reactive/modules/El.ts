@@ -13,7 +13,7 @@ function updateRef(refTree: IRefTree, properties): void {
       attrItem.ownerElement.innerHTML = attrItem.nodeValue;
     } else if (attrItem.nodeName === "value") {
       attrItem.ownerElement.innerHTML = attrItem.nodeValue;
-      Utils.objectAssign(properties.__og__reactive.refTree,Reactive.collectEl(attrItem.ownerElement, properties, properties.__og__reactive));
+      Utils.objectAssign(properties.__og__.refTree,Reactive.collectEl(attrItem.ownerElement, properties, properties.__og__.reactive));
     }
   }
 }

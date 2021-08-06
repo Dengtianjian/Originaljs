@@ -76,7 +76,7 @@ export function defineOGProperty(target: HTMLElement | TAttr | TText | Element |
     objectAssign(target.__og__, initProperties);
     return;
   };
-  defineProperty(target, "__og__", initProperties, false, false, true);
+  defineProperty(target, "__og__", initProperties, false, false, false);
 }
 
 export default {

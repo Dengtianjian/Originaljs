@@ -18,7 +18,7 @@ export function deepUpdateRef(refTree: IRefTree, refProperty?: IProperties): voi
       path = path ? `${path}.${propertyName}` : propertyName;
     }
 
-    updateRef(refTree[propertyName], refProperty.__og__reactive.properties, path);
+    updateRef(refTree[propertyName], refProperty.__og__.properties, path);
   }
   return;
 }
@@ -104,7 +104,7 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
 }
 
 export function setUpdateView(target: any, propertyKey: string, value: any, receiver: any): boolean {
-  const refTree: IRefTree = target.__og__reactive.refTree;
+  const refTree: IRefTree = target.__og__.refTree;
   if (!target.__og__propertiesPath) {
     target[propertyKey] = value;
     updateRef(refTree[propertyKey], target, propertyKey);

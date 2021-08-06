@@ -204,7 +204,7 @@ class CButton extends OG.createElement() {
     // setInterval(() => {
     //   this.update("number", this.formatTime());
     // }, 1000);
-    return;
+    // return;
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       console.time("total");
       this.books.push(...data);
@@ -290,8 +290,8 @@ class CButton extends OG.createElement() {
     // fetch("./elHTML.html").then(res => res.text()).then(res => {
     //   this.update("elHTML", res);
     // });
-    this.update("number",Date.now());
-    return;
+    // this.update("number",Date.now());
+    // return;
     // this.update("show", this.show === "none" ? 'flex' : 'none');
     // console.log(this.books);
 

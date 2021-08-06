@@ -9,7 +9,6 @@ import { ICSSStyleDeclaration } from "./types/TransitionType";
 import { setUpdateView } from "./View";
 
 export class OGElement extends HTMLElement implements IOGElement {
-  __og__reactive: Reactive = null;
   __og__: { reactive: Reactive; transitions: Record<string, Transition>; el: IEl; slots: Record<string, Node[]>; } = {
     reactive: null,
     transitions: {},

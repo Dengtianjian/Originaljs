@@ -3,7 +3,7 @@ import Plugin from "../Plugin";
 import { IEl } from "../types/ElementType";
 import { IProperties } from "../types/Properties";
 import { IRefTree } from "../types/Ref";
-import Utils from "../Utils";
+import Utils, { defineOGProperty } from "../Utils";
 import { deepUpdateRef } from "../View";
 import Collect from "./Collect";
 import Attrs from "./modules/Attrs";
@@ -32,9 +32,11 @@ export class Reactive {
     this.target = target;
     this.properties = properties;
 
-    if (!properties.__og__reactive) {
-      Utils.defineProperty(properties, "__og__reactive", this);
-    }
+    properties.__og__.reactive=this;
+    properties.__og__.refTree=this.refTree;
+    properties.__og__.propertiesPath="";
+    properties.__og__.properties=properties;
+    
     if (!properties.__og__propertiesPath) {
       Utils.defineProperty(properties, "__og__propertiesPath", "");
     }

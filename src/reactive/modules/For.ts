@@ -141,16 +141,16 @@ function setUpdateView(properties: IProperties, refTree: IRefTree, propertyKey: 
       replaceRef(newEls[index], forItem.itemName, propertyNameSting);
     });
 
-    Utils.objectAssign(partRefTree, Collect.collection(newEls, properties.__og__reactive.properties));
+    Utils.objectAssign(partRefTree, Collect.collection(newEls, properties.__og__.properties));
 
     forItem.el.append(...newEls);
     forIndex++;
   }
 
   propertyNames.pop();
-  Utils.objectAssign(properties.__og__reactive.refTree, partRefTree);
-  setProxy(refTree, properties, properties.__og__reactive, propertyNames);
-  deepUpdateRef(partRefTree, properties.__og__reactive.properties);
+  Utils.objectAssign(properties.__og__.refTree, partRefTree);
+  setProxy(refTree, properties, properties.__og__.reactive, propertyNames);
+  deepUpdateRef(partRefTree, properties.__og__.properties);
   return true;
 }
 

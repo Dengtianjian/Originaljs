@@ -20,8 +20,8 @@ export default {
     if (!(target as HTMLElement).attributes || (target as HTMLElement).attributes.length === 0) return attrRefTree;
 
     for (const attrItem of Array.from((target as HTMLElement).attributes) as TAttr[]) {
-      defineOGProperty(target);
       if (!Ref.Item.test(attrItem.nodeValue)) continue;
+      defineOGProperty(attrItem);
 
       const refs: string[] = attrItem.nodeValue.match(refItemRegExp);
 
@@ -43,12 +43,9 @@ export default {
         Utils.objectAssign(attrRefTree, Collect.generateElRefTree(propertyNames, attrItem));
       }
 
-      // Utils.defineProperty(attrItem, "__og__attrs", {
-      //   nodeRawValue: attrItem.nodeValue
-      // });
-      Utils.defineProperty(attrItem.__og__, "attrs", {
+      attrItem.__og__.attrs={
         nodeRawValue: attrItem.nodeValue
-      });
+      };
     }
     return attrRefTree;
   },

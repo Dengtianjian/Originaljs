@@ -78,20 +78,20 @@ export default {
     let paths: string[] = target.__og__propertiesPath.split(".");
     paths.push(String(propertyKey))
     if (typeof value === "object") {
-      setProxy(refTree[propertyKey], target[propertyKey], target.__og__reactive, paths);
+      setProxy(refTree[propertyKey], target[propertyKey], target.__og__.reactive, paths);
 
       deepUpdateRef(refTree[propertyKey], target[propertyKey]);
     }
 
     refTree = Array.isArray(target) ? refTree : refTree[propertyKey];
-    updateRef(refTree, target.__og__reactive.properties, propertyNamesToPath(paths));
+    updateRef(refTree, target.__og__.properties, propertyNamesToPath(paths));
 
     return true;
   },
   deleteUpdateView(target: IEl, propertyKey): Boolean {
     // TODO 全局 target.__og__propertiesPath改为数组。paths用数组存储
     let paths: string[] = target.__og__propertiesPath.split(".");
-    let refTree: IRefTree = Utils.deepGetObjectProperty(target.__og__reactive.refTree, paths);
+    let refTree: IRefTree = Utils.deepGetObjectProperty(target.__og__.refTree, paths);
 
     paths.push(String(propertyKey));
     removeRefTree(refTree[propertyKey], paths, true);
