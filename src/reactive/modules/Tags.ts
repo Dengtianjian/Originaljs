@@ -75,7 +75,7 @@ export default {
     return refTree;
   },
   setUpdateView(target, refTree, propertyKey, value): boolean {
-    let paths: string[] = target.__og__propertiesPath.split(".");
+    let paths: string[] = target.__og__.propertiesPath.split(".");
     paths.push(String(propertyKey))
     if (typeof value === "object") {
       setProxy(refTree[propertyKey], target[propertyKey], target.__og__.reactive, paths);
@@ -89,8 +89,8 @@ export default {
     return true;
   },
   deleteUpdateView(target: IEl, propertyKey): Boolean {
-    // TODO 全局 target.__og__propertiesPath改为数组。paths用数组存储
-    let paths: string[] = target.__og__propertiesPath.split(".");
+    // TODO 全局 target.__og__.propertiesPath改为数组。paths用数组存储
+    let paths: string[] = target.__og__.propertiesPath.split(".");
     let refTree: IRefTree = Utils.deepGetObjectProperty(target.__og__.refTree, paths);
 
     paths.push(String(propertyKey));

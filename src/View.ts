@@ -11,7 +11,7 @@ export function deepUpdateRef(refTree: IRefTree, refProperty?: IProperties): voi
   for (const propertyName in refTree) {
     if (!refProperty.hasOwnProperty(propertyName)) continue;
 
-    let path: string = refProperty.__og__propertiesPath;
+    let path: string = refProperty.__og__.propertiesPath;
     if (typeof refProperty[propertyName] === "object") {
       deepUpdateRef(refTree[propertyName], refProperty[propertyName]);
     } else {
@@ -105,12 +105,12 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
 
 export function setUpdateView(target: any, propertyKey: string, value: any, receiver: any): boolean {
   const refTree: IRefTree = target.__og__.refTree;
-  if (!target.__og__propertiesPath) {
+  if (!target.__og__.propertiesPath) {
     target[propertyKey] = value;
     updateRef(refTree[propertyKey], target, propertyKey);
     return true;
   }
-  const propertyNames: string[] = target.__og__propertiesPath.split(".");
+  const propertyNames: string[] = target.__og__.propertiesPath.split(".");
   const refTreePart: IRefTree = Utils.deepGetObjectProperty(refTree, propertyNames);
 
   Plugin.useAll("setUpdateView", [target, refTreePart, propertyKey, value]);

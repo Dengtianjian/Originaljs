@@ -9,9 +9,7 @@ export type TOGProperties = {
   data: IOGElement
 }
 
-export type IEl = (HTMLElement | ShadowRoot | Element) & {
-  __og__propertiesPath: string
-} & TOGProperties;
+export type IEl = (HTMLElement | ShadowRoot | Element) & TOGProperties;
 
 export interface IOGElement extends HTMLElement {
   __og__: {

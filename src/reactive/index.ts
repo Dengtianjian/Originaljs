@@ -36,10 +36,6 @@ export class Reactive {
     properties.__og__.refTree=this.refTree;
     properties.__og__.propertiesPath="";
     properties.__og__.properties=properties;
-    
-    if (!properties.__og__propertiesPath) {
-      Utils.defineProperty(properties, "__og__propertiesPath", "");
-    }
 
     Utils.objectAssign(this.refTree, collectEl(target, properties, this));
   }
