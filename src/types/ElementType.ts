@@ -18,10 +18,6 @@ export interface IOGElement extends HTMLElement {
     el: IEl,
     slots: Record<string, Node[]>
   },
-  // transitions: Record<string, Transition>,
-  // el: IEl,
-  // slots: Record<string, Node[]>;
-  // refs: IRefTree,
   connected(): void;
   rendered(): void;
   disconnected(): void;
