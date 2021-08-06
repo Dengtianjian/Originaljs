@@ -3,7 +3,7 @@ import Plugin from "../Plugin";
 import { getPropertyData } from "../Property";
 import { IEl } from "../types/ElementType";
 import { IProperties } from "../types/Properties";
-import { IRefTree } from "../types/Ref";
+import { IRefTree, TAttr, TText } from "../types/Ref";
 import Utils from "../Utils";
 
 function useCollectElRefHook(target: IEl | Node[], properties: IProperties): IRefTree {
@@ -35,7 +35,7 @@ export function collection(target: IEl | Node[], properties: IProperties): IRefT
   return elRefTree;
 }
 
-export function generateElRefTree(propertyNames: string[], refEl: Attr | Text): IRefTree {
+export function generateElRefTree(propertyNames: string[], refEl: TAttr | TText): IRefTree {
   let tree: IRefTree = {};
 
   let branchName: string = "__els";
@@ -46,15 +46,15 @@ export function generateElRefTree(propertyNames: string[], refEl: Attr | Text): 
   tree = Utils.generateObjectTree(propertyNames, {
     [branchName]: [refEl]
   });
-  let propertyNamesMirroring:string[]=[...propertyNames];
-  let propertyName:string=propertyNamesMirroring.pop();
-  refEl['__og__branch']=[{
+  let propertyNamesMirroring: string[] = [...propertyNames];
+  let propertyName: string = propertyNamesMirroring.pop();
+  refEl.__og__['ref'] = {
     tree,
     propertyNames,
     propertyName,
-    branch:getPropertyData(propertyNames,tree),
-    parentBranch:getPropertyData(propertyNamesMirroring,tree)
-  }];
+    branch: getPropertyData(propertyNames, tree),
+    parentBranch: getPropertyData(propertyNamesMirroring, tree)
+  };
 
   return tree;
 }

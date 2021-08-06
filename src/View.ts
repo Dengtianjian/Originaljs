@@ -32,18 +32,18 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
 
   if (els && els.length > 0) {
     els.forEach(el => {
-      if (el.__og__parsed) {
+      if (el.__og__.parsed) {
         el.textContent = transformValueToString(getPropertyData(propertyKeyPaths, properties));
       } else {
         el.textContent = parse(el.textContent, properties);
-        el.__og__parsed = true;
+        el.__og__.parsed = true;
       }
     })
   }
 
   if (attrs && attrs.length > 0) {
     for (const attr of attrs) {
-      attr.nodeValue = parse(attr.__og__attrs.nodeRawValue, properties);
+      attr.nodeValue = parse(attr.__og__.attrs.nodeRawValue, properties);
     }
   }
 
@@ -100,7 +100,7 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
     }
 
   }
-  Plugin.useAll("updateRef",Array.from(arguments));
+  Plugin.useAll("updateRef", Array.from(arguments));
 }
 
 export function setUpdateView(target: any, propertyKey: string, value: any, receiver: any): boolean {
@@ -142,7 +142,7 @@ export function removeRefTree(refTree: IRefTree, branchNames: string[], isDeep: 
 
   if (attrs && attrs.length > 0) {
     attrs.forEach(attr => {
-      attr.__og__attrs.nodeRawValue = attr.__og__attrs.nodeRawValue.replace(`{${propertyNamesToPath(branchNames)}}`, "").trim();
+      attr.__og__.attrs.nodeRawValue = attr.__og__.attrs.nodeRawValue.replace(`{${propertyNamesToPath(branchNames)}}`, "").trim();
     });
     refTree['__attrs'] = [];
   }

@@ -4,24 +4,27 @@ import { Ref } from "../../Rules";
 import { IEl, IOGElement } from "../../types/ElementType";
 import { TPluginItem } from "../../types/Plugin";
 import { IProperties } from "../../types/Properties";
-import { IRefTree } from "../../types/Ref";
-import Utils from "../../Utils";
+import { IRefTree, TAttr } from "../../types/Ref";
+import Utils, { defineOGProperty } from "../../Utils";
 import Collect from "../Collect";
 
-const refItemRegExp:RegExp=new RegExp(Ref.Item, "g");
+const refItemRegExp: RegExp = new RegExp(Ref.Item, "g");
 
 export default {
   collectElAttrRef(target: IEl, rootEl: IOGElement): IRefTree {
     let attrRefTree: IRefTree = {};
-    Utils.defineProperty(target, "__og__attrCollected", true);
+    defineOGProperty(target, {
+      attrCollected: true
+    });
 
     if (!(target as HTMLElement).attributes || (target as HTMLElement).attributes.length === 0) return attrRefTree;
 
-    for (const attrItem of Array.from((target as HTMLElement).attributes)) {
+    for (const attrItem of Array.from((target as HTMLElement).attributes) as TAttr[]) {
+      defineOGProperty(target);
       if (!Ref.Item.test(attrItem.nodeValue)) continue;
 
       const refs: string[] = attrItem.nodeValue.match(refItemRegExp);
-      
+
       if (refs === null) return attrRefTree;
       let variables: string[] = refs.filter(item => {
         return Ref.variableItem.test(item);
@@ -40,7 +43,10 @@ export default {
         Utils.objectAssign(attrRefTree, Collect.generateElRefTree(propertyNames, attrItem));
       }
 
-      Utils.defineProperty(attrItem, "__og__attrs", {
+      // Utils.defineProperty(attrItem, "__og__attrs", {
+      //   nodeRawValue: attrItem.nodeValue
+      // });
+      Utils.defineProperty(attrItem.__og__, "attrs", {
         nodeRawValue: attrItem.nodeValue
       });
     }
@@ -56,7 +62,7 @@ export default {
       return refTree;
     }
 
-    if (target.__og__attrCollected) return refTree;
+    if (target?.__og__?.attrCollected) return refTree;
 
     Utils.objectAssign(refTree, this.collectElAttrRef(target, properties));
 

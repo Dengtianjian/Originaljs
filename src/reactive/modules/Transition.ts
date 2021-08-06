@@ -1,7 +1,6 @@
 import Transition from "../../Transition";
 import { IEl, IOGElement } from "../../types/ElementType";
 import { TPluginItem } from "../../types/Plugin";
-import { IProperties } from "../../types/Properties";
 import { IRefTree } from "../../types/Ref";
 
 export default {
@@ -10,7 +9,7 @@ export default {
     let tag: HTMLElement = target as HTMLElement;
     if (!tag.attributes['name']) return {};
     let transitionName: string = tag.attributes['name'].nodeValue;
-    let transition: Transition = rootEl.transitions[transitionName];
+    let transition: Transition = rootEl.__og__.transitions[transitionName];
 
     const childrens: HTMLElement[] = Array.from(tag.children) as HTMLElement[];
 
@@ -22,8 +21,8 @@ export default {
         transition.updatePart.push(...childrens);
       }
     } else {
-      rootEl.transitions[transitionName] = new Transition(childrens);
-      rootEl.transitions[transitionName]['updatePart']=childrens;
+      rootEl.__og__.transitions[transitionName] = new Transition(childrens);
+      rootEl.__og__.transitions[transitionName]['updatePart']=childrens;
     }
 
     return {};

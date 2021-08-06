@@ -10,22 +10,25 @@ import { setUpdateView } from "./View";
 
 export class OGElement extends HTMLElement implements IOGElement {
   __og__reactive: Reactive = null;
-  transitions: Record<string, Transition> = {};
-  OGElement: boolean = true;
-  el: IEl = null;
-  slots: Record<string, Node[]> = {};
-  refs: IRefTree = {};
+  __og__: { reactive: Reactive; transitions: Record<string, Transition>; el: IEl; slots: Record<string, Node[]>; } = {
+    reactive: null,
+    transitions: {},
+    el: null,
+    slots: {}
+  };
+  // transitions: Record<string, Transition> = {};
   constructor() {
     super();
     // @ts-ignore
-    this.el = this.attachShadow({ mode: "closed" });
+    // this.el = this.attachShadow({ mode: "closed" });
+    this.__og__.el = this.attachShadow({ mode: "closed" });
   }
   private connectedCallback(): void {
     this.connected();
     this.templateMount();
     this.collectSlots();
-    bindMethods(this.el, this, this);
-    Reactive.observe(this.el, this);
+    bindMethods(this.__og__.el, this, this);
+    Reactive.observe(this.__og__.el, this);
     this.rendered();
   }
   private disconnectedCallback(): void {
@@ -50,23 +53,23 @@ export class OGElement extends HTMLElement implements IOGElement {
       template = Array.from(template);
     }
 
-    this.el.append(...template);
+    this.__og__.el.append(...template);
   }
   private collectSlots(): void {
-    const slotEls: NodeListOf<HTMLSlotElement> = this.el.querySelectorAll("slot");
+    const slotEls: NodeListOf<HTMLSlotElement> = this.__og__.el.querySelectorAll("slot");
 
     for (const slotElItem of Array.from(slotEls)) {
       const slotName: string = slotElItem.name || "default";
 
-      if (!this.slots[slotName]) {
-        this.slots[slotName] = []
+      if (!this.__og__.slots[slotName]) {
+        this.__og__.slots[slotName] = []
       };
 
       slotElItem.addEventListener("slotchange", () => {
         if (slotName === "default") {
-          this.slots[slotName].push(...(this.el.querySelector("slot:not(name)") as HTMLSlotElement).assignedNodes());
+          this.__og__.slots[slotName].push(...(this.__og__.el.querySelector("slot:not(name)") as HTMLSlotElement).assignedNodes());
         } else {
-          this.slots[slotName].push(...(this.el.querySelector(`slot[name=${slotName}]`) as HTMLSlotElement).assignedNodes());
+          this.__og__.slots[slotName].push(...(this.__og__.el.querySelector(`slot[name=${slotName}]`) as HTMLSlotElement).assignedNodes());
         }
       })
     }
@@ -85,7 +88,7 @@ export class OGElement extends HTMLElement implements IOGElement {
     }
   };
   transition(transitionName: string, initStyles?: ICSSStyleDeclaration): Transition | undefined {
-    let transition = this.transitions[transitionName];
+    let transition = this.__og__.transitions[transitionName];
     if (transition === undefined) throw new Error("Undefined transition element：" + transitionName);
     if (initStyles) transition.step(initStyles, 0);
     return transition;

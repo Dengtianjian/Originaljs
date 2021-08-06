@@ -54,6 +54,9 @@ export default {
 
       const newTextEl: Text = document.createTextNode(`{${variableName}}`);
       const propertyNames: string[] = transformPropertyName(variableName);
+      Utils.defineProperty(newTextEl, "__og__", {
+        parsed: false
+      }, false, false, true);
 
       Utils.objectAssign(refTree, Collect.generateElRefTree(propertyNames, newTextEl));
 

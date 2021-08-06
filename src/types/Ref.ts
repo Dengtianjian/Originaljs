@@ -1,5 +1,5 @@
 import { TConditionElItem, TConditionItem } from "./ConditionElType"
-import { IEl } from "./ElementType"
+import { IEl, TOGProperties } from "./ElementType"
 import { IProperties } from "./Properties"
 
 export type TRefTreeFors = {
@@ -35,11 +35,15 @@ export interface IRefTree {
 }
 
 export type TAttr = Attr & {
-  __og__attrs: {
-    nodeRawValue: string
+  __og__: TOGProperties & {
+    attrs:{
+      nodeRawValue: string
+    }
   }
 }
 
 export type TText = Text & {
-  __og__parsed: boolean
+  __og__:TOGProperties & {
+    parsed:boolean
+  }
 }

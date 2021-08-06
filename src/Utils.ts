@@ -1,6 +1,8 @@
+import { IEl } from "./types/ElementType";
 import { IProperties } from "./types/Properties";
+import { TAttr, TText } from "./types/Ref";
 
-function deepCopy(obj): object {
+export function deepCopy(obj): object {
   if (typeof obj !== 'object') return;
 
   var newObj = obj instanceof Array ? [] : {};
@@ -12,7 +14,7 @@ function deepCopy(obj): object {
   return newObj;
 }
 
-function objectAssign(target: object, source: object) {
+export function objectAssign(target: object, source: object) {
   for (const key in source) {
     if (Object.prototype.hasOwnProperty.call(source, key)) {
       const targetItem = target[key];
@@ -30,7 +32,7 @@ function objectAssign(target: object, source: object) {
   }
 }
 
-function generateObjectTree(branchs: string[], lastBranch: {} = {}): object {
+export function generateObjectTree(branchs: string[], lastBranch: {} = {}): object {
   let tree = {};
 
   if (branchs.length === 1) {
@@ -41,7 +43,7 @@ function generateObjectTree(branchs: string[], lastBranch: {} = {}): object {
   return tree;
 }
 
-function deepGetObjectProperty(obj: object, propertyNames: string[]): IProperties {
+export function deepGetObjectProperty(obj: object, propertyNames: string[]): IProperties {
   if (obj[propertyNames[0]]) {
     return deepGetObjectProperty(obj[propertyNames[0]], propertyNames.slice(1));
   } else {
@@ -49,7 +51,7 @@ function deepGetObjectProperty(obj: object, propertyNames: string[]): IPropertie
   }
 }
 
-function defineProperty(obj, propertyKey: string, value: any, configurable: boolean = false, writable: boolean = false, enumerable: boolean = false): void {
+export function defineProperty(obj, propertyKey: string, value: any, configurable: boolean = false, writable: boolean = false, enumerable: boolean = false): void {
   if (obj.hasOwnProperty(propertyKey)) {
     const target: {
       [x: string]: TypedPropertyDescriptor<any>;
@@ -69,10 +71,19 @@ function defineProperty(obj, propertyKey: string, value: any, configurable: bool
   })
 }
 
+export function defineOGProperty(target: HTMLElement | TAttr | TText | Element | IEl, initProperties = {}): void {
+  if (target.hasOwnProperty("__og__")) {
+    objectAssign(target.__og__, initProperties);
+    return;
+  };
+  defineProperty(target, "__og__", initProperties, false, false, true);
+}
+
 export default {
   deepCopy,
   objectAssign,
   generateObjectTree,
   deepGetObjectProperty,
-  defineProperty
+  defineProperty,
+  defineOGProperty
 }

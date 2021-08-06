@@ -11,8 +11,6 @@ const conditions: Record<string, TConditionItem> = {};
 const ConditionElTagNames: string[] = ["O-IF", "O-ELSE", "O-ELSE-IF"];
 
 function getConditionElSibling(target: Element): TConditionElItem[] {
-  // console.log(target);
-  
   let els: TConditionElItem[] = [{
     target,
     conditionAttr: target.attributes['condition'],

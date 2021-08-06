@@ -1,11 +1,11 @@
 import { TPluginItem } from "../../types/Plugin";
-import { IRefTree } from "../../types/Ref";
+import { IRefTree, TAttr } from "../../types/Ref";
 import Utils from "../../Utils";
 import Reactive from "../index";
 
 function updateRef(refTree: IRefTree, properties): void {
   if (!refTree.__attrs) return;
-  let attrs: Attr[] = refTree.__attrs;
+  let attrs: TAttr[] = refTree.__attrs;
   for (const attrItem of attrs) {
     if (attrItem.ownerElement.tagName !== "O-EL") continue;
 
