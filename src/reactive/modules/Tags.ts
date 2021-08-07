@@ -21,8 +21,8 @@ export default {
     }
 
     if (target?.__og__?.tagCollected) return;
-    defineOGProperty(target,{
-      tagCollected:true
+    defineOGProperty(target, {
+      tagCollected: true
     });
 
     if (target.nodeType !== 3) return refTree;
@@ -71,6 +71,10 @@ export default {
     for (const newTextChildNode of newTextChildNodes) {
       parentNode.insertBefore(newTextChildNode, target);
     }
+
+    defineOGProperty(parentNode, {
+      hasRef: true
+    });
 
     return refTree;
   },

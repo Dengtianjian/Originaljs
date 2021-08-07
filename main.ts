@@ -22,7 +22,7 @@ A { number } B {obj.name} {obj.user.lastName}
 </div>
 `;
 
- template = `
+template = `
 <div class="fixed">
 <button onclick="updateArr" >Update arr</button>
 <button onclick="updateObj" >add Property</button>
@@ -197,14 +197,14 @@ template = `
 <o-el html="{elHTML}"></o-el>
 `;
 
-template=await fetch("./cbutton.html").then(res=>res.text());
+template = await fetch("./cbutton.html").then(res => res.text());
 
 class CButton extends OG.createElement() {
   connected() {
     // setInterval(() => {
     //   this.update("number", this.formatTime());
     // }, 1000);
-    // return;
+    return;
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       console.time("total");
       this.books.push(...data);
@@ -283,6 +283,15 @@ class CButton extends OG.createElement() {
   };
   count = 1;
   show = false;
+  updateData() {
+    this.update("number",Date.now());
+    this.update("elHTML", `
+      <div>{count}</div>
+    `);
+  }
+  removeRef(){
+    console.log(this.__og__.reactive.refTree);
+  }
   updateMultiNumbers() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);
   }
@@ -290,8 +299,8 @@ class CButton extends OG.createElement() {
     // fetch("./elHTML.html").then(res => res.text()).then(res => {
     //   this.update("elHTML", res);
     // });
-    // this.update("number",Date.now());
-    // return;
+    this.update("number", Date.now());
+    return;
     // this.update("show", this.show === "none" ? 'flex' : 'none');
     // console.log(this.books);
 
@@ -332,6 +341,8 @@ class CButton extends OG.createElement() {
       //   this.books[0].base_info.title = "96岁老党员跨时空对话牺牲战友 ";
       // }
       // this.books.push(data[this.index++]);
+      // this.books[0]=data[0];
+      // return;
       console.time();
       this.books.push(...data);
       console.timeEnd();

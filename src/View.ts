@@ -155,3 +155,34 @@ export function removeRefTree(refTree: IRefTree, branchNames: string[], isDeep: 
 
   return true;
 }
+
+export function removeTextRef(target: TText): void {
+  if (!target.__og__?.ref) return;
+
+  let branch = target.__og__.ref.branch;
+
+  branch.__els.splice(branch.__els.indexOf(target), 1);
+}
+export function removeAttrRef(attr: TAttr): void {
+  if (!attr.__og__?.ref) return;
+  let branch = attr.__og__.ref.branch;
+
+  branch.__attrs.splice(branch.__attrs.indexOf(attr), 1);
+}
+export function removeTargetRefTree(target: HTMLElement, isDeep: boolean = false): void {
+  if (isDeep && target.childNodes?.length > 0) {
+    target.childNodes.forEach(nodeItem => {
+      removeTargetRefTree(nodeItem, true);
+    });
+  }
+  if (!target.__og__?.hasRef) return;
+
+  target.childNodes.forEach(nodeItem => {
+    removeTextRef(nodeItem as TText);
+  });
+
+  for (const attrItem of Array.from(target.attributes)) {
+    removeAttrRef(attrItem);
+  }
+
+}
