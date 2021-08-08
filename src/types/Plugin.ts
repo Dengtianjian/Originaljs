@@ -11,6 +11,4 @@ export type TPluginItem = {
   updateRef?(refTree: IRefTree, properties: IProperties, propertyKeyPaths: string): void;
 }
 
-export type TPlugins = {
-  [name: string]: TPluginItem
-};
+export type TPlugins = TPluginItem[];
