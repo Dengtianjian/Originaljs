@@ -25,5 +25,6 @@ export interface IOGElement extends HTMLElement {
   propChanged(name: string, newValue: string, oldValue: string): void;
   render(): null | Node | NodeList | string;
   update(propertyName: string, newValue: any): void;
+  setStatic(propertyName: string, isDeep: boolean): void;
   transition(transitionName: string, initStyle?: ICSSStyleDeclaration): Transition | undefined
 }

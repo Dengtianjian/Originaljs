@@ -234,8 +234,8 @@ class CButton extends OG.createElement() {
   render() {
     return template;
   }
-  elValue = `<>`;
-  elHTML = `<div data-nums="{number}">{number}</div>`;
+  elValue = `<div>{numbers}</div>`;
+  elHTML = `<div>{number}</div>`;
   books = [];
   number = 123;
   numbers = {
@@ -284,13 +284,13 @@ class CButton extends OG.createElement() {
   count = 1;
   show = false;
   updateData() {
-    this.update("number",Date.now());
     this.update("elHTML", `
-      <div>{count}</div>
-    `);
+    <div>{count}</div>
+  `);
+    this.update("number", Date.now());
   }
-  removeRef(){
-    console.log(this.__og__.reactive.refTree);
+  removeRef() {
+    this.setStatic(this.__og__.el.querySelector(".number"));
   }
   updateMultiNumbers() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);

@@ -16,7 +16,12 @@ function updateRef(refTree: IRefTree, properties): void {
     } else if (attrItem.nodeName === "value") {
       removeTargetRefTree(attrItem.ownerElement, true);
       attrItem.ownerElement.innerHTML = attrItem.nodeValue;
-      Utils.objectAssign(properties.__og__.refTree, Reactive.collectEl(attrItem.ownerElement, properties, properties.__og__.reactive));
+      let refTree = Reactive.collectEl(attrItem.ownerElement, properties, properties.__og__.reactive);
+      if(properties.__og__.refTree.number){
+        properties.__og__.refTree.number.a=[];
+      }
+
+      Utils.objectAssign(properties.__og__.refTree, refTree);
     }
   }
 }

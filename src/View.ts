@@ -105,6 +105,7 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
 
 export function setUpdateView(target: any, propertyKey: string, value: any, receiver: any): boolean {
   const refTree: IRefTree = target.__og__.refTree;
+
   if (!target.__og__.propertiesPath) {
     target[propertyKey] = value;
     updateRef(refTree[propertyKey], target, propertyKey);
@@ -160,7 +161,7 @@ export function removeTextRef(target: TText): void {
   if (!target.__og__?.ref) return;
 
   let branch = target.__og__.ref.branch;
-
+  
   branch.__els.splice(branch.__els.indexOf(target), 1);
 }
 export function removeAttrRef(attr: TAttr): void {
@@ -169,7 +170,7 @@ export function removeAttrRef(attr: TAttr): void {
 
   branch.__attrs.splice(branch.__attrs.indexOf(attr), 1);
 }
-export function removeTargetRefTree(target: HTMLElement, isDeep: boolean = false): void {
+export function removeTargetRefTree(target: HTMLElement | Element, isDeep: boolean = false): void {
   if (isDeep && target.childNodes?.length > 0) {
     target.childNodes.forEach(nodeItem => {
       removeTargetRefTree(nodeItem, true);
@@ -178,7 +179,9 @@ export function removeTargetRefTree(target: HTMLElement, isDeep: boolean = false
   if (!target.__og__?.hasRef) return;
 
   target.childNodes.forEach(nodeItem => {
-    removeTextRef(nodeItem as TText);
+    if (nodeItem instanceof Text) {
+      removeTextRef(nodeItem as TText);
+    }
   });
 
   for (const attrItem of Array.from(target.attributes)) {

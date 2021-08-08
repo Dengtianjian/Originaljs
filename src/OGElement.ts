@@ -1,12 +1,13 @@
 import { compareMerge } from "./Diff";
 import { bindMethods } from "./Method";
 import { parseDom } from "./Parser";
+import { getPropertyData } from "./Property";
 import { Reactive } from "./reactive";
 import Transition from "./Transition";
 import { IEl, IOGElement } from "./types/ElementType";
 import { IRefTree } from "./types/Ref";
 import { ICSSStyleDeclaration } from "./types/TransitionType";
-import { setUpdateView } from "./View";
+import { removeTargetRefTree, setUpdateView } from "./View";
 
 export class OGElement extends HTMLElement implements IOGElement {
   __og__: { reactive: Reactive; transitions: Record<string, Transition>; el: IEl; slots: Record<string, Node[]>; } = {
@@ -91,5 +92,15 @@ export class OGElement extends HTMLElement implements IOGElement {
     if (transition === undefined) throw new Error("Undefined transition element：" + transitionName);
     if (initStyles) transition.step(initStyles, 0);
     return transition;
+  }
+  setStatic(target: string | HTMLElement | Element, isDeep: boolean = false): void {
+    if (typeof target === "string") {
+      let refTree: IRefTree = getPropertyData(target, this.__og__.reactive.refTree);
+      for (const key in refTree) {
+        refTree[key] = [];
+      }
+    } else {
+      removeTargetRefTree(target, isDeep);
+    }
   }
 }

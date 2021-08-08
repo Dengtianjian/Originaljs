@@ -21,7 +21,7 @@ export function objectAssign(target: object, source: object) {
       const sourceItem = source[key];
       if (typeof targetItem === "object") {
         if (Array.isArray(targetItem)) {
-          target[key] = target[key].concat(sourceItem);
+          target[key].push(...sourceItem);
         } else {
           objectAssign(targetItem, sourceItem);
         }
