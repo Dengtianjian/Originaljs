@@ -37,7 +37,10 @@ export class Reactive {
     properties.__og__.propertiesPath = "";
     properties.__og__.properties = properties;
     
-    Utils.objectAssign(this.refTree, collectEl(target, properties, this));
+    let refTree=collectEl(target, properties, this);
+    console.log(1);
+    
+    Utils.objectAssign(this.refTree, refTree);
   }
 }
 
