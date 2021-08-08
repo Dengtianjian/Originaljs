@@ -1,32 +1,32 @@
 import { TPluginItem, TPlugins } from "./types/Plugin";
 
-const Plugins: Record<string, TPluginItem> = {};
+const Plugins: TPlugins = [];
+const RegisteredPluginsName: Record<string, number> = {};
 
 export function register(name: string, plugin: TPluginItem): void {
-  Plugins[name] = plugin;
+  if (RegisteredPluginsName[name] !== undefined) return;
+  Plugins.push(plugin);
+  RegisteredPluginsName[name] = Plugins.length - 1;
 }
 
 export function use(name: string): TPluginItem {
-  if (!Plugins.hasOwnProperty(name)) {
+  if (RegisteredPluginsName[name] === undefined) {
     console.error("The plugin( " + name + " ) does not exist.");
     return;
   }
-  return Plugins[name];
+  return Plugins[RegisteredPluginsName[name]];
 }
 
-export function all(): Record<string, TPluginItem> {
+export function all(): TPlugins {
   return Plugins;
 }
 
 export function useAll<T>(hookName: keyof TPluginItem, args: any[] = []): T[] {
   const plugins: TPlugins = all();
   const results: T[] = [];
-  for (const pluginName in plugins) {
-    if (plugins.hasOwnProperty(pluginName)) {
-      if (plugins[pluginName][hookName]) {
-        results.push(plugins[pluginName][hookName](...args));
-      }
-    }
+  for (const pluginItem of plugins) {
+    if (pluginItem[hookName] === undefined) continue;
+    results.push(pluginItem[hookName](...args));
   }
   return results;
 }
