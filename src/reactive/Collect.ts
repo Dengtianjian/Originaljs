@@ -26,12 +26,14 @@ function useCollectElRefHook(target: IEl | Node[], properties: IProperties): IRe
 export function collection(target: IEl | Node[], properties: IProperties): IRefTree {
   let elRefTree: IRefTree = {};
 
-  Utils.objectAssign(elRefTree, useCollectElRefHook(target, properties));
+  let refTree = useCollectElRefHook(target, properties);
+  
+  Utils.objectAssign(elRefTree, refTree);
 
   for (const item of Plugin.useAll<IRefTree[]>("collectRef", [target, properties])) {
     Utils.objectAssign(elRefTree, item);
   }
-
+  
   return elRefTree;
 }
 

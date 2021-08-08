@@ -10,12 +10,16 @@ import { ICSSStyleDeclaration } from "./types/TransitionType";
 import { removeTargetRefTree, setUpdateView } from "./View";
 
 export class OGElement extends HTMLElement implements IOGElement {
-  __og__: { reactive: Reactive; transitions: Record<string, Transition>; el: IEl; slots: Record<string, Node[]>; } = {
-    reactive: null,
-    transitions: {},
-    el: null,
-    slots: {}
-  };
+  __og__: {
+    reactive: Reactive; transitions: Record<string, Transition>; el: IEl; slots: Record<string, Node[]>;
+    refTree: IRefTree;
+  } = {
+      reactive: null,
+      transitions: {},
+      el: null,
+      slots: {},
+      refTree: {}
+    };
   // transitions: Record<string, Transition> = {};
   constructor() {
     super();

@@ -16,7 +16,8 @@ export interface IOGElement extends HTMLElement {
     reactive: Reactive,
     transitions: Record<string, Transition>,
     el: IEl,
-    slots: Record<string, Node[]>
+    slots: Record<string, Node[]>,
+    refTree: IRefTree
   },
   connected(): void;
   rendered(): void;

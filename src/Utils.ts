@@ -14,7 +14,7 @@ export function deepCopy(obj): object {
   return newObj;
 }
 
-export function objectAssign(target: object, source: object) {
+export function objectAssign(target: object, source: object): void {
   for (const key in source) {
     if (!source.hasOwnProperty(key)) return;
     const targetItem = target[key];
@@ -22,14 +22,11 @@ export function objectAssign(target: object, source: object) {
 
     if (typeof targetItem === "object") {
       if (Array.isArray(targetItem)) {
-        target[key].push(...sourceItem);
+        targetItem.push(...sourceItem);
       } else {
         objectAssign(targetItem, sourceItem);
       }
     } else {
-      if (key === "number") {
-        console.log(deepCopy(target), key, sourceItem);
-      }
       target[key] = source[key];
     }
   }

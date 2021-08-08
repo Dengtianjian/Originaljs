@@ -1,6 +1,6 @@
 import { TPluginItem } from "../../types/Plugin";
 import { IRefTree, TAttr } from "../../types/Ref";
-import Utils from "../../Utils";
+import Utils, { deepCopy } from "../../Utils";
 import { removeTargetRefTree } from "../../View";
 import Reactive from "../index";
 
@@ -36,9 +36,6 @@ function updateRef(refTree: IRefTree, properties): void {
       removeTargetRefTree(attrItem.ownerElement, true);
       attrItem.ownerElement.innerHTML = attrItem.nodeValue;
       let refTree = Reactive.collectEl(attrItem.ownerElement, properties, properties.__og__.reactive);
-      if (properties.__og__.refTree.number) {
-        properties.__og__.refTree.number.a = [];
-      }
 
       Utils.objectAssign(properties.__og__.refTree, refTree);
     }

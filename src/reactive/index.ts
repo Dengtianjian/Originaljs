@@ -32,11 +32,11 @@ export class Reactive {
     this.target = target;
     this.properties = properties;
 
-    properties.__og__.reactive=this;
-    properties.__og__.refTree=this.refTree;
-    properties.__og__.propertiesPath="";
-    properties.__og__.properties=properties;
-
+    properties.__og__.reactive = this;
+    properties.__og__.refTree = this.refTree;
+    properties.__og__.propertiesPath = "";
+    properties.__og__.properties = properties;
+    
     Utils.objectAssign(this.refTree, collectEl(target, properties, this));
   }
 }
