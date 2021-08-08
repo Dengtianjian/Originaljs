@@ -22,7 +22,7 @@ export function useAll<T>(hookName: keyof TPluginItem, args: any[] = []): T[] {
   const plugins: TPlugins = all();
   const results: T[] = [];
   for (const pluginName in plugins) {
-    if (Object.prototype.hasOwnProperty.call(plugins, pluginName)) {
+    if (plugins.hasOwnProperty(pluginName)) {
       if (plugins[pluginName][hookName]) {
         results.push(plugins[pluginName][hookName](...args));
       }

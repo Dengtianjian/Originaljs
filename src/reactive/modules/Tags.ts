@@ -35,6 +35,7 @@ export default {
     let expressions: string[] = refs.filter(item => {
       return !Ref.variableItem.test(item);
     });
+
     Utils.objectAssign(refTree, generateExpressionRefTree(expressions, target, rootEl));
 
     if (variables === null) return refTree;
