@@ -35,11 +35,10 @@ function updateRef(refTree: IRefTree, properties): void {
     } else if (attrItem.nodeName === "value") {
       removeTargetRefTree(attrItem.ownerElement, true);
       attrItem.ownerElement.innerHTML = attrItem.nodeValue;
-      console.log(2);
+      console.log(properties.__og__.refTree.number.__els);
       
       let refTree = Reactive.collectEl(attrItem.ownerElement, properties, properties.__og__.reactive);
-
-      Utils.objectAssign(properties.__og__.refTree, refTree);
+      Utils.objectAssign(properties.__og__.refTree,refTree);
     }
   }
 }

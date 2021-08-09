@@ -100,7 +100,8 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
     }
 
   }
-  Plugin.useAll("updateRef", Array.from(arguments));
+  Plugin.useAll<IRefTree[]>("updateRef", Array.from(arguments));
+
 }
 
 export function setUpdateView(target: any, propertyKey: string, value: any, receiver: any): boolean {
@@ -161,7 +162,7 @@ export function removeTextRef(target: TText): void {
   if (!target.__og__?.ref) return;
 
   let branch = target.__og__.ref.branch;
-  
+
   branch.__els.splice(branch.__els.indexOf(target), 1);
 }
 export function removeAttrRef(attr: TAttr): void {

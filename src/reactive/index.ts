@@ -37,16 +37,15 @@ export class Reactive {
     properties.__og__.propertiesPath = "";
     properties.__og__.properties = properties;
     
-    let refTree=collectEl(target, properties, this);
-    console.log(1);
-    
-    Utils.objectAssign(this.refTree, refTree);
+    collectEl(target, properties, this);
+    // Utils.objectAssign(this.refTree, refTree);
   }
 }
 
-function collectEl(target: IEl | Node[], properties: IProperties, reactiveInstance: Reactive): IRefTree {
+function collectEl(target: IEl | Node[], properties: IProperties, reactiveInstance: Reactive):IRefTree {
   //* 1. 收集引用
-  let refTree: IRefTree = Collect.collection(target, properties);
+  Collect.collection(target, properties);
+  let refTree: IRefTree = properties.__og__.refTree;
 
   //* 2. 设置Proxy
   setProxy(refTree, properties, reactiveInstance);
