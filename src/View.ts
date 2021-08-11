@@ -105,6 +105,9 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
 
 export function setUpdateView(target: any, propertyKey: string, value: any, receiver: any): boolean {
   const refTree: IRefTree = target.__og__.refTree;
+  if (getPropertyData(propertyKey, target.__og__.properties) === value) {
+    return true;
+  }
 
   if (!target.__og__.propertiesPath) {
     target[propertyKey] = value;
