@@ -27,18 +27,13 @@ export function collection(target: IEl | Node[], properties: IProperties): IRefT
   let elRefTree: IRefTree = {};
 
   let refTree = useCollectElRefHook(target, properties);
-  
-  console.log(3);
-  
+
   Utils.objectAssign(elRefTree, refTree);
 
   for (const item of Plugin.useAll<IRefTree[]>("collectRef", [target, properties])) {
     Utils.objectAssign(elRefTree, item);
   }
-  
-  console.log(elRefTree.number.__els); 
-  
-  Utils.objectAssign(properties.__og__.refTree,elRefTree);
+
   return elRefTree;
 }
 
@@ -55,15 +50,15 @@ export function generateElRefTree(propertyNames: string[], refEl: TAttr | TText)
   });
   let propertyNamesMirroring: string[] = [...propertyNames];
   let propertyName: string = propertyNamesMirroring.pop();
-  defineOGProperty(refEl, {
-    ref: {
-      tree,
-      propertyNames,
-      propertyName,
-      branch: getPropertyData(propertyNames, tree),
-      parentBranch: getPropertyData(propertyNamesMirroring, tree)
-    }
-  });
+  // defineOGProperty(refEl, {
+  //   ref: {
+  //     tree,
+  //     propertyNames,
+  //     propertyName,
+  //     branch: getPropertyData(propertyNames, tree),
+  //     parentBranch: getPropertyData(propertyNamesMirroring, tree)
+  //   }
+  // });
 
   return tree;
 }

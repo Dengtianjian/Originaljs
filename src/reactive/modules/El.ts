@@ -4,25 +4,6 @@ import Utils, { deepCopy } from "../../Utils";
 import { removeTargetRefTree } from "../../View";
 import Reactive from "../index";
 
-function objectAssign(target: object, source: object) {
-  for (const key in source) {
-    if (source.hasOwnProperty(key)) {
-      const targetItem = target[key];
-      const sourceItem = source[key];
-
-      if (typeof targetItem === "object") {
-        if (Array.isArray(targetItem)) {
-          target[key].push(...sourceItem);
-        } else {
-          objectAssign(targetItem, sourceItem);
-        }
-      } else {
-        target[key] = source[key];
-      }
-    }
-  }
-}
-
 function updateRef(refTree: IRefTree, properties): void {
   if (!refTree.__attrs) return;
   let attrs: TAttr[] = refTree.__attrs;
@@ -35,10 +16,8 @@ function updateRef(refTree: IRefTree, properties): void {
     } else if (attrItem.nodeName === "value") {
       removeTargetRefTree(attrItem.ownerElement, true);
       attrItem.ownerElement.innerHTML = attrItem.nodeValue;
-      console.log(properties.__og__.refTree.number.__els);
-      
-      let refTree = Reactive.collectEl(attrItem.ownerElement, properties, properties.__og__.reactive);
-      Utils.objectAssign(properties.__og__.refTree,refTree);
+
+      Reactive.collectEl(attrItem.ownerElement, properties, properties.__og__.reactive);
     }
   }
 }

@@ -2,7 +2,7 @@ import { setProxy } from "../OGProxy";
 import Plugin from "../Plugin";
 import { IEl } from "../types/ElementType";
 import { IProperties } from "../types/Properties";
-import { IRefTree } from "../types/Ref";
+import { IRefTree, TAttr, TText } from "../types/Ref";
 import Utils, { defineOGProperty } from "../Utils";
 import { deepUpdateRef } from "../View";
 import Collect from "./Collect";
@@ -36,16 +36,30 @@ export class Reactive {
     properties.__og__.refTree = this.refTree;
     properties.__og__.propertiesPath = "";
     properties.__og__.properties = properties;
-    
+
     collectEl(target, properties, this);
-    // Utils.objectAssign(this.refTree, refTree);
+
+    for (const branchName in this.refTree) {
+      if (this.refTree.hasOwnProperty(branchName)) {
+        const branch: IRefTree = this.refTree[branchName];
+        const els: TText[] = branch.__els;
+        const attrs: TAttr[] = branch.__attrs;
+
+        if (els) {
+          for (const elItem of els) {
+            defineOGProperty(elItem, {
+              branch
+            });
+          }
+        }
+      }
+    }
   }
 }
 
-function collectEl(target: IEl | Node[], properties: IProperties, reactiveInstance: Reactive):IRefTree {
+function collectEl(target: IEl | Node[], properties: IProperties, reactiveInstance: Reactive): IRefTree {
   //* 1. 收集引用
-  Collect.collection(target, properties);
-  let refTree: IRefTree = properties.__og__.refTree;
+  let refTree: IRefTree = Collect.collection(target, properties);
 
   //* 2. 设置Proxy
   setProxy(refTree, properties, reactiveInstance);
@@ -53,7 +67,7 @@ function collectEl(target: IEl | Node[], properties: IProperties, reactiveInstan
   //* 3. 引用转换实体值
   deepUpdateRef(refTree, properties);
 
-  return refTree;
+  Utils.objectAssign(reactiveInstance.refTree, refTree);
 }
 
 export default {

@@ -5,7 +5,7 @@ import { getPropertyData } from "./Property";
 import { TConditionElItem, TConditionItem } from "./types/ConditionElType";
 import { IProperties } from "./types/Properties";
 import { IRefTree, TAttr, TExpressionItem, TText } from "./types/Ref";
-import Utils from "./Utils";
+import Utils, { defineOGProperty } from "./Utils";
 
 export function deepUpdateRef(refTree: IRefTree, refProperty?: IProperties): void {
   for (const propertyName in refTree) {
@@ -32,6 +32,9 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
 
   if (els && els.length > 0) {
     els.forEach(el => {
+      defineOGProperty(el, {
+        tree: refTree
+      });
       if (el.__og__.parsed) {
         el.textContent = transformValueToString(getPropertyData(propertyKeyPaths, properties));
       } else {
@@ -98,10 +101,9 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
       //   el.parentElement.append(el.target);
       // }
     }
-
   }
-  Plugin.useAll<IRefTree[]>("updateRef", Array.from(arguments));
 
+  Plugin.useAll<IRefTree[]>("updateRef", Array.from(arguments));
 }
 
 export function setUpdateView(target: any, propertyKey: string, value: any, receiver: any): boolean {
