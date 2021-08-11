@@ -48,7 +48,9 @@ export class Reactive {
         if (els) {
           for (const elItem of els) {
             defineOGProperty(elItem, {
-              branch
+              ref: {
+                branch
+              }
             });
           }
         }

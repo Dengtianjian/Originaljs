@@ -32,9 +32,6 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
 
   if (els && els.length > 0) {
     els.forEach(el => {
-      defineOGProperty(el, {
-        tree: refTree
-      });
       if (el.__og__.parsed) {
         el.textContent = transformValueToString(getPropertyData(propertyKeyPaths, properties));
       } else {
