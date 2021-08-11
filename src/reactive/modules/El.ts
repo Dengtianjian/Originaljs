@@ -1,6 +1,6 @@
 import { TPluginItem } from "../../types/Plugin";
-import { IRefTree, TAttr } from "../../types/Ref";
-import Utils, { deepCopy } from "../../Utils";
+import { IRefTree, TAttr, TText } from "../../types/Ref";
+import Utils, { deepCopy, defineOGProperty } from "../../Utils";
 import { removeTargetRefTree } from "../../View";
 import Reactive from "../index";
 
@@ -17,7 +17,28 @@ function updateRef(refTree: IRefTree, properties): void {
       removeTargetRefTree(attrItem.ownerElement, true);
       attrItem.ownerElement.innerHTML = attrItem.nodeValue;
 
-      Reactive.collectEl(attrItem.ownerElement, properties, properties.__og__.reactive);
+      let refTree:IRefTree = Reactive.collectEl(attrItem.ownerElement, properties, properties.__og__.reactive);
+      for (const branchName in refTree) {
+        if (refTree.hasOwnProperty(branchName)) {
+          const branch: IRefTree = refTree[branchName];
+          const els: TText[] = branch.__els;
+          const attrs: TAttr[] = branch.__attrs;
+  
+          if (els) {
+            for (let index = 0; index < els.length; index++) {
+              const elItem = els[index];
+              defineOGProperty(elItem, {
+                ref: {
+                  branch,
+                  parentBranch: refTree,
+                  branchName,
+                  propertyKey: index
+                }
+              });
+            }
+          }
+        }
+      }
     }
   }
 }

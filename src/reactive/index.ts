@@ -49,14 +49,16 @@ export class Reactive {
         if (els) {
           for (let index = 0; index < els.length; index++) {
             const elItem = els[index];
-            defineOGProperty(elItem, {
-              ref: {
-                branch,
-                parentBranch: this.refTree,
-                branchName,
-                propertyKey: index
-              }
-            });
+            if(!elItem.__og__.ref){
+              defineOGProperty(elItem, {
+                ref: {
+                  branch,
+                  parentBranch: this.refTree,
+                  branchName,
+                  propertyKey: index
+                }
+              });
+            }
           }
         }
       }
@@ -75,6 +77,7 @@ function collectEl(target: IEl | Node[], properties: IProperties, reactiveInstan
   deepUpdateRef(refTree, properties);
 
   Utils.objectAssign(reactiveInstance.refTree, refTree);
+  return refTree;
 }
 
 export default {
