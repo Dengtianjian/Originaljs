@@ -39,6 +39,7 @@ export class Reactive {
 
     collectEl(target, properties, this);
 
+    // TODO：抽取，然后可以给El模块下用
     for (const branchName in this.refTree) {
       if (this.refTree.hasOwnProperty(branchName)) {
         const branch: IRefTree = this.refTree[branchName];
@@ -46,10 +47,14 @@ export class Reactive {
         const attrs: TAttr[] = branch.__attrs;
 
         if (els) {
-          for (const elItem of els) {
+          for (let index = 0; index < els.length; index++) {
+            const elItem = els[index];
             defineOGProperty(elItem, {
               ref: {
-                branch
+                branch,
+                parentBranch: this.refTree,
+                branchName,
+                propertyKey: index
               }
             });
           }
