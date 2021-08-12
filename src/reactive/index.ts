@@ -100,7 +100,7 @@ function collectEl(target: IEl | Node[], properties: IProperties, reactiveInstan
 
   Utils.objectAssign(reactiveInstance.refTree, refTree);
 
-  elAddRefTreeProperty(refTree);
+  elAddRefTreeProperty(reactiveInstance.refTree);
 
   Plugin.useAll("end", [target, properties, reactiveInstance]);
   return refTree;
