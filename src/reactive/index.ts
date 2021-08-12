@@ -69,7 +69,6 @@ function elAddRefTreeProperty(refTree: IRefTree): void {
       if (attrs && attrs.length > 0) {
         attrs.forEach((item, index) => {
           if (!item.__og__.ref) {
-            console.dir(item);
 
             defineOGProperty(item, {
               ref: {
