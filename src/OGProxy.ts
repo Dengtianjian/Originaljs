@@ -1,4 +1,5 @@
 import { propertyNamesToPath } from "./Parser";
+import Plugin from "./Plugin";
 import { Reactive } from "./reactive";
 import { IProperties } from "./types/Properties";
 import { IRefTree } from "./types/Ref";
@@ -37,5 +38,6 @@ export function setProxy(refTree: IRefTree, properties: IProperties, reactiveIns
 
       paths.pop();
     }
+
   }
 }

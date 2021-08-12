@@ -30,6 +30,8 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
   const expressions: TExpressionItem[] = refTree.__expressions;
   const conditions: TConditionItem[] = refTree.__conditions;
 
+  Plugin.useAll("beforeUpdatedRef", Array.from(arguments));
+
   if (els && els.length > 0) {
     els.forEach(el => {
       if (el.__og__.parsed) {
@@ -100,11 +102,12 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
     }
   }
 
-  Plugin.useAll<IRefTree[]>("updateRef", Array.from(arguments));
+  Plugin.useAll("afterUpdatedRef", Array.from(arguments));
 }
 
 export function setUpdateView(target: any, propertyKey: string, value: any, receiver: any): boolean {
   const refTree: IRefTree = target.__og__.refTree;
+  Plugin.useAll("dataUpdate", [target, propertyKey]);
   if (getPropertyData(propertyKey, target.__og__.properties) === value) {
     return true;
   }
@@ -123,6 +126,7 @@ export function setUpdateView(target: any, propertyKey: string, value: any, rece
 }
 
 export function deleteUpdateView(target: any, propertyKey: PropertyKey): boolean {
+  Plugin.useAll("dataUpdate", [target, propertyKey]);
   Plugin.useAll("deleteUpdateView", [target, propertyKey]);
   return true;
 }

@@ -39,34 +39,56 @@ export class Reactive {
 
     collectEl(target, properties, this);
 
-    // TODO：抽取，然后可以给El模块下用
-    for (const branchName in this.refTree) {
-      if (this.refTree.hasOwnProperty(branchName)) {
-        const branch: IRefTree = this.refTree[branchName];
-        const els: TText[] = branch.__els;
-        const attrs: TAttr[] = branch.__attrs;
 
-        if (els) {
-          for (let index = 0; index < els.length; index++) {
-            const elItem = els[index];
-            if(!elItem.__og__.ref){
-              defineOGProperty(elItem, {
-                ref: {
-                  branch,
-                  parentBranch: this.refTree,
-                  branchName,
-                  propertyKey: index
-                }
-              });
-            }
+  }
+}
+
+function elAddRefTreeProperty(refTree: IRefTree): void {
+  for (const branchName in refTree) {
+    if (refTree.hasOwnProperty(branchName)) {
+      const branch: IRefTree = refTree[branchName];
+      const els: TText[] = branch.__els;
+      const attrs: TAttr[] = branch.__attrs;
+
+      if (els) {
+        for (let index = 0; index < els.length; index++) {
+          const elItem = els[index];
+          if (!elItem.__og__.ref) {
+            defineOGProperty(elItem, {
+              ref: {
+                branch,
+                parentBranch: refTree,
+                branchName,
+                propertyKey: index
+              }
+            });
           }
         }
+      }
+
+      if (attrs && attrs.length > 0) {
+        attrs.forEach((item, index) => {
+          if (!item.__og__.ref) {
+            console.dir(item);
+
+            defineOGProperty(item, {
+              ref: {
+                branch,
+                parentBranch: refTree,
+                branchName,
+                propertyKey: index
+              }
+            });
+          }
+        });
       }
     }
   }
 }
 
 function collectEl(target: IEl | Node[], properties: IProperties, reactiveInstance: Reactive): IRefTree {
+  Plugin.useAll("start", [target, properties, reactiveInstance]);
+
   //* 1. 收集引用
   let refTree: IRefTree = Collect.collection(target, properties);
 
@@ -77,6 +99,10 @@ function collectEl(target: IEl | Node[], properties: IProperties, reactiveInstan
   deepUpdateRef(refTree, properties);
 
   Utils.objectAssign(reactiveInstance.refTree, refTree);
+
+  elAddRefTreeProperty(refTree);
+
+  Plugin.useAll("end", [target, properties, reactiveInstance]);
   return refTree;
 }
 
