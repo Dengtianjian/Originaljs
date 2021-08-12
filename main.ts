@@ -287,19 +287,19 @@ class CButton extends OG.createElement() {
     //   this.update("elHTML", `
     //   <div>{count}</div>
     // `);
-    // this.update("number", Date.now());
+    this.update("number", Date.now());
     // this.user.name = {
     //   a: "Admin"
     // }
-    this.update("user.name", {
-      a: "Admin"
-    });
+    // this.update("user.name", {
+    //   a: "Admin"
+    // });
   }
   removeRef() {
     this.user.name = {
       b: "Bob"
     }
-    // this.setStatic(this.__og__.el.querySelector(".number"));
+    this.setStatic(this.__og__.el.querySelector("p[data-number]"));
   }
   updateMultiNumbers() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);

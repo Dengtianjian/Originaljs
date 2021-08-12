@@ -90,18 +90,15 @@ export class OGElement extends HTMLElement implements IOGElement {
     let oldValue: any = getPropertyData(propertyNames, this);
 
     if (typeof newValue === "object" && newValue !== null && newValue !== undefined) {
+      let compartResult: boolean = compareObject(newValue, oldValue);
       compareMerge(newValue, oldValue);
-      let obj = {
-        a: 2,
-        b: 3
-      }
-      if(compareObject(newValue, oldValue)){
 
+      if (compartResult === false) {
+        updateRef(getPropertyData(propertyNames, oldValue.__og__.refTree), this, propertyNamesToPath(propertyNames));
       }
-      updateRef(getPropertyData(propertyNames, oldValue.__og__.refTree), this, propertyNamesToPath(propertyNames));
+
     } else if (newValue !== oldValue) {
       let target: unknown = this;
-
       deepSetObjectPropertyValue(this, [...propertyNames], newValue);
       if (propertyNames.length > 1) {
         propertyName = propertyNames.pop();

@@ -49,16 +49,6 @@ export function generateElRefTree(propertyNames: string[], refEl: TAttr | TText)
     [branchName]: [refEl]
   });
   let propertyNamesMirroring: string[] = [...propertyNames];
-  let propertyName: string = propertyNamesMirroring.pop();
-  // defineOGProperty(refEl, {
-  //   ref: {
-  //     tree,
-  //     propertyNames,
-  //     propertyName,
-  //     branch: getPropertyData(propertyNames, tree),
-  //     parentBranch: getPropertyData(propertyNamesMirroring, tree)
-  //   }
-  // });
 
   return tree;
 }

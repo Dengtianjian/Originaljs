@@ -24,6 +24,7 @@ export function deepUpdateRef(refTree: IRefTree, refProperty?: IProperties): voi
 }
 
 export function updateRef(refTree: IRefTree, properties: IProperties, propertyKeyPaths: string): void {
+
   if (!refTree) return;
   const els: TText[] = refTree.__els;
   const attrs: TAttr[] = refTree.__attrs;
@@ -108,9 +109,6 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
 export function setUpdateView(target: any, propertyKey: string, value: any, receiver: any): boolean {
   const refTree: IRefTree = target.__og__.refTree;
   Plugin.useAll("dataUpdate", [target, propertyKey]);
-  if (getPropertyData(propertyKey, target.__og__.properties) === value) {
-    return true;
-  }
 
   if (!target.__og__.propertiesPath) {
     target[propertyKey] = value;
