@@ -1,6 +1,6 @@
-import { compareMerge } from "./Diff";
+import { compareMerge, compareObject } from "./Diff";
 import { bindMethods } from "./Method";
-import { parseDom, transformPropertyName } from "./Parser";
+import { parseDom, propertyNamesToPath, transformPropertyName } from "./Parser";
 import { getPropertyData } from "./Property";
 import { Reactive } from "./reactive";
 import Transition from "./Transition";
@@ -8,7 +8,7 @@ import { IEl, IOGElement } from "./types/ElementType";
 import { IRefTree } from "./types/Ref";
 import { ICSSStyleDeclaration } from "./types/TransitionType";
 import { deepSetObjectPropertyValue } from "./Utils";
-import { removeTargetRefTree, setUpdateView } from "./View";
+import { removeTargetRefTree, setUpdateView, updateRef } from "./View";
 
 export class OGElement extends HTMLElement implements IOGElement {
   __og__: {
@@ -91,6 +91,14 @@ export class OGElement extends HTMLElement implements IOGElement {
 
     if (typeof newValue === "object" && newValue !== null && newValue !== undefined) {
       compareMerge(newValue, oldValue);
+      let obj = {
+        a: 2,
+        b: 3
+      }
+      if(compareObject(newValue, oldValue)){
+
+      }
+      updateRef(getPropertyData(propertyNames, oldValue.__og__.refTree), this, propertyNamesToPath(propertyNames));
     } else if (newValue !== oldValue) {
       let target: unknown = this;
 

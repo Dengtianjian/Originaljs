@@ -83,7 +83,9 @@ export default {
     let paths: string[] = target.__og__.propertiesPath.split(".");
     paths.push(String(propertyKey))
     if (typeof value === "object") {
-      setProxy(refTree[propertyKey], target[propertyKey], target.__og__.reactive, paths);
+      let parentPaths: string[] = [...paths];
+      parentPaths.pop();
+      setProxy(refTree, target, target.__og__.reactive, parentPaths);
 
       deepUpdateRef(refTree[propertyKey], target[propertyKey]);
     }

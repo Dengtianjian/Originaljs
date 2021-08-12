@@ -270,7 +270,7 @@ class CButton extends OG.createElement() {
     name: {
       firstName: "Deng",
       lastName: "Tianjian"
-    },
+    } as { [key: string]: any },
     times: {
       register: "2021-02-24",
       lastLogin: "2021-06-28",
@@ -284,14 +284,22 @@ class CButton extends OG.createElement() {
   count = 1;
   show = false;
   updateData() {
-  //   this.update("elHTML", `
-  //   <div>{count}</div>
-  // `);
+    //   this.update("elHTML", `
+    //   <div>{count}</div>
+    // `);
     // this.update("number", Date.now());
-  this.update("user.name.firstName","AAAAAA");
+    // this.user.name = {
+    //   a: "Admin"
+    // }
+    this.update("user.name", {
+      a: "Admin"
+    });
   }
   removeRef() {
-    this.setStatic(this.__og__.el.querySelector(".number"));
+    this.user.name = {
+      b: "Bob"
+    }
+    // this.setStatic(this.__og__.el.querySelector(".number"));
   }
   updateMultiNumbers() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);

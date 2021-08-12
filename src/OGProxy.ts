@@ -9,7 +9,7 @@ import { deleteUpdateView, setUpdateView } from "./View";
 export function setProxy(refTree: IRefTree, properties: IProperties, reactiveInstance: Reactive, paths: string[] = []): void {
   for (const branchName in refTree) {
     if (refTree.hasOwnProperty(branchName)) {
-      if (!(typeof properties[branchName] === "object" && properties[branchName] !== null && properties[branchName] !== undefined)) continue;
+      if (!(typeof properties[branchName] === "object" && properties[branchName] !== undefined)) continue;
       paths.push(branchName);
       setProxy(refTree[branchName], properties[branchName], reactiveInstance, paths);
 
@@ -18,11 +18,11 @@ export function setProxy(refTree: IRefTree, properties: IProperties, reactiveIns
         continue;
       };
 
-      defineOGProperty(properties[branchName],{
-        propertiesPath:propertyNamesToPath(paths),
-        reactive:reactiveInstance,
-        refTree:reactiveInstance.refTree,
-        properties:reactiveInstance.properties
+      defineOGProperty(properties[branchName], {
+        propertiesPath: propertyNamesToPath(paths),
+        reactive: reactiveInstance,
+        refTree: reactiveInstance.refTree,
+        properties: reactiveInstance.properties
       });
 
       properties[branchName] = new Proxy(properties[branchName], {

@@ -45,10 +45,14 @@ export class Reactive {
 
 function elAddRefTreeProperty(refTree: IRefTree): void {
   for (const branchName in refTree) {
-    if (refTree.hasOwnProperty(branchName)) {
+    if (refTree.hasOwnProperty(branchName)&&!Array.isArray(refTree[branchName])) {
       const branch: IRefTree = refTree[branchName];
       const els: TText[] = branch.__els;
       const attrs: TAttr[] = branch.__attrs;
+
+      if (typeof branch === "object") {
+        elAddRefTreeProperty(branch);
+      }
 
       if (els) {
         for (let index = 0; index < els.length; index++) {
@@ -69,7 +73,6 @@ function elAddRefTreeProperty(refTree: IRefTree): void {
       if (attrs && attrs.length > 0) {
         attrs.forEach((item, index) => {
           if (!item.__og__.ref) {
-
             defineOGProperty(item, {
               ref: {
                 branch,
