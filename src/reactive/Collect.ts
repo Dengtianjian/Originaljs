@@ -13,11 +13,12 @@ function useCollectElRefHook(target: IEl | Node[], properties: IProperties): IRe
       Utils.objectAssign(refTree, useCollectElRefHook(nodeItem as IEl, properties));
     }
     return refTree;
-  } else if (target.nodeType !== 3 && target.childNodes.length > 0) {
-    Utils.objectAssign(refTree, useCollectElRefHook(Array.from(target.childNodes), properties));
-  };
+  }
   for (const item of Plugin.useAll<IRefTree[]>("collectElRef", [target, properties])) {
     Utils.objectAssign(refTree, item);
+  };
+  if (target.nodeType !== 3 && target.childNodes.length > 0) {
+    Utils.objectAssign(refTree, useCollectElRefHook(Array.from(target.childNodes), properties));
   };
 
   return refTree;
@@ -25,7 +26,7 @@ function useCollectElRefHook(target: IEl | Node[], properties: IProperties): IRe
 
 export function collection(target: IEl | Node[], properties: IProperties): IRefTree {
   let elRefTree: IRefTree = {};
-
+  
   let refTree = useCollectElRefHook(target, properties);
 
   Utils.objectAssign(elRefTree, refTree);
@@ -48,7 +49,6 @@ export function generateElRefTree(propertyNames: string[], refEl: TAttr | TText)
   tree = Utils.generateObjectTree(propertyNames, {
     [branchName]: [refEl]
   });
-  let propertyNamesMirroring: string[] = [...propertyNames];
 
   return tree;
 }

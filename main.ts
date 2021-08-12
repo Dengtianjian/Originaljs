@@ -287,7 +287,11 @@ class CButton extends OG.createElement() {
     //   this.update("elHTML", `
     //   <div>{count}</div>
     // `);
-    this.update("number", Date.now());
+    // this.update("number", Date.now());
+    // TODO: 第一次加载页面，先push然后动态更新o-el元素的value数据会不显示
+    fetch("./elHTML.html").then(res => res.text()).then(res => {
+      this.update("elHTML", res);
+    })
     // this.user.name = {
     //   a: "Admin"
     // }
@@ -295,11 +299,18 @@ class CButton extends OG.createElement() {
     //   a: "Admin"
     // });
   }
+  pages = 1;
   removeRef() {
+    // this.update("count", Math.round(Math.random() * 10000));
+    fetch("./mook/book_page1.json").then(res => res.json()).then(res => {
+      console.log(res);
+      this.pages++;
+      this.books.push(...res.data);
+    });
     this.user.name = {
       b: "Bob"
     }
-    this.setStatic(this.__og__.el.querySelector("p[data-number]"));
+    // this.setStatic(this.__og__.el.querySelector("p[data-number]"));
   }
   updateMultiNumbers() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);
