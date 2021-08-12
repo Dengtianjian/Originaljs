@@ -101,11 +101,15 @@ export function propertyNamesToPath(propertyNames: string[] | number[]): string 
   let propertyPath: string = "";
   propertyNames.forEach(item => {
     if (isNaN(item)) {
-      propertyPath += item;
+      propertyPath += "." + item;
     } else {
       propertyPath += `[${item}]`;
     }
   });
+  if (propertyPath[0] === ".") {
+    propertyPath = propertyPath.slice(1);
+  }
+
   return propertyPath;
 }
 

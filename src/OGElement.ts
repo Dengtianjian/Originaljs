@@ -1,12 +1,13 @@
 import { compareMerge } from "./Diff";
 import { bindMethods } from "./Method";
-import { parseDom } from "./Parser";
+import { parseDom, transformPropertyName } from "./Parser";
 import { getPropertyData } from "./Property";
 import { Reactive } from "./reactive";
 import Transition from "./Transition";
 import { IEl, IOGElement } from "./types/ElementType";
 import { IRefTree } from "./types/Ref";
 import { ICSSStyleDeclaration } from "./types/TransitionType";
+import { deepSetObjectPropertyValue } from "./Utils";
 import { removeTargetRefTree, setUpdateView } from "./View";
 
 export class OGElement extends HTMLElement implements IOGElement {
@@ -85,10 +86,21 @@ export class OGElement extends HTMLElement implements IOGElement {
   adopted(): void { }
   disconnected(): void { };
   update<T>(propertyName: string, newValue: T | any): void {
+    let propertyNames: string[] = transformPropertyName(propertyName);
+    let oldValue: any = getPropertyData(propertyNames, this);
+
     if (typeof newValue === "object" && newValue !== null && newValue !== undefined) {
-      compareMerge(newValue, this[propertyName]);
-    } else {
-      setUpdateView(this, propertyName, newValue, this);
+      compareMerge(newValue, oldValue);
+    } else if (newValue !== oldValue) {
+      let target: unknown = this;
+
+      deepSetObjectPropertyValue(this, [...propertyNames], newValue);
+      if (propertyNames.length > 1) {
+        propertyName = propertyNames.pop();
+        target = getPropertyData(propertyNames, this);
+      }
+
+      setUpdateView(target, propertyName, newValue, this);
     }
   };
   transition(transitionName: string, initStyles?: ICSSStyleDeclaration): Transition | undefined {

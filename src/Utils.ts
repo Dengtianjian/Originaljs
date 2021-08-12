@@ -1,3 +1,4 @@
+import { transformPropertyName } from "./Parser";
 import { IEl } from "./types/ElementType";
 import { IProperties } from "./types/Properties";
 import { TAttr, TText } from "./types/Ref";
@@ -51,6 +52,18 @@ export function deepGetObjectProperty(obj: object, propertyNames: string[]): IPr
   }
 }
 
+export function deepSetObjectPropertyValue(obj: object, propertyNames: string[] | string, value: any): void {
+  propertyNames = Array.isArray(propertyNames) ? propertyNames : transformPropertyName(propertyNames);
+
+  if (propertyNames.length == 1) {
+    obj[propertyNames[0]] = value;
+  } else {
+    let firstKey: string = propertyNames[0];
+    propertyNames.shift();
+    deepSetObjectPropertyValue(obj[firstKey], propertyNames, value);
+  }
+}
+
 export function defineProperty(obj, propertyKey: string, value: any, configurable: boolean = false, writable: boolean = false, enumerable: boolean = false): void {
   if (obj.hasOwnProperty(propertyKey)) {
     const target: {
@@ -84,6 +97,7 @@ export default {
   objectAssign,
   generateObjectTree,
   deepGetObjectProperty,
+  deepSetObjectPropertyValue,
   defineProperty,
   defineOGProperty
 }

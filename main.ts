@@ -284,10 +284,11 @@ class CButton extends OG.createElement() {
   count = 1;
   show = false;
   updateData() {
-    this.update("elHTML", `
-    <div>{count}</div>
-  `);
-    this.update("number", Date.now());
+  //   this.update("elHTML", `
+  //   <div>{count}</div>
+  // `);
+    // this.update("number", Date.now());
+  this.update("user.name.firstName","AAAAAA");
   }
   removeRef() {
     this.setStatic(this.__og__.el.querySelector(".number"));
