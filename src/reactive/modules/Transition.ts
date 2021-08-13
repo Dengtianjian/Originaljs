@@ -22,9 +22,13 @@ export default {
       }
     } else {
       rootEl.__og__.transitions[transitionName] = new Transition(childrens);
-      rootEl.__og__.transitions[transitionName]['updatePart']=childrens;
+      rootEl.__og__.transitions[transitionName]['updatePart'] = childrens;
     }
 
     return {};
+  },
+  beforeUpdateRef(refTree: IRefTree): void {
+    console.log(refTree);
+
   }
 } as TPluginItem

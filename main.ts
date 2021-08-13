@@ -201,6 +201,7 @@ template = await fetch("./cbutton.html").then(res => res.text());
 
 class CButton extends OG.createElement() {
   connected() {
+    console.time("total");
     // setInterval(() => {
     //   this.update("number", this.formatTime());
     // }, 1000);
@@ -233,6 +234,9 @@ class CButton extends OG.createElement() {
   }
   render() {
     return template;
+  }
+  rendered(){
+    console.timeEnd("total");
   }
   elValue = `<div>{numbers}</div>`;
   elHTML = `<div>{number}</div>`;
@@ -283,12 +287,12 @@ class CButton extends OG.createElement() {
   };
   count = 1;
   show = false;
+  transitionName:"showBook";
   updateData() {
     //   this.update("elHTML", `
     //   <div>{count}</div>
     // `);
     // this.update("number", Date.now());
-    // TODO: 第一次加载页面，先push然后动态更新o-el元素的value数据会不显示
     fetch("./elHTML.html").then(res => res.text()).then(res => {
       this.update("elHTML", res);
     })
@@ -319,8 +323,8 @@ class CButton extends OG.createElement() {
     // fetch("./elHTML.html").then(res => res.text()).then(res => {
     //   this.update("elHTML", res);
     // });
-    this.update("number", Date.now());
-    return;
+    // this.update("number", Date.now());
+    // return;
     // this.update("show", this.show === "none" ? 'flex' : 'none');
     // console.log(this.books);
 
@@ -340,7 +344,7 @@ class CButton extends OG.createElement() {
     // this.books[0].base_info.title = "";
     // this.books.splice(0, 2);
     // this.number = Date.now();
-    fetch("./mook/book_page2.json").then(res => res.json()).then(({ data }) => {
+    fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
 
       // for (const key in data) {
       //   if (Object.prototype.hasOwnProperty.call(data, key)) {
@@ -366,6 +370,7 @@ class CButton extends OG.createElement() {
       console.time();
       this.books.push(...data);
       console.timeEnd();
+      return;
       console.time("transition");
       this.transition("showBook", {
         display: "flex",
