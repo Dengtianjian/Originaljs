@@ -205,7 +205,7 @@ class CButton extends OG.createElement() {
     // setInterval(() => {
     //   this.update("number", this.formatTime());
     // }, 1000);
-    return;
+    // return;
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       console.time("total");
       this.books.push(...data);
@@ -286,7 +286,7 @@ class CButton extends OG.createElement() {
     }
   };
   count = 1;
-  show = false;
+  show = true;
   transitionName = "showBook";
   updateTransition() {
     if (this.transitionName === "showBook") {
