@@ -208,7 +208,7 @@ class CButton extends OG.createElement() {
     // return;
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       console.time("total");
-      this.books.push(...data);
+      this.books.push(data[0]);
       console.timeEnd("total");
 
       console.time("transition");

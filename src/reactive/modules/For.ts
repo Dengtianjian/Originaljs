@@ -28,11 +28,10 @@ function replaceAttrRef(target: HTMLElement, sourceString: string, replaceString
 
   const attributes: Attr[] = Array.from(target.attributes);
 
-  const testHasVariableRegExp: RegExp = new RegExp(Ref.variableItem, "g");
   const sourceStringRegExp: RegExp = new RegExp(`(?<=\x20*)${sourceString}?`, "g");
 
   attributes.reduce((prev, attrItem) => {
-    if (testHasVariableRegExp.test(attrItem.nodeValue)) {
+    if (Ref.variableItem.test(attrItem.nodeValue)) {
       attrItem.nodeValue = attrItem.nodeValue.replace(sourceStringRegExp, replaceString);
     }
     if (attrItem.nodeName === "in" && attrItem.nodeValue.indexOf(sourceString) > -1) {
