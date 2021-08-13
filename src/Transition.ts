@@ -35,13 +35,15 @@ class Transition implements ITransition {
 
     const updateEls: HTMLElement[] = this.updatePart ? this.updatePart : this.els;
     if (updateEls.length === 0) return;
-    this.batchChangeElStyle(updateEls, {
-      transitionProperty: Object.keys(transition.styles).join(","),
-      transitionDuration: `${transition.duration}s`,
-      transitionTimingFunction: transition.timingFunction,
-      transitionDelay: `${transition.delay}s`,
-      ...transition.styles
-    });
+    updateEls.forEach(els => {
+      this.batchChangeElStyle(Array.from(els.children) as HTMLElement[], {
+        transitionProperty: Object.keys(transition.styles).join(","),
+        transitionDuration: `${transition.duration}s`,
+        transitionTimingFunction: transition.timingFunction,
+        transitionDelay: `${transition.delay}s`,
+        ...transition.styles
+      });
+    })
     this.runingTimer = window.setTimeout(() => {
       this.transitions.shift();
 

@@ -13,18 +13,12 @@ function addTransitions(target, rootEl): boolean {
   let transition: Transition = rootEl.__og__.transitions[transitionName];
   if (Ref.Item.test(transitionName)) return false;
 
-  const children: HTMLElement[] = Array.from(tag.children) as HTMLElement[];
-
   if (transition) {
-    transition.els.push(...children);
-    if (transition.updatePart === null) {
-      transition.updatePart = children;
-    } else {
-      transition.updatePart.push(...children);
-    }
+    transition.els.push(tag);
+    transition.updatePart.push(tag);
   } else {
-    rootEl.__og__.transitions[transitionName] = new Transition(children);
-    rootEl.__og__.transitions[transitionName]['updatePart'] = children;
+    rootEl.__og__.transitions[transitionName] = new Transition(tag);
+    rootEl.__og__.transitions[transitionName]['updatePart'] = [tag];
   }
   return true;
 }
