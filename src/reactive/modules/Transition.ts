@@ -15,6 +15,7 @@ function addTransitions(target, rootEl): boolean {
 
   if (transition) {
     transition.els.push(tag);
+    if (!Array.isArray(transition.updatePart)) transition.updatePart = [];
     transition.updatePart.push(tag);
   } else {
     rootEl.__og__.transitions[transitionName] = new Transition(tag);
