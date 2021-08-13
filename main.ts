@@ -235,7 +235,7 @@ class CButton extends OG.createElement() {
   render() {
     return template;
   }
-  rendered(){
+  rendered() {
     console.timeEnd("total");
   }
   elValue = `<div>{numbers}</div>`;
@@ -287,15 +287,32 @@ class CButton extends OG.createElement() {
   };
   count = 1;
   show = false;
-  transitionName:"showBook";
+  transitionName = "showBook";
+  updateTransition() {
+    if (this.transitionName === "showBook") {
+      this.transition(this.transitionName, {
+        transform: "translateX(0px)"
+      }).step({
+        transform: "translateX(50px)"
+      })
+    } else {
+      this.transition(this.transitionName, {
+        transform: "translateX(0px)"
+      }).step({
+        transform: "translateY(" + Math.round(Math.random() * 100) + "px)"
+      })
+    }
+
+  }
   updateData() {
+    this.update("transitionName", "newTransitionName");
     //   this.update("elHTML", `
     //   <div>{count}</div>
     // `);
     // this.update("number", Date.now());
-    fetch("./elHTML.html").then(res => res.text()).then(res => {
-      this.update("elHTML", res);
-    })
+    // fetch("./elHTML.html").then(res => res.text()).then(res => {
+    //   this.update("elHTML", res);
+    // })
     // this.user.name = {
     //   a: "Admin"
     // }

@@ -38,8 +38,6 @@ export class Reactive {
     properties.__og__.properties = properties;
 
     collectEl(target, properties, this);
-
-
   }
 }
 
