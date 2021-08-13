@@ -304,6 +304,13 @@ class CButton extends OG.createElement() {
     }
 
   }
+  updateTransition2() {
+    this.transition("showBook", {
+      transform: "translateX(0px)"
+    }).step({
+      transform: "translateX(50px)"
+    })
+  }
   updateData() {
     this.update("transitionName", "newTransitionName");
     //   this.update("elHTML", `

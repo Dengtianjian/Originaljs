@@ -5,7 +5,7 @@ import Utils, { deepCopy, defineOGProperty } from "../../Utils";
 import { removeTargetRefTree } from "../../View";
 import Reactive from "../index";
 
-function afterUpdatedRef(refTree: IRefTree, properties): void {
+function afterUpdateRef(refTree: IRefTree, properties): void {
   if (!refTree.__attrs) return;
   let attrs: TAttr[] = refTree.__attrs;
 
@@ -24,5 +24,5 @@ function afterUpdatedRef(refTree: IRefTree, properties): void {
 }
 
 export default {
-  afterUpdatedRef
+  afterUpdateRef
 } as TPluginItem

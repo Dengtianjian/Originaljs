@@ -31,7 +31,7 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
   const expressions: TExpressionItem[] = refTree.__expressions;
   const conditions: TConditionItem[] = refTree.__conditions;
 
-  Plugin.useAll("beforeUpdatedRef", Array.from(arguments));
+  Plugin.useAll("beforeUpdateRef", Array.from(arguments));
 
   if (els && els.length > 0) {
     els.forEach(el => {
@@ -103,7 +103,7 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
     }
   }
 
-  Plugin.useAll("afterUpdatedRef", Array.from(arguments));
+  Plugin.useAll("afterUpdateRef", Array.from(arguments));
 }
 
 export function setUpdateView(target: any, propertyKey: string, value: any, receiver: any): boolean {

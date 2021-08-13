@@ -34,7 +34,7 @@ class Transition implements ITransition {
     const transition: TTransitionItem = this.transitions[0];
 
     const updateEls: HTMLElement[] = this.updatePart ? this.updatePart : this.els;
-
+    if (updateEls.length === 0) return;
     this.batchChangeElStyle(updateEls, {
       transitionProperty: Object.keys(transition.styles).join(","),
       transitionDuration: `${transition.duration}s`,

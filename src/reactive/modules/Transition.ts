@@ -34,7 +34,20 @@ export default {
     addTransitions(target, rootEl);
     return {};
   },
-  afterUpdatedRef(refTree: IRefTree, properties: IProperties) {
+  beforeUpdateRef(refTree: IRefTree, properties: IProperties) {
+    if (!refTree.__attrs) return;
+    let attrs: TAttr[] = refTree.__attrs;
+    let transitions = properties.__og__.transitions;
+
+    for (const attrItem of attrs) {
+      if (attrItem.ownerElement.tagName !== "O-TRANSITION") continue;
+      if (!transitions[attrItem.nodeValue]) continue;
+      let els = transitions[attrItem.nodeValue].els;
+      els.splice(els.indexOf(attrItem.ownerElement), 1);
+    }
+    return true;
+  },
+  afterUpdateRef(refTree: IRefTree, properties: IProperties) {
     if (!refTree.__attrs) return;
     let attrs: TAttr[] = refTree.__attrs;
 
