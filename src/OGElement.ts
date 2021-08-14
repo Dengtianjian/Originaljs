@@ -3,7 +3,7 @@ import { bindMethods } from "./Method";
 import { parseDom, propertyNamesToPath, transformPropertyName } from "./Parser";
 import { getPropertyData } from "./Property";
 import { Reactive } from "./reactive";
-import Transition from "./Transition";
+import Transition from "./transition";
 import { IEl, IOGElement } from "./types/ElementType";
 import { IRefTree } from "./types/Ref";
 import { ICSSStyleDeclaration } from "./types/TransitionType";
@@ -112,6 +112,22 @@ export class OGElement extends HTMLElement implements IOGElement {
     let transition = this.__og__.transitions[transitionName];
     if (transition === undefined) throw new Error("Undefined transition element：" + transitionName);
     if (initStyles) transition.step(initStyles, 0);
+    return transition;
+  };
+  useTransitionPreset(presetName: string): Transition {
+    let preset = Transition.getPreset(presetName);
+    if (preset === undefined) {
+      console.error("transition preset not exist");
+      return;
+    }
+    let transition = this.transition(presetName, preset.initStyle);
+    if (transition === undefined) {
+      console.error("Undefined transition element：" + presetName);
+      return;
+    }
+    preset.transitions.forEach(transitionItem => {
+      transition.step(transitionItem.styles, transitionItem.duration, transitionItem.timingFunction, transitionItem.delay, transitionItem.callBack);
+    });
     return transition;
   }
   setStatic(target: string | HTMLElement | Element, isDeep: boolean = false): void {

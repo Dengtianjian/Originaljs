@@ -1,5 +1,5 @@
 import { Reactive } from "../reactive";
-import Transition from "../Transition";
+import Transition from "../transition";
 import { IRefTree } from "./Ref";
 import { ICSSStyleDeclaration } from "./TransitionType";
 

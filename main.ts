@@ -1,5 +1,5 @@
 import OG, { defineElement } from "./src";
-import Transition from "./src/Transition";
+import Transition, { addTransition } from "./src/transition";
 
 let template: string = `
 <div data-number="{number} {obj.nums}">
@@ -199,6 +199,31 @@ template = `
 
 template = await fetch("./cbutton.html").then(res => res.text());
 
+// addTransition("showBook", {
+//   opacity: "0",
+//   transform: "translateY(50px)",
+// }, [
+//   {
+//     transform: "translateY(0px)",
+//     opacity: "1"
+//   },
+//   {
+//     transform: "translateX(50px)",
+//     opacity: "1"
+//   }
+// ]);
+Transition.preset("showBook", {
+  opacity: "0",
+  transform: "translateY(50px)",
+}).add({
+  opacity: "1",
+  transform: "translateY(0px)",
+}).add({
+  transform: "translateX(50px)",
+}).add({
+  transform: "translateX(0px)",
+}, 0.5, "cubic-bezier(0.67, -0.71, 0.65, 1.47)");
+
 class CButton extends OG.createElement() {
   connected() {
     console.time("total");
@@ -211,25 +236,27 @@ class CButton extends OG.createElement() {
       this.books.push(data[0]);
       console.timeEnd("total");
 
-      console.time("transition");
-      let t = this.transition("showBook", {
-        opacity: "0",
-        transform: "translateY(50px)",
-      });
-      t.step({
-        transform: "translateY(0px)",
-        opacity: "1"
-      }, 0.3, "", 0, () => {
-        console.log("translateX end");
-        // if (Date.now() % 2 === 0) {
-        //   t.stop();
-        // }
-      }).step({
-        transform: "translateX(50px)"
-      }).end(() => {
-        this.show = true;
-        console.timeEnd("transition");
-      });
+      // console.time("transition");
+      this.useTransitionPreset("showBook");
+      // this.transition("showBook");
+      // let t = this.transition("showBook", {
+      //   opacity: "0",
+      //   transform: "translateY(50px)",
+      // });
+      // t.step({
+      //   transform: "translateY(0px)",
+      //   opacity: "1"
+      // }, 0.3, "", 0, () => {
+      //   console.log("translateX end");
+      //   // if (Date.now() % 2 === 0) {
+      //   //   t.stop();
+      //   // }
+      // }).step({
+      //   transform: "translateX(50px)"
+      // }).end(() => {
+      //   this.show = true;
+      //   console.timeEnd("transition");
+      // });
     });
   }
   render() {

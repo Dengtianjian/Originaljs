@@ -1,5 +1,5 @@
 import { Ref } from "../../Rules";
-import Transition from "../../Transition";
+import Transition from "../../transition";
 import { IEl, IOGElement } from "../../types/ElementType";
 import { TPluginItem } from "../../types/Plugin";
 import { IProperties } from "../../types/Properties";

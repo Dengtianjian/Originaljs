@@ -1,17 +1,47 @@
-import { ICSSStyleDeclaration, ITransition, TTransitionItem } from "./types/TransitionType";
+import { ICSSStyleDeclaration, ITransition, TTransitionItem } from "../types/TransitionType";
+
+const presets: {
+  [name: string]: {
+    initStyle: ICSSStyleDeclaration,
+    transitions: TTransitionItem[]
+  }
+} = {};
+
+type TPresetReturn = {
+  add(styles: ICSSStyleDeclaration, duration?: number, timingFunction?: string, delay?: number, callBack?: () => void): TPresetReturn
+}
 
 class Transition implements ITransition {
   els: HTMLElement[] & Element[] = null;
   updatePart: HTMLElement[] = null;
-  private transitions: TTransitionItem[] = [];
-  private startTimestamp: number = null;
+  transitions: TTransitionItem[] = [];
   private endCallBack: () => void = null;
   private updatedStyles: Set<string> = new Set();
   private isClearStyle: boolean = false;
   private runingTimer: number = null;
-  private transitionQueue: TTransitionItem[] = [];
   constructor(el: HTMLElement | HTMLElement[]) {
     this.els = Array.isArray(el) ? el : [el];
+  }
+  static preset(name: string, initStyle: ICSSStyleDeclaration): TPresetReturn {
+    presets[name] = {
+      initStyle,
+      transitions: []
+    }
+    return {
+      add(styles: ICSSStyleDeclaration, duration: number = 0.3, timingFunction: string = "linear", delay: number = 0, callBack?: () => void) {
+        presets[name].transitions.push({
+          styles,
+          duration,
+          timingFunction,
+          delay,
+          callBack
+        });
+        return this;
+      }
+    }
+  }
+  static getPreset(name: string) {
+    return presets[name];
   }
   private batchChangeElStyle(els: HTMLElement[], property: string | Record<string, any>, value?: any): void {
     els.forEach(el => {

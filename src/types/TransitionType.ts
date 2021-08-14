@@ -1,4 +1,4 @@
-import Transition from "../Transition";
+import Transition from "../transition";
 
 /** An object that is a CSS declaration block, and exposes style information and various style-related methods and properties. */
 export interface ICSSStyleDeclaration {
