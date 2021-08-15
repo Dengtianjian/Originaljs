@@ -1,4 +1,4 @@
-import { transformPropertyName } from "./Parser";
+import { parse, transformPropertyName } from "./Parser";
 import { propertyHasKey } from "./reactive/Collect";
 import { Ref } from "./Rules";
 import { IEl, IOGElement } from "./types/ElementType";
@@ -19,6 +19,7 @@ export function executeExpression(expression: string, properties: IProperties): 
     if (!pushedNames.includes(firstPropertyName) && propertyHasKey(name, properties)) {
       pushedNames.push(firstPropertyName);
     }
+    expression = parse(expression, properties, true);
   });
   const expressionProperties: IProperties = [];
   pushedNames.forEach(item => {

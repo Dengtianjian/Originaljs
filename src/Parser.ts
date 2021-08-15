@@ -85,14 +85,21 @@ export function transformValueToString(value: any): string {
         } else if (typeof value[key] === "object" && !Array.isArray(value)) {
           objItems.push(key + ":" + transformValueToString(value[key]));
         } else {
-          objItems.push(key + ":" + value[key].toString())
+          if (typeof value[key] !== "object" || typeof value[key] === undefined) {
+            value[key] = value[key].toString();
+          }
+          objItems.push(key + ":" + value[key]);
         }
       }
     }
 
     return "{" + objItems.join(",") + "}";
   }
-  return value.toString();
+  if (typeof value === "object" || typeof value === undefined) {
+    value = value.toString();
+  }
+
+  return value;
 }
 
 export function propertyNamesToPath(propertyNames: string[] | number[]): string {
@@ -111,12 +118,17 @@ export function propertyNamesToPath(propertyNames: string[] | number[]): string 
   return propertyPath;
 }
 
-export function parse(sourceString: string, properties: IProperties): string {
+export function parse(sourceString: string, properties: IProperties, quotesAdd: Boolean = false): string {
   const refs = sourceString.match(new RegExp(Ref.ExtractVariableName, "g"));
 
   refs.forEach(ref => {
-    const replaceValue: string = transformValueToString(getPropertyData(ref, properties));
+    let replaceValue: string | number = transformValueToString(getPropertyData(ref, properties));
 
+    if (quotesAdd) {
+      if (typeof replaceValue === "string") {
+        replaceValue = `"${replaceValue}"`;
+      }
+    }
     sourceString = sourceString.replaceAll(`{${ref}}`, replaceValue)
   });
 

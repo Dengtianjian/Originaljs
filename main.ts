@@ -227,13 +227,14 @@ Transition.preset("showBook", {
 class CButton extends OG.createElement() {
   connected() {
     console.time("total");
-    // setInterval(() => {
+    // setInterval(() =>newP {
     //   this.update("number", this.formatTime());
     // }, 1000);
     // return;
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       console.time("total");
-      this.books.push(...data);
+      this.books.push(data[0]);
+      // this.books.push(data[1]);
       console.timeEnd("total");
 
       // console.time("transition");
@@ -333,16 +334,24 @@ class CButton extends OG.createElement() {
   }
   updateTransition2() {
     console.log("updateTransition2");
-    
+
     // this.transition("showBook", {
     //   transform: "translateX(0px)"
     // }).step({
     //   transform: "translateX(50px)"
     // })
   }
-  updateData() {
-    console.log(arguments);
-    
+  position = {
+    x: 0,
+    y: 0
+  }
+  moveInBook = (event) => {
+    this.position.x = event.x;
+    this.position.y = event.y;
+  }
+  updateData = (cover, number, event, target) => {
+    console.log(cover,number);
+
     // this.update("transitionName", "newTransitionName");
     //   this.update("elHTML", `
     //   <div>{count}</div>

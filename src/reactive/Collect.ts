@@ -1,6 +1,7 @@
 import { transformPropertyName } from "../Parser";
 import Plugin from "../Plugin";
 import { getPropertyData } from "../Property";
+import { Ref } from "../Rules";
 import { IEl } from "../types/ElementType";
 import { IProperties } from "../types/Properties";
 import { IRefTree, TAttr, TText } from "../types/Ref";
@@ -78,6 +79,16 @@ export function propertyHasKey(keys: string | string[], properties: IProperties)
   properties = properties[keys[0]];
   keys.shift();
   return propertyHasKey(keys, properties);
+}
+
+const ExtractRefItemGlobalRegExp: RegExp = new RegExp(Ref.ExtractItem, "g");
+export function getRefs(rawString: string): string[] {
+  let refSet: string[] = [];
+  if (Ref.Item.test(rawString) === false) return refSet;
+  let refs: RegExpMatchArray = rawString.match(ExtractRefItemGlobalRegExp);
+  if (refs !== null) refSet = refs;
+
+  return refSet;
 }
 
 export default {
