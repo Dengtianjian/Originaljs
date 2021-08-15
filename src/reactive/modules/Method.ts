@@ -65,8 +65,6 @@ export default {
         }
         params = rawStrings;
       }
-      console.log(params);
-
 
       const methodName: RegExpMatchArray = methodNameItem.match(Methods.MethodName);
       if (methodName === null) continue;
