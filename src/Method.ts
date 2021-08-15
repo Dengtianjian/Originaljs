@@ -5,15 +5,14 @@ import { IEl } from "./types/ElementType";
 function parseMethodParams(rawString: string): string[] {
   const paramsRawString: RegExpMatchArray = rawString.match(Methods.MethodParams);
   if (paramsRawString === null) return [];
+  let params: string[] = paramsRawString[0].split(",");
+  params.forEach(item=>{
+    
+  })
   return paramsRawString[0].split(",");
 }
 
-export function bindMethods(target: IEl, methods: Record<string, Function | AsyncGeneratorFunction | any>, thisDirection: object = target): boolean {
-  if (target.childNodes.length > 0) {
-    Array.from(target.children).forEach((childNode) => {
-      bindMethods(childNode, methods, thisDirection);
-    });
-  }
+export function elBindMethod(target, methods: Record<string, Function | AsyncGeneratorFunction | any>, thisDirection: object = target) {
   target = target as HTMLElement | Element;
 
   if (target.attributes && target.attributes.length > 0) {
@@ -36,7 +35,6 @@ export function bindMethods(target: IEl, methods: Record<string, Function | Asyn
             continue;
           }
 
-          params.push(target);
           const listener = methods[methodName[0]].bind(thisDirection, ...params);
 
           const type: RegExpMatchArray = attrItem.name.match(new RegExp(Methods.MethodType, "g"));
@@ -48,5 +46,17 @@ export function bindMethods(target: IEl, methods: Record<string, Function | Asyn
       }
     }
   }
+}
+
+export function bindMethods(target: IEl, methods: Record<string, Function | AsyncGeneratorFunction | any>, thisDirection: object = target): boolean {
+  if (target.nodeType === 3) return false;
+
+  if (target.childNodes.length > 0) {
+    Array.from(target.children).forEach((childNode) => {
+      bindMethods(childNode, methods, thisDirection);
+    });
+  }
+
+  elBindMethod(target, methods, thisDirection);
   return true;
 }

@@ -12,6 +12,8 @@ import Tags from "./modules/Tags";
 import For from "./modules/For";
 import Condition from "./modules/Condition";
 import El from "./modules/El";
+import { bindMethods } from "../Method";
+import Method from "./modules/Method";
 
 Plugin.register('For', For);
 Plugin.register('Condition', Condition);
@@ -19,6 +21,7 @@ Plugin.register("Tags", Tags);
 Plugin.register("Attrs", Attrs);
 Plugin.register("Transition", Transition);
 Plugin.register("El", El);
+Plugin.register("Method",Method);
 
 export class Reactive {
   target: IEl = null;
@@ -43,7 +46,7 @@ export class Reactive {
 
 function elAddRefTreeProperty(refTree: IRefTree): void {
   for (const branchName in refTree) {
-    if (refTree.hasOwnProperty(branchName)&&!Array.isArray(refTree[branchName])) {
+    if (refTree.hasOwnProperty(branchName) && !Array.isArray(refTree[branchName])) {
       const branch: IRefTree = refTree[branchName];
       const els: TText[] = branch.__els;
       const attrs: TAttr[] = branch.__attrs;
@@ -103,6 +106,8 @@ function collectEl(target: IEl | Node[], properties: IProperties, reactiveInstan
   elAddRefTreeProperty(reactiveInstance.refTree);
 
   Plugin.useAll("end", [target, properties, reactiveInstance]);
+
+  // bindMethods(target, properties, properties);
   return refTree;
 }
 

@@ -233,11 +233,11 @@ class CButton extends OG.createElement() {
     // return;
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       console.time("total");
-      this.books.push(data[0]);
+      this.books.push(...data);
       console.timeEnd("total");
 
       // console.time("transition");
-      this.useTransitionPreset("showBook");
+      // this.useTransitionPreset("showBook");
       // this.transition("showBook");
       // let t = this.transition("showBook", {
       //   opacity: "0",
@@ -332,14 +332,18 @@ class CButton extends OG.createElement() {
 
   }
   updateTransition2() {
-    this.transition("showBook", {
-      transform: "translateX(0px)"
-    }).step({
-      transform: "translateX(50px)"
-    })
+    console.log("updateTransition2");
+    
+    // this.transition("showBook", {
+    //   transform: "translateX(0px)"
+    // }).step({
+    //   transform: "translateX(50px)"
+    // })
   }
   updateData() {
-    this.update("transitionName", "newTransitionName");
+    console.log(arguments);
+    
+    // this.update("transitionName", "newTransitionName");
     //   this.update("elHTML", `
     //   <div>{count}</div>
     // `);
@@ -420,6 +424,7 @@ class CButton extends OG.createElement() {
       // return;
       console.time();
       this.books.push(...data);
+      this.useTransitionPreset("showBook");
       console.timeEnd();
       return;
       console.time("transition");

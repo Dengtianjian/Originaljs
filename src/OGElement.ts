@@ -32,7 +32,7 @@ export class OGElement extends HTMLElement implements IOGElement {
     this.connected();
     this.templateMount();
     this.collectSlots();
-    bindMethods(this.__og__.el, this, this);
+    // bindMethods(this.__og__.el, this, this);
     Reactive.observe(this.__og__.el, this);
     this.rendered();
   }
@@ -70,13 +70,13 @@ export class OGElement extends HTMLElement implements IOGElement {
         this.__og__.slots[slotName] = []
       };
 
-      slotElItem.addEventListener("slotchange", () => {
-        if (slotName === "default") {
-          this.__og__.slots[slotName].push(...(this.__og__.el.querySelector("slot:not(name)") as HTMLSlotElement).assignedNodes());
-        } else {
-          this.__og__.slots[slotName].push(...(this.__og__.el.querySelector(`slot[name=${slotName}]`) as HTMLSlotElement).assignedNodes());
-        }
-      })
+      // slotElItem.addEventListener("slotchange", () => {
+      //   if (slotName === "default") {
+      //     this.__og__.slots[slotName].push(...(this.__og__.el.querySelector("slot:not(name)") as HTMLSlotElement).assignedNodes());
+      //   } else {
+      //     this.__og__.slots[slotName].push(...(this.__og__.el.querySelector(`slot[name=${slotName}]`) as HTMLSlotElement).assignedNodes());
+      //   }
+      // })
     }
   }
   propChanged(name: string, newValue: string, oldValue: string): void { }

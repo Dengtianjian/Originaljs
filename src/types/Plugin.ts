@@ -7,12 +7,17 @@ export type TPluginItem = {
   [key: string]: any,
   start?(target: IEl | Node[], properties: IProperties, reactiveInstance: Reactive): void;
   collectElRef?(target: IEl | Node[], properties: IProperties): IRefTree;
+  collectElAttrRef?(attr: Attr, properties: IProperties): IRefTree;
   collectRef?(target: IEl | Node[], properties: IProperties): IRefTree,
   setProxy?(),
   dataUpdate?(target: any, propertyKey: string): void,
   setUpdateView?(target: IProperties, refTree: IRefTree, propertyKey: string | number, value: any): Boolean;
   deleteUpdateView?(target: IProperties, propertyKey: string | number): Boolean;
   beforeUpdateRef?(refTree: IRefTree, properties: IProperties, propertyKeyPaths: string): void;
+  beforeUpdateElRef?(el: IEl, properties: IProperties): void;
+  afterUpdateElRef?(el: IEl, properties: IProperties): void;
+  beforeUpdateAttrRef?(attr: Attr, properties: IProperties): void;
+  afterUpdateAttrRef?(attr: Attr, properties: IProperties): void;
   afterUpdateRef?(refTree: IRefTree, properties: IProperties, propertyKeyPaths: string): void;
   removeRefTree?(): void;
   removeTargetRefTree?(): void;

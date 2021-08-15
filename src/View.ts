@@ -1,11 +1,11 @@
 import { executeExpression } from "./Expression";
-import { parse, propertyNamesToPath, transformPropertyName, transformValueToString } from "./Parser";
+import { parse, propertyNamesToPath, transformValueToString } from "./Parser";
 import Plugin from "./Plugin";
 import { getPropertyData } from "./Property";
 import { TConditionElItem, TConditionItem } from "./types/ConditionElType";
 import { IProperties } from "./types/Properties";
 import { IRefTree, TAttr, TExpressionItem, TText } from "./types/Ref";
-import Utils, { defineOGProperty } from "./Utils";
+import Utils from "./Utils";
 
 export function deepUpdateRef(refTree: IRefTree, refProperty?: IProperties): void {
   for (const propertyName in refTree) {
@@ -35,18 +35,22 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
 
   if (els && els.length > 0) {
     els.forEach(el => {
+      Plugin.useAll("beforeUpdateElRef", [el, properties]);
       if (el.__og__.parsed) {
         el.textContent = transformValueToString(getPropertyData(propertyKeyPaths, properties));
       } else {
         el.textContent = parse(el.textContent, properties);
         el.__og__.parsed = true;
       }
+      Plugin.useAll("afterUpdateElRef", [el, properties]);
     })
   }
 
   if (attrs && attrs.length > 0) {
     for (const attr of attrs) {
+      Plugin.useAll("beforeUpdateAttrRef", [attr, properties]);
       attr.nodeValue = parse(attr.__og__.attrs.nodeRawValue, properties);
+      Plugin.useAll("afterUpdateAttrRef", [attr, properties]);
     }
   }
 

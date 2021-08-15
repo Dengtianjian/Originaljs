@@ -4,12 +4,19 @@ import { getPropertyData } from "../Property";
 import { IEl } from "../types/ElementType";
 import { IProperties } from "../types/Properties";
 import { IRefTree, TAttr, TText } from "../types/Ref";
-import Utils, { defineOGProperty } from "../Utils";
+import Utils from "../Utils";
 
 function useCollectElRefHook(target: IEl | Node[], properties: IProperties): IRefTree {
   let refTree: IRefTree = {};
   if (Array.isArray(target)) {
-    for (const nodeItem of target) {
+    for (const nodeItem of target as HTMLElement[]) {
+      if (nodeItem.attributes && nodeItem.attributes.length > 0) {
+        Array.from(nodeItem.attributes).forEach(attrItem => {
+          for (const item of Plugin.useAll<IRefTree[]>("collectElAttrRef", [attrItem, properties])) {
+            Utils.objectAssign(refTree, item);
+          };
+        })
+      }
       Utils.objectAssign(refTree, useCollectElRefHook(nodeItem as IEl, properties));
     }
     return refTree;
@@ -20,13 +27,19 @@ function useCollectElRefHook(target: IEl | Node[], properties: IProperties): IRe
   if (target.nodeType !== 3 && target.childNodes.length > 0) {
     Utils.objectAssign(refTree, useCollectElRefHook(Array.from(target.childNodes), properties));
   };
+  if (target.attributes && target.attributes.length > 0) {
+    Array.from(target.attributes).forEach(attrItem => {
+      for (const item of Plugin.useAll<IRefTree[]>("collectElAttrRef", [attrItem, properties])) {
+        Utils.objectAssign(refTree, item);
+      };
+    })
+  }
 
   return refTree;
 }
 
 export function collection(target: IEl | Node[], properties: IProperties): IRefTree {
   let elRefTree: IRefTree = {};
-  
   let refTree = useCollectElRefHook(target, properties);
 
   Utils.objectAssign(elRefTree, refTree);

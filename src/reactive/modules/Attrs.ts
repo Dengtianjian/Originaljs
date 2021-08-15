@@ -10,45 +10,46 @@ import Collect from "../Collect";
 
 const refItemRegExp: RegExp = new RegExp(Ref.Item, "g");
 
-export default {
-  collectElAttrRef(target: IEl, rootEl: IOGElement): IRefTree {
-    let attrRefTree: IRefTree = {};
-    defineOGProperty(target, {
-      attrCollected: true
+function collectElAttrRef(target: IEl, rootEl: IOGElement): IRefTree {
+  let attrRefTree: IRefTree = {};
+  defineOGProperty(target, {
+    attrCollected: true
+  });
+
+  if (!(target as HTMLElement).attributes || (target as HTMLElement).attributes.length === 0) return attrRefTree;
+
+  for (const attrItem of Array.from((target as HTMLElement).attributes) as TAttr[]) {
+    if (!Ref.Item.test(attrItem.nodeValue)) continue;
+    defineOGProperty(attrItem);
+
+    const refs: string[] = attrItem.nodeValue.match(refItemRegExp);
+
+    if (refs === null) return attrRefTree;
+    let variables: string[] = refs.filter(item => {
+      return Ref.variableItem.test(item);
     });
+    let expressions: string[] = refs.filter(item => {
+      return !Ref.variableItem.test(item);
+    });
+    Utils.objectAssign(attrRefTree, generateExpressionRefTree(expressions, attrItem, rootEl));
 
-    if (!(target as HTMLElement).attributes || (target as HTMLElement).attributes.length === 0) return attrRefTree;
+    for (const refItem of variables) {
+      const variabledName: RegExpMatchArray = refItem.match(Ref.ExtractVariableName);
+      if (variabledName === null) continue;
 
-    for (const attrItem of Array.from((target as HTMLElement).attributes) as TAttr[]) {
-      if (!Ref.Item.test(attrItem.nodeValue)) continue;
-      defineOGProperty(attrItem);
+      const propertyNames: string[] = transformPropertyName(variabledName[0]);
 
-      const refs: string[] = attrItem.nodeValue.match(refItemRegExp);
-
-      if (refs === null) return attrRefTree;
-      let variables: string[] = refs.filter(item => {
-        return Ref.variableItem.test(item);
-      });
-      let expressions: string[] = refs.filter(item => {
-        return !Ref.variableItem.test(item);
-      });
-      Utils.objectAssign(attrRefTree, generateExpressionRefTree(expressions, attrItem, rootEl));
-
-      for (const refItem of variables) {
-        const variabledName: RegExpMatchArray = refItem.match(Ref.ExtractVariableName);
-        if (variabledName === null) continue;
-
-        const propertyNames: string[] = transformPropertyName(variabledName[0]);
-
-        Utils.objectAssign(attrRefTree, Collect.generateElRefTree(propertyNames, attrItem));
-      }
-
-      attrItem.__og__.attrs={
-        nodeRawValue: attrItem.nodeValue
-      };
+      Utils.objectAssign(attrRefTree, Collect.generateElRefTree(propertyNames, attrItem));
     }
-    return attrRefTree;
-  },
+
+    attrItem.__og__.attrs = {
+      nodeRawValue: attrItem.nodeValue
+    };
+  }
+  return attrRefTree;
+}
+
+export default {
   collectElRef(target: IEl | Node[], properties: IProperties): IRefTree {
     let refTree: IRefTree = {};
 
@@ -61,7 +62,7 @@ export default {
 
     if (target?.__og__?.attrCollected) return refTree;
 
-    Utils.objectAssign(refTree, this.collectElAttrRef(target, properties));
+    Utils.objectAssign(refTree, collectElAttrRef(target, properties));
 
     return refTree;
   }
