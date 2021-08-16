@@ -31,19 +31,20 @@ export interface IRefTree {
   __attrs?: TAttr[],
   __fors?: TRefTreeFors[],
   __expressions?: TExpressionItem[],
-  __conditions?: TConditionItem[]
+  __conditions?: TConditionItem[],
+  __methods?: Array<any>
 }
 
 export type TAttr = Attr & {
   __og__?: TOGProperties & {
-    attrs:{
+    attrs: {
       nodeRawValue: string
     }
   }
 }
 
 export type TText = Text & {
-  __og__?:TOGProperties & {
-    parsed:boolean
+  __og__?: TOGProperties & {
+    parsed: boolean
   }
 }

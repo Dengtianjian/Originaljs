@@ -16,6 +16,8 @@ export default {
     if (target === null) return {};
     if (Methods.OnAttributeName.test(attrItem.name) === false || Methods.MethodNameAttibuteValue.test(attrItem.value) === false) return {};
     const methodNames: RegExpMatchArray = String(attrItem.value).match(new RegExp(Methods.MatchMethodName, "g"));
+    const eventType: RegExpMatchArray = attrItem.nodeName.match(Methods.MethodType);
+    if (eventType === null) return {};
 
     if (methodNames === null) return {};
     //* 清除已有方法
@@ -67,16 +69,18 @@ export default {
       const type: RegExpMatchArray = attrItem.name.match(new RegExp(Methods.MethodType, "g"));
       if (type === null) continue;
 
-      listener = (event) => {
-        properties[methodName[0]].apply(target, [...params, event, target]);
-      };
+      // listener = (event) => {
+      //   properties[methodName[0]].apply(target, [...params, event, target]);
+      // };
       if (refNames.length > 0) {
         deepSetObjectPropertyValue(refTree, refNames[0], {
           __methods: [
             {
               paramsRawString: paramsRawString[0],
               listener,
-              params
+              params,
+              target,
+              type: eventType[0]
             }
           ]
         });
@@ -88,5 +92,20 @@ export default {
 
     return refTree;
   },
-  // setUpdateView()
+  afterUpdateRef(refTree: IRefTree, properties: IProperties, propertyName: string): boolean {
+    if (refTree.__methods === undefined) return;
+    const methodRefs: Array<any> = refTree.__methods;
+
+    // console.trace(1);
+    methodRefs.forEach(item => {
+      let listener = () => {
+        console.log(methodRefs);
+      };
+      item['listener'] = listener;
+      (item.target as HTMLElement).removeEventListener(item.type, item.listener);
+      (item.target as HTMLElement).addEventListener(item.type, listener)
+    });
+
+    return true;
+  }
 } as TPluginItem
