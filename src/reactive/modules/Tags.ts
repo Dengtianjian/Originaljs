@@ -80,7 +80,7 @@ export default {
     return refTree;
   },
   setUpdateView(target, refTree, propertyKey, value): boolean {
-    let paths: string[] = target.__og__.propertiesPath.split(".");
+    let paths: string[] = transformPropertyName(target.__og__.propertiesPath);
     paths.push(String(propertyKey))
     if (typeof value === "object") {
       let parentPaths: string[] = [...paths];
@@ -91,13 +91,14 @@ export default {
     }
 
     refTree = Array.isArray(target) ? refTree : refTree[propertyKey];
+
     updateRef(refTree, target.__og__.properties, propertyNamesToPath(paths));
 
     return true;
   },
   deleteUpdateView(target: IEl, propertyKey): Boolean {
     // TODO 全局 target.__og__.propertiesPath改为数组。paths用数组存储
-    let paths: string[] = target.__og__.propertiesPath.split(".");
+    let paths: string[] = transformPropertyName(target.__og__.propertiesPath);
     let refTree: IRefTree = Utils.deepGetObjectProperty(target.__og__.refTree, paths);
 
     paths.push(String(propertyKey));

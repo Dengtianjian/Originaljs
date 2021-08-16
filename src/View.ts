@@ -1,5 +1,5 @@
 import { executeExpression } from "./Expression";
-import { parse, propertyNamesToPath, transformValueToString } from "./Parser";
+import { parse, propertyNamesToPath, transformPropertyName, transformValueToString } from "./Parser";
 import Plugin from "./Plugin";
 import { getPropertyData } from "./Property";
 import { TConditionElItem, TConditionItem } from "./types/ConditionElType";
@@ -119,7 +119,8 @@ export function setUpdateView(target: any, propertyKey: string, value: any, rece
     updateRef(refTree[propertyKey], target, propertyKey);
     return true;
   }
-  const propertyNames: string[] = target.__og__.propertiesPath.split(".");
+
+  const propertyNames: string[] = transformPropertyName(target.__og__.propertiesPath);
   const refTreePart: IRefTree = Utils.deepGetObjectProperty(refTree, propertyNames);
 
   Plugin.useAll("setUpdateView", [target, refTreePart, propertyKey, value]);

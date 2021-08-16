@@ -1,5 +1,5 @@
 import { setProxy } from "../../OGProxy";
-import { propertyNamesToPath, transformPropertyName } from "../../Parser";
+import { propertyNamesToPath, transformPropertyName, transformValueToString } from "../../Parser";
 import { getPropertyData } from "../../Property";
 import { Ref } from "../../Rules";
 import { IEl } from "../../types/ElementType";
@@ -126,7 +126,7 @@ function collectElRef(target: HTMLElement | Node[], properties: IProperties): IR
 function setUpdateView(properties: IProperties, refTree: IRefTree, propertyKey: string, value: any): boolean {
   if (Array.isArray(properties) && propertyKey === "length" || refTree.__fors === undefined) return true;
   const fors: TRefTreeFors[] = refTree.__fors;
-  const propertyNames: string[] = properties.__og__.propertiesPath.split(".");
+  const propertyNames: string[] = transformPropertyName(properties.__og__.propertiesPath);
   propertyNames.push(propertyKey);
   const propertyNameSting: string = propertyNamesToPath(propertyNames);
   const partRefTree: IRefTree = {};
