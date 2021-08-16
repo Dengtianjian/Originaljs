@@ -136,11 +136,10 @@
 </style>
 <o-for bookitem in="books">
   <div>
-    <div class="books" onclick="updateData('{ bookitem.base_info.id } + 2',2)" >
+    <div class="books" onclick="updateData('{ bookitem.base_info.summary } + 2',2)" >
       <img class="poster" src="{bookitem.base_info.cover_img}" />
-      <slot name="books1"></slot>
       <div class="info" data-content="{bookitem.base_info.title}">
-        <div class="title">{bookitem.base_info.title +" | "+ bookitem.base_info.title}</div>
+        <div class="title">{bookitem.base_info.title +" | "+ bookitem.base_info.id}</div>
         <div class="desc">{ bookitem.base_info.summary }</div>
         <div class="author">
           <div class="author-info"><object><a href="/user/1838039171075352" target="_blank" rel="" st:name="author"

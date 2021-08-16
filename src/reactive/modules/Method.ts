@@ -7,12 +7,8 @@ import { Methods, Ref } from "../../Rules";
 import { TPluginItem } from "../../types/Plugin";
 import { IProperties } from "../../types/Properties";
 import { IRefTree } from "../../types/Ref";
-import Utils, { generateObjectTree } from "../../Utils";
+import Utils, { deepSetObjectPropertyValue, generateObjectTree } from "../../Utils";
 import { getRefs } from "../Collect";
-
-function deepSetProperty(obj, property) {
-
-}
 
 export default {
   collectElAttrRef(attrItem: Attr, properties: IProperties): IRefTree {
@@ -26,9 +22,10 @@ export default {
     target[attrItem.name] = null;
 
     const refTree: IRefTree = {};
-    
+    const refNames: string[][] = [];
+
     for (const methodNameItem of methodNames) {
-      let params: Array<string | HTMLElement | Element | OGElement> = [1];
+      let params: Array<string | HTMLElement | Element | OGElement> = [];
       let listener = null;
 
       const paramsRawString: RegExpMatchArray = methodNameItem.match(Methods.MethodParams);
@@ -40,22 +37,16 @@ export default {
             if (/^['"].+['"]$/.test(item)) {
               item = rawStrings[index] = item.replace(/^['"](.+)['"]$/, "$1");
             }
-            
+
             if (Ref.Item.test(item)) {
               let refs: string[] = getRefs(item);
 
               refs.forEach(refItem => {
                 rawStrings[index] = executeExpression(item, properties);
+                let names: string[] = transformPropertyName(refItem);
+                refNames.push(names);
 
-                Utils.objectAssign(refTree, generateObjectTree(transformPropertyName(refItem), {
-                  __methods: [
-                    {
-                      paramsRawString: paramsRawString[0],
-                      listener,
-                      params
-                    }
-                  ]
-                }))
+                Utils.objectAssign(refTree, generateObjectTree(names, {}));
               })
             }
 
@@ -79,6 +70,17 @@ export default {
       listener = (event) => {
         properties[methodName[0]].apply(target, [...params, event, target]);
       };
+      if (refNames.length > 0) {
+        deepSetObjectPropertyValue(refTree, refNames[0], {
+          __methods: [
+            {
+              paramsRawString: paramsRawString[0],
+              listener,
+              params
+            }
+          ]
+        });
+      }
 
       target.addEventListener(type[0], listener);
     }
@@ -86,4 +88,5 @@ export default {
 
     return refTree;
   },
+  // setUpdateView()
 } as TPluginItem

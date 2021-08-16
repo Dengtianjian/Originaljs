@@ -350,7 +350,7 @@ class CButton extends OG.createElement() {
     this.position.y = event.y;
   }
   updateData = (cover, number, event, target) => {
-    console.log(cover,number);
+    console.log(cover, number);
 
     // this.update("transitionName", "newTransitionName");
     //   this.update("elHTML", `
@@ -383,12 +383,15 @@ class CButton extends OG.createElement() {
   updateMultiNumbers() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);
   }
-  updateArr(event) {
+  updateArr = (event) => {
     // fetch("./elHTML.html").then(res => res.text()).then(res => {
     //   this.update("elHTML", res);
     // });
-    // this.update("number", Date.now());
-    // return;
+    // this.update("books[0].base_info.summary", Date.now());
+    this.books[0].base_info.summary="aaa";
+    // console.log(this.books[0].base_info.id);
+    
+    return;
     // this.update("show", this.show === "none" ? 'flex' : 'none');
     // console.log(this.books);
 
