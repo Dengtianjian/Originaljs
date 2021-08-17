@@ -67,6 +67,8 @@ export default {
 
       const paramsRawString: RegExpMatchArray = methodNameItem.match(Methods.MethodParams);
 
+      // TODO：全是静态的参数就不用记录__methods属性
+      // TODO：抽取代码
       if (paramsRawString) {
         let rawStrings: string[] | number[] = paramsRawString[0].split(",");
         for (let index = 0; index < rawStrings.length; index++) {
@@ -148,7 +150,16 @@ export default {
             let refs: string[] = getRefs(item);
 
             refs.forEach(refItem => {
-              rawStrings[index] = executeExpression(item, properties);
+              if (Ref.ExpressionItem.test(item)) {
+                rawStrings[index] = executeExpression(item, properties);
+              } else {
+                let data = getPropertyData(refItem, properties);
+                if (data.__og__) {
+                  rawStrings[index] = Utils.deepCopy(data);
+                } else {
+                  rawStrings[index] = data;
+                }
+              }
             });
           }
 

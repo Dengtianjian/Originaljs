@@ -349,8 +349,8 @@ class CButton extends OG.createElement() {
     this.position.x = event.x;
     this.position.y = event.y;
   }
-  updateData = (cover, number, event, target) => {
-    console.log(cover, number);
+  updateData = (book) => {
+    console.log(book.buy_count);
 
     // this.update("transitionName", "newTransitionName");
     //   this.update("elHTML", `
