@@ -18,7 +18,6 @@ export function deepUpdateRef(refTree: IRefTree, refProperty?: IProperties): voi
       path = path ? `${path}.${propertyName}` : propertyName;
     }
 
-    console.trace(1,path,propertyName);
     updateRef(refTree[propertyName], refProperty.__og__.properties, path);
   }
   return;
@@ -112,11 +111,6 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
 }
 
 export function setUpdateView(target: any, propertyKey: string, value: any, receiver: any): boolean {
-  // console.log(Array.isArray(target), propertyKey);
-
-  // if (Array.isArray(target) && propertyKey === "length") return true;
-  console.log(1);
-  
   const refTree: IRefTree = target.__og__.refTree;
   Plugin.useAll("dataUpdate", [target, propertyKey]);
 

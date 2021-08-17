@@ -10,6 +10,41 @@ import { IRefTree } from "../../types/Ref";
 import Utils, { deepSetObjectPropertyValue, defineOGProperty, generateObjectTree } from "../../Utils";
 import { getRefs } from "../Collect";
 
+function parseParamsString(paramsString: string, properties: IProperties): Array<any> {
+  let params: Array<string | HTMLElement | Element | OGElement> = [];
+  const paramsRawString: RegExpMatchArray = paramsString.match(Methods.MethodParams);
+
+  if (paramsRawString) {
+    let rawStrings: string[] | number[] = paramsRawString[0].split(",");
+    for (let index = 0; index < rawStrings.length; index++) {
+      let item = rawStrings[index];
+      if (isNaN(Number(item))) {
+        if (/^['"].+['"]$/.test(item)) {
+          item = rawStrings[index] = item.replace(/^['"](.+)['"]$/, "$1");
+        }
+
+        if (Ref.Item.test(item)) {
+          let refs: string[] = getRefs(item);
+
+          refs.forEach(refItem => {
+            rawStrings[index] = executeExpression(item, properties);
+            let names: string[] = transformPropertyName(refItem);
+            refNames.push(names);
+
+            Utils.objectAssign(refTree, generateObjectTree(names, {}));
+          })
+        }
+
+      } else {
+        rawStrings[index] = Number(item);
+      }
+    }
+    params = rawStrings;
+  }
+
+  return params;
+}
+
 export default {
   collectElAttrRef(attrItem: Attr, properties: IProperties): IRefTree {
     let target = attrItem.ownerElement;
@@ -31,6 +66,7 @@ export default {
       let listener = null;
 
       const paramsRawString: RegExpMatchArray = methodNameItem.match(Methods.MethodParams);
+
       if (paramsRawString) {
         let rawStrings: string[] | number[] = paramsRawString[0].split(",");
         for (let index = 0; index < rawStrings.length; index++) {
@@ -80,7 +116,8 @@ export default {
               listener,
               params,
               target,
-              type: eventType[0]
+              type: eventType[0],
+              methodName: methodName[0]
             }
           ]
         });
@@ -96,17 +133,39 @@ export default {
     if (refTree.__methods === undefined) return;
     const methodRefs: Array<any> = refTree.__methods;
 
-    // console.trace(1);
-    methodRefs.forEach(item => {
-      let listener = () => {
-        console.log(methodRefs);
+    for (const methodItem of methodRefs) {
+      if (properties[methodItem.methodName] === undefined || typeof properties[methodItem.methodName] !== "function") continue;
+
+      let rawStrings: string[] | number[] = methodItem.paramsRawString.split(",");
+      for (let index = 0; index < rawStrings.length; index++) {
+        let item = rawStrings[index];
+        if (isNaN(Number(item))) {
+          if (/^['"].+['"]$/.test(item)) {
+            item = rawStrings[index] = item.replace(/^['"](.+)['"]$/, "$1");
+          }
+
+          if (Ref.Item.test(item)) {
+            let refs: string[] = getRefs(item);
+
+            refs.forEach(refItem => {
+              rawStrings[index] = executeExpression(item, properties);
+            });
+          }
+
+        } else {
+          rawStrings[index] = Number(item);
+        }
+      }
+      methodItem.params = rawStrings;
+
+      let listener = function () {
+        properties[methodItem.methodName].apply(methodItem.target, methodItem.params);
       };
 
-
-      (item.target as HTMLElement).removeEventListener(item.type, item.listener);
-      item['listener'] = listener;
-      (item.target as HTMLElement).addEventListener(item.type, listener)
-    });
+      (methodItem.target as HTMLElement).removeEventListener(methodItem.type, methodItem.listener);
+      methodItem['listener'] = listener;
+      (methodItem.target as HTMLElement).addEventListener(methodItem.type, listener)
+    }
 
     return true;
   }
