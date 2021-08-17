@@ -389,7 +389,7 @@ class CButton extends OG.createElement() {
     // });
     // this.update("books[0].base_info.summary", Date.now());
     this.books[0].base_info.summary="aaa";
-    // console.log(this.books[0].base_info.id);
+    console.log(this.books[0].base_info.id);
     
     return;
     // this.update("show", this.show === "none" ? 'flex' : 'none');

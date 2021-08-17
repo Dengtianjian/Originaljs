@@ -7,7 +7,7 @@ import { Methods, Ref } from "../../Rules";
 import { TPluginItem } from "../../types/Plugin";
 import { IProperties } from "../../types/Properties";
 import { IRefTree } from "../../types/Ref";
-import Utils, { deepSetObjectPropertyValue, generateObjectTree } from "../../Utils";
+import Utils, { deepSetObjectPropertyValue, defineOGProperty, generateObjectTree } from "../../Utils";
 import { getRefs } from "../Collect";
 
 export default {
@@ -69,9 +69,9 @@ export default {
       const type: RegExpMatchArray = attrItem.name.match(new RegExp(Methods.MethodType, "g"));
       if (type === null) continue;
 
-      // listener = (event) => {
-      //   properties[methodName[0]].apply(target, [...params, event, target]);
-      // };
+      listener = (event) => {
+        properties[methodName[0]].apply(target, [...params, event, target]);
+      };
       if (refNames.length > 0) {
         deepSetObjectPropertyValue(refTree, refNames[0], {
           __methods: [
@@ -101,8 +101,10 @@ export default {
       let listener = () => {
         console.log(methodRefs);
       };
-      item['listener'] = listener;
+
+
       (item.target as HTMLElement).removeEventListener(item.type, item.listener);
+      item['listener'] = listener;
       (item.target as HTMLElement).addEventListener(item.type, listener)
     });
 
