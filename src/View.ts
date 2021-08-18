@@ -1,4 +1,5 @@
 import { executeExpression } from "./Expression";
+import { OGElement } from "./OGElement";
 import { parse, propertyNamesToPath, transformPropertyName, transformValueToString } from "./Parser";
 import Plugin from "./Plugin";
 import { getPropertyData } from "./Property";
@@ -50,12 +51,15 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
     for (const attr of attrs) {
       Plugin.useAll("beforeUpdateAttrRef", [attr, properties]);
       //* 判断是不是OG定义的元素，是的话再看是不是props
-      if (attr.__og__ && attr.ownerElement.__og__) {
-        if (attr.ownerElement.__og__.props.includes(attr.nodeName)) {
-          attr.nodeValue = "props data";
+      if (attr.__og__ && (attr.ownerElement as OGElement).__og__) {
+        let attrOwnerElement: OGElement = attr.ownerElement as OGElement;
+        if (attrOwnerElement.__og__.props.includes(attr.nodeName)) {
           let name = getRefs(attr.__og__.attrs.nodeRawValue)[0];
           let newValue = getPropertyData(name, properties);
-          attr.ownerElement.update(attr.nodeName, Utils.deepCopy(newValue));
+
+          if (typeof newValue !== attr.nodeValue) attr.nodeValue = typeof newValue;
+
+          attrOwnerElement.update(attr.nodeName, Utils.deepCopy(newValue));
         }
       } else {
         attr.nodeValue = parse(attr.__og__.attrs.nodeRawValue, properties);
