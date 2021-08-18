@@ -50,6 +50,7 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
   if (attrs && attrs.length > 0) {
     for (const attr of attrs) {
       Plugin.useAll("beforeUpdateAttrRef", [attr, properties]);
+      // TODO：支持表达式
       //* 判断是不是OG定义的元素，是的话再看是不是props
       if (attr.__og__ && (attr.ownerElement as OGElement).__og__) {
         let attrOwnerElement: OGElement = attr.ownerElement as OGElement;
