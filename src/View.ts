@@ -50,7 +50,6 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
   if (attrs && attrs.length > 0) {
     for (const attr of attrs) {
       Plugin.useAll("beforeUpdateAttrRef", [attr, properties]);
-      // TODO：支持表达式
       //* 判断是不是OG定义的元素，是的话再看是不是props
       if (attr.ownerElement instanceof OGElement) {
         let attrOwnerElement: OGElement = attr.ownerElement;
@@ -62,6 +61,8 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
           if (typeof newValue !== attr.nodeValue) attr.nodeValue = typeof newValue;
 
           attrOwnerElement.update(attr.nodeName, Utils.deepCopy(newValue));
+        } else {
+          attr.nodeValue = parse(attr.__og__.attrs.nodeRawValue, properties);
         }
       } else {
         attr.nodeValue = parse(attr.__og__.attrs.nodeRawValue, properties);
@@ -84,9 +85,11 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
       if (expressionItem.target instanceof Attr) {
         if (expressionItem.target.ownerElement instanceof OGElement) {
           let atrrOwnerElement: OGElement = expressionItem.target.ownerElement;
-          expressionItem.target.nodeValue = "expression";
           if (atrrOwnerElement.__og__.props.includes(expressionItem.target.nodeName)) {
+            expressionItem.target.nodeValue = "expression";
             atrrOwnerElement.update(expressionItem.target.nodeName, functionResult);
+          } else {
+            expressionItem.target.nodeValue = functionResult;
           }
         } else {
           expressionItem.target.nodeValue = functionResult;
