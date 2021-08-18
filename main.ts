@@ -389,6 +389,10 @@ class CButton extends OG.createElement() {
     //   this.update("elHTML", res);
     // });
     // this.update("books[0].base_info.summary", Date.now());
+    setInterval(() => {
+      this.numbers.a = Date.now();
+    }, 1000);
+    return;
     this.books[0].base_info.summary = "" + Date.now() + "";
     console.log(this.books[0].base_info.id);
 
@@ -505,13 +509,20 @@ class CTable extends OG.createElement(["data"]) {
   data = {
     a: 2
   };
-  propChanged(name, value) {
-    console.log(value);
+  propertyChanged(name, value) {
 
-    this.update(name, value);
   }
   render() {
     return tableTemplate;
+  }
+  updateData = () => {
+    this.data.a = 888;
+    // setInterval(() => {
+    //   console.time("interval");
+    //   console.time();
+    //   this.data.a = Date.now();
+    //   console.timeEnd("interval");
+    // }, 1000);
   }
 }
 

@@ -23,7 +23,7 @@ export interface IOGElement extends HTMLElement {
   rendered(): void;
   disconnected(): void;
   adopted(): void;
-  propChanged(name: string, newValue: string, oldValue: string): void;
+  propertyChanged(name: string, newValue: string, oldValue: string): void;
   render(): null | Node | NodeList | string;
   update(propertyName: string, newValue: any): void;
   setStatic(propertyName: string, isDeep: boolean): void;

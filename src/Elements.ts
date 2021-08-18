@@ -4,7 +4,7 @@ export function createElement(props: string[] = []) {
   return class extends OGElement {
     static observedAttributes: string[] = props;
     constructor() {
-      super();
+      super(props);
     }
   }
 }

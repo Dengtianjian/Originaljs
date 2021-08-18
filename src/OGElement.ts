@@ -7,32 +7,31 @@ import Transition from "./transition";
 import { IEl, IOGElement } from "./types/ElementType";
 import { IRefTree } from "./types/Ref";
 import { ICSSStyleDeclaration } from "./types/TransitionType";
-import { deepSetObjectPropertyValue } from "./Utils";
+import Utils, { deepSetObjectPropertyValue } from "./Utils";
 import { removeTargetRefTree, setUpdateView, updateRef } from "./View";
 
 export class OGElement extends HTMLElement implements IOGElement {
   __og__: {
     reactive: Reactive; transitions: Record<string, Transition>; el: IEl; slots: Record<string, Node[]>;
-    refTree: IRefTree;
+    refTree: IRefTree; props: string[]
   } = {
       reactive: null,
       transitions: {},
       el: null,
       slots: {},
-      refTree: {}
+      refTree: {},
+      props: []
     };
-  // transitions: Record<string, Transition> = {};
-  constructor() {
+  constructor(props: string[]) {
     super();
+    this.__og__.props = props;
     // @ts-ignore
-    // this.el = this.attachShadow({ mode: "closed" });
     this.__og__.el = this.attachShadow({ mode: "closed" });
   }
   private connectedCallback(): void {
     this.connected();
     this.templateMount();
     this.collectSlots();
-    // bindMethods(this.__og__.el, this, this);
     Reactive.observe(this.__og__.el, this);
     this.rendered();
   }
@@ -43,7 +42,7 @@ export class OGElement extends HTMLElement implements IOGElement {
     this.adopted();
   }
   private attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-    this.propChanged(name, newValue, oldValue);
+    this.propertyChanged(name, newValue, oldValue);
   }
   private templateMount(): void {
     let template: string | Node | Node[] | NodeList = this.render();
@@ -79,7 +78,7 @@ export class OGElement extends HTMLElement implements IOGElement {
       // })
     }
   }
-  propChanged(name: string, newValue: string, oldValue: string): void { }
+  propertyChanged(name: string, newValue: string, oldValue: string): void { }
   connected(): void { };
   render(): null | Node | NodeList | string { return null; }
   rendered(): void { };
@@ -88,8 +87,9 @@ export class OGElement extends HTMLElement implements IOGElement {
   update<T>(propertyName: string, newValue: T | any): void {
     let propertyNames: string[] = transformPropertyName(propertyName);
     let oldValue: any = getPropertyData(propertyNames, this);
+    let oldValueCopy: any = Utils.deepCopy(oldValue);
 
-    if (typeof newValue === "object" && newValue !== null && newValue !== undefined) {
+    if (typeof newValue === "object" && newValue !== null && newValue !== undefined && typeof oldValue === "object") {
       let compartResult: boolean = compareObject(newValue, oldValue);
       compareMerge(newValue, oldValue);
 
@@ -107,6 +107,7 @@ export class OGElement extends HTMLElement implements IOGElement {
 
       setUpdateView(target, propertyName, newValue, this);
     }
+    this.propertyChanged(propertyName, newValue, oldValueCopy);
   };
   transition(transitionName: string, initStyles?: ICSSStyleDeclaration): Transition | undefined {
     let transition = this.__og__.transitions[transitionName];

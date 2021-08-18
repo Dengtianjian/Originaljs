@@ -4,7 +4,7 @@ import { IProperties } from "./types/Properties";
 import { TAttr, TText } from "./types/Ref";
 
 export function deepCopy(obj): object {
-  if (typeof obj !== 'object') return;
+  if (typeof obj !== 'object') return obj;
 
   var newObj = obj instanceof Array ? [] : {};
   for (var key in obj) {

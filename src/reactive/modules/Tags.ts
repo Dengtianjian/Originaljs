@@ -90,9 +90,14 @@ export default {
       deepUpdateRef(refTree[propertyKey], target[propertyKey]);
     }
 
-    refTree = Array.isArray(target) ? refTree : refTree[propertyKey];
+    //* 更新父级对象的视图
+    updateRef(refTree, target.__og__.properties, propertyNamesToPath(paths.slice(0, paths.length - 1)));
 
-    updateRef(refTree, target.__og__.properties, propertyNamesToPath(paths));
+    //* 再更新当前属性的试图
+    refTree = Array.isArray(target) ? refTree : refTree[propertyKey];
+    if (refTree) {
+      updateRef(refTree, target.__og__.properties, propertyNamesToPath(paths));
+    }
 
     return true;
   },

@@ -2,6 +2,7 @@ import { executeExpression } from "./Expression";
 import { parse, propertyNamesToPath, transformPropertyName, transformValueToString } from "./Parser";
 import Plugin from "./Plugin";
 import { getPropertyData } from "./Property";
+import { getRefs } from "./reactive/Collect";
 import { TConditionElItem, TConditionItem } from "./types/ConditionElType";
 import { IProperties } from "./types/Properties";
 import { IRefTree, TAttr, TExpressionItem, TText } from "./types/Ref";
@@ -24,7 +25,6 @@ export function deepUpdateRef(refTree: IRefTree, refProperty?: IProperties): voi
 }
 
 export function updateRef(refTree: IRefTree, properties: IProperties, propertyKeyPaths: string): void {
-
   if (!refTree) return;
   const els: TText[] = refTree.__els;
   const attrs: TAttr[] = refTree.__attrs;
@@ -37,7 +37,7 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
     els.forEach(el => {
       Plugin.useAll("beforeUpdateElRef", [el, properties]);
       if (el.__og__.parsed) {
-        el.textContent = transformValueToString(getPropertyData(propertyKeyPaths, properties));
+        el.textContent = transformValueToString(Utils.deepCopy(getPropertyData(propertyKeyPaths, properties)));
       } else {
         el.textContent = parse(el.textContent, properties);
         el.__og__.parsed = true;
@@ -49,7 +49,17 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
   if (attrs && attrs.length > 0) {
     for (const attr of attrs) {
       Plugin.useAll("beforeUpdateAttrRef", [attr, properties]);
-      attr.nodeValue = parse(attr.__og__.attrs.nodeRawValue, properties);
+      //* 判断是不是OG定义的元素，是的话再看是不是props
+      if (attr.__og__ && attr.ownerElement.__og__) {
+        if (attr.ownerElement.__og__.props.includes(attr.nodeName)) {
+          attr.nodeValue = "props data";
+          let name = getRefs(attr.__og__.attrs.nodeRawValue)[0];
+          let newValue = getPropertyData(name, properties);
+          attr.ownerElement.update(attr.nodeName, Utils.deepCopy(newValue));
+        }
+      } else {
+        attr.nodeValue = parse(attr.__og__.attrs.nodeRawValue, properties);
+      }
       Plugin.useAll("afterUpdateAttrRef", [attr, properties]);
     }
   }
