@@ -198,6 +198,7 @@ template = `
 `;
 
 template = await fetch("./cbutton.html").then(res => res.text());
+let tableTemplate = await fetch("./ctable.html").then(res => res.text());
 
 // addTransition("showBook", {
 //   opacity: "0",
@@ -233,7 +234,7 @@ class CButton extends OG.createElement() {
     // return;
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       console.time("total");
-      this.books.push(data[0]);
+      this.books.push(...data);
       // this.books.push(data[1]);
       console.timeEnd("total");
 
@@ -500,4 +501,19 @@ class CButton extends OG.createElement() {
   }
 }
 
+class CTable extends OG.createElement(["data"]) {
+  data = {
+    a: 2
+  };
+  propChanged(name, value) {
+    console.log(value);
+
+    this.update(name, value);
+  }
+  render() {
+    return tableTemplate;
+  }
+}
+
+defineElement("c-table", CTable);
 defineElement("c-button", CButton);
