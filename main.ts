@@ -507,7 +507,7 @@ class CButton extends OG.createElement() {
 
 class CTable extends OG.createElement(["data"]) {
   data = {
-    a: 2
+    a: 6
   };
   propertyChanged(name, value) {
 
