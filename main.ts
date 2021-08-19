@@ -265,7 +265,7 @@ class CButton extends OG.createElement() {
     return template;
   }
   rendered() {
-    console.timeEnd("total");
+    console.log("rendered");
   }
   elValue = `<div>{numbers}</div>`;
   elHTML = `<div>{number}</div>`;
@@ -383,6 +383,9 @@ class CButton extends OG.createElement() {
   }
   updateMultiNumbers() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);
+  }
+  updateTemplate = () => {
+    this.rerender(this.elValue);
   }
   updateArr = (event) => {
     // fetch("./elHTML.html").then(res => res.text()).then(res => {

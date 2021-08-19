@@ -1,5 +1,4 @@
 import { compareMerge, compareObject } from "./Diff";
-import { bindMethods } from "./Method";
 import { parseDom, propertyNamesToPath, transformPropertyName } from "./Parser";
 import { getPropertyData } from "./Property";
 import { Reactive } from "./reactive";
@@ -44,9 +43,7 @@ export class OGElement extends HTMLElement implements IOGElement {
   private attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     this.propertyChanged(name, newValue, oldValue);
   }
-  private templateMount(): void {
-    let template: string | Node | Node[] | NodeList = this.render();
-
+  private templateMount(template: string | Node | Node[] | NodeList = this.render()): void {
     if (template === null) return;
 
     if (typeof template === "string") {
@@ -84,6 +81,13 @@ export class OGElement extends HTMLElement implements IOGElement {
   rendered(): void { };
   adopted(): void { }
   disconnected(): void { };
+  rerender(template: string | Node | NodeList): void {
+    this.__og__.el.innerHTML = "";
+    this.templateMount(template);
+    this.collectSlots();
+    Reactive.observe(this.__og__.el, this);
+    this.rendered();
+  };
   update<T>(propertyName: string, newValue: T | any): void {
     let propertyNames: string[] = transformPropertyName(propertyName);
     let oldValue: any = getPropertyData(propertyNames, this);
@@ -93,7 +97,7 @@ export class OGElement extends HTMLElement implements IOGElement {
       let compartResult: boolean = compareObject(newValue, oldValue);
       compareMerge(newValue, oldValue);
 
-      if (compartResult === false&&oldValue.__og__) {
+      if (compartResult === false && oldValue.__og__) {
         updateRef(getPropertyData(propertyNames, oldValue.__og__.refTree), this, propertyNamesToPath(propertyNames));
       }
 
