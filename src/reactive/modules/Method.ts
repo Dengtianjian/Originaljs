@@ -67,7 +67,6 @@ export default {
 
       const paramsRawString: RegExpMatchArray = methodNameItem.match(Methods.MethodParams);
 
-      // TODO：全是静态的参数就不用记录__methods属性
       // TODO：抽取代码
       if (paramsRawString) {
         let rawStrings: string[] | number[] = paramsRawString[0].split(",");

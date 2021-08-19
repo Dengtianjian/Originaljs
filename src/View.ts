@@ -71,7 +71,6 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
     }
   }
 
-  // TODO：props传参支持表达式
   if (expressions && expressions.length > 0) {
     for (const expressionItem of expressions) {
       let expressionProperties: IProperties[] = [];
@@ -86,7 +85,7 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
         if (expressionItem.target.ownerElement instanceof OGElement) {
           let atrrOwnerElement: OGElement = expressionItem.target.ownerElement;
           if (atrrOwnerElement.__og__.props.includes(expressionItem.target.nodeName)) {
-            expressionItem.target.nodeValue = "expression";
+            expressionItem.target.nodeValue = typeof functionResult;
             atrrOwnerElement.update(expressionItem.target.nodeName, functionResult);
           } else {
             expressionItem.target.nodeValue = functionResult;

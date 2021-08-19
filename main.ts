@@ -505,17 +505,27 @@ class CButton extends OG.createElement() {
   }
 }
 
+function patchZero(rawString: string | number): string | number {
+  return rawString < 10 ? `0${rawString}` : rawString;
+}
 class CTable extends OG.createElement(["data"]) {
   data = {
     a: 6
   };
-  propertyChanged(name, value) {
-
+  nowDate = "";
+  propertyChanged = (name, value) => {
+    if (name === "data") {
+      this.update("nowDate", this.formatTime(value.a));
+    }
+  }
+  formatTime(timestamp): string {
+    const d = new Date(timestamp);
+    return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 ${patchZero(d.getHours())}:${patchZero(d.getMinutes())}:${patchZero(d.getSeconds())}`;
   }
   render() {
     return tableTemplate;
   }
-  updateData = () => {
+  updateData = (...res) => {
     this.data.a = 888;
     // setInterval(() => {
     //   console.time("interval");

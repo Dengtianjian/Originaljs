@@ -93,7 +93,7 @@ export class OGElement extends HTMLElement implements IOGElement {
       let compartResult: boolean = compareObject(newValue, oldValue);
       compareMerge(newValue, oldValue);
 
-      if (compartResult === false) {
+      if (compartResult === false&&oldValue.__og__) {
         updateRef(getPropertyData(propertyNames, oldValue.__og__.refTree), this, propertyNamesToPath(propertyNames));
       }
 
