@@ -1,5 +1,7 @@
 import OG, { defineElement } from "./src";
+import { revoke } from "./src/OGProxy";
 import Transition, { addTransition } from "./src/transition";
+import Utils from "./src/Utils";
 
 let template: string = `
 <div data-number="{number} {obj.nums}">
@@ -231,7 +233,7 @@ class CButton extends OG.createElement() {
     // setInterval(() =>newP {
     //   this.update("number", this.formatTime());
     // }, 1000);
-    // return;
+    return;
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       console.time("total");
       this.books.push(...data);
@@ -265,6 +267,7 @@ class CButton extends OG.createElement() {
     return template;
   }
   rendered() {
+    console.timeEnd("total");
     console.log("rendered");
   }
   elValue = `<div>{numbers}</div>`;
@@ -312,6 +315,17 @@ class CButton extends OG.createElement() {
     profile: {
       address: "Guangzhou",
       phone: "1328888999"
+    },
+    showMe() {
+      console.log(this);
+    },
+    deepObj: {
+      a: {
+        b: {
+          c: [0, 2, 3]
+        },
+        e: 666
+      }
     }
   };
   count = 1;
@@ -385,7 +399,7 @@ class CButton extends OG.createElement() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);
   }
   updateTemplate = () => {
-    this.rerender(this.elValue);
+    this.rerender(this.elValue).then(res => console.log(res));
   }
   updateArr = (event) => {
     // fetch("./elHTML.html").then(res => res.text()).then(res => {

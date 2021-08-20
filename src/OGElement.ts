@@ -1,4 +1,5 @@
 import { compareMerge, compareObject } from "./Diff";
+import { revokeByRefTree } from "./OGProxy";
 import { parseDom, propertyNamesToPath, transformPropertyName } from "./Parser";
 import { getPropertyData } from "./Property";
 import { Reactive } from "./reactive";
@@ -81,12 +82,14 @@ export class OGElement extends HTMLElement implements IOGElement {
   rendered(): void { };
   adopted(): void { }
   disconnected(): void { };
-  rerender(template: string | Node | NodeList): void {
+  rerender(template: string | Node | NodeList): Promise<boolean> {
+    console.log(revokeByRefTree(this.__og__.refTree, this));
     this.__og__.el.innerHTML = "";
     this.templateMount(template);
     this.collectSlots();
     Reactive.observe(this.__og__.el, this);
     this.rendered();
+    return Promise.resolve(true);
   };
   update<T>(propertyName: string, newValue: T | any): void {
     let propertyNames: string[] = transformPropertyName(propertyName);

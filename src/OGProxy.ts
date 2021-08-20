@@ -1,5 +1,6 @@
 import { propertyNamesToPath } from "./Parser";
 import Plugin from "./Plugin";
+import { getPropertyData } from "./Property";
 import { Reactive } from "./reactive";
 import { IProperties } from "./types/Properties";
 import { IRefTree } from "./types/Ref";
@@ -38,6 +39,22 @@ export function setProxy(refTree: IRefTree, properties: IProperties, reactiveIns
 
       paths.pop();
     }
+  }
+}
 
+// TODO 深层对象，多层代理问题，上一层不应该是代理对象
+export function revokeByRefTree(refTree: IRefTree, properties: IProperties): void {
+  for (const branchName in refTree) {
+    if (refTree.hasOwnProperty(branchName)) {
+      const branch: IRefTree = refTree[branchName];
+      if (/__\w+/.test(Object.keys(branch).join(" "))) {
+        properties[branchName] = Utils.deepCopy(properties[branchName]);
+        console.log( properties[branchName]);
+      } else {
+        console.log(branch);
+
+        revokeByRefTree(branch, properties[branchName]);
+      }
+    }
   }
 }
