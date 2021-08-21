@@ -61,7 +61,8 @@ export function generateElRefTree(propertyNames: string[], refEl: TAttr | TText)
   }
 
   tree = Utils.generateObjectTree(propertyNames, {
-    [branchName]: [refEl]
+    [branchName]: [refEl],
+    __has: true
   });
 
   return tree;

@@ -55,7 +55,8 @@ export default {
         Utils.objectAssign(refTree, Utils.generateObjectTree(transformPropertyName(name), {
           __conditions: {
             [conditionKey]: conditions[conditionKey]
-          }
+          },
+          __has: true
         }));
       }
     });

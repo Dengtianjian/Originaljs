@@ -63,7 +63,8 @@ export function generateExpressionRefTree(expressions: string[], target: IEl | A
               target,
               propertyFirstKeys: [...pushedNames, template]
             }
-          ]
+          ],
+          __has:true
         }))
       })
     }

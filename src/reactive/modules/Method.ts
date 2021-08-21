@@ -120,7 +120,8 @@ export default {
               type: eventType[0],
               methodName: methodName[0]
             }
-          ]
+          ],
+          __has: true
         });
       }
 

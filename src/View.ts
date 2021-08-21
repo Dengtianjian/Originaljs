@@ -10,19 +10,17 @@ import { IRefTree, TAttr, TExpressionItem, TText } from "./types/Ref";
 import Utils from "./Utils";
 
 export function deepUpdateRef(refTree: IRefTree, refProperty?: IProperties): void {
-  for (const propertyName in refTree) {
-    if (!refProperty.hasOwnProperty(propertyName)) continue;
+  for (const branchName in refTree) {
+    if (refProperty.hasOwnProperty(branchName) === false) continue;
+    let branch: IRefTree = refTree[branchName];
+    let branchProperty: IProperties = refProperty[branchName];
 
-    let path: string = refProperty.__og__.propertiesPath;
-    if (typeof refProperty[propertyName] === "object") {
-      deepUpdateRef(refTree[propertyName], refProperty[propertyName]);
-    } else {
-      path = path ? `${path}.${propertyName}` : propertyName;
+    deepUpdateRef(branch, branchProperty);
+
+    if (branch.__has && branchProperty.__og__) {
+      updateRef(branch, branchProperty.__og__.properties, branchProperty.__og__.propertiesPath);
     }
-
-    updateRef(refTree[propertyName], refProperty.__og__.properties, path);
   }
-  return;
 }
 
 export function updateRef(refTree: IRefTree, properties: IProperties, propertyKeyPaths: string): void {
@@ -40,6 +38,7 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
       if (el.__og__.parsed) {
         el.textContent = transformValueToString(Utils.deepCopy(getPropertyData(propertyKeyPaths, properties)));
       } else {
+
         el.textContent = parse(el.textContent, properties);
         el.__og__.parsed = true;
       }

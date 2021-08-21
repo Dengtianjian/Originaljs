@@ -32,7 +32,8 @@ export interface IRefTree {
   __fors?: TRefTreeFors[],
   __expressions?: TExpressionItem[],
   __conditions?: TConditionItem[],
-  __methods?: Array<any>
+  __methods?: Array<any>,
+  __has?: boolean
 }
 
 export type TAttr = Attr & {

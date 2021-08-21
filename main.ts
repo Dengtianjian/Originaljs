@@ -399,7 +399,10 @@ class CButton extends OG.createElement() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);
   }
   updateTemplate = () => {
-    this.rerender(this.elValue).then(res => console.log(res));
+    this.user.deepObj.a = {
+      a: 2
+    };
+    // this.rerender(this.elValue).then(res => console.log(res));
   }
   updateArr = (event) => {
     // fetch("./elHTML.html").then(res => res.text()).then(res => {

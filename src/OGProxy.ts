@@ -12,6 +12,7 @@ export function setProxy(refTree: IRefTree, properties: IProperties, reactiveIns
     if (refTree.hasOwnProperty(branchName)) {
       if (!(typeof properties[branchName] === "object" && properties[branchName] !== undefined)) continue;
       paths.push(branchName);
+
       setProxy(refTree[branchName], properties[branchName], reactiveInstance, paths);
 
       if (properties[branchName].hasOwnProperty("__og__")) {
@@ -47,12 +48,11 @@ export function revokeByRefTree(refTree: IRefTree, properties: IProperties): voi
   for (const branchName in refTree) {
     if (refTree.hasOwnProperty(branchName)) {
       const branch: IRefTree = refTree[branchName];
-      if (/__\w+/.test(Object.keys(branch).join(" "))) {
-        properties[branchName] = Utils.deepCopy(properties[branchName]);
-        console.log( properties[branchName]);
+      if (branch.__has) {
+        let deepCopyData = Utils.deepCopy(properties[branchName]);
+        delete properties[branchName];
+        properties[branchName] = deepCopyData;
       } else {
-        console.log(branch);
-
         revokeByRefTree(branch, properties[branchName]);
       }
     }

@@ -120,7 +120,7 @@ export function propertyNamesToPath(propertyNames: string[] | number[]): string 
 
 export function parse(sourceString: string, properties: IProperties, quotesAdd: Boolean = false): string {
   const refs = sourceString.match(new RegExp(Ref.ExtractVariableName, "g"));
-
+  
   refs.forEach(ref => {
     let replaceValue: string | number = transformValueToString(getPropertyData(ref, properties));
 

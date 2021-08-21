@@ -120,7 +120,8 @@ function collectElRef(target: HTMLElement | Node[], properties: IProperties): IR
         keyName,
         itemName
       }
-    ]
+    ],
+    __has: true
   } as IRefTree);
 }
 function setUpdateView(properties: IProperties, refTree: IRefTree, propertyKey: string, value: any): boolean {
