@@ -21,7 +21,7 @@ Plugin.register("Tags", Tags);
 Plugin.register("Attrs", Attrs);
 Plugin.register("Transition", Transition);
 Plugin.register("El", El);
-Plugin.register("Method",Method);
+Plugin.register("Method", Method);
 
 export class Reactive {
   target: IEl = null;
@@ -46,6 +46,7 @@ export class Reactive {
 
 function elAddRefTreeProperty(refTree: IRefTree): void {
   for (const branchName in refTree) {
+    if (!refTree[branchName]) continue;
     if (refTree.hasOwnProperty(branchName) && !Array.isArray(refTree[branchName])) {
       const branch: IRefTree = refTree[branchName];
       const els: TText[] = branch.__els;
