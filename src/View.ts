@@ -15,10 +15,21 @@ export function deepUpdateRef(refTree: IRefTree, refProperty?: IProperties): voi
     let branch: IRefTree = refTree[branchName];
     let branchProperty: IProperties = refProperty[branchName];
 
-    deepUpdateRef(branch, branchProperty);
+    if (branch.__has) {
+      let path: string = "";
+      if (typeof branchProperty !== "object") {
+        let paths: string[] = transformPropertyName(refProperty.__og__.propertiesPath);
+        paths.push(branchName);
+        path = propertyNamesToPath(paths);
+      } else {
+        path = branchProperty.__og__.propertiesPath;
+      }
 
-    if (branch.__has && branchProperty.__og__) {
-      updateRef(branch, branchProperty.__og__.properties, branchProperty.__og__.propertiesPath);
+      updateRef(branch, refProperty.__og__.properties, path);
+    }
+
+    if (typeof branchProperty === "object") {
+      deepUpdateRef(branch, branchProperty);
     }
   }
 }
@@ -38,7 +49,6 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
       if (el.__og__.parsed) {
         el.textContent = transformValueToString(Utils.deepCopy(getPropertyData(propertyKeyPaths, properties)));
       } else {
-
         el.textContent = parse(el.textContent, properties);
         el.__og__.parsed = true;
       }

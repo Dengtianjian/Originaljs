@@ -270,7 +270,7 @@ class CButton extends OG.createElement() {
     console.timeEnd("total");
     console.log("rendered");
   }
-  elValue = `<div>{numbers}</div>`;
+  elValue = `<div>{obj.user.firstName}</div>`;
   elHTML = `<div>{number}</div>`;
   books = [];
   number = 123;
@@ -399,10 +399,7 @@ class CButton extends OG.createElement() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);
   }
   updateTemplate = () => {
-    this.user.deepObj.a = {
-      a: 2
-    };
-    // this.rerender(this.elValue).then(res => console.log(res));
+    this.rerender(this.elValue).then(res => console.log(res));
   }
   updateArr = (event) => {
     // fetch("./elHTML.html").then(res => res.text()).then(res => {

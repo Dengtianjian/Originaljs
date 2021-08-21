@@ -83,7 +83,7 @@ export class OGElement extends HTMLElement implements IOGElement {
   adopted(): void { }
   disconnected(): void { };
   rerender(template: string | Node | NodeList): Promise<boolean> {
-    console.log(revokeByRefTree(this.__og__.refTree, this));
+    revokeByRefTree(this.__og__.refTree, this);
     this.__og__.el.innerHTML = "";
     this.templateMount(template);
     this.collectSlots();
