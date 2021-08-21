@@ -270,7 +270,7 @@ class CButton extends OG.createElement() {
     console.timeEnd("total");
     console.log("rendered");
   }
-  elValue = `<div>{obj.user.firstName}</div>`;
+  elValue = `<div>{obj.user.lastName}</div>`;
   elHTML = `<div>{number}</div>`;
   books = [];
   number = 123;
@@ -399,7 +399,13 @@ class CButton extends OG.createElement() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);
   }
   updateTemplate = () => {
-    this.rerender(this.elValue).then(res => console.log(res));
+
+    fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
+      this.books.push(...data);
+      fetch("./elHTML.html").then(res => res.text()).then(res => {
+        this.rerender(res).then(res => console.log(res));
+      });
+    });
   }
   updateArr = (event) => {
     // fetch("./elHTML.html").then(res => res.text()).then(res => {
