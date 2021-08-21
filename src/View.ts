@@ -43,6 +43,41 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
 
   Plugin.useAll("beforeUpdateRef", Array.from(arguments));
 
+  for (const key in conditions) {
+    const conditionItem: TConditionItem = conditions[key];
+    let els: TConditionElItem[] = conditionItem.els;
+
+    let newIndex: number = null;
+    for (let index = 0; index < els.length; index++) {
+      const el = els[index];
+      if (["O-IF", "O-ELSE-IF"].includes(el.target.nodeName)) {
+        const expressionResult: any = executeExpression(el.conditionAttr.__og__.attrs.nodeRawValue, properties);
+
+        if (expressionResult) {
+          newIndex = index;
+          break;
+        }
+      } else {
+        newIndex = index;
+        break;
+      }
+    }
+
+    if (conditionItem.current === newIndex) continue;
+
+    if (conditionItem.current !== null) {
+      let currentShowEl = els[conditionItem.current];
+      currentShowEl.parentElement.insertBefore(currentShowEl.substitute, currentShowEl.target);
+      currentShowEl.parentElement.removeChild(currentShowEl.target);
+    }
+
+    let newShowEl = els[newIndex];
+    newShowEl.parentElement.insertBefore(newShowEl.target, newShowEl.substitute);
+    newShowEl.parentElement.removeChild(newShowEl.substitute);
+
+    conditionItem.current = newIndex;
+  }
+
   if (els && els.length > 0) {
     els.forEach(el => {
       Plugin.useAll("beforeUpdateElRef", [el, properties]);
@@ -105,41 +140,6 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
       } else {
         expressionItem.target.textContent = functionResult;
       }
-    }
-  }
-
-  for (const key in conditions) {
-    const conditionItem: TConditionItem = conditions[key];
-    let els: TConditionElItem[] = conditionItem.els;
-
-    for (let index = 0; index < els.length; index++) {
-      const el = els[index];
-      if (el.conditionAttr) {
-        const expressionResult: any = executeExpression(el.conditionAttr.nodeValue, properties);
-        if (expressionResult) {
-          conditionItem.current = index;
-          break;
-        }
-      }
-    }
-
-    if (conditionItem.current !== null) {
-      let old: TConditionElItem = els[conditionItem.current];
-      if (!old.substitute) old.substitute = new Comment();
-    }
-
-    for (let index = 0; index < els.length; index++) {
-      const el = els[index];
-      // if (conditionItem.current !== index) {
-      //   if (el.substitute === null) {
-      //     el.substitute = new Comment();
-      //   }
-      //   el.parentElement.appendChild(el.substitute);
-      //   el.parentElement.removeChild(el.target);
-      // } else {
-      //   el.parentElement.removeChild(el.substitute);
-      //   el.parentElement.append(el.target);
-      // }
     }
   }
 

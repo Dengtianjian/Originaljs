@@ -328,9 +328,14 @@ class CButton extends OG.createElement() {
       }
     }
   };
-  count = 1;
+  count = 3;
   show = true;
   transitionName = "showBook";
+  updateCondition = () => {
+    this.update("count", this.count == 1 ? 2 : this.count == 2 ? 3 : 1);
+    console.log(this.count);
+    
+  }
   updateTransition() {
     if (this.transitionName === "showBook") {
       this.transition(this.transitionName, {
