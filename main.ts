@@ -233,12 +233,10 @@ class CButton extends OG.createElement() {
     // setInterval(() =>newP {
     //   this.update("number", this.formatTime());
     // }, 1000);
-    return;
+    // return;
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
-      console.time("total");
       this.books.push(...data);
       // this.books.push(data[1]);
-      console.timeEnd("total");
 
       // console.time("transition");
       // this.useTransitionPreset("showBook");
@@ -334,7 +332,9 @@ class CButton extends OG.createElement() {
   updateCondition = () => {
     this.update("count", this.count == 1 ? 2 : this.count == 2 ? 3 : 1);
     console.log(this.count);
-    
+    if (this.count == 3) {
+      this.numbers.a = 666;
+    }
   }
   updateTransition() {
     if (this.transitionName === "showBook") {
@@ -417,14 +417,14 @@ class CButton extends OG.createElement() {
     //   this.update("elHTML", res);
     // });
     // this.update("books[0].base_info.summary", Date.now());
-    setInterval(() => {
-      this.numbers.a = Date.now();
-    }, 1000);
-    return;
-    this.books[0].base_info.summary = "" + Date.now() + "";
-    console.log(this.books[0].base_info.id);
+    // setInterval(() => {
+    //   this.numbers.a = Date.now();
+    // }, 1000);
+    // return;
+    // this.books[0].base_info.summary = "" + Date.now() + "";
+    // console.log(this.books[0].base_info.id);
 
-    return;
+    // return;
     // this.update("show", this.show === "none" ? 'flex' : 'none');
     // console.log(this.books);
 
@@ -467,10 +467,10 @@ class CButton extends OG.createElement() {
       // this.books.push(data[this.index++]);
       // this.books[0]=data[0];
       // return;
-      console.time();
+      // console.time();
       this.books.push(...data);
       this.useTransitionPreset("showBook");
-      console.timeEnd();
+      // console.timeEnd();
       return;
       console.time("transition");
       this.transition("showBook", {
@@ -499,7 +499,7 @@ class CButton extends OG.createElement() {
     //   this.books[0]['base_info']['title'] = "深入了解区块链、挖矿、钱包、签名等技术原理，对未来的数字货币世界做好准备";
     // }, 5000);
   }
-  updateObj() {
+  updateObj = () => {
     if (this.show) {
       this.transition("showBook").step({
         transform: "translateY(-50px)",
