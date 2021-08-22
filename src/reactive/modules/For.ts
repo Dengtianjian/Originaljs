@@ -153,8 +153,6 @@ function setUpdateView(properties: IProperties, refTree: IRefTree, propertyKey: 
 
   propertyNames.pop();
   Utils.objectAssign(properties.__og__.refTree, partRefTree);
-  // setProxy(refTree, properties, properties.__og__.reactive, propertyNames);
-  // deepUpdateRef(partRefTree, properties.__og__.properties);
   return true;
 }
 

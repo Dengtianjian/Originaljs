@@ -36,11 +36,11 @@ export function deepUpdateRef(refTree: IRefTree, refProperty?: IProperties): voi
 
 export function updateRef(refTree: IRefTree, properties: IProperties, propertyKeyPaths: string): void {
   if (!refTree) return;
-
   const els: TText[] = refTree.__els;
   const attrs: TAttr[] = refTree.__attrs;
   const expressions: TExpressionItem[] = refTree.__expressions;
   const conditions: TConditionItem[] = refTree.__conditions;
+  // TODO 更新数据 多次被调用
 
   Plugin.useAll("beforeUpdateRef", Array.from(arguments));
 
@@ -168,6 +168,7 @@ export function setUpdateView(target: any, propertyKey: string, value: any, rece
 
   Plugin.useAll("setUpdateView", [target, refTreePart, propertyKey, value]);
 
+  updateRef(refTreePart[propertyKey], target.__og__.properties, target.__og__.propertiesPath);
   return true;
 }
 

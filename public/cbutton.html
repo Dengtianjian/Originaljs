@@ -1,17 +1,9 @@
-<button onclick="updateCondition">
-  update Condition
-</button>
-
-<o-if condition="{count}==1">
-  {numbers}
-</o-if>
-<o-else-if condition="{count}==2">
-  456
-</o-else-if>
-<o-else>
-  7489
-</o-else>
-
-<p>
-  Condition el
-</p>
+<div>
+  el is attribute
+  <img src="{imgs[0]}" alt="">
+  <button onclick="updateImage">update img</button>
+  <p>
+    {dynamicElTagName}
+  </p>
+</div>
+<o-el is="{dynamicElTagName}"></o-el>

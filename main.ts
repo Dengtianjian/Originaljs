@@ -228,10 +228,10 @@ Transition.preset("showBook", {
 }, 0.5, "cubic-bezier(0.67, -0.71, 0.65, 1.47)");
 
 class CButton extends OG.createElement() {
-  constructor(){
+  constructor() {
     super();
     console.time("加载中");
-    fetch("./cbutton.html").then(res => res.text()).then(res=>{
+    fetch("./cbutton.html").then(res => res.text()).then(res => {
       console.timeEnd("加载中");
       console.time("渲染");
       this.render(res);
@@ -337,6 +337,22 @@ class CButton extends OG.createElement() {
   count = 3;
   show = true;
   transitionName = "showBook";
+  dynamicElTagName = "c-table";
+  imgs = [
+
+  ]
+  updateImage = () => {
+    this.imgs.push(...[
+      "https://image.kejixun.com/2021/0820/20210820103812954.jpg",
+      "https://image.kejixun.com/2021/0820/20210820103558354.jpg",
+      "https://image.kejixun.com/2021/0820/20210820103417150.jpg",
+      "https://image.kejixun.com/2021/0820/20210820102926975.jpg",
+      "https://image.kejixun.com/2021/0820/20210820102530365.jpg"
+    ])
+  }
+  getImage = (imgItem) => {
+    this.imgs[0] = "https://image.kejixun.com/2021/0820/20210820100127249.jpg";
+  }
   updateCondition = () => {
     this.update("count", this.count == 1 ? 2 : this.count == 2 ? 3 : 1);
     console.log(this.count);

@@ -14,8 +14,6 @@ export default {
     if (target.__og__ && target.__og__.skipCollect) {
       return {};
     }
-    console.log(target);
-    
 
     let refTree: IRefTree = {};
 
