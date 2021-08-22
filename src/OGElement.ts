@@ -1,6 +1,6 @@
 import { compareMerge, compareObject } from "./Diff";
 import { revokeByRefTree } from "./OGProxy";
-import { parseDom, propertyNamesToPath, transformPropertyName } from "./Parser";
+import { parseDom, parseTemplate, propertyNamesToPath, transformPropertyName } from "./Parser";
 import { getPropertyData } from "./Property";
 import { Reactive } from "./reactive";
 import Transition from "./transition";
@@ -30,10 +30,6 @@ export class OGElement extends HTMLElement implements IOGElement {
   }
   private connectedCallback(): void {
     this.connected();
-    this.templateMount();
-    this.collectSlots();
-    Reactive.observe(this.__og__.el, this);
-    this.rendered();
   }
   private disconnectedCallback(): void {
     this.disconnected();
@@ -43,19 +39,6 @@ export class OGElement extends HTMLElement implements IOGElement {
   }
   private attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     this.propertyChanged(name, newValue, oldValue);
-  }
-  private templateMount(template: string | Node | Node[] | NodeList = this.render()): void {
-    if (template === null) return;
-
-    if (typeof template === "string") {
-      template = parseDom(template);
-    } else if (template instanceof Node) {
-      template = [template];
-    } else if (template instanceof NodeList) {
-      template = Array.from(template);
-    }
-
-    this.__og__.el.append(...template);
   }
   private collectSlots(): void {
     const slotEls: NodeListOf<HTMLSlotElement> = this.__og__.el.querySelectorAll("slot");
@@ -78,16 +61,16 @@ export class OGElement extends HTMLElement implements IOGElement {
   }
   propertyChanged(name: string, newValue: string, oldValue: string): void { }
   connected(): void { };
-  render(): null | Node | NodeList | string { return null; }
   rendered(): void { };
   adopted(): void { }
   disconnected(): void { };
-  rerender(template: string | Node | NodeList): Promise<boolean> {
+  render(template: string | Node | NodeList): Promise<boolean> {
     revokeByRefTree(this.__og__.refTree, this);
-    this.__og__.el.innerHTML = "";
-    this.templateMount(template);
+    let templateNodeList: Node[] = parseTemplate(template);
     this.collectSlots();
-    Reactive.observe(this.__og__.el, this);
+    let reactiveInstance: Reactive = Reactive.observe(templateNodeList, this);
+    reactiveInstance.target = this.__og__.el;
+    this.__og__.el.append(...templateNodeList);
     this.rendered();
     return Promise.resolve(true);
   };

@@ -6,12 +6,13 @@ export default defineConfig({
   server: {
   },
   build: {
-    minify: true,
-    lib: {
-      entry: "src/index.ts",
-      name: "original",
-      formats: ["es", "iife"],
-      fileName: "original",
-    },
+    minify: "esbuild",
+    target: "esnext"
+    // lib: {
+    //   entry: "src/index.ts",
+    //   name: "original",
+    //   formats: ["es", "iife"],
+    //   fileName: "original",
+    // },
   },
 });

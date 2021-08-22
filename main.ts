@@ -199,7 +199,7 @@ template = `
 <o-el html="{elHTML}"></o-el>
 `;
 
-template = await fetch("./cbutton.html").then(res => res.text());
+// template = await fetch("./cbutton.html").then(res => res.text());
 let tableTemplate = await fetch("./ctable.html").then(res => res.text());
 
 // addTransition("showBook", {
@@ -228,6 +228,17 @@ Transition.preset("showBook", {
 }, 0.5, "cubic-bezier(0.67, -0.71, 0.65, 1.47)");
 
 class CButton extends OG.createElement() {
+  constructor(){
+    super();
+    console.time("加载中");
+    fetch("./cbutton.html").then(res => res.text()).then(res=>{
+      console.timeEnd("加载中");
+      console.time("渲染");
+      this.render(res);
+      console.timeEnd("渲染");
+    })
+
+  }
   connected() {
     console.time("total");
     // setInterval(() =>newP {
@@ -260,9 +271,6 @@ class CButton extends OG.createElement() {
       //   console.timeEnd("transition");
       // });
     });
-  }
-  render() {
-    return template;
   }
   rendered() {
     console.timeEnd("total");
@@ -404,11 +412,10 @@ class CButton extends OG.createElement() {
     this.multiNumbers[0] = Math.round(Math.random() * 10000);
   }
   updateTemplate = () => {
-
     fetch("./mook/book_page1.json").then(res => res.json()).then(({ data }) => {
       this.books.push(...data);
       fetch("./elHTML.html").then(res => res.text()).then(res => {
-        this.rerender(res).then(res => console.log(res));
+        this.render(res).then(res => console.log(res));
       });
     });
   }
@@ -541,6 +548,9 @@ class CTable extends OG.createElement(["data"]) {
     a: 6
   };
   nowDate = "";
+  connected() {
+    this.render(tableTemplate);
+  }
   propertyChanged = (name, value) => {
     if (name === "data") {
       this.update("nowDate", this.formatTime(value.a));
@@ -549,9 +559,6 @@ class CTable extends OG.createElement(["data"]) {
   formatTime(timestamp): string {
     const d = new Date(timestamp);
     return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 ${patchZero(d.getHours())}:${patchZero(d.getMinutes())}:${patchZero(d.getSeconds())}`;
-  }
-  render() {
-    return tableTemplate;
   }
   updateData = (...res) => {
     this.data.a = 888;

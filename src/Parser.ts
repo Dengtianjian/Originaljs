@@ -14,6 +14,20 @@ export function parseDom(DOMString): Node[] {
   return nodes;
 }
 
+export function parseTemplate(template: string | Node | Node[] | NodeList): Node[] {
+  if (template === null) return [];
+
+  if (typeof template === "string") {
+    template = parseDom(template);
+  } else if (template instanceof Node) {
+    template = [template];
+  } else if (template instanceof NodeList) {
+    template = Array.from(template);
+  }
+
+  return template;
+}
+
 export function transformPropertyName(propertyNameString: string): string[] {
   // if (/(?<=\])\w/.test(propertyNameString) || /\W+^[\u4e00-\u9fa5]/.test(propertyNameString)) {
   //   throw new Error("Template syntax error:" + propertyNameString);

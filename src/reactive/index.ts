@@ -27,12 +27,11 @@ export class Reactive {
   target: IEl = null;
   properties: IProperties = null;
   refTree: IRefTree = {};
-  static observe(target: IEl, refData: IProperties): Reactive {
+  static observe(target: IEl | Node[], refData: IProperties): Reactive {
     const reactiveInstance = new Reactive(target, refData);
     return reactiveInstance;
   }
-  constructor(target: IEl, properties: IProperties) {
-    this.target = target;
+  constructor(target: IEl | Node[], properties: IProperties) {
     this.properties = properties;
 
     properties.__og__.reactive = this;
