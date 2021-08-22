@@ -36,6 +36,7 @@ export function deepUpdateRef(refTree: IRefTree, refProperty?: IProperties): voi
 
 export function updateRef(refTree: IRefTree, properties: IProperties, propertyKeyPaths: string): void {
   if (!refTree) return;
+
   const els: TText[] = refTree.__els;
   const attrs: TAttr[] = refTree.__attrs;
   const expressions: TExpressionItem[] = refTree.__expressions;
@@ -61,6 +62,8 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
         newIndex = index;
         break;
       }
+      el.target.parentNode.insertBefore(el.substitute, el.target);
+      el.target.parentNode.removeChild(el.target);
     }
 
     if (conditionItem.current === newIndex) continue;
@@ -72,8 +75,12 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
     }
 
     let newShowEl = els[newIndex];
-    newShowEl.parentElement.insertBefore(newShowEl.target, newShowEl.substitute);
-    newShowEl.parentElement.removeChild(newShowEl.substitute);
+    if (newShowEl.parentElement.contains(newShowEl.substitute)) {
+      newShowEl.parentElement.insertBefore(newShowEl.target, newShowEl.substitute);
+      newShowEl.parentElement.removeChild(newShowEl.substitute);
+    } else if (!newShowEl.parentElement.contains(newShowEl.target)) {
+      newShowEl.parentElement.appendChild(newShowEl.target);
+    }
 
     conditionItem.current = newIndex;
   }

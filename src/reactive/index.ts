@@ -15,24 +15,28 @@ import El from "./modules/El";
 import { bindMethods } from "../Method";
 import Method from "./modules/Method";
 
-Plugin.register('For', For);
 Plugin.register('Condition', Condition);
+Plugin.register('For', For);
 Plugin.register("Tags", Tags);
 Plugin.register("Attrs", Attrs);
 Plugin.register("Transition", Transition);
 Plugin.register("El", El);
 Plugin.register("Method", Method);
 
+let TargetEl = null;
+
 export class Reactive {
   target: IEl = null;
   properties: IProperties = null;
   refTree: IRefTree = {};
-  static observe(target: IEl | Node[], refData: IProperties): Reactive {
+  static observe(target: IEl | Node[], refData: IProperties, rootEl: any): Reactive {
+    TargetEl = rootEl;
     const reactiveInstance = new Reactive(target, refData);
     return reactiveInstance;
   }
   constructor(target: IEl | Node[], properties: IProperties) {
     this.properties = properties;
+    this.target = target as IEl;
 
     properties.__og__.reactive = this;
     properties.__og__.refTree = this.refTree;

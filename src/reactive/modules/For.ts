@@ -42,6 +42,10 @@ function replaceAttrRef(target: HTMLElement, sourceString: string, replaceString
 }
 
 function collectElRef(target: HTMLElement | Node[], properties: IProperties): IRefTree {
+  if (target.__og__ && target.__og__.skipCollect) {
+    return {};
+  }
+  
   let refTree: IRefTree = {};
 
   if (Array.isArray(target)) {

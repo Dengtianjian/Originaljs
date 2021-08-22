@@ -26,6 +26,10 @@ function addTransitions(target, rootEl): boolean {
 
 export default {
   collectElRef(target: IEl, rootEl: IOGElement): IRefTree {
+    if (target.__og__ && target.__og__.skipCollect) {
+      return {};
+    }
+    
     addTransitions(target, rootEl);
     return {};
   },

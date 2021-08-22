@@ -47,6 +47,10 @@ function parseParamsString(paramsString: string, properties: IProperties): Array
 
 export default {
   collectElAttrRef(attrItem: Attr, properties: IProperties): IRefTree {
+    if (attrItem.ownerElement.__og__ && attrItem.ownerElement.__og__.skipCollect) {
+      return {};
+    }
+
     let target = attrItem.ownerElement;
     if (target === null) return {};
     if (Methods.OnAttributeName.test(attrItem.name) === false || Methods.MethodNameAttibuteValue.test(attrItem.value) === false) return {};

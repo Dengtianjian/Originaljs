@@ -1,7 +1,4 @@
 import { TPluginItem } from "../../types/Plugin";
-import { IProperties } from "../../types/Properties";
-import { IRefTree, TAttr, TText } from "../../types/Ref";
-import Utils, { deepCopy, defineOGProperty } from "../../Utils";
 import { removeTargetRefTree } from "../../View";
 import Reactive from "../index";
 
