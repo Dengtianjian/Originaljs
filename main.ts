@@ -337,6 +337,7 @@ class CButton extends OG.createElement() {
   };
   count = 1;
   show = false;
+  showSub = false;
   transitionName = "showBook";
   dynamicElTagName = "c-table";
   imgs = []
@@ -396,6 +397,7 @@ class CButton extends OG.createElement() {
   updateData = (book) => {
     // console.log(book.buy_count);
     this.numbers.a = Date.now();
+    this.update("showSub", !this.showSub);
     // this.update("transitionName", "newTransitionName");
     //   this.update("elHTML", `
     //   <div>{count}</div>

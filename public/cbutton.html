@@ -10,5 +10,13 @@
   second:{numbers.a}
 </o-else-if>
 <o-else>
-  third
+  third:{showSub}
+  <p>
+    <o-if condition="{showSub}">
+      show sub
+    </o-if>
+    <o-else>
+      not show sub
+    </o-else>
+  </p>
 </o-else>

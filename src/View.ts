@@ -69,8 +69,11 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
 
     if (conditionItem.current !== null) {
       let currentShowEl = els[conditionItem.current];
-      currentShowEl.parentElement.insertBefore(currentShowEl.substitute, currentShowEl.target);
-      currentShowEl.parentElement.removeChild(currentShowEl.target);
+      if (currentShowEl.parentElement.contains(currentShowEl.target)) {
+        currentShowEl.parentElement.insertBefore(currentShowEl.substitute, currentShowEl.target);
+        currentShowEl.parentElement.removeChild(currentShowEl.target);
+      }
+      removeTargetRefTree(currentShowEl.target, true);
     }
 
     let newShowEl = els[newIndex];
@@ -80,7 +83,8 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
     } else if (!newShowEl.parentElement.contains(newShowEl.target)) {
       newShowEl.parentElement.appendChild(newShowEl.target);
     }
-    Reactive.collectEl(newShowEl.target.childNodes,properties.__og__.properties,properties.__og__.reactive);
+    newShowEl.target.innerHTML = newShowEl.target.__og__.templateHTML;
+    Reactive.collectEl(newShowEl.target.childNodes, properties.__og__.properties, properties.__og__.reactive);
 
     conditionItem.current = newIndex;
   }
@@ -241,5 +245,4 @@ export function removeTargetRefTree(target: HTMLElement | Element, isDeep: boole
   for (const attrItem of Array.from(target.attributes)) {
     removeAttrRef(attrItem);
   }
-
 }

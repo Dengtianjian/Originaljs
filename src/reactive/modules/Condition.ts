@@ -11,19 +11,19 @@ import Reactive from "../index";
 const conditions: Record<string, TConditionItem> = {};
 const ConditionElTagNames: string[] = ["O-IF", "O-ELSE", "O-ELSE-IF"];
 
-function getConditionElSibling(target: Element, parentElement?: HTMLElement): TConditionElItem[] {
+function getConditionElSibling(target: Element): TConditionElItem[] {
   if (!ConditionElTagNames.includes(target.nodeName)) return [];
 
   let els: TConditionElItem[] = [{
     target,
     conditionAttr: target.attributes['condition'],
     substitute: new Comment(target.nodeName),
-    parentElement: parentElement || target.parentNode as HTMLElement
+    parentElement: target.parentNode as HTMLElement
   }];
 
   if (target.tagName !== "O-ELSE" && target.nextElementSibling) {
     if (!target.attributes['condition']) throw new Error("Condition element is missing condition attribute");
-    els.push(...getConditionElSibling(target.nextElementSibling, parentElement));
+    els.push(...getConditionElSibling(target.nextElementSibling));
   }
   defineOGProperty(target, {
     conditionCollected: true
@@ -36,7 +36,8 @@ export default {
   collectElRef(target: HTMLElement, properties: IProperties): IRefTree {
     if (!ConditionElTagNames.includes(target.tagName)) return {};
     defineOGProperty(target, {
-      skipCollect: true
+      skipCollect: true,
+      templateHTML: target.innerHTML
     });
     if (['O-ELSE-IF', 'O-ELSE'].includes(target.tagName)) {
       if (!target.__og__ || !target.__og__.conditionCollected) {
@@ -46,18 +47,18 @@ export default {
     }
     if (!target.attributes['condition']) throw new Error("Condition element is missing condition attribute");
 
-    let els: TConditionElItem[] = getConditionElSibling(target, properties.__og__.el);
+    let els: TConditionElItem[] = getConditionElSibling(target);
 
     let refTree: IRefTree = {};
     const matchVariableName: RegExp = new RegExp(Ref.VariableName, "g");
     let variableNames: string[] = [];
 
     for (const el of els) {
-      if (properties.__og__.el.contains(el.target)) {
+      if (el.target.parentNode.contains(el.target)) {
         el.parentElement.insertBefore(el.substitute, el.target);
         el.parentElement.removeChild(el.target);
       } else {
-        properties.__og__.el.appendChild(el.target);
+        el.target.parentNode.appendChild(el.target);
       }
 
       if (!el.conditionAttr) continue;
