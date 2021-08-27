@@ -316,6 +316,7 @@ class CButton extends OG.createElement() {
     times: {
       register: "2021-02-24",
       lastLogin: "2021-06-28",
+      cover:"https://image.kejixun.com/2021/0820/20210820103812954.jpg"
     },
     friends: ["Amy", "Bob", "Candy", "Daisy", "Eva"],
     profile: {
@@ -338,10 +339,9 @@ class CButton extends OG.createElement() {
   show = true;
   transitionName = "showBook";
   dynamicElTagName = "c-table";
-  imgs = [
-
-  ]
+  imgs = []
   updateImage = () => {
+   this.user.times.cover = "https://image.kejixun.com/2021/0820/20210820102926975.jpg";
     this.imgs.push(...[
       "https://image.kejixun.com/2021/0820/20210820103812954.jpg",
       "https://image.kejixun.com/2021/0820/20210820103558354.jpg",

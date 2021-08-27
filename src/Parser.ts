@@ -14,15 +14,26 @@ export function parseDom(DOMString): Node[] {
   return nodes;
 }
 
+function transformRefVariableName(sourceString: string): string {
+  let dotRefs: string[] = sourceString.match(/(?<=\{) *.+(?=.*\.).+? *(?=\})/g);
+  dotRefs.forEach(item => {
+    sourceString = sourceString.replaceAll(item, propertyNamesToPath(transformPropertyName(item)));
+  });
+  return sourceString;
+}
 export function parseTemplate(template: string | Node | Node[] | NodeList): Node[] {
   if (template === null) return [];
 
   if (typeof template === "string") {
-    template = parseDom(template);
+    template = parseDom(transformRefVariableName(template));
   } else if (template instanceof Node) {
+    template.innerHTML = transformRefVariableName(template.innerHTML);
     template = [template];
   } else if (template instanceof NodeList) {
     template = Array.from(template);
+    template.forEach(nodeItem => {
+      nodeItem.innerHTML = transformRefVariableName(nodeItem.innerHTML);
+    });
   }
 
   return template;
@@ -118,9 +129,11 @@ export function transformValueToString(value: any): string {
 
 export function propertyNamesToPath(propertyNames: string[] | number[]): string {
   let propertyPath: string = "";
-  propertyNames.forEach(item => {
-    if (isNaN(item)) {
-      propertyPath += "." + item;
+  propertyNames.forEach((item, index) => {
+    if (index === 0) {
+      propertyPath += item;
+    } else if (isNaN(item)) {
+      propertyPath += `['${item}']`;
     } else {
       propertyPath += `[${item}]`;
     }

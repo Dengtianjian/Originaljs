@@ -69,8 +69,7 @@ export class OGElement extends HTMLElement implements IOGElement {
     this.collectSlots();
     let templates = parseTemplate(template);
     this.__og__.el.append(...templates);
-    let reactiveInstance: Reactive = Reactive.observe(this.__og__.el, this, this.__og__.el);
-    reactiveInstance.target = this.__og__.el;
+    Reactive.observe(this.__og__.el, this);
     this.rendered();
     return Promise.resolve(true);
   };

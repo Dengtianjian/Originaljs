@@ -53,6 +53,7 @@ export default {
 
       let variableName = String(variableNameMatchs[0]).trim();
 
+
       const previousText: string = target.textContent.slice(0, target.textContent.indexOf(variables[index]));
       if (previousText) {
         newTextChildNodes.push(document.createTextNode(previousText));

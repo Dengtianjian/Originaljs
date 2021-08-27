@@ -23,14 +23,11 @@ Plugin.register("Transition", Transition);
 Plugin.register("El", El);
 Plugin.register("Method", Method);
 
-let TargetEl = null;
-
 export class Reactive {
   target: IEl = null;
   properties: IProperties = null;
   refTree: IRefTree = {};
-  static observe(target: IEl | Node[], refData: IProperties, rootEl: any): Reactive {
-    TargetEl = rootEl;
+  static observe(target: IEl | Node[], refData: IProperties): Reactive {
     const reactiveInstance = new Reactive(target, refData);
     return reactiveInstance;
   }

@@ -1,9 +1,12 @@
 <div>
   el is attribute
-  <img src="{imgs[0]}" alt="">
+  <img src="{user.times.cover}" alt="{user['times']['cover']}">
   <button onclick="updateImage">update img</button>
   <p>
     {dynamicElTagName}
   </p>
+  <div>
+    {user.profile}
+  </div>
 </div>
 <o-el is="{dynamicElTagName}"></o-el>

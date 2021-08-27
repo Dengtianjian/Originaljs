@@ -5,8 +5,6 @@ import Reactive from "../index";
 
 function collectElAttrRef(attrItem:Attr) {
   if (attrItem.ownerElement.nodeName !== "O-EL") return {};
-  console.trace(attrItem.ownerElement);
-  
   // defineOGProperty(target, {
   //   attrCollected: true,
   //   tagCollected: true
