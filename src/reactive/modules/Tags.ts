@@ -11,10 +11,6 @@ import Collect from "../Collect";
 
 export default {
   collectElRef(target: IEl, rootEl: IOGElement): IRefTree {
-    if (target.__og__ && target.__og__.skipCollect) {
-      return {};
-    }
-
     let refTree: IRefTree = {};
 
     if (Array.isArray(target)) {

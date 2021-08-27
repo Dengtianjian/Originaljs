@@ -316,7 +316,7 @@ class CButton extends OG.createElement() {
     times: {
       register: "2021-02-24",
       lastLogin: "2021-06-28",
-      cover:"https://image.kejixun.com/2021/0820/20210820103812954.jpg"
+      cover: "https://image.kejixun.com/2021/0820/20210820103812954.jpg"
     },
     friends: ["Amy", "Bob", "Candy", "Daisy", "Eva"],
     profile: {
@@ -335,13 +335,13 @@ class CButton extends OG.createElement() {
       }
     }
   };
-  count = 3;
-  show = true;
+  count = 1;
+  show = false;
   transitionName = "showBook";
   dynamicElTagName = "c-table";
   imgs = []
   updateImage = () => {
-   this.user.times.cover = "https://image.kejixun.com/2021/0820/20210820102926975.jpg";
+    this.user.times.cover = "https://image.kejixun.com/2021/0820/20210820102926975.jpg";
     this.imgs.push(...[
       "https://image.kejixun.com/2021/0820/20210820103812954.jpg",
       "https://image.kejixun.com/2021/0820/20210820103558354.jpg",
@@ -356,9 +356,9 @@ class CButton extends OG.createElement() {
   updateCondition = () => {
     this.update("count", this.count == 1 ? 2 : this.count == 2 ? 3 : 1);
     console.log(this.count);
-    if (this.count == 3) {
-      this.numbers.a = 666;
-    }
+    // if (this.count == 3) {
+    //   this.numbers.a = 666;
+    // }
   }
   updateTransition() {
     if (this.transitionName === "showBook") {
@@ -394,8 +394,8 @@ class CButton extends OG.createElement() {
     this.position.y = event.y;
   }
   updateData = (book) => {
-    console.log(book.buy_count);
-
+    // console.log(book.buy_count);
+    this.numbers.a = Date.now();
     // this.update("transitionName", "newTransitionName");
     //   this.update("elHTML", `
     //   <div>{count}</div>

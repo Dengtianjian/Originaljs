@@ -3,6 +3,7 @@ import { OGElement } from "./OGElement";
 import { parse, propertyNamesToPath, transformPropertyName, transformValueToString } from "./Parser";
 import Plugin from "./Plugin";
 import { getPropertyData } from "./Property";
+import Reactive from "./reactive";
 import { getRefs } from "./reactive/Collect";
 import { TConditionElItem, TConditionItem } from "./types/ConditionElType";
 import { IProperties } from "./types/Properties";
@@ -62,8 +63,6 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
         newIndex = index;
         break;
       }
-      el.target.parentNode.insertBefore(el.substitute, el.target);
-      el.target.parentNode.removeChild(el.target);
     }
 
     if (conditionItem.current === newIndex) continue;
@@ -81,6 +80,7 @@ export function updateRef(refTree: IRefTree, properties: IProperties, propertyKe
     } else if (!newShowEl.parentElement.contains(newShowEl.target)) {
       newShowEl.parentElement.appendChild(newShowEl.target);
     }
+    Reactive.collectEl(newShowEl.target.childNodes,properties.__og__.properties,properties.__og__.reactive);
 
     conditionItem.current = newIndex;
   }

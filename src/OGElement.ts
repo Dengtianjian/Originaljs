@@ -67,8 +67,7 @@ export class OGElement extends HTMLElement implements IOGElement {
   render(template: string | Node | NodeList): Promise<boolean> {
     revokeByRefTree(this.__og__.refTree, this);
     this.collectSlots();
-    let templates = parseTemplate(template);
-    this.__og__.el.append(...templates);
+    this.__og__.el.append(...parseTemplate(template));
     Reactive.observe(this.__og__.el, this);
     this.rendered();
     return Promise.resolve(true);

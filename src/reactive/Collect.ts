@@ -9,7 +9,10 @@ import Utils from "../Utils";
 
 function useCollectElRefHook(target: IEl | Node[], properties: IProperties): IRefTree {
   let refTree: IRefTree = {};
-  if (Array.isArray(target)) {
+  if (Array.isArray(target) || target instanceof NodeList) {
+    if (target instanceof NodeList) {
+      target = Array.from(target);
+    }
     for (const nodeItem of target as HTMLElement[]) {
       if (nodeItem.attributes && nodeItem.attributes.length > 0) {
         Array.from(nodeItem.attributes).forEach(attrItem => {
@@ -25,6 +28,8 @@ function useCollectElRefHook(target: IEl | Node[], properties: IProperties): IRe
   for (const item of Plugin.useAll<IRefTree[]>("collectElRef", [target, properties])) {
     Utils.objectAssign(refTree, item);
   };
+  if (target.__og__.skipCollect) return refTree;
+
   if (target.nodeType !== 3 && target.childNodes.length > 0) {
     Utils.objectAssign(refTree, useCollectElRefHook(Array.from(target.childNodes), properties));
   };

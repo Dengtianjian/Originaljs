@@ -16,9 +16,11 @@ export function parseDom(DOMString): Node[] {
 
 function transformRefVariableName(sourceString: string): string {
   let dotRefs: string[] = sourceString.match(/(?<=\{) *.+(?=.*\.).+? *(?=\})/g);
-  dotRefs.forEach(item => {
-    sourceString = sourceString.replaceAll(item, propertyNamesToPath(transformPropertyName(item)));
-  });
+  if (dotRefs) {
+    dotRefs.forEach(item => {
+      sourceString = sourceString.replaceAll(item, propertyNamesToPath(transformPropertyName(item)));
+    });
+  }
   return sourceString;
 }
 export function parseTemplate(template: string | Node | Node[] | NodeList): Node[] {

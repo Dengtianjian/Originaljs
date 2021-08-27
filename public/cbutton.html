@@ -1,12 +1,14 @@
 <div>
-  el is attribute
-  <img src="{user.times.cover}" alt="{user['times']['cover']}">
-  <button onclick="updateImage">update img</button>
-  <p>
-    {dynamicElTagName}
-  </p>
-  <div>
-    {user.profile}
-  </div>
+  <button onclick="updateCondition">updateCount</button>
+  <button onclick="updateData">updateData</button>
 </div>
-<o-el is="{dynamicElTagName}"></o-el>
+
+<o-if condition="{count} == 1">
+  first
+</o-if>
+<o-else-if condition="{count} == 2">
+  second:{numbers.a}
+</o-else-if>
+<o-else>
+  third
+</o-else>
