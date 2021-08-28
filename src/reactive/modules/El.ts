@@ -1,16 +1,14 @@
 import { TPluginItem } from "../../types/Plugin";
 import { defineOGProperty } from "../../Utils";
 import { removeTargetRefTree } from "../../View";
+import { getRefs } from "../Collect";
 import Reactive from "../index";
 
-function collectElAttrRef(attrItem:Attr) {
+function collectElAttrRef(attrItem: Attr) {
   if (attrItem.ownerElement.nodeName !== "O-EL") return {};
-  // defineOGProperty(target, {
-  //   attrCollected: true,
-  //   tagCollected: true
-  // });
-  // // let newElTagName: string = target.attrbutes['is'];
-  // console.dir(target.attributes);
+  if (attrItem.nodeName !== "is" || !attrItem.nodeValue) return {};
+  console.log(getRefs(attrItem.nodeValue));
+
 
   return {};
 }
@@ -29,9 +27,12 @@ function afterUpdateAttrRef(attrItem: Attr, properties): void {
       Reactive.collectEl(attrItem.ownerElement, properties, properties.__og__.reactive);
       break;
     case "is":
-      // let ownerElement = attrItem.ownerElement;
-      // let newEl = document.createElement(attrItem.nodeValue);
-      // ownerElement.parentNode.insertBefore(newEl, ownerElement);
+      if (attrItem.nodeValue) {
+        // let ownerElement = attrItem.ownerElement;
+        // let newEl = document.createElement(attrItem.nodeValue);
+        // ownerElement.parentNode.insertBefore(newEl, ownerElement);
+        // ownerElement.parentNode.removeChild(ownerElement);
+      }
       break;
   }
 }

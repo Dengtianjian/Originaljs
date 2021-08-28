@@ -3,20 +3,4 @@
   <button onclick="updateData">updateData</button>
 </div>
 
-<o-if condition="{count} == 1">
-  first
-</o-if>
-<o-else-if condition="{count} == 2">
-  second:{numbers.a}
-</o-else-if>
-<o-else>
-  third:{user.booleans.showMore} {showSub}
-  <p>
-    <o-if condition="{user.booleans.showMore} || {showSub}">
-      show sub
-    </o-if>
-    <o-else>
-      not show sub
-    </o-else>
-  </p>
-</o-else>
+<o-el is="{show} ? '{ dynamicElTagName }' : '{errorDynamicElTagName}'"></o-el>

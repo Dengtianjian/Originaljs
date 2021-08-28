@@ -343,6 +343,7 @@ class CButton extends OG.createElement() {
   showSub = true;
   transitionName = "showBook";
   dynamicElTagName = "c-table";
+  errorDynamicElTagName = "c-input";
   imgs = []
   updateImage = () => {
     this.user.times.cover = "https://image.kejixun.com/2021/0820/20210820102926975.jpg";
@@ -358,7 +359,10 @@ class CButton extends OG.createElement() {
     this.imgs[0] = "https://image.kejixun.com/2021/0820/20210820100127249.jpg";
   }
   updateCondition = () => {
-    this.update("count", this.count == 1 ? 2 : this.count == 2 ? 3 : 1);
+    this.update("dynamicElTagName", this.dynamicElTagName === "c-table" ? 'c-input' : 'c-table');
+    console.log(this.dynamicElTagName);
+
+    // this.update("count", this.count == 1 ? 2 : this.count == 2 ? 3 : 1);
     // console.log(this.count);
     // if (this.count == 3) {
     //   this.numbers.a = 666;
@@ -593,5 +597,13 @@ class CTable extends OG.createElement(["data"]) {
   }
 }
 
+class TInput extends OG.createElement() {
+  constructor() {
+    super();
+    this.render("<input />");
+  }
+}
+
 defineElement("c-table", CTable);
 defineElement("c-button", CButton);
+defineElement("c-input", TInput);

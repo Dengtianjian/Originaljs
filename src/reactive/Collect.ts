@@ -92,6 +92,8 @@ export function getRefs(rawString: string): string[] {
   let refSet: string[] = [];
   if (Ref.Item.test(rawString) === false) return refSet;
   let refs: RegExpMatchArray = rawString.match(ExtractRefItemGlobalRegExp);
+  console.log(refs);
+  
   if (refs !== null) refSet = refs;
 
   return refSet;
