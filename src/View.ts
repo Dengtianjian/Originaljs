@@ -228,12 +228,33 @@ export function removeAttrRef(attr: TAttr): void {
 
   branch.__attrs.splice(branch.__attrs.indexOf(attr), 1);
 }
+export function removeConditionRef(target: HTMLElement): void {
+  if (!target.__og__?.condition) return;
+  let conditionInfo = target.__og__.condition;
+
+  for (const names of conditionInfo.variableNames) {
+    let branch: IRefTree = getPropertyData(names, conditionInfo.properties.__og__.refTree);
+    if (!branch) continue;
+    let condition = branch.__conditions[conditionInfo.conditionKey];
+    condition.els.forEach(el => {
+      if (branch.__attrs.indexOf(el.target.attributes['condition']) !== -1) {
+        branch.__attrs.splice(el.target.attributes['condition'], 1);
+      }
+    })
+
+    delete branch.__conditions[conditionInfo.conditionKey];
+  }
+}
 export function removeTargetRefTree(target: HTMLElement | Element, isDeep: boolean = false): void {
   if (isDeep && target.childNodes?.length > 0) {
     target.childNodes.forEach(nodeItem => {
+      if (["O-IF", "O-ELSE-IF", "O-ELSE"].includes(nodeItem.tagName)) {
+        removeConditionRef(nodeItem);
+      }
       removeTargetRefTree(nodeItem, true);
     });
   }
+
   if (!target.__og__?.hasRef) return;
 
   target.childNodes.forEach(nodeItem => {

@@ -6,7 +6,6 @@ import { IProperties } from "../../types/Properties";
 import { IRefTree } from "../../types/Ref";
 import Utils, { defineOGProperty } from "../../Utils";
 import { propertyHasKey } from "../Collect";
-import Reactive from "../index";
 
 const conditions: Record<string, TConditionItem> = {};
 const ConditionElTagNames: string[] = ["O-IF", "O-ELSE", "O-ELSE-IF"];
@@ -52,6 +51,7 @@ export default {
     let refTree: IRefTree = {};
     const matchVariableName: RegExp = new RegExp(Ref.VariableName, "g");
     let variableNames: string[] = [];
+    const conditionKey: string = String(Date.now());
 
     for (const el of els) {
       if (el.target.parentNode.contains(el.target)) {
@@ -68,12 +68,24 @@ export default {
       variableNames.push(...refs);
     }
     variableNames = Array.from(new Set(variableNames));
-    const conditionKey: string = String(Date.now());
     const condition: TConditionItem = {
       els,
       current: null
     };
     conditions[conditionKey] = condition;
+
+    for (const el of els) {
+      if (!el.target.__og__.condition) {
+        defineOGProperty(el.target, {
+          condition:{
+            conditionKey,
+            variableNames,
+            properties
+          }
+        });
+      }
+    }
+
     variableNames.forEach(name => {
       if (propertyHasKey(name, properties)) {
         Utils.objectAssign(refTree, Utils.generateObjectTree(transformPropertyName(name), {

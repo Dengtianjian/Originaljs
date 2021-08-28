@@ -326,6 +326,9 @@ class CButton extends OG.createElement() {
     showMe() {
       console.log(this);
     },
+    booleans: {
+      showMore: false
+    },
     deepObj: {
       a: {
         b: {
@@ -337,7 +340,7 @@ class CButton extends OG.createElement() {
   };
   count = 1;
   show = false;
-  showSub = false;
+  showSub = true;
   transitionName = "showBook";
   dynamicElTagName = "c-table";
   imgs = []
@@ -356,7 +359,7 @@ class CButton extends OG.createElement() {
   }
   updateCondition = () => {
     this.update("count", this.count == 1 ? 2 : this.count == 2 ? 3 : 1);
-    console.log(this.count);
+    // console.log(this.count);
     // if (this.count == 3) {
     //   this.numbers.a = 666;
     // }
@@ -398,6 +401,7 @@ class CButton extends OG.createElement() {
     // console.log(book.buy_count);
     this.numbers.a = Date.now();
     this.update("showSub", !this.showSub);
+    // this.user.booleans.showMore = false;
     // this.update("transitionName", "newTransitionName");
     //   this.update("elHTML", `
     //   <div>{count}</div>

@@ -19,9 +19,9 @@ export function executeExpression(expression: string, properties: IProperties): 
     if (!pushedNames.includes(firstPropertyName) && propertyHasKey(name, properties)) {
       pushedNames.push(firstPropertyName);
     }
-
-    expression = parse(expression, properties, true);
   });
+  expression = parse(expression, properties, true);
+
   if (!expression) return null;
   const expressionProperties: IProperties = [];
   pushedNames.forEach(item => {

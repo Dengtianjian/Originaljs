@@ -10,9 +10,9 @@
   second:{numbers.a}
 </o-else-if>
 <o-else>
-  third:{showSub}
+  third:{user.booleans.showMore} {showSub}
   <p>
-    <o-if condition="{showSub}">
+    <o-if condition="{user.booleans.showMore} || {showSub}">
       show sub
     </o-if>
     <o-else>
