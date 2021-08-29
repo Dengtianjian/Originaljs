@@ -104,7 +104,7 @@ class Transition implements ITransition {
       };
     }, transition.duration * 1000);
   }
-  step(styles: ICSSStyleDeclaration, duration: number = 0.3, timingFunction: string = "linear", delay: number = 0, callBack?: () => void): this {
+ step(styles: ICSSStyleDeclaration, duration: number = 0.3, timingFunction: string = "linear", delay: number = 0, callBack?: () => void): this {
     this.transitions.push({
       styles,
       duration,

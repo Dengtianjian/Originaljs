@@ -1,16 +1,6 @@
-import { OGElement } from "./OGElement";
-import { createElement, defineElement } from "./Elements";
-
-export {
-  OGElement,
-
-  createElement,
-  defineElement
-};
+import Element from "./Element";
 
 export default {
-  OGElement,
-
-  createElement,
-  defineElement
-};
+  createElement: Element.createElement,
+  defineElement: Element.defineElement
+}
