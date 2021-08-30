@@ -7,9 +7,40 @@ Module.add("Element", {
   reactive: {
     start() {
       console.log("start");
+    },
+    collectRef() {
+      console.log(arguments);
+      return {};
     }
   }
-})
+});
+
+/**
+ * 遍历每一个节点，并且引用collectElRef、collectAttrRef钩子
+ * @param target 遍历的目标元素或者元素数组
+ * @param properties 属性
+ */
+function traverseNodes(target: IElement | Node[], properties: Record<string, any>): TRefTree {
+  const refTree: TRefTree = {};
+
+  if (!Array.isArray(target)) {
+    target = [target];
+  }
+  if (target instanceof NodeList) {
+    target = Array.from(target);
+  }
+
+  target.forEach(nodeItem => {
+    for (const refPart of Module.useAll<TRefTree>("reactive.collecElRef", Array.from(arguments))) {
+      Utils.objectMerge(refTree, refPart);
+    }
+    for (const refPart of Module.useAll<TRefTree>("reactive.collecElRef", Array.from(arguments))) {
+      Utils.objectMerge(refTree, refPart);
+    }
+  });
+
+  return refTree;
+}
 
 export default class Reactive {
   private refTree: TRefTree = {};
@@ -24,8 +55,13 @@ export default class Reactive {
   }
   static collectEl(target: IElement | Node[], properties: Record<string, any>, reactiveInstance: Reactive): TRefTree {
     Module.useAll("reactive.start", Array.from(arguments));
+    const elRefTree: TRefTree = traverseNodes(target, properties);
 
-    return {};
+    for (const item of Module.useAll<TRefTree>("reactive.collectRef", Array.from(arguments))) {
+      Utils.objectMerge(elRefTree, item);
+    }
+
+    return elRefTree;
   }
   constructor(private target: IElement | Node[], private properties: Record<string, any>) {
     let defineProperties: Record<string, any> = {

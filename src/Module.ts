@@ -25,7 +25,7 @@ function useAll<T>(moduleName: keyof TModuleHookNames, args: any[] = []): T[] {
   for (const moduleItem of Modules) {
     let hookFunction: Function = Utils.getObjectProperty(moduleItem, moduleNames);
     if (hookFunction === undefined) continue;
-
+    
     results.push(hookFunction(...args));
   }
 

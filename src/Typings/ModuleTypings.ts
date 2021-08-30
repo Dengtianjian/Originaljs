@@ -1,4 +1,5 @@
-import { ICustomElement } from "./CustomElementTypings";
+import Reactive from "../Reactive";
+import { ICustomElement, IElement } from "./CustomElementTypings";
 import { TRefTree } from "./RefTreeTypings";
 
 export type TModuleHookNames = {
@@ -42,7 +43,7 @@ export type TModuleOptions = {
   },
   reactive?: {
     start?: () => void;
-    collecElRef?: () => TRefTree;
+    collecElRef?: (target: IElement | Node[], properties: Record<string, any>, reactiveInstance: Reactive) => TRefTree;
     collectAttrRef?: () => TRefTree;
     collectRef?: () => TRefTree;
     beforeUpdateView?: () => void;
