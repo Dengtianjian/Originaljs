@@ -2,11 +2,11 @@ function updateView() {
 
 }
 
-function setUpdateView(): boolean {
+function setUpdateView(target: any, propertyKey: string | symbol, value: any, receiver: any): boolean {
   return true;
 }
 
-function deleteUpdateView(): boolean {
+function deleteUpdateView(target: any, propertyKey: string | symbol): boolean {
   return true;
 }
 
