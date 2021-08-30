@@ -29,6 +29,9 @@ export interface ICustomElement extends HTMLElement {
   useTransitionPreset(presetName: string): Transition
 }
 
+export type TElement = {
+  __OG__: TOG
+} & Element & HTMLElement & Node;
 export interface IElement extends Element {
   __OG__: TOG
 }
