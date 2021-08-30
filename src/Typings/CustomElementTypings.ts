@@ -31,7 +31,7 @@ export interface ICustomElement extends HTMLElement {
 
 export type TElement = {
   __OG__: TOG
-} & Element & HTMLElement & Node;
+} & Element & HTMLElement & Node & ParentNode;
 export interface IElement extends Element {
   __OG__: TOG
 }

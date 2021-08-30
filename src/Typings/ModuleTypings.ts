@@ -42,10 +42,10 @@ export type TModuleOptions = {
     exclude?: string[]
   },
   reactive?: {
-    start?: (target: IElement | Node[], properties: Record<string, any>, reactiveInstance: Reactive) => void;
-    collectRef?: (target: IElement | Node[], properties: Record<string, any>, reactiveInstance: Reactive) => TRefTree;
-    collecElRef?: (target: IElement | Node[], properties: Record<string, any>) => TRefTree;
-    collectAttrRef?: (target: IElement | Node[], properties: Record<string, any>) => TRefTree;
+    start?: (target: IElement | IElement[], rootEl: ICustomElement, reactiveInstance: Reactive) => void;
+    collectRef?: (target: IElement | IElement[], rootEl: ICustomElement, reactiveInstance: Reactive) => TRefTree;
+    collecElRef?: (target: IElement | IElement[], rootEl: ICustomElement) => TRefTree;
+    collectAttrRef?: (target: IElement | IElement[], rootEl: ICustomElement) => TRefTree;
     beforeUpdateView?: () => void;
     beforeUpdateElView?: () => void;
     beforeUpdateAttrView?: () => void;

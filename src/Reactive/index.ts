@@ -1,8 +1,9 @@
-import { TElement } from "../Typings/CustomElementTypings";
+import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
 import { TRefTree } from "../Typings/RefTreeTypings";
 import Utils from "../Utils";
 import Module from "../Module";
 import ElementModule from "./Modules/Element";
+import PropertyProxy from "./PropertyProxy";
 
 Module.add("Element", ElementModule);
 
@@ -32,9 +33,9 @@ function traverseNodes(target: TElement | TElement[], properties: Record<string,
         }
       });
     }
-    if (elementItem.children && elementItem.children.length > 0) {
-      Array.from(elementItem.children).forEach(childrenItem => {
-        Utils.objectMerge(refTree, traverseNodes(childrenItem as TElement, properties));
+    if (elementItem.childNodes && elementItem.childNodes.length > 0) {
+      elementItem.childNodes.forEach(nodeItem => {
+        Utils.objectMerge(refTree, traverseNodes(nodeItem as TElement, properties));
       });
     }
   });
@@ -43,17 +44,17 @@ function traverseNodes(target: TElement | TElement[], properties: Record<string,
 }
 
 export default class Reactive {
-  private refTree: TRefTree = {};
+  refTree: TRefTree = {};
   /**
    * 观察元素
    * @param target 观察的目标元素或者目标元素数组
    * @param properties 引用的数据
    * @returns 观察实例
    */
-  static observe(target: TElement | TElement[], properties: Record<string, any>): Reactive {
+  static observe(target: TElement | TElement[], properties: ICustomElement): Reactive {
     return new Reactive(target, properties);
   }
-  static collectEl(target: TElement | TElement[], properties: Record<string, any>, reactiveInstance: Reactive): TRefTree {
+  static collectEl(target: TElement | TElement[], properties: ICustomElement, reactiveInstance: Reactive) {
     Module.useAll("reactive.start", Array.from(arguments));
     const elRefTree: TRefTree = traverseNodes(target, properties);
 
@@ -61,9 +62,11 @@ export default class Reactive {
       Utils.objectMerge(elRefTree, item);
     }
 
-    return elRefTree;
+    Utils.objectMerge(reactiveInstance.refTree, elRefTree);
+
+    PropertyProxy.setProxy(reactiveInstance.refTree, properties, reactiveInstance);
   }
-  constructor(private target: TElement | TElement[], private properties: Record<string, any>) {
+  constructor(private target: TElement | TElement[], public properties: ICustomElement) {
     let defineProperties: Record<string, any> = {
       reactive: this,
       refTree: this.refTree,
@@ -73,9 +76,9 @@ export default class Reactive {
     if (Array.isArray(target)) {
       target.forEach(item => {
         Utils.defineOGProperty(item, defineProperties);
-      })
+      });
     } else {
-      Utils.defineOGProperty(target, defineProperties);
+      Utils.defineOGProperty(properties, defineProperties);
     }
 
     Reactive.collectEl(target, properties, this);

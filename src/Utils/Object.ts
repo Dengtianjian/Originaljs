@@ -1,4 +1,4 @@
-import { IElement } from "../Typings/CustomElementTypings";
+import { IElement, TElement } from "../Typings/CustomElementTypings";
 
 function objectMerge(target: object, source: object): void {
   for (const key in source) {
@@ -6,11 +6,11 @@ function objectMerge(target: object, source: object): void {
     const targetItem = target[key];
     const sourceItem = source[key];
 
-    if (typeof targetItem === "object") {
+    if (targetItem === "object") {
       if (Array.isArray(targetItem)) {
         targetItem.push(...sourceItem);
       } else {
-        objectMerge(targetItem, sourceItem);
+        objectMerge(target[key], sourceItem);
       }
     } else {
       target[key] = source[key];
@@ -36,7 +36,7 @@ function defineProperty(target: object, propertyKey: string, value: any, configu
 function defineOGProperty(target: Attr | Text | IElement | Node
   , properties: Record<string, any> = {}): void {
   if (target.hasOwnProperty("__OG__")) {
-    objectMerge(target, properties);
+    objectMerge((target as TElement).__OG__, properties);
   } else {
     defineProperty(target, "__OG__", properties, false, false, false);
   }
@@ -49,9 +49,21 @@ function getObjectProperty(target: object, propertyNames: string[]): any {
   return target[propertyNames[0]];
 }
 
+function generateObjectTree(propertyNames: string[], endPropertyValue: object = {}): object {
+  const tree = {};
+
+  if (propertyNames.length === 1) {
+    tree[propertyNames[0]] = endPropertyValue;
+  } else {
+    tree[propertyNames[0]] = generateObjectTree(propertyNames.slice(1), endPropertyValue);
+  }
+  return tree;
+}
+
 export default {
   objectMerge,
   defineProperty,
   defineOGProperty,
-  getObjectProperty
+  getObjectProperty,
+  generateObjectTree
 }
