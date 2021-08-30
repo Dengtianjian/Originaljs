@@ -9,7 +9,7 @@ function executeExpression(expression: string, properties: ICustomElement): any 
   expression = expression.trim();
   const refs: string[] = expression.match(GlobalExtractVariableName);
   const expressionData: Array<any> = [];
-  const functionArguments: any[] = [];
+  let functionArguments: any[] = [];
   if (refs === null || refs.length === 0) {
     let expressionPropertyValue: any = Utils.getObjectProperty(properties, [expression]);
     if (typeof expressionPropertyValue === "function") {
@@ -21,8 +21,13 @@ function executeExpression(expression: string, properties: ICustomElement): any 
     }
   } else {
     functionArguments.push(...refs);
+    functionArguments = Array.from(new Set(functionArguments));
     refs.forEach(refItem => {
-      expressionData.push(Utils.getObjectProperty(properties, Transform.transformPropertyNameToArray(refItem)));
+      let expressionPropertyValue: any = Utils.getObjectProperty(properties, Transform.transformPropertyNameToArray(refItem));
+      if (typeof expressionPropertyValue === "function") {
+        expressionPropertyValue = expressionPropertyValue();
+      }
+      expressionData.push(expressionPropertyValue);
     });
     expression = expression.replace(/\{ *([a-zA-z_][a-zA-z0-9_\.\[\]'"]+)? *\}/g, "$1");
     expression = "return " + expression;

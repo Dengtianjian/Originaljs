@@ -1,1 +1,19 @@
-{ {computed} + 1 }
+<div>
+  hello world
+  <p>
+    { computed }
+  </p>
+  <p>
+    {count}
+    {count}
+  </p>
+</div>
+{
+  ()=>{
+    const d=this.computed();
+    return this.count + {computed} + d
+  } 
+}
+<p>
+  6
+</p>

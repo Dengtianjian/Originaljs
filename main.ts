@@ -28,7 +28,7 @@ class CEl extends OG.createElement() {
   };
   count = 888;
   computed() {
-    return 999;
+    return 1010;
   }
   datePatchZero(dateEl: number | string): string | number {
     return dateEl < 10 ? `0${dateEl}` : dateEl;
