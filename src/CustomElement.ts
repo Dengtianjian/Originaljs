@@ -53,7 +53,7 @@ export default class CustomElement extends HTMLElement implements ICustomElement
     this.__OG__.el.innerHTML = "";
     this.__OG__.slots = {};
     this.__OG__.el.append(...Parser.parseTemplate(template));
-     Reactive.observe(this.__OG__.el, this);
+    Reactive.observe(this.__OG__.el, this);
 
     this.collectSlots();
 
