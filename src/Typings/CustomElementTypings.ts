@@ -7,7 +7,8 @@ export type TOG = {
   [key: string]: any,
   reactive: Reactive,
   rootEl: IElement,
-  refTree: TRefTree
+  refTree: TRefTree,
+  propertiesKeyPath: string[]
 }
 
 export interface ICustomElement extends HTMLElement {

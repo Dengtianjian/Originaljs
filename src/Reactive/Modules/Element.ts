@@ -2,7 +2,9 @@ import { ICustomElement, IElement, TElement } from "../../Typings/CustomElementT
 import { TModuleOptions } from "../../Typings/ModuleTypings";
 import { TRefTree } from "../../Typings/RefTreeTypings";
 import Utils from "../../Utils";
+import Expression from "../Expression";
 import Ref from "../Ref";
+import Transform from "../Transform";
 
 export default {
   reactive: {
@@ -38,17 +40,29 @@ export default {
         const newTextEl: Text = document.createTextNode(refItem);
 
         Utils.defineOGProperty(newTextEl, {
-          elementParsed: false
+          elementParsed: false,
+          rawTemplate: refItem
         });
 
+        const refTreePart: TRefTree = {};
         refPropertyNames.forEach(propertyNames => {
-          Utils.objectMerge(refTree, Utils.generateObjectTree(propertyNames, {
-            __els: [newTextEl]
-          }));
+          let propertyRef: TRefTree = Utils.generateObjectTree(propertyNames, {
+            __els: [newTextEl],
+          });
+          Utils.objectMerge(refTreePart, propertyRef);
         });
 
         newTextChildNodes.push(newTextEl);
         target.textContent = target.textContent.slice(refItem.length);
+
+        Utils.defineOGProperty(newTextEl, {
+          properties: rootEl,
+          ref: {
+            tree: refTreePart,
+            propertyNames: refPropertyNames
+          }
+        });
+        Utils.objectMerge(refTree, refTreePart);
       });
 
       for (const newTextItem of newTextChildNodes) {
@@ -60,6 +74,15 @@ export default {
       });
 
       return refTree;
+    },
+    setUpdateView(refTree: TRefTree, properties: Record<string, any>, value: any, propertyNames: string[]): void {
+      if (refTree.__els === undefined) return;
+      const els: TElement[] = refTree.__els;
+
+      els.forEach(el => {
+        const rawTemplate: string = el.__OG__.rawTemplate;
+        el.textContent = Transform.transformObjectToString(Expression.executeExpression(rawTemplate, el.__OG__.properties));
+      })
     }
   }
 } as TModuleOptions

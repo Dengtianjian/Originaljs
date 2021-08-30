@@ -81,7 +81,17 @@ function transformPropertyNameToString(propertyNames: string[] & number[]): stri
   return propertyPath;
 }
 
+function transformObjectToString(target: any): string {
+  if (typeof target === "object" && target !== null) {
+    console.log(target);
+
+  }
+  if (target === null) return "null";
+  return target.toString();
+}
+
 export default {
   transformPropertyNameToArray,
-  transformPropertyNameToString
+  transformPropertyNameToString,
+  transformObjectToString
 }

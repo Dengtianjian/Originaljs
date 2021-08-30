@@ -13,6 +13,9 @@ class CEl extends OG.createElement() {
   }
   rendered() {
     console.timeLog("render");
+    // setInterval(() => {
+    //   this.user.name = this.formatTime();
+    // }, 1000);
   }
   msg = "Hello world";
   user = {
@@ -22,6 +25,17 @@ class CEl extends OG.createElement() {
     a: {
       c: 8
     }
+  };
+  count = 888;
+  datePatchZero(dateEl: number | string): string | number {
+    return dateEl < 10 ? `0${dateEl}` : dateEl;
+  }
+  formatTime(): string {
+    let timeString: string = "";
+    let d: Date = new Date();
+    timeString = `${d.getFullYear()}-${this.datePatchZero(d.getMonth() + 1)}-${this.datePatchZero(d.getDate())} ${this.datePatchZero(d.getHours())}:${this.datePatchZero(d.getMinutes())}:${this.datePatchZero(d.getSeconds())}`;
+
+    return timeString;
   }
 }
 

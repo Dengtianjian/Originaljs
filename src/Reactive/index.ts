@@ -4,6 +4,7 @@ import Utils from "../Utils";
 import Module from "../Module";
 import ElementModule from "./Modules/Element";
 import PropertyProxy from "./PropertyProxy";
+import Ref from "./Ref";
 
 Module.add("Element", ElementModule);
 
@@ -65,12 +66,14 @@ export default class Reactive {
     Utils.objectMerge(reactiveInstance.refTree, elRefTree);
 
     PropertyProxy.setProxy(reactiveInstance.refTree, properties, reactiveInstance);
+
+    Ref.updateRef(reactiveInstance.refTree, properties);
   }
   constructor(private target: TElement | TElement[], public properties: ICustomElement) {
     let defineProperties: Record<string, any> = {
       reactive: this,
       refTree: this.refTree,
-      propertiesKeyPath: "",
+      propertiesKeyPath: [],
       properties
     };
     if (Array.isArray(target)) {

@@ -44,7 +44,10 @@ function defineOGProperty(target: Attr | Text | IElement | Node
 
 function getObjectProperty(target: object, propertyNames: string[]): any {
   if (typeof target[propertyNames[0]] === "object") {
-    return getObjectProperty(target[propertyNames[0]], propertyNames.slice(1));
+    if (propertyNames.slice(1).length > 0) {
+      return getObjectProperty(target[propertyNames[0]], propertyNames.slice(1));
+    }
+    return target[propertyNames[0]];
   }
   return target[propertyNames[0]];
 }
