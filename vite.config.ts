@@ -7,12 +7,12 @@ export default defineConfig({
   },
   build: {
     minify: "esbuild",
-    target: "esnext"
-    // lib: {
-    //   entry: "src/index.ts",
-    //   name: "original",
-    //   formats: ["es", "iife"],
-    //   fileName: "original",
-    // },
+    target: "esnext",
+    lib: {
+      entry: "src/index.ts",
+      name: "original",
+      formats: ["es", "iife"],
+      fileName: "original",
+    },
   },
 });

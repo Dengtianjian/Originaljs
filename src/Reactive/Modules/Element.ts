@@ -4,6 +4,7 @@ import { TRefTree } from "../../Typings/RefTreeTypings";
 import Utils from "../../Utils";
 import Expression from "../Expression";
 import Ref from "../Ref";
+import { RefRules } from "../Rules";
 import Transform from "../Transform";
 
 export default {
@@ -30,7 +31,9 @@ export default {
 
       const parentNode: TElement = target.parentNode as TElement;
       const newTextChildNodes: Text[] = [];
+
       refs.forEach(refItem => {
+        const extractRef: string = refItem.match(RefRules.extractItem)[0];
         const previousText: string = target.textContent.slice(0, target.textContent.indexOf(refItem));
         if (previousText) {
           newTextChildNodes.push(document.createTextNode(previousText));
@@ -41,7 +44,7 @@ export default {
 
         Utils.defineOGProperty(newTextEl, {
           elementParsed: false,
-          rawTemplate: refItem
+          expression: extractRef
         });
 
         const refTreePart: TRefTree = {};
@@ -80,8 +83,9 @@ export default {
       const els: TElement[] = refTree.__els;
 
       els.forEach(el => {
-        const rawTemplate: string = el.__OG__.rawTemplate;
-        el.textContent = Transform.transformObjectToString(Expression.executeExpression(rawTemplate, el.__OG__.properties));
+        const expression: string = el.__OG__.expression;
+
+        el.textContent = Transform.transformObjectToString(Expression.executeExpression(expression, el.__OG__.properties));
       })
     }
   }

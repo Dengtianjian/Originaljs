@@ -87,6 +87,7 @@ function transformObjectToString(target: any): string {
 
   }
   if (target === null) return "null";
+  if (target === undefined) return "undefined";
   return target.toString();
 }
 

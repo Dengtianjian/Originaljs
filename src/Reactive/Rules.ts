@@ -1,7 +1,7 @@
 export const RefRules = {
   withDotRefPropertyName: /(?<=\{) *.+(?=.*\.).+? *(?=\})/g,
-  keyItem: /\{ *.+ *\}/,
-  extractItem: /(?<=\{).+(?=\})/,
+  keyItem: /\{ *(\n*.+\n*)+ *\}/,
+  extractItem: /(?<=\{)(\n*.+\n*)+(?=\})/,
   variableName: /[a-zA-z_][a-zA-z0-9_\.\[\]'"]+/,
   variableItem: /\{ *[a-zA-z_][a-zA-z0-9_\.\[\]'"]* *\}/,
   extractVariableName: /(?<=\{) *[a-zA-z_][a-zA-z0-9_\.\[\]'"]+? *(?=\})/,
