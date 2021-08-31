@@ -1,5 +1,7 @@
 import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
 import { TRefTree } from "../Typings/RefTreeTypings";
+import Utils from "../Utils";
+import Expression from "./Expression";
 import { RefRules } from "./Rules";
 import Transform from "./Transform";
 import View from "./View";
@@ -43,6 +45,11 @@ function collecRef(sourceString: string, transformPropertyNameToArray: boolean =
   return refs;
 }
 
+/**
+ * 递归更新refTree视图
+ * @param refTree 引用数
+ * @param refProperties 根标签，也是数据保存的
+ */
 function updateRef(refTree: TRefTree, refProperties: ICustomElement | TElement | Record<string, any>): void {
   for (const branchName in refTree) {
     if (refProperties[branchName] === undefined) continue;
@@ -56,8 +63,25 @@ function updateRef(refTree: TRefTree, refProperties: ICustomElement | TElement |
   }
 }
 
+function generateRefTree(propertyNames: string[], target: unknown, endBranch: Record<string, any> = {}): TRefTree {
+  if (target instanceof Attr) {
+    endBranch['__attrs'] = target;
+  } else if (target instanceof Text) {
+    if (RefRules.expressionItem.test(target.textContent)) {
+      endBranch['__expressions'] = [
+        Expression.handleExpressionRef(target.textContent, target)
+      ]
+    } else {
+      endBranch['__els'] = [target];
+    }
+  }
+
+  return Utils.generateObjectTree(propertyNames, endBranch);
+}
+
 export default {
   collecRef,
   getRefKey,
-  updateRef
+  updateRef,
+  generateRefTree
 }

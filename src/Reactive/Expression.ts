@@ -10,8 +10,12 @@ function executeExpression(expression: string, properties: IElement, refProperty
     expressionItem = handleExpressionRef(expression, null);
     refPropertyNames = expressionItem.refPropertyNames;
   }
+  let executeResult: any = new Function(`return ${expression}`).apply(properties);
+  if (typeof executeResult === "function") {
+    executeResult = executeResult.apply(properties);
+  }
 
-  return new Function(`return ${expression}`).apply(properties);
+  return executeResult;
 }
 
 function handleExpressionRef(expression: string, target?: Text | Attr): TExpressionItem {

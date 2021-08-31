@@ -16,6 +16,9 @@ class CEl extends OG.createElement() {
     // setInterval(() => {
     //   this.user.name = this.formatTime();
     // }, 1000);
+    setTimeout(() => {
+      this.obj.a.c = 9;
+    }, 5000);
     // setInterval(() => {
     //   this.obj.a = {
     //     c: Date.now()
@@ -32,6 +35,9 @@ class CEl extends OG.createElement() {
     }
   };
   count = 888;
+  computed() {
+    return 1010;
+  }
   datePatchZero(dateEl: number | string): string | number {
     return dateEl < 10 ? `0${dateEl}` : dateEl;
   }

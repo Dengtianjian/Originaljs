@@ -3,6 +3,7 @@ import { TModuleOptions } from "../../Typings/ModuleTypings";
 import { TRefTree } from "../../Typings/RefTreeTypings";
 import Utils from "../../Utils";
 import Ref from "../Ref";
+import { RefRules } from "../Rules";
 import Transform from "../Transform";
 
 export default {
@@ -29,6 +30,7 @@ export default {
 
       const parentNode: TElement = target.parentNode as TElement;
       const newTextChildNodes: Text[] = [];
+
       refs.forEach(refItem => {
         const previousText: string = target.textContent.slice(0, target.textContent.indexOf(refItem));
         if (previousText) {

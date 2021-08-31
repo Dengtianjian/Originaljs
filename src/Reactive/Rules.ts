@@ -1,12 +1,12 @@
 export const RefRules = {
-  withDotRefPropertyName: /(?<=\{) *.+(?=.*\.).+? *(?=\})/g,
-  refItem: /\{ *.+ *\}/,
-  extractRefItem: /(?<=\{).+(?=\})/,
+  withDotRefPropertyName: /(?<=\{) *[.\W\S]+(?=[.\W\S]*\.)[.\W\S]+? *(?=\})/g,
+  refItem: /\{ *[.\W\S]+ *\}/,
+  extractRefItem: /(?<=\{)[.\W\S]+(?=\})/,
   variableName: /[a-zA-z_][a-zA-z0-9_\.\[\]'"]+/,
   variableItem: /\{ *[a-zA-z_][a-zA-z0-9_\.\[\]'"]* *\}/,
   extractVariableName: /(?<=\{) *[a-zA-z_][a-zA-z0-9_\.\[\]'"]+? *(?=\})/,
-  expressionItem: /\{ *(.*{ *.+ *}.+|.+{ *.+ *}.*)+ *\}/,
-  extractExpression:/(?<=\{) *(.*{ *.+ *}.+|.+{ *.+ *}.*)+ *(?=\})/,
+  expressionItem: /\{ *([.\W\S]*{ *[.\W\S]+ *}[.\W\S]+)+ *\}/g,
+  extractExpression:/(?<=\{) *([.\W\S]*{ *[.\W\S]+ *}[.\W\S]+)+ *(?=\})/,
 } as {
   withDotRefPropertyName: RegExp, //* 带有点符号的引用字符串
   refItem: RegExp, //* 匹配带 花括号的
