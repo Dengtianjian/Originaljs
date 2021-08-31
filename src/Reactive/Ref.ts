@@ -67,10 +67,10 @@ function generateRefTree(propertyNames: string[], target: unknown, endBranch: Re
   if (target instanceof Attr) {
     endBranch['__attrs'] = target;
   } else if (target instanceof Text) {
-    if (RefRules.expressionItem.test(target.textContent)) {
+    if (RefRules.extractExpression.test(target.textContent) === true) {
       endBranch['__expressions'] = [
         Expression.handleExpressionRef(target.textContent, target)
-      ]
+      ];
     } else {
       endBranch['__els'] = [target];
     }

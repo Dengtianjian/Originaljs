@@ -17,7 +17,7 @@ class CEl extends OG.createElement() {
     //   this.user.name = this.formatTime();
     // }, 1000);
     setTimeout(() => {
-      this.obj.a.c = 9;
+      this.display.show = true;
     }, 5000);
     // setInterval(() => {
     //   this.obj.a = {
@@ -35,6 +35,9 @@ class CEl extends OG.createElement() {
     }
   };
   count = 888;
+  display = {
+    show: false
+  };
   async computed() {
     return new Promise((resolve, reject) => {
       resolve(1);
