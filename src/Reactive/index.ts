@@ -5,8 +5,10 @@ import Module from "../Module";
 import ElementModule from "./Modules/Element";
 import PropertyProxy from "./PropertyProxy";
 import Ref from "./Ref";
+import ExpressionModule from "./Modules/ExpressionModule";
 
 Module.add("Element", ElementModule);
+Module.add("ExpressionModule", ExpressionModule);
 
 /**
  * 遍历每一个节点，并且引用collectElRef、collectAttrRef钩子

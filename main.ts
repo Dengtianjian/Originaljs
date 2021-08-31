@@ -16,6 +16,11 @@ class CEl extends OG.createElement() {
     // setInterval(() => {
     //   this.user.name = this.formatTime();
     // }, 1000);
+    // setInterval(() => {
+    //   this.obj.a = {
+    //     c: Date.now()
+    //   }
+    // }, 1000);
   }
   msg = "Hello world";
   user = {

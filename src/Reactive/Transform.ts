@@ -81,12 +81,31 @@ function transformPropertyNameToString(propertyNames: string[] & number[]): stri
   return propertyPath;
 }
 
+/**
+ * 转换任意值为字符串
+ * @param target 被转换成字符串的任意类型对象
+ * @returns 转换后的字符串
+ */
 function transformObjectToString(target: any): string {
   if (typeof target === "object" && target !== null) {
-    console.log(target);
+    const valueItem: string[] = [];
+    for (const key in target) {
+      if (Array.isArray(target[key])) {
+        valueItem.push(`${key}: [ ${target[key].toString()} ]`);
+      } else if (typeof target[key] === "object" && target[key] !== null) {
+        valueItem.push(`${key}: ${transformObjectToString(target[key])}`);
+      } else {
+        if (target[key] === null || target[key] === undefined) {
+          target[key] = target[key] === null ? 'null' : 'undefined';
+        }
+        valueItem.push(`${key}: ${target[key].toString()}`);
+      }
+    }
 
+    return `{ ${valueItem.join(",")} }`;
   }
   if (target === null) return "null";
+  if (target === undefined) return "undefined";
   return target.toString();
 }
 

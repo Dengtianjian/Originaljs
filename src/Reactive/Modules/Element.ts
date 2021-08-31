@@ -4,6 +4,7 @@ import { TRefTree } from "../../Typings/RefTreeTypings";
 import Utils from "../../Utils";
 import Expression from "../Expression";
 import Ref from "../Ref";
+import { RefRules } from "../Rules";
 import Transform from "../Transform";
 
 export default {
@@ -31,24 +32,33 @@ export default {
       const parentNode: TElement = target.parentNode as TElement;
       const newTextChildNodes: Text[] = [];
       refs.forEach(refItem => {
+        //* 内容是表达式处理
+        const isExpression: boolean = RefRules.expressionItem.test(refItem);
+
         const previousText: string = target.textContent.slice(0, target.textContent.indexOf(refItem));
         if (previousText) {
           newTextChildNodes.push(document.createTextNode(previousText));
           target.textContent = target.textContent.slice(target.textContent.indexOf(refItem));
         }
-        const refPropertyNames: string[][] = Ref.collecRef(refItem);
+        const refPropertyNames: string[][] | string[] = Ref.collecRef(refItem);
         const newTextEl: Text = document.createTextNode(refItem);
 
-        Utils.defineOGProperty(newTextEl, {
+        let defineProperties: Record<string, any> = {
           elementParsed: false,
-          rawTemplate: refItem
-        });
+        };
+        Utils.defineOGProperty(newTextEl, defineProperties);
 
         const refTreePart: TRefTree = {};
+        const branchValue: Record<string, object[]> = {};
+        if (isExpression) {
+          branchValue['__expressions'] = [
+            Expression.handleExpressionRef(refItem, newTextEl)
+          ]
+        } else {
+          branchValue['__els'] = [newTextEl];
+        }
         refPropertyNames.forEach(propertyNames => {
-          let propertyRef: TRefTree = Utils.generateObjectTree(propertyNames, {
-            __els: [newTextEl],
-          });
+          let propertyRef: TRefTree = Utils.generateObjectTree(propertyNames, branchValue);
           Utils.objectMerge(refTreePart, propertyRef);
         });
 
@@ -80,9 +90,8 @@ export default {
       const els: TElement[] = refTree.__els;
 
       els.forEach(el => {
-        const rawTemplate: string = el.__OG__.rawTemplate;
-        el.textContent = Transform.transformObjectToString(Expression.executeExpression(rawTemplate, el.__OG__.properties));
-      })
+        el.textContent = Transform.transformObjectToString(value);
+      });
     }
   }
 } as TModuleOptions

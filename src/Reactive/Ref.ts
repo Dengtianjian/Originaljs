@@ -3,8 +3,8 @@ import { TRefTree } from "../Typings/RefTreeTypings";
 import { RefRules } from "./Rules";
 import Transform from "./Transform";
 import View from "./View";
-const matchRefItem: RegExp = new RegExp(RefRules.keyItem, "g");
-const matchAndExtract: RegExp = new RegExp(RefRules.extractItem, "g");
+const matchRefItem: RegExp = new RegExp(RefRules.refItem, "g");
+const matchAndExtract: RegExp = new RegExp(RefRules.extractRefItem, "g");
 const matchAndExtractVariableName: RegExp = new RegExp(RefRules.extractVariableName, "g");
 
 /**
@@ -24,14 +24,21 @@ function getRefKey(sourceString: string, extract: boolean = true): string[] {
 /**
  * 获取模板片段里的引用属性名
  * @param sourceString 模板片段
+ * @param transformPropertyNameToArray 是否转换属性名为数组
  * @returns 模板里的引用属性名数组
  */
-function collecRef(sourceString: string): string[][] {
+function collecRef(sourceString: string, transformPropertyNameToArray: boolean = true): string[][] | string[] {
   let refs: string[] | string[][] = sourceString.match(matchAndExtractVariableName) || [];
 
   refs = refs.map(refItem => {
-    return Transform.transformPropertyNameToArray(refItem);
+    refItem = refItem.trim();
+    if (transformPropertyNameToArray) {
+      // @ts-ignore
+      refItem = Transform.transformPropertyNameToArray(refItem);
+    }
+    return refItem;
   });
+
 
   return refs;
 }
