@@ -6,8 +6,10 @@ import ElementModule from "./Modules/ElementModule";
 import PropertyProxy from "./PropertyProxy";
 import Ref from "./Ref";
 import ExpressionModule from "./Modules/ExpressionModule";
+import AttrModule from "./Modules/AttrModule";
 
 Module.add("ElementModule", ElementModule);
+Module.add("AttrModule", AttrModule);
 Module.add("ExpressionModule", ExpressionModule);
 
 /**
