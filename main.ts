@@ -35,8 +35,15 @@ class CEl extends OG.createElement() {
     }
   };
   count = 888;
-  computed() {
-    return 1010;
+  async computed() {
+    return new Promise((resolve, reject) => {
+      resolve(1);
+      setTimeout(() => {
+        reject({
+          message: "error"
+        });
+      }, 5000);
+    })
   }
   datePatchZero(dateEl: number | string): string | number {
     return dateEl < 10 ? `0${dateEl}` : dateEl;

@@ -18,6 +18,18 @@ function setUpdateView(target: TElement | ICustomElement | Record<string, any>, 
   } else {
     refProperties = target.__OG__.properties;
   }
+  if (typeof value === "function") {
+    if (Object.prototype.toString.call(value) === "[object AsyncFunction]") {
+      value.apply(target.__OG__.properties).then(res => {
+        Module.useAll("reactive.setUpdateView", [refTree, refProperties, res, propertyNames]);
+      }).catch(err => {
+        Module.useAll("reactive.setUpdateView", [refTree, refProperties, err, propertyNames]);
+      })
+      value = "";
+    } else {
+      value = value.apply(target.__OG__.properties);
+    }
+  }
 
   Module.useAll("reactive.setUpdateView", [refTree, refProperties, value, propertyNames]);
   return true;

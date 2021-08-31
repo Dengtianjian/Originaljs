@@ -27,7 +27,9 @@ function setProxy(refTree: TRefTree, properties: ICustomElement, reactiveInstanc
     properties[branchName] = new Proxy(properties[branchName], {
       set(...rest): boolean {
         Reflect.set(...rest);
-        return View.setUpdateView(...rest);
+        // @ts-ignore
+        View.setUpdateView(...rest);
+        return true;
       },
       deleteProperty(...rest): boolean {
         Reflect.deleteProperty(...rest);
