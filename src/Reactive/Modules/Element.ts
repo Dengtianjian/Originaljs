@@ -1,10 +1,8 @@
-import { ICustomElement, IElement, TElement } from "../../Typings/CustomElementTypings";
+import { ICustomElement, TElement } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
 import { TRefTree } from "../../Typings/RefTreeTypings";
 import Utils from "../../Utils";
-import Expression from "../Expression";
 import Ref from "../Ref";
-import { RefRules } from "../Rules";
 import Transform from "../Transform";
 
 export default {
@@ -32,9 +30,6 @@ export default {
       const parentNode: TElement = target.parentNode as TElement;
       const newTextChildNodes: Text[] = [];
       refs.forEach(refItem => {
-        //* 内容是表达式处理
-        const isExpression: boolean = RefRules.expressionItem.test(refItem);
-
         const previousText: string = target.textContent.slice(0, target.textContent.indexOf(refItem));
         if (previousText) {
           newTextChildNodes.push(document.createTextNode(previousText));
@@ -49,16 +44,8 @@ export default {
         Utils.defineOGProperty(newTextEl, defineProperties);
 
         const refTreePart: TRefTree = {};
-        const branchValue: Record<string, object[]> = {};
-        if (isExpression) {
-          branchValue['__expressions'] = [
-            Expression.handleExpressionRef(refItem, newTextEl)
-          ]
-        } else {
-          branchValue['__els'] = [newTextEl];
-        }
         refPropertyNames.forEach(propertyNames => {
-          let propertyRef: TRefTree = Utils.generateObjectTree(propertyNames, branchValue);
+          let propertyRef: TRefTree = Ref.generateRefTree(propertyNames, newTextEl, {});
           Utils.objectMerge(refTreePart, propertyRef);
         });
 
@@ -85,7 +72,7 @@ export default {
 
       return refTree;
     },
-    setUpdateView(refTree: TRefTree, properties: Record<string, any>, value: any, propertyNames: string[]): void {
+    setUpdateView(refTree: TRefTree, properties: Record<string, any>, value: any): void {
       if (refTree.__els === undefined) return;
       const els: TElement[] = refTree.__els;
 
