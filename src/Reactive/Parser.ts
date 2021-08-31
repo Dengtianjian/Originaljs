@@ -20,14 +20,7 @@ function parseDom(HTMLString: string): Node[] {
  * @returns 优化后的字符串
  */
 function optimizeRefKey(sourceString: string): string {
-  const withDotRefs: string[] = sourceString.match(RefRules.withDotRefPropertyName);
-  if (withDotRefs) {
-    withDotRefs.forEach(refItem => {
-      refItem = refItem.replaceAll(/\.([\w\d_]+)?/g, "['$1']");
-    });
-  }
-
-  return sourceString;
+  return sourceString.replaceAll(/\.([\w\d_]+)?/g, "['$1']");
 }
 
 /**
