@@ -2,12 +2,12 @@ import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
 import { TRefTree } from "../Typings/RefTreeTypings";
 import Utils from "../Utils";
 import Module from "../Module";
-import ElementModule from "./Modules/Element";
+import ElementModule from "./Modules/ElementModule";
 import PropertyProxy from "./PropertyProxy";
 import Ref from "./Ref";
 import ExpressionModule from "./Modules/ExpressionModule";
 
-Module.add("Element", ElementModule);
+Module.add("ElementModule", ElementModule);
 Module.add("ExpressionModule", ExpressionModule);
 
 /**
