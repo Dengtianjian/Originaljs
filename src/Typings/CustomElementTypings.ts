@@ -1,3 +1,4 @@
+import CustomElement from "../CustomElement";
 import Reactive from "../Reactive";
 import Transition from "../Transition";
 import { TRefTree } from "./RefTreeTypings";
@@ -33,7 +34,7 @@ export interface ICustomElement extends HTMLElement {
 
 export type TElement = {
   __OG__: TOG
-} & Element & HTMLElement & Node & ParentNode;
+} & Element & HTMLElement & Node & ParentNode & ICustomElement;
 export interface IElement extends Element {
   __OG__: TOG
 }

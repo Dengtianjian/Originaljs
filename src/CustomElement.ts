@@ -1,5 +1,5 @@
 import Transition from "./Transition";
-import { ICustomElement, IElement } from "./Typings/CustomElementTypings";
+import { ICustomElement, IElement, TElement, TOG } from "./Typings/CustomElementTypings";
 import { TCSSStyleDeclaration } from "./Typings/TransitionTypings";
 import Parser from "./Reactive/Parser";
 import Reactive from "./Reactive";
@@ -10,7 +10,7 @@ export default class CustomElement extends HTMLElement implements ICustomElement
     this.__OG__.props = props;
     this.__OG__.el = this.attachShadow({
       mode: "closed"
-    });
+    }) as unknown as ICustomElement;
   }
   __OG__ = {
     reactive: null,
@@ -20,7 +20,12 @@ export default class CustomElement extends HTMLElement implements ICustomElement
     el: null,
     slots: {},
     props: []
-  };
+  } as {
+    transitions: Record<string, Transition>;
+    el: IElement;
+    slots: Record<string, Node[]>;
+    props: string[];
+  } & TOG;
   private connctedCallback(): void {
     this.connected();
   }
@@ -53,7 +58,7 @@ export default class CustomElement extends HTMLElement implements ICustomElement
     this.__OG__.el.innerHTML = "";
     this.__OG__.slots = {};
     this.__OG__.el.append(...Parser.parseTemplate(template));
-    Reactive.observe(this.__OG__.el, this);
+    Reactive.observe(this.__OG__.el as TElement, this as unknown as ICustomElement);
 
     this.collectSlots();
 
