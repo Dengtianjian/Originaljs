@@ -32,7 +32,6 @@ export default {
       const newTextChildNodes: Text[] = [];
 
       refs.forEach(refItem => {
-        const extractRef: string = refItem.match(RefRules.extractItem)[0];
         const previousText: string = target.textContent.slice(0, target.textContent.indexOf(refItem));
         if (previousText) {
           newTextChildNodes.push(document.createTextNode(previousText));
