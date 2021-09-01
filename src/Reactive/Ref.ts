@@ -80,26 +80,46 @@ function generateRefTreeByRefString(refString: string, target: Attr | Text, endB
 }
 
 function generateRefTree(propertyNames: string[], target: unknown, endBranch: Record<string, any> = {}, endBranchName?: string): TRefTree {
-  if (target instanceof Attr) {
-    if (RefRules.extractExpression.test(target.textContent) === true) {
-      endBranch['__expressions'] = [
-        Expression.handleExpressionRef(target.nodeValue, target)
-      ];
-    } else if (!endBranchName) {
+  let expression: string = "";
+  if (!endBranchName) {
+    if (target instanceof Attr) {
       endBranchName = "__attrs";
-    }
-  } else if (target instanceof Text) {
-    if (RefRules.extractExpression.test(target.textContent) === true) {
-      endBranch['__expressions'] = [
-        Expression.handleExpressionRef(target.textContent, target)
-      ];
-    } else if (!endBranchName) {
+      expression = target.nodeValue;
+    } else if (target instanceof Text) {
       endBranchName = "__els";
+      expression = target.textContent;
+    }
+    if (RefRules.extractExpression.test(expression) === true) {
+      endBranchName = "__expressions";
     }
   }
-  endBranch[endBranchName] = [target];
 
-  return Utils.generateObjectTree(propertyNames, endBranch);
+  switch (endBranchName) {
+    case "__expressions": {
+      endBranch = [
+        {
+          ...endBranch,
+          ...Expression.handleExpressionRef(expression, target as Attr | Text)
+        }
+      ];
+    }
+    case "__attrs":
+    case "__els":
+      endBranch = [target];
+      break;
+    case "__methods":
+      endBranch = [
+        {
+          ...endBranch,
+          target
+        }
+      ];
+      break;
+  }
+
+  return Utils.generateObjectTree(propertyNames, {
+    [endBranchName]: endBranch
+  });
 }
 
 export default {
