@@ -14,9 +14,22 @@ export type TMethodBranch = {
   listener: (event: any) => void
 };
 
+export type TDynamicElementContentTypes = {
+  html: 1,
+  value: 2,
+  is: 3
+};
+export type TDynamicElementBranch = {
+  attr: Attr,
+  target: TElement,
+  rawTemplate: string,
+  contentType: keyof TDynamicElementContentTypes | string
+}
+
 export type TRefTree = {
   __els?: TElement[],
   __attrs?: Attr[],
   __expressions?: TExpressionItem[],
-  __methods?: TMethodBranch[]
+  __methods?: TMethodBranch[],
+  __dynamicElements?: TDynamicElementBranch[]
 }

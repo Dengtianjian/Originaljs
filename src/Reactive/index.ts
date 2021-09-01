@@ -31,23 +31,31 @@ function traverseNodes(target: TElement | TElement[], properties: Record<string,
     target = Array.from(target);
   }
 
-  target.forEach(elementItem => {
+  for (const elementItem of target) {
     for (const refPart of Module.useAll<TRefTree>("reactive.collecElRef", [elementItem, properties])) {
       Utils.objectMerge(refTree, refPart);
     }
-    if (elementItem.attributes && elementItem.attributes.length > 0) {
+
+    //* 判断是否需要跳过属性收集以来
+    if ((elementItem.__OG__ && !elementItem.__OG__.skipAttrCollect) && (elementItem.attributes && elementItem.attributes.length > 0)) {
       Array.from(elementItem.attributes).forEach(attrItem => {
         for (const refPart of Module.useAll<TRefTree>("reactive.collectAttrRef", [attrItem, properties])) {
           Utils.objectMerge(refTree, refPart);
         }
       });
     }
+
+    //* 判断是否需要跳过收集子元素依赖
+    if (elementItem.__OG__ && elementItem.__OG__.skipChildNodesCollect) {
+      continue;
+    }
+
     if (elementItem.childNodes && elementItem.childNodes.length > 0) {
       elementItem.childNodes.forEach(nodeItem => {
         Utils.objectMerge(refTree, traverseNodes(nodeItem as TElement, properties));
       });
     }
-  });
+  }
 
   return refTree;
 }

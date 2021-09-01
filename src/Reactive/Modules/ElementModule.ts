@@ -75,7 +75,7 @@ export default {
       return refTree;
     },
     setUpdateView(refTree: TRefTree, properties: Record<string, any>, value: any): void {
-      if (refTree.__els === undefined) return;
+      if (refTree?.__els === undefined) return;
       const els: TElement[] = refTree.__els;
 
       els.forEach(el => {

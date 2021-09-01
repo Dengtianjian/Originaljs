@@ -39,10 +39,18 @@ class CEl extends OG.createElement() {
   };
   count = 888;
   display = {
-    show: false
+    show: false,
+    staticHtml: "<h1>Hello Originaljs</h1>"
   };
+  UpdateHtml = () => {
+    fetch("./staticHTML.html").then(res => res.text()).then(res => {
+      this.display.staticHtml = res;
+    })
+
+  }
+  elhtml = "<h1>Hello Originaljs</h1>";
   updateData = () => {
-    this.user.name="https://sortablejs.github.io/Vue.Draggable/img/logo.c6a3753c.svg";
+    this.user.name = "https://sortablejs.github.io/Vue.Draggable/img/logo.c6a3753c.svg";
     this.display.show = !this.display.show;
   }
   updateCount = (...rest) => {

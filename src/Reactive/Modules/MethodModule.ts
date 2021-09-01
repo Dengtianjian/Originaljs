@@ -111,7 +111,7 @@ export default {
       return refTree;
     },
     setUpdateView(refTree: TRefTree, properties: ICustomElement, value, propertyNames): void {
-      if (refTree.__methods === undefined) return;
+      if (refTree?.__methods === undefined) return;
       const methods: TMethodBranch[] = refTree.__methods;
 
       for (const method of methods) {

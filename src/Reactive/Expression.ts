@@ -16,6 +16,7 @@ function executeExpression(expression: string, properties: IElement | Record<str
   if (refPropertyNames === undefined) {
     expressionItem = handleExpressionRef(expression, null);
     refPropertyNames = expressionItem.refPropertyNames;
+    expression = expressionItem.expression;
   }
   let executeResult: any = new Function(`return ${expression}`).apply(properties);
   if (typeof executeResult === "function") {

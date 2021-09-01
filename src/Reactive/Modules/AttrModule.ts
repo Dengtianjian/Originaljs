@@ -24,7 +24,7 @@ export default {
       return refTree;
     },
     setUpdateView(refTree, properties, value): void {
-      if (refTree.__attrs === undefined) return;
+      if (refTree?.__attrs === undefined) return;
       const attrs: Attr[] = refTree.__attrs;
 
       attrs.forEach(attr => {
