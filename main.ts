@@ -16,12 +16,12 @@ class CEl extends OG.createElement() {
     // setInterval(() => {
     //   this.user.name = this.formatTime();
     // }, 1000);
-    setTimeout(() => {
-      this.user.name = "https://wx1.sinaimg.cn/orj360/002TLsr9ly1gu0usvnavsj61hc0o011o02.jpg";
-      setTimeout(() => {
-        this.user.name = "https://mbdp01.bdstatic.com/static/landing-pc/img/logo_top.79fdb8c2.png";
-      }, 5000);
-    }, 5000);
+    // setTimeout(() => {
+    //   this.user.name = "https://wx1.sinaimg.cn/orj360/002TLsr9ly1gu0usvnavsj61hc0o011o02.jpg";
+    //   setTimeout(() => {
+    //     this.user.name = "https://mbdp01.bdstatic.com/static/landing-pc/img/logo_top.79fdb8c2.png";
+    //   }, 5000);
+    // }, 5000);
     // setInterval(() => {
     //   this.obj.a = {
     //     c: Date.now()
@@ -41,6 +41,9 @@ class CEl extends OG.createElement() {
   display = {
     show: false
   };
+  updateData = () => {
+    this.display.show = !this.display.show;
+  }
   async computed() {
     return new Promise((resolve, reject) => {
       resolve(1);

@@ -81,6 +81,7 @@ export default class CustomElement extends HTMLElement implements ICustomElement
 
   }
   updateProperty(propertyName: string, newValue: any): void {
+    console.log(propertyName, newValue);
 
   }
   revokeObserve(target: string | IElement, isDeep: boolean): void {

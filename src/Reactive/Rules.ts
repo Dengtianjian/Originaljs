@@ -1,13 +1,4 @@
-export const RefRules = {
-  withDotRefPropertyName: /(?<=\{) *[.\W\S]+(?=[.\W\S]*\.)[.\W\S]+? *(?=\})/g,
-  refItem: /\{ *[.\W\S]+ *\}/,
-  extractRefItem: /(?<=\{)[.\W\S]+(?=\})/,
-  variableName: /[a-zA-z_][a-zA-z0-9_\.\[\]'"]+/,
-  variableItem: /\{ *[a-zA-z_][a-zA-z0-9_\.\[\]'"]* *\}/,
-  extractVariableName: /(?<=\{) *[a-zA-z_][a-zA-z0-9_\.\[\]'"]+? *(?=\})/,
-  expressionItem: /\{ *([.\W\S]*{ *[.\W\S]+ *}[.\W\S]+)+ *\}/g,
-  extractExpression:/(?<=\{) *([.\W\S]*{ *[.\W\S]+ *}[.\W\S]+)+ *(?=\})/,
-} as {
+export const RefRules: {
   withDotRefPropertyName: RegExp, //* 带有点符号的引用字符串
   refItem: RegExp, //* 匹配带 花括号的
   extractRefItem: RegExp, //* 匹配并且抽取
@@ -16,4 +7,29 @@ export const RefRules = {
   extractVariableName: RegExp, //* 从 {} 中提取
   expressionItem: RegExp, //* 表达式
   extractExpression: RegExp, //* 抽取表达式
+} = {
+  withDotRefPropertyName: /(?<=\{) *[.\W\S]+(?=[.\W\S]*\.)[.\W\S]+? *(?=\})/g,
+  refItem: /\{ *[.\W\S]+ *\}/,
+  extractRefItem: /(?<=\{)[.\W\S]+(?=\})/,
+  variableName: /[a-zA-z_][a-zA-z0-9_\.\[\]'"]+/,
+  variableItem: /\{ *[a-zA-z_][a-zA-z0-9_\.\[\]'"]* *\}/,
+  extractVariableName: /(?<=\{) *[a-zA-z_][a-zA-z0-9_\.\[\]'"]+? *(?=\})/,
+  expressionItem: /\{ *([.\W\S]*{ *[.\W\S]+ *}[.\W\S]+)+ *\}/g,
+  extractExpression: /(?<=\{) *([.\W\S]*{ *[.\W\S]+ *}[.\W\S]+)+ *(?=\})/,
+}
+
+export const MethodRules: {
+  OnAttributeName: RegExp, //* 绑定方法的属性名 onclick onmouseover ...
+  MethodNameAttibuteValue: RegExp, //* 匹配属性值是否绑定了方法
+  MatchMethodName: RegExp, //* 匹配方法名称
+  MethodName: RegExp, //* 匹配方法名称，且后面必须带有参数
+  MethodType: RegExp, //* 匹配方法类型
+  MethodParams: RegExp, //* 匹配参数
+} = {
+  OnAttributeName: /^on[a-z]+$/,
+  MethodNameAttibuteValue: /^\w+(\(\))?/,
+  MatchMethodName: /\w+(\(.+\))?;?/,
+  MethodName: /\w+(?=\(.+\))?/,
+  MethodType: /(?<=on)\w+/,
+  MethodParams: /(?<=\().+(?=\))/
 }
