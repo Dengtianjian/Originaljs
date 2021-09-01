@@ -1,5 +1,3 @@
-import { RefRules, MethodRules } from "./Rules";
-
 /**
  * 转换HTML文本为标签节点数组
  * @param HTMLString HTML文本
@@ -48,8 +46,12 @@ function parseTemplate(template: string | Element | Node[] | NodeList): Node[] {
   return template;
 }
 
-
-function parseMethodParams(paramString: string): any[] {
+/**
+ * 解析方法参数字符串
+ * @param paramString 参数字符串
+ * @returns 解析后的参数字符串数组
+ */
+function parseMethodParams(paramString: string): string[] {
   const params: any[] = paramString.split(",").map(param => {
     if (isNaN(Number(param))) {
       return param;

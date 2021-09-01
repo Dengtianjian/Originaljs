@@ -2,7 +2,6 @@ import Reactive from ".";
 import { ICustomElement } from "../Typings/CustomElementTypings";
 import { TRefTree } from "../Typings/RefTreeTypings";
 import Utils from "../Utils";
-import Transform from "./Transform";
 import View from "./View";
 
 function setProxy(refTree: TRefTree, properties: ICustomElement, reactiveInstance: Reactive, paths: number[] & string[] = []): void {
