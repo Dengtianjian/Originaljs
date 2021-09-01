@@ -8,7 +8,7 @@ import Transform from "../Transform";
 export default {
   reactive: {
     setUpdateView(refTree: TRefTree, properties: TElement) {
-      if (!refTree.__expressions) return;
+      if (refTree.__expressions === undefined) return;
       const expressions: TExpressionItem[] = refTree.__expressions;
 
       expressions.forEach(expressionItem => {

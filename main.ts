@@ -44,6 +44,10 @@ class CEl extends OG.createElement() {
   updateData = () => {
     this.display.show = !this.display.show;
   }
+  updateCount = (...rest) => {
+    this.count = Date.now();
+    console.log(rest);
+  }
   async computed() {
     return new Promise((resolve, reject) => {
       resolve(1);

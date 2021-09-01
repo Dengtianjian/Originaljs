@@ -28,7 +28,7 @@ export const MethodRules: {
 } = {
   OnAttributeName: /^on[a-z]+$/,
   MethodNameAttibuteValue: /^\w+(\(\))?/,
-  MatchMethodName: /\w+(\(.+\))?;?/,
+  MatchMethodName: /\w+(\(.+\))?(?=;)?/,
   MethodName: /\w+(?=\(.+\))?/,
   MethodType: /(?<=on)\w+/,
   MethodParams: /(?<=\().+(?=\))/

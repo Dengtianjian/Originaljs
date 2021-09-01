@@ -6,11 +6,11 @@ function objectMerge(target: object, source: object): void {
     const targetItem = target[key];
     const sourceItem = source[key];
 
-    if (targetItem === "object") {
+    if (typeof targetItem === "object" && targetItem !== null) {
       if (Array.isArray(targetItem)) {
         targetItem.push(...sourceItem);
       } else {
-        objectMerge(target[key], sourceItem);
+        objectMerge(targetItem, sourceItem);
       }
     } else {
       target[key] = source[key];

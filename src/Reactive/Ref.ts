@@ -63,24 +63,41 @@ function updateRef(refTree: TRefTree, refProperties: ICustomElement | TElement |
   }
 }
 
-function generateRefTree(propertyNames: string[], target: unknown, endBranch: Record<string, any> = {}): TRefTree {
+function generateRefTreeByRefString(refString: string, target: Attr | Text, endBranch?: Record<string, any>, endBranchName?: string): TRefTree {
+  const refs: string[] = getRefKey(refString, false);
+  if (refs.length === 0) return {};
+
+  const refTree: TRefTree = {};
+  refs.forEach(refItem => {
+    const refPropertyNames: string[][] | string[] = collecRef(refItem);
+
+    refPropertyNames.forEach(propertyNames => {
+      Utils.objectMerge(refTree, generateRefTree(propertyNames, target, endBranch,
+        endBranchName));
+    });
+  });
+  return refTree;
+}
+
+function generateRefTree(propertyNames: string[], target: unknown, endBranch: Record<string, any> = {}, endBranchName?: string): TRefTree {
   if (target instanceof Attr) {
     if (RefRules.extractExpression.test(target.textContent) === true) {
       endBranch['__expressions'] = [
         Expression.handleExpressionRef(target.nodeValue, target)
       ];
-    } else {
-      endBranch['__attrs'] = [target];
+    } else if (!endBranchName) {
+      endBranchName = "__attrs";
     }
   } else if (target instanceof Text) {
     if (RefRules.extractExpression.test(target.textContent) === true) {
       endBranch['__expressions'] = [
         Expression.handleExpressionRef(target.textContent, target)
       ];
-    } else {
-      endBranch['__els'] = [target];
+    } else if (!endBranchName) {
+      endBranchName = "__els";
     }
   }
+  endBranch[endBranchName] = [target];
 
   return Utils.generateObjectTree(propertyNames, endBranch);
 }
@@ -89,5 +106,6 @@ export default {
   collecRef,
   getRefKey,
   updateRef,
-  generateRefTree
+  generateRefTree,
+  generateRefTreeByRefString
 }

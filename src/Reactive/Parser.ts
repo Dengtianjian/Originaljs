@@ -1,4 +1,4 @@
-import { RefRules } from "./Rules";
+import { RefRules, MethodRules } from "./Rules";
 
 /**
  * 转换HTML文本为标签节点数组
@@ -48,8 +48,22 @@ function parseTemplate(template: string | Element | Node[] | NodeList): Node[] {
   return template;
 }
 
+
+function parseMethodParams(paramString: string): any[] {
+  const params: any[] = paramString.split(",").map(param => {
+    if (isNaN(Number(param))) {
+      return param;
+    } else {
+      return Number(param);
+    }
+  })
+
+  return params;
+}
+
 export default {
   parseDom,
   parseTemplate,
-  optimizeRefKey
+  optimizeRefKey,
+  parseMethodParams
 }

@@ -10,8 +10,8 @@ import AttrModule from "./Modules/AttrModule";
 import MethodModule from "./Modules/MethodModule";
 
 Module.add("ElementModule", ElementModule);
-Module.add("MethodModule", MethodModule);
 Module.add("AttrModule", AttrModule);
+Module.add("MethodModule", MethodModule);
 Module.add("ExpressionModule", ExpressionModule);
 
 /**
@@ -71,14 +71,18 @@ export default class Reactive {
 
     Utils.objectMerge(reactiveInstance.refTree, elRefTree);
 
-    PropertyProxy.setProxy(reactiveInstance.refTree, properties, reactiveInstance);
+    if (Object.keys(properties.__OG__.refTree).length === 0) {
+      properties.__OG__.refTree = reactiveInstance.refTree;
+    }
 
-    Ref.updateRef(reactiveInstance.refTree, properties);
+    PropertyProxy.setProxy(elRefTree, properties, reactiveInstance);
+
+    Ref.updateRef(elRefTree, properties);
   }
   constructor(private target: TElement | TElement[], public properties: ICustomElement) {
     let defineProperties: Record<string, any> = {
       reactive: this,
-      refTree: this.refTree,
+      refTree: null,
       propertiesKeyPath: [],
       properties
     };
