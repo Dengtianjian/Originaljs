@@ -1,5 +1,9 @@
-<button onclick="updateData;" title="{count}">Update data</button>
-<button onclick="updateCount(1,2,'{user.name}')" title="{count}">Update property</button>
+<button onclick="updateData;" title="{ count }">Update data</button>
+<button onclick="updateCount(1,2,'{ { user.name } + `?time=`+Date.now(); {obj.a.c}=2; }')" title="{count}">Update property</button>
 
 <p>{count}</p>
 <p>{ display.show }</p>
+<p>{ user.name }</p>
+<p>
+  { obj.a.c }
+</p>

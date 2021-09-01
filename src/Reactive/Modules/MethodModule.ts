@@ -6,6 +6,7 @@ import Parser from "../Parser";
 import Utils from "../../Utils";
 import Ref from "../Ref";
 import Transform from "../Transform";
+import Expression from "../Expression";
 
 const GlobalMatchMethodName: RegExp = new RegExp(MethodRules.MatchMethodName, "g");
 
@@ -15,11 +16,18 @@ function bindMethod(methodItem: TMethodBranch, properties: Record<string, any>) 
     return;
   }
 
-  if (methodItem.refParams > 0) {
-    const refParams: Record<number, string[]> = methodItem.refParamsMap;
-    for (const index in refParams) {
-      methodItem.params[index] = Transform.transformObjectToString(Utils.getObjectProperty(properties, refParams[index]));
-    }
+  //* 引用参数转换
+  if (methodItem.refParamsMap.size > 0) {
+    methodItem.refParamsMap.forEach((refParamItem, paramIndex) => {
+      methodItem.params[paramIndex] = Transform.transformObjectToString(Utils.getObjectProperty(properties, refParamItem));
+    })
+  }
+
+  //* 表达式参数转换
+  if (methodItem.expressionParamMap.size > 0) {
+    methodItem.expressionParamMap.forEach((expressionItem, paramIndex) => {
+      methodItem.params[paramIndex] = Transform.transformObjectToString(Expression.executeExpression(expressionItem.expression, properties, expressionItem.params));
+    })
   }
 
   const listener = function (event): any {
@@ -54,22 +62,30 @@ export default {
 
       for (let methodName of methodNames) {
         let listener = null;
-        let params: string[] | string = methodName.match(MethodRules.MethodParams);
-        let refParamsMap: Record<number, string[]> = {};
-        let refParams: number = 0;
-        if (params) {
-          params = Parser.parseMethodParams(params[0]);
+        let paramString = methodName.match(MethodRules.MethodParams);
+        let params: string[] = [];
+
+        let refParamsMap: Map<number, string[]> = new Map();
+        const expressionParamMap: Map<number, {
+          expression: string, params: string[]
+        }> = new Map();
+
+        if (paramString) {
+          params = Parser.parseMethodParams(paramString[0]);
           params.forEach((param, index) => {
             if (RefRules.refItem.test(param)) {
-              param = param.match(RefRules.extractRefItem)[0];
-              // @ts-ignore
-              params[index] = param;
-              refParamsMap[index] = Transform.transformPropertyNameToArray(param);
-              refParams++;
+              params[index] = param = param.match(RefRules.extractRefItem)[0];
+
+              if (Expression.isExpression(`{ ${param} }`)) {
+                expressionParamMap.set(index, {
+                  expression: Expression.handleExpressionRef(`{ ${param} }`, target).expression,
+                  params: Ref.collecRef(param) as string[]
+                });
+              } else {
+                refParamsMap.set(index, Transform.transformPropertyNameToArray(param));
+              }
             }
           })
-        } else {
-          params = [];
         }
 
         let extractMethodName: string[] | string = methodName.match(MethodRules.MethodName);
@@ -77,7 +93,7 @@ export default {
         const branch: TMethodBranch = {
           params,
           refParamsMap,
-          refParams,
+          expressionParamMap,
           listener,
           eventType,
           methodName: extractMethodName,
@@ -85,7 +101,7 @@ export default {
           target
         }
         //* 没有响应式的参数方法先绑定
-        if (Object.keys(refParamsMap).length === 0) {
+        if (refParamsMap.size === 0 && expressionParamMap.size === 0) {
           bindMethod(branch, properties);
         } else {
           Utils.objectMerge(refTree, Ref.generateRefTreeByRefString(methodName, target, branch, "__methods"));

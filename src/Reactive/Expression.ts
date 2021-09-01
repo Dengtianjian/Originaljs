@@ -11,7 +11,7 @@ import Transform from "./Transform";
  * @param refPropertyNames 引用的数据名称数组
  * @returns 表达式执行结果
  */
-function executeExpression(expression: string, properties: IElement, refPropertyNames?: string[]): any {
+function executeExpression(expression: string, properties: IElement | Record<string, any>, refPropertyNames?: string[]): any {
   let expressionItem: TExpressionItem = null;
   if (refPropertyNames === undefined) {
     expressionItem = handleExpressionRef(expression, null);
@@ -35,7 +35,7 @@ function handleExpressionRef(expression: string, target?: Text | Attr): TExpress
   expression = expression.match(RefRules.extractRefItem)[0].trim();
   const propertyNames: string[][] | string[] = Ref.collecRef(expression, false);
   propertyNames.forEach((propertyName, index) => {
-    const matchValue:string=propertyName.replace(/([\[\]\.])/g,"\\$1");
+    const matchValue: string = propertyName.replace(/([\[\]\.])/g, "\\$1");
     expression = expression.replace(new RegExp(`\{ *${matchValue} *\}`), `this.${propertyName}`);
 
     propertyNames[index] = Transform.transformPropertyNameToArray(propertyName);
@@ -48,7 +48,17 @@ function handleExpressionRef(expression: string, target?: Text | Attr): TExpress
   };
 }
 
+/**
+ * 判断指定字符串是不是表达式
+ * @param nowSureString 不确定的字符串
+ * @returns 判断结果
+ */
+function isExpression(nowSureString: string): boolean {
+  return RefRules.extractExpression.test(nowSureString);
+}
+
 export default {
   executeExpression,
-  handleExpressionRef
+  handleExpressionRef,
+  isExpression
 }

@@ -3,8 +3,10 @@ import { TExpressionItem } from "./ExpressionTypings";
 
 export type TMethodBranch = {
   params: string[],
-  refParamsMap: Record<number, string[]>,
-  refParams: number,
+  refParamsMap: Map<number, string[]>,
+  expressionParamMap: Map<number, {
+    expression: string, params: string[]
+  }>,
   target: Attr,
   eventType: string,
   methodName: string,
