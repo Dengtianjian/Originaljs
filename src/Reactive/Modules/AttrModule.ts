@@ -4,6 +4,7 @@ import { TRefTree } from "../../Typings/RefTreeTypings";
 import Utils from "../../Utils";
 import Ref from "../Ref";
 import { RefRules } from "../Rules";
+import Transform from "../Transform";
 
 export default {
   reactive: {
@@ -14,18 +15,32 @@ export default {
       const refs: string[] = Ref.getRefKey(target.nodeValue, false);
       if (refs.length === 0) return {};
 
-      const nodeValue: string = target.nodeValue;
-      const ownElement: TElement = target.ownerElement as TElement;
-
       Utils.defineOGProperty(target, {
         attrCollected: true
       });
 
-      refs.forEach(refItem=>{
+      const refTree: TRefTree = {};
+      refs.forEach(refItem => {
+        const refPropertyNames: string[][] | string[] = Ref.collecRef(refItem);
 
-      })
+        refPropertyNames.forEach(propertyNames => {
+          Utils.objectMerge(refTree, Ref.generateRefTree(propertyNames, target));
+        });
 
-      console.dir(nodeValue)
+      });
+
+      Utils.defineOGProperty(target.ownerElement, {
+        hasRefs: true
+      });
+      return refTree;
+    },
+    setUpdateView(refTree, properties, value): void {
+      if (!refTree.__attrs) return;
+      const attrs: Attr[] = refTree.__attrs;
+
+      attrs.forEach(attr => {
+        attr.nodeValue = Transform.transformObjectToString(value);
+      });
     }
   }
 } as TModuleOptions

@@ -65,7 +65,13 @@ function updateRef(refTree: TRefTree, refProperties: ICustomElement | TElement |
 
 function generateRefTree(propertyNames: string[], target: unknown, endBranch: Record<string, any> = {}): TRefTree {
   if (target instanceof Attr) {
-    endBranch['__attrs'] = target;
+    if (RefRules.extractExpression.test(target.textContent) === true) {
+      endBranch['__expressions'] = [
+        Expression.handleExpressionRef(target.nodeValue, target)
+      ];
+    } else {
+      endBranch['__attrs'] = [target];
+    }
   } else if (target instanceof Text) {
     if (RefRules.extractExpression.test(target.textContent) === true) {
       endBranch['__expressions'] = [

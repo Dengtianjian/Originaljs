@@ -22,7 +22,9 @@ function handleExpressionRef(expression: string, target?: Text | Attr): TExpress
   expression = expression.match(RefRules.extractRefItem)[0].trim();
   const propertyNames: string[][] | string[] = Ref.collecRef(expression, false);
   propertyNames.forEach((propertyName, index) => {
-    expression = expression.replace(new RegExp(`\{ *${propertyName} *\}`), `this.${propertyName}`);
+    const matchValue:string=propertyName.replace(/([\[\]\.])/g,"\\$1");
+    expression = expression.replace(new RegExp(`\{ *${matchValue} *\}`), `this.${propertyName}`);
+
     propertyNames[index] = Transform.transformPropertyNameToArray(propertyName);
   });
 

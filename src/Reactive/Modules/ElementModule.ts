@@ -47,7 +47,7 @@ export default {
 
         const refTreePart: TRefTree = {};
         refPropertyNames.forEach(propertyNames => {
-          let propertyRef: TRefTree = Ref.generateRefTree(propertyNames, newTextEl, {});
+          let propertyRef: TRefTree = Ref.generateRefTree(propertyNames, newTextEl);
           Utils.objectMerge(refTreePart, propertyRef);
         });
 

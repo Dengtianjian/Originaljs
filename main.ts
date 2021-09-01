@@ -17,7 +17,10 @@ class CEl extends OG.createElement() {
     //   this.user.name = this.formatTime();
     // }, 1000);
     setTimeout(() => {
-      this.display.show = true;
+      this.user.name = "https://wx1.sinaimg.cn/orj360/002TLsr9ly1gu0usvnavsj61hc0o011o02.jpg";
+      setTimeout(() => {
+        this.user.name = "https://mbdp01.bdstatic.com/static/landing-pc/img/logo_top.79fdb8c2.png";
+      }, 5000);
     }, 5000);
     // setInterval(() => {
     //   this.obj.a = {
@@ -27,7 +30,7 @@ class CEl extends OG.createElement() {
   }
   msg = "Hello world";
   user = {
-    name: "admin"
+    name: "https://lf3-cdn-tos.bytescm.com/obj/static/xitu_juejin_web/dcec27cc6ece0eb5bb217e62e6bec104.svg"
   };
   obj = {
     a: {
