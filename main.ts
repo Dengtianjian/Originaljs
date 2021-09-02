@@ -40,7 +40,7 @@ class CEl extends OG.createElement() {
   count = 888;
   display = {
     show: false,
-    staticHtml: "<h1 title=\"{obj.a.c}\">Hello {obj.a.c} Originaljs</h1>",
+    staticHtml: "<h1 title=\"{obj.a.c}\">Hello { {obj.a.c} + 2 } Originaljs</h1>",
     staticHTML2: "<h1>Hello static HTML2</h1>"
   };
   UpdateHtml = () => {

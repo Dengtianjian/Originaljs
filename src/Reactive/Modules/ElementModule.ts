@@ -85,10 +85,11 @@ export default {
 
       ref.propertyNames.forEach(propertyNameArray => {
         const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
-        const els: TElement[] = branch.__els;
-        els.splice(els.indexOf(target), 1);
+        if(branch.__els){
+          const els: TElement[] = branch.__els;
+          els.splice(els.indexOf(target), 1);
+        }
       });
-      ref.propertyNames = [];
     }
   }
 } as TModuleOptions
