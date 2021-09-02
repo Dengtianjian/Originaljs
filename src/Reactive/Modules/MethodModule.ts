@@ -31,7 +31,7 @@ function bindMethod(methodItem: TMethodBranch, properties: Record<string, any>) 
   }
 
   const listener = function (event): any {
-    properties[methodItem.methodName].apply(methodItem.ownerElement, [...methodItem.params, event, methodItem.ownerElement]);
+    properties[methodItem.methodName].apply(properties, [...methodItem.params, event, methodItem.ownerElement]);
   }
 
   //* 移除旧的监听事件

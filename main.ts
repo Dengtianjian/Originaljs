@@ -57,7 +57,7 @@ class CEl extends OG.createElement() {
     this.user.name = "https://sortablejs.github.io/Vue.Draggable/img/logo.c6a3753c.svg";
     this.display.show = !this.display.show;
   }
-  updateCount = () => {
+  updateCount(){
     this.obj.a.c = Date.now();
     this.display.show = !this.display.show;
     console.log(this.obj.a.c);
