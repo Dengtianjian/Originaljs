@@ -37,6 +37,7 @@ export default {
       });
     },
     clearAttrRefTree(target: Attr & { [key: string]: any } & TElement): void {
+      if (!target.__OG__) return;
       target.__OG__.ref.propertyNames.forEach(propertyNameArray => {
         const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
         const attrs: Attr[] = branch.__attrs;

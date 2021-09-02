@@ -107,6 +107,7 @@ export default {
           Utils.objectMerge(refTree, Ref.generateRefTreeByRefString(methodName, target, branch, "__methods"));
         }
       }
+      ownerElement.removeAttribute(target.nodeName); //* 移除属性
 
       return refTree;
     },
@@ -117,6 +118,10 @@ export default {
       for (const method of methods) {
         bindMethod(method, properties.__OG__.properties);
       }
+    },
+    clearAttrRefTree(refTree: TRefTree): void {
+      console.log(refTree);
+
     }
   }
 } as TModuleOptions
