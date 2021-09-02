@@ -23,7 +23,8 @@ export type TDynamicElementBranch = {
   attr: Attr,
   target: TElement,
   refInfo: TRefInfo,
-  contentType: keyof TDynamicElementContentTypes | string
+  contentType: keyof TDynamicElementContentTypes | string,
+  showEl?: Element
 }
 
 export type TRefTree = {

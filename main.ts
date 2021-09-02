@@ -44,9 +44,10 @@ class CEl extends OG.createElement() {
     staticHTML2: "<h1>Hello static HTML2</h1>"
   };
   UpdateHtml = () => {
-    fetch("./staticHTML.html").then(res => res.text()).then(res => {
-      this.display.staticHtml = res;
-    })
+    // fetch("./staticHTML.html").then(res => res.text()).then(res => {
+    //   this.display.staticHtml = res;
+    // })
+    this.dynimicElements.tag1 = "1";
 
   }
   updateStaticHTML2 = () => {
@@ -57,13 +58,13 @@ class CEl extends OG.createElement() {
     this.user.name = "https://sortablejs.github.io/Vue.Draggable/img/logo.c6a3753c.svg";
     this.display.show = !this.display.show;
   }
-  updateCount(){
+  updateCount() {
     this.obj.a.c = Date.now();
     this.display.show = !this.display.show;
     console.log(this.obj.a.c);
   }
   dynimicElements = {
-    tag1: ""
+    tag1: "2"
   }
   async computed() {
     return new Promise((resolve, reject) => {
