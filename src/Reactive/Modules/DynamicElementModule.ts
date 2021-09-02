@@ -51,6 +51,7 @@ export default {
         skipChildNodesCollect: true
       });
 
+      target.removeAttribute(contentType);
       return refTree;
     },
     setUpdateView(refTree: TRefTree, properties: Record<string, any>) {
