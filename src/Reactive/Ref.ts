@@ -91,7 +91,7 @@ function generateRefTree(propertyNames: string[], target: unknown, endBranch: Re
       endBranchName = "__els";
       expression = target.textContent;
     }
-    if (RefRules.extractExpression.test(expression) === true) {
+    if (Expression.isExpression(expression) === true) {
       endBranchName = "__expressions";
     }
   }
@@ -105,6 +105,7 @@ function generateRefTree(propertyNames: string[], target: unknown, endBranch: Re
         }
       ];
     }
+    break;
     case "__attrs":
     case "__els":
       endBranch = [target];
