@@ -47,8 +47,7 @@ export default {
 
         const refTreePart: TRefTree = {};
         refPropertyNames.forEach(propertyNames => {
-          let propertyRef: TRefTree = Ref.generateRefTree(propertyNames, newTextEl);
-          Utils.objectMerge(refTreePart, propertyRef);
+          Utils.objectMerge(refTreePart, Ref.generateRefTree(propertyNames, newTextEl));
         });
 
         newTextChildNodes.push(newTextEl);
@@ -89,7 +88,7 @@ export default {
         const els: TElement[] = branch.__els;
         els.splice(els.indexOf(target), 1);
       });
-      ref.propertyNames=[];
+      ref.propertyNames = [];
     }
   }
 } as TModuleOptions

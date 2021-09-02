@@ -15,6 +15,7 @@ function executeExpression(expression: string, properties: IElement | Record<str
   let expressionItem: TExpressionItem = null;
   if (refPropertyNames === undefined) {
     expressionItem = handleExpressionRef(expression, null);
+    if (!expressionItem) return "";
     refPropertyNames = expressionItem.refPropertyNames;
     expression = expressionItem.expression;
   }
@@ -33,7 +34,9 @@ function executeExpression(expression: string, properties: IElement | Record<str
  * @returns 表达式相关信息
  */
 function handleExpressionRef(expression: string, target?: Text | Attr): TExpressionItem {
-  expression = expression.match(RefRules.extractRefItem)[0].trim();
+  const matchExpression: string[] = expression.match(RefRules.extractRefItem);
+  if (!matchExpression) return;
+  expression = matchExpression[0];
   const propertyNames: string[][] | string[] = Ref.collecRef(expression, false);
   propertyNames.forEach((propertyName, index) => {
     const matchValue: string = propertyName.replace(/([\[\]\.])/g, "\\$1");
