@@ -25,7 +25,8 @@ export type TModuleHookNames = {
   "reactive.afterUpdateAttrView",
   "reactive.afterUpdatedView",
   "reactive.clearRefTree",
-  "reactive.clearTargetRefTree",
+  "reactive.clearElRefTree",
+  "reactive.clearAttrRefTree",
   "reactive.end",
 }
 
@@ -54,8 +55,9 @@ export type TModuleOptions = {
     afterUpdatedElView?: () => void;
     afterUpdateAttrView?: () => void;
     afterUpdatedView?: () => void;
-    clearRefTree?: () => void;
-    clearTargetRefTree?: () => void;
+    clearRefTree?: (target: Element, isDeep: boolean) => void;
+    clearElRefTree?: (target: Text, parentNode: Element, isDeep: boolean) => void;
+    clearAttrRefTree?: (target: Attr, parentNode: Element, isDeep: boolean) => void;
     end?: () => void;
   }
 };

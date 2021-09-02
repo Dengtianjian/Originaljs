@@ -65,6 +65,7 @@ export default {
             dynamicElementInfo.target.innerHTML = refPropertyValue;
             break;
           case "value":
+            Ref.clearElRef(dynamicElementInfo.target, true);
             dynamicElementInfo.target.innerHTML = Parser.optimizeRefKey(refPropertyValue);
             Reactive.collectEl(Array.from(dynamicElementInfo.target.childNodes) as TElement[], properties.__OG__.properties, properties.__OG__.reactive);
             break;

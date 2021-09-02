@@ -57,7 +57,6 @@ export default {
         Utils.defineOGProperty(newTextEl, {
           properties: rootEl,
           ref: {
-            tree: refTreePart,
             propertyNames: refPropertyNames
           }
         });
@@ -81,6 +80,16 @@ export default {
       els.forEach(el => {
         el.textContent = Transform.transformObjectToString(value);
       });
+    },
+    clearElRefTree(target: Text & { [key: string]: any } & TElement): void {
+      const ref = target.__OG__.ref;
+
+      ref.propertyNames.forEach(propertyNameArray => {
+        const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
+        const els: TElement[] = branch.__els;
+        els.splice(els.indexOf(target), 1);
+      });
+      ref.propertyNames=[];
     }
   }
 } as TModuleOptions

@@ -1,3 +1,4 @@
+import Module from "../Module";
 import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
 import { TExpressionItem } from "../Typings/ExpressionTypings";
 import { TRefInfo, TRefTree } from "../Typings/RefTreeTypings";
@@ -178,6 +179,34 @@ function isRef(refString: string): boolean {
   return RefRules.matchRefItem.test(refString);
 }
 
+function clearElRef(target: TElement, isDeep: boolean = false): void {
+  if (isDeep && target.children?.length > 0) {
+    Array.from(target.children).forEach(nodeItem => {
+      clearElRef(nodeItem as TElement, true);
+    });
+  }
+
+  if (!target.__OG__.hasRefs) return;
+
+  Module.useAll("reactive.clearRefTree", Array.from(arguments));
+
+  const clearElTreeArguments: any[] = Array.from(arguments);
+  target.childNodes.forEach(nodeItem => {
+    // @ts-ignore
+    if (nodeItem instanceof Text && nodeItem.__OG__?.ref) {
+      clearElTreeArguments.unshift(nodeItem);
+      Module.useAll("reactive.clearElRefTree", clearElTreeArguments);
+      clearElTreeArguments.shift();
+    }
+  });
+
+  Array.from(target.attributes).forEach(attrItem => {
+    clearElTreeArguments.unshift(attrItem);
+    Module.useAll("reactive.clearAttrRefTree", clearElTreeArguments);
+    clearElTreeArguments.shift();
+  })
+}
+
 export default {
   collecRef,
   getRefKey,
@@ -186,5 +215,6 @@ export default {
   generateRefTreeByRefString,
   parseTemplateGenerateRefInfo,
   parenRefInfo,
-  isRef
+  isRef,
+  clearElRef
 }

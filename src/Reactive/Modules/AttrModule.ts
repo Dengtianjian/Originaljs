@@ -14,9 +14,14 @@ export default {
       if (MethodRules.OnAttributeName.test(target.nodeName)) return {};
 
       const refTree: TRefTree = Ref.generateRefTreeByRefString(target.nodeValue, target);
+      const propertyNames: string[][] = Ref.collecRef(target.nodeValue, true) as string[][];
 
       Utils.defineOGProperty(target, {
-        attrCollected: true
+        attrCollected: true,
+        properties,
+        ref: {
+          propertyNames
+        }
       });
       Utils.defineOGProperty(target.ownerElement, {
         hasRefs: true
@@ -30,6 +35,14 @@ export default {
       attrs.forEach(attr => {
         attr.nodeValue = Transform.transformObjectToString(value);
       });
+    },
+    clearAttrRefTree(target: Attr & { [key: string]: any } & TElement): void {
+      target.__OG__.ref.propertyNames.forEach(propertyNameArray => {
+        const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
+        const attrs: Attr[] = branch.__attrs;
+        attrs.splice(attrs.indexOf(target), 1);
+      });
+      target.__OG__.ref.propertyNames = [];
     }
   }
 } as TModuleOptions
