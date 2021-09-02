@@ -22,7 +22,7 @@ export type TDynamicElementContentTypes = {
 export type TDynamicElementBranch = {
   attr: Attr,
   target: TElement,
-  rawTemplate: string,
+  refInfo: TRefInfo,
   contentType: keyof TDynamicElementContentTypes | string
 }
 
@@ -32,4 +32,10 @@ export type TRefTree = {
   __expressions?: TExpressionItem[],
   __methods?: TMethodBranch[],
   __dynamicElements?: TDynamicElementBranch[]
+}
+
+export type TRefInfo = {
+  type: string,
+  expressionInfo: TExpressionItem | null,
+  refPropertyNames: string[][]
 }

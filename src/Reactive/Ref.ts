@@ -1,5 +1,6 @@
 import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
-import { TRefTree } from "../Typings/RefTreeTypings";
+import { TExpressionItem } from "../Typings/ExpressionTypings";
+import { TRefInfo, TRefTree } from "../Typings/RefTreeTypings";
 import Utils from "../Utils";
 import Expression from "./Expression";
 import { RefRules } from "./Rules";
@@ -122,10 +123,47 @@ function generateRefTree(propertyNames: string[], target: unknown, endBranch: Re
   });
 }
 
+function generateRefInfo(refString: string): TRefInfo {
+  let expressionInfo: TExpressionItem | null = null;
+  let type: string = "";
+  let refPropertyNames: string[][] = [];
+  if (Expression.isExpression(refString)) {
+    type = "expression";
+    expressionInfo = Expression.handleExpressionRef(refString);
+  } else {
+    type = "variable";
+    refPropertyNames = collecRef(refString, true) as string[][];
+  }
+
+  return {
+    type,
+    expressionInfo,
+    refPropertyNames
+  }
+}
+
+function handleRefInfo(refInfo: TRefInfo, properties: ICustomElement): any {
+  let result: any = null;
+  switch (refInfo.type) {
+    case "expression":
+      result = Expression.executeExpression(refInfo.expressionInfo.expression, properties.__OG__.properties, refInfo.expressionInfo.refPropertyNames);
+      break;
+    case "variable":
+      if (refInfo.refPropertyNames.length > 0) {
+        const refPropertyName: string[] = refInfo.refPropertyNames[0];
+        result = Utils.getObjectProperty(properties, refPropertyName);
+      }
+      break;
+  }
+  return Transform.transformObjectToString(result);
+}
+
 export default {
   collecRef,
   getRefKey,
   updateRef,
   generateRefTree,
-  generateRefTreeByRefString
+  generateRefTreeByRefString,
+  generateRefInfo,
+  handleRefInfo
 }
