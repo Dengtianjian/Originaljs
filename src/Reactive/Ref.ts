@@ -123,7 +123,12 @@ function generateRefTree(propertyNames: string[], target: unknown, endBranch: Re
   });
 }
 
-function generateRefInfo(refString: string): TRefInfo {
+/**
+ * 解析字符串并且生成引用信息
+ * @param refString 模板字符串
+ * @returns 数据引用信息
+ */
+function parseTemplateGenerateRefInfo(refString: string): TRefInfo {
   let expressionInfo: TExpressionItem | null = null;
   let type: string = "";
   let refPropertyNames: string[][] = [];
@@ -142,7 +147,13 @@ function generateRefInfo(refString: string): TRefInfo {
   }
 }
 
-function handleRefInfo(refInfo: TRefInfo, properties: ICustomElement): any {
+/**
+ * 解析引用信息返回数据
+ * @param refInfo 引用信息，根据parseTemplateGenerateRefInfo返回
+ * @param properties 数据
+ * @returns 解析结果
+ */
+function parenRefInfo(refInfo: TRefInfo, properties: ICustomElement): any {
   let result: any = null;
   switch (refInfo.type) {
     case "expression":
@@ -158,12 +169,22 @@ function handleRefInfo(refInfo: TRefInfo, properties: ICustomElement): any {
   return Transform.transformObjectToString(result);
 }
 
+/**
+ * 判断模板字符串是变量或者表达式，还是普通字符串
+ * @param refString 模板字符串
+ * @returns true=是变量或者表达式，false=普通字符串
+ */
+function isRef(refString: string): boolean {
+  return RefRules.matchRefItem.test(refString);
+}
+
 export default {
   collecRef,
   getRefKey,
   updateRef,
   generateRefTree,
   generateRefTreeByRefString,
-  generateRefInfo,
-  handleRefInfo
+  parseTemplateGenerateRefInfo,
+  parenRefInfo,
+  isRef
 }

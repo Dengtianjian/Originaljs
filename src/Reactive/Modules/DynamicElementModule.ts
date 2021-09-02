@@ -9,7 +9,7 @@ import { RefRules } from "../Rules";
 
 export default {
   reactive: {
-    collecElRef(target: TElement): TRefTree {
+    collecElRef(target: TElement, roolEl: ICustomElement): TRefTree {
       if (target.tagName !== "O-EL") return {};
 
       const attributes: NamedNodeMap = target.attributes;
@@ -17,24 +17,25 @@ export default {
       const contentType: keyof TDynamicElementContentTypes = attr.nodeName as keyof TDynamicElementContentTypes;
       const attrValue: string = attr.nodeValue;
       let refTree: TRefTree = {};
-      if (contentType === "html") {
-        if (RefRules.matchRefItem.test(attrValue)) {
-          refTree = Ref.generateRefTreeByRefString(attrValue, attr, [{
-            attr,
-            target,
-            contentType,
-            refInfo: Ref.generateRefInfo(attrValue)
-          }], "__dynamicElements");
-        } else {
-          target.innerHTML = attrValue;
-        }
-      } else if (contentType === "value") {
+      if (Ref.isRef(attrValue) && (contentType === "html" || contentType === "value")) {
         refTree = Ref.generateRefTreeByRefString(attrValue, attr, [{
           attr,
           target,
           contentType,
-          refInfo: Ref.generateRefInfo(attrValue)
+          refInfo: Ref.parseTemplateGenerateRefInfo(attrValue)
         }], "__dynamicElements");
+      }
+      if (contentType === "html") {
+        if (Ref.isRef(attrValue) === false) {
+          //* 不是数据绑定，直渲染
+          target.innerHTML = attrValue;
+        }
+      } else if (contentType === "value") {
+        if (Ref.isRef(attrValue) === false) {
+          //* 不是数据绑定，直渲染
+          target.innerHTML = Parser.optimizeRefKey(attrValue);
+          Reactive.collectEl(Array.from(target.childNodes) as TElement[], roolEl, roolEl.__OG__.reactive); //* 收集元素下的子元素数据绑定依赖
+        }
       } else if (contentType === "is") {
         console.log(attributes['is']);
       }
@@ -53,10 +54,10 @@ export default {
       dynamicElements.forEach(dynamicElementInfo => {
         switch (dynamicElementInfo.contentType) {
           case "html":
-            dynamicElementInfo.target.innerHTML = Ref.handleRefInfo(dynamicElementInfo.refInfo, properties.__OG__.properties);
+            dynamicElementInfo.target.innerHTML = Ref.parenRefInfo(dynamicElementInfo.refInfo, properties.__OG__.properties);
             break;
           case "value":
-            let html: string = Ref.handleRefInfo(dynamicElementInfo.refInfo, properties.__OG__.properties);
+            let html: string = Ref.parenRefInfo(dynamicElementInfo.refInfo, properties.__OG__.properties);
             dynamicElementInfo.target.innerHTML = Parser.optimizeRefKey(html);
             Reactive.collectEl(Array.from(dynamicElementInfo.target.childNodes) as TElement[], properties.__OG__.properties, properties.__OG__.reactive);
             break;

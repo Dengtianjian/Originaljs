@@ -40,13 +40,17 @@ class CEl extends OG.createElement() {
   count = 888;
   display = {
     show: false,
-    staticHtml: "<h1>Hello {obj.a.c} Originaljs</h1>"
+    staticHtml: "<h1>Hello {obj.a.c} Originaljs</h1>",
+    staticHTML2: "<h1>Hello static HTML2</h1>"
   };
   UpdateHtml = () => {
     fetch("./staticHTML.html").then(res => res.text()).then(res => {
       this.display.staticHtml = res;
     })
 
+  }
+  updateStaticHTML2 = () => {
+    this.display.staticHTML2 = "hhhhhhhh";
   }
   elhtml = "<h1>Hello Originaljs</h1>";
   updateData = () => {
@@ -57,6 +61,9 @@ class CEl extends OG.createElement() {
     this.obj.a.c = Date.now();
     this.display.show = !this.display.show;
     console.log(this.obj.a.c);
+  }
+  dynimicElements = {
+    tag1: ""
   }
   async computed() {
     return new Promise((resolve, reject) => {
