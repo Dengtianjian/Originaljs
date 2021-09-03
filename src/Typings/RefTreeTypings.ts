@@ -28,7 +28,7 @@ export type TDynamicElementBranch = {
 }
 
 export type TRefTree = {
-  __els?: TElement[],
+  __els?: Map<string|number,TElement>,
   __attrs?: Attr[],
   __expressions?: TExpressionItem[],
   __methods?: TMethodBranch[],
