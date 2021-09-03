@@ -1,4 +1,4 @@
-import { ICustomElement } from "../../Typings/CustomElementTypings";
+import { ICustomElement, TElement } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
 import { TMethodBranch, TRefTree } from "../../Typings/RefTreeTypings";
 import { MethodRules, RefRules } from "../Rules";
@@ -60,6 +60,7 @@ export default {
       const ownerElement: HTMLElement = target.ownerElement as HTMLElement;
       ownerElement[target.nodeName] = null; //* 清除已有方法
 
+      const paramPropertyNames: string[][] = [];
       for (let methodName of methodNames) {
         let listener = null;
         let paramString = methodName.match(MethodRules.MethodParams);
@@ -83,6 +84,7 @@ export default {
                 });
               } else {
                 refParamsMap.set(index, Transform.transformPropertyNameToArray(param));
+                paramPropertyNames.push(refParamsMap.get(index));
               }
             }
           })
@@ -108,6 +110,12 @@ export default {
         }
       }
       ownerElement.removeAttribute(target.nodeName); //* 移除属性
+      Utils.defineOGProperty(ownerElement, {
+        properties,
+        ref: {
+          paramPropertyNames
+        }
+      });
 
       return refTree;
     },
@@ -119,9 +127,21 @@ export default {
         bindMethod(method, properties.__OG__.properties);
       }
     },
-    clearAttrRefTree(refTree: TRefTree): void {
-      console.log(refTree);
-
+    clearRefTree(target: TElement): void {
+      if (!target.__OG__.ref) return;
+      const ref = target.__OG__.ref;
+      if (!ref.paramPropertyNames) return;
+      ref.paramPropertyNames.forEach(propertyNameArray => {
+        const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
+        if (branch.__methods) {
+          const methods: TMethodBranch[] = branch.__methods;
+          methods.forEach((methodItem, itemIndex) => {
+            if (methodItem.ownerElement === target) {
+              methods.splice(itemIndex, 1);
+            }
+          });
+        }
+      })
     }
   }
 } as TModuleOptions

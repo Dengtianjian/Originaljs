@@ -56,7 +56,8 @@ export default {
         Utils.defineOGProperty(newTextEl, {
           properties: rootEl,
           ref: {
-            propertyNames: refPropertyNames
+            propertyNames: refPropertyNames,
+            hasRefs: true
           }
         });
         Utils.objectMerge(refTree, refTreePart);
@@ -85,7 +86,7 @@ export default {
 
       ref.propertyNames.forEach(propertyNameArray => {
         const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
-        if(branch.__els){
+        if (branch.__els) {
           const els: TElement[] = branch.__els;
           els.splice(els.indexOf(target), 1);
         }

@@ -65,7 +65,7 @@ function updateRef(refTree: TRefTree, refProperties: ICustomElement | TElement |
   }
 }
 
-function generateRefTreeByRefString(refString: string, target: Attr | Text, endBranch?: Record<string, any>, endBranchName?: string): TRefTree {
+function generateRefTreeByRefString(refString: string, target: Attr | Text | Element, endBranch?: Record<string, any>, endBranchName?: string): TRefTree {
   const refs: string[] = getRefKey(refString, false);
   if (refs.length === 0) return {};
 
@@ -105,7 +105,7 @@ function generateRefTree(propertyNames: string[], target: unknown, endBranch: Re
         }
       ];
     }
-    break;
+      break;
     case "__attrs":
     case "__els":
       endBranch = [target];
@@ -188,10 +188,8 @@ function clearElRef(target: TElement, isDeep: boolean = false): void {
   }
 
   if (!target.__OG__.hasRefs) return;
-
-  Module.useAll("reactive.clearRefTree", Array.from(arguments));
-
   const clearElTreeArguments: any[] = Array.from(arguments);
+  Module.useAll("reactive.clearRefTree", Array.from(arguments));
   target.childNodes.forEach(nodeItem => {
     // @ts-ignore
     if (nodeItem instanceof Text && nodeItem.__OG__?.ref) {
