@@ -1,7 +1,7 @@
 import Module from "../Module";
 import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
 import { TExpressionItem } from "../Typings/ExpressionTypings";
-import { TRefInfo, TRefTree } from "../Typings/RefTreeTypings";
+import { TDynamicElementBranch, TMethodBranch, TRefInfo, TRefTree } from "../Typings/RefTreeTypings";
 import Utils from "../Utils";
 import Expression from "./Expression";
 import { RefRules } from "./Rules";
@@ -171,6 +171,27 @@ function parenRefInfo(refInfo: TRefInfo, properties: ICustomElement): any {
   return Transform.transformObjectToString(result);
 }
 
+function clearRefByRefInfo(refInfo: TRefInfo, target: TElement): void {
+  switch (refInfo.type) {
+    case "expression":
+      break;
+    case "variable":
+      const refPropertyNames: string[][] = refInfo.refPropertyNames;
+      refPropertyNames.forEach(propertyNameArray => {
+        const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
+        if (branch.__dynamicElements) {
+          const dynamicElements: TDynamicElementBranch[] = branch.__dynamicElements;
+          dynamicElements.forEach((elementItem, itemIndex) => {
+            if (elementItem.target === target) {
+              dynamicElements.splice(itemIndex, 1);
+            }
+          });
+        }
+      })
+      break;
+  }
+}
+
 /**
  * 判断模板字符串是变量或者表达式，还是普通字符串
  * @param refString 模板字符串
@@ -187,7 +208,7 @@ function clearElRef(target: TElement, isDeep: boolean = false): void {
     });
   }
 
-  if (!target.__OG__.hasRefs) return;
+  if (!target.__OG__ || !target.__OG__.hasRefs) return;
   const clearElTreeArguments: any[] = Array.from(arguments);
   Module.useAll("reactive.clearRefTree", Array.from(arguments));
   target.childNodes.forEach(nodeItem => {
@@ -214,6 +235,7 @@ export default {
   generateRefTreeByRefString,
   parseTemplateGenerateRefInfo,
   parenRefInfo,
+  clearRefByRefInfo,
   isRef,
   clearElRef
 }

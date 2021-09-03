@@ -128,7 +128,7 @@ export default {
       }
     },
     clearRefTree(target: TElement): void {
-      if (!target.__OG__.ref) return;
+      if (!target.__OG__ || !target.__OG__.ref) return;
       const ref = target.__OG__.ref;
       if (!ref.paramPropertyNames) return;
       ref.paramPropertyNames.forEach(propertyNameArray => {

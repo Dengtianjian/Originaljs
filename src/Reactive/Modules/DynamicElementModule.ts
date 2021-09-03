@@ -1,7 +1,7 @@
 import Reactive from "..";
 import { ICustomElement, IElement, TElement } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TDynamicElementBranch, TDynamicElementContentTypes, TRefTree } from "../../Typings/RefTreeTypings";
+import { TDynamicElementBranch, TDynamicElementContentTypes, TRefInfo, TRefTree } from "../../Typings/RefTreeTypings";
 import Utils from "../../Utils";
 import Parser from "../Parser";
 import Ref from "../Ref";
@@ -37,18 +37,26 @@ export default {
           break;
       }
       if (Ref.isRef(attrValue)) {
+        const refInfo: TRefInfo = Ref.parseTemplateGenerateRefInfo(attrValue);
         refTree = Ref.generateRefTreeByRefString(attrValue, attr, [{
           attr,
           target,
           contentType,
-          refInfo: Ref.parseTemplateGenerateRefInfo(attrValue),
+          refInfo,
           ...endBranch
         }], "__dynamicElements");
+        Utils.defineOGProperty(target, {
+          hasRefs: true,
+          ref: {
+            info: refInfo
+          }
+        });
       }
 
       Utils.defineOGProperty(target, {
         skipAttrCollect: true,
-        skipChildNodesCollect: true
+        skipChildNodesCollect: true,
+        properties: roolEl
       });
 
       target.removeAttribute(contentType);
@@ -65,19 +73,26 @@ export default {
             dynamicElementInfo.target.innerHTML = refPropertyValue;
             break;
           case "value":
-            Ref.clearElRef(dynamicElementInfo.target, true);
+            dynamicElementInfo.target.childNodes.forEach(childNode => {
+              Ref.clearElRef(childNode as TElement, true);
+            });
             dynamicElementInfo.target.innerHTML = Parser.optimizeRefKey(refPropertyValue);
             Reactive.collectEl(Array.from(dynamicElementInfo.target.childNodes) as TElement[], properties.__OG__.properties, properties.__OG__.reactive);
             break;
           case "is":
             const newEl: Element = document.createElement(refPropertyValue);
-            newEl.textContent = String(Date.now());
             dynamicElementInfo.showEl.parentNode.insertBefore(newEl, dynamicElementInfo.showEl); //* 插入新的标签
             dynamicElementInfo.showEl.parentNode.removeChild(dynamicElementInfo.showEl); //* 移除旧标签
             dynamicElementInfo.showEl = newEl; //* 现在现在显示的标签
             break;
         }
       })
+    },
+    clearRefTree(target: TElement): void {
+      if (!target.__OG__ || !target.__OG__.ref) return;
+      const ref = target.__OG__.ref;
+
+      Ref.clearRefByRefInfo(ref.info, target);
     }
   }
 } as TModuleOptions
