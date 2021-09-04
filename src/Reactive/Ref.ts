@@ -172,6 +172,16 @@ function parenRefInfo(refInfo: TRefInfo, properties: ICustomElement): any {
 function clearRefByRefInfo(refInfo: TRefInfo, target: TElement): void {
   switch (refInfo.type) {
     case "expression":
+      const expressionInfo: TExpressionItem = refInfo.expressionInfo;
+      expressionInfo.refPropertyNames.forEach(propertyNameArray => {
+        const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
+        if (branch.__dynamicElements) {
+          const dynamicElements: Map<symbol, TDynamicElementBranch> = branch.__dynamicElements;
+          dynamicElements.forEach((elementItem, itemKey) => {
+            branch.__dynamicElements.delete(itemKey);
+          });
+        }
+      })
       break;
     case "variable":
       const refPropertyNames: string[][] = refInfo.refPropertyNames;

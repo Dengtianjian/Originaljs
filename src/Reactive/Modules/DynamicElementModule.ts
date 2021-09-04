@@ -91,8 +91,7 @@ export default {
     clearRefTree(target: TElement): void {
       if (!target.__OG__ || !target.__OG__.ref) return;
       const ref = target.__OG__.ref;
-      console.log(ref);
-      
+
       if (!ref.info) return;
       Ref.clearRefByRefInfo(ref.info, target);
     }

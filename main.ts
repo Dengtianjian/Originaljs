@@ -40,7 +40,7 @@ class CEl extends OG.createElement() {
   count = 888;
   display = {
     show: false,
-    staticHtml: `<o-el value="{display.staticHTML2}"></o-el>`,
+    staticHtml: `<o-el value="{ {display.staticHTML2} + '<p>2</p>' }"></o-el>`,
     staticHTML2: "<h1>Hello static HTML2</h1>"
   };
   UpdateHtml = () => {
