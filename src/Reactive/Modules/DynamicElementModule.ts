@@ -38,13 +38,13 @@ export default {
       }
       if (Ref.isRef(attrValue)) {
         const refInfo: TRefInfo = Ref.parseTemplateGenerateRefInfo(attrValue);
-        refTree = Ref.generateRefTreeByRefString(attrValue, attr, [{
+        refTree = Ref.generateRefTreeByRefString(attrValue, attr, Symbol(), {
           attr,
           target,
           contentType,
           refInfo,
           ...endBranch
-        }], "__dynamicElements");
+        }, "__dynamicElements");
         Utils.defineOGProperty(target, {
           hasRefs: true,
           ref: {
@@ -64,7 +64,7 @@ export default {
     },
     setUpdateView(refTree: TRefTree, properties: Record<string, any>) {
       if (refTree?.__dynamicElements === undefined) return;
-      const dynamicElements: TDynamicElementBranch[] = refTree.__dynamicElements;
+      const dynamicElements: Map<symbol, TDynamicElementBranch> = refTree.__dynamicElements;
 
       dynamicElements.forEach(dynamicElementInfo => {
         const refPropertyValue: any = Ref.parenRefInfo(dynamicElementInfo.refInfo, properties.__OG__.properties);
@@ -91,7 +91,9 @@ export default {
     clearRefTree(target: TElement): void {
       if (!target.__OG__ || !target.__OG__.ref) return;
       const ref = target.__OG__.ref;
-
+      console.log(ref);
+      
+      if (!ref.info) return;
       Ref.clearRefByRefInfo(ref.info, target);
     }
   }

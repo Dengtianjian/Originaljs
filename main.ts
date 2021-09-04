@@ -40,7 +40,7 @@ class CEl extends OG.createElement() {
   count = 888;
   display = {
     show: false,
-    staticHtml: `<o-el html="{ {display.staticHTML2} + '3' }"></o-el>`,
+    staticHtml: `<o-el value="{display.staticHTML2}"></o-el>`,
     staticHTML2: "<h1>Hello static HTML2</h1>"
   };
   UpdateHtml = () => {
@@ -54,15 +54,15 @@ class CEl extends OG.createElement() {
     this.display.staticHTML2 = "hhhhhhhh";
   }
   elhtml = "<h1>Hello Originaljs</h1>";
-  updateData(...rest){
+  updateData(...rest) {
     console.log(rest);
 
     this.user.name = "https://sortablejs.github.io/Vue.Draggable/img/logo.c6a3753c.svg";
     this.display.show = !this.display.show;
   }
   updateCount() {
-    this.obj.a.c = Date.now();
-    this.display.show = !this.display.show;
+    // this.obj.a.c = Date.now();
+    // this.display.show = !this.display.show;
     console.log(this.obj.a.c);
   }
   dynimicElements = {

@@ -7,7 +7,22 @@ function objectMerge(target: object, source: object): void {
     const sourceItem = source[key];
 
     if (typeof targetItem === "object" && targetItem !== null) {
-      if (Array.isArray(targetItem)) {
+      if (targetItem instanceof Map) {
+        if (typeof sourceItem === "object") {
+          if (sourceItem instanceof Map) {
+            sourceItem.forEach((item, key) => {
+              targetItem.set(key, item);
+            })
+          } else {
+            for (const key in sourceItem) {
+              if (!sourceItem.hasOwnProperty(key)) continue;
+              targetItem.set(key, sourceItem[key]);
+            }
+          }
+        } else {
+          targetItem.set(sourceItem[key], sourceItem[key]);
+        }
+      } else if (Array.isArray(targetItem)) {
         targetItem.push(...sourceItem);
       } else {
         objectMerge(targetItem, sourceItem);

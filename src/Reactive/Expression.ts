@@ -11,14 +11,15 @@ import Transform from "./Transform";
  * @param refPropertyNames 引用的数据名称数组
  * @returns 表达式执行结果
  */
-function executeExpression(expression: string, properties: IElement | Record<string, any>, refPropertyNames?: string[]): any {
+function executeExpression(expression: string, properties: IElement | Record<string, any>, refPropertyNames?: string[][]): any {
   let expressionItem: TExpressionItem = null;
   if (refPropertyNames === undefined) {
     expressionItem = handleExpressionRef(expression, null);
     if (!expressionItem) return "";
-    refPropertyNames = expressionItem.refPropertyNames;
     expression = expressionItem.expression;
   }
+
+  // TODO { count } { {count} + 2 } 会报错
   let executeResult: any = new Function(`return ${expression}`).apply(properties);
   if (typeof executeResult === "function") {
     executeResult = executeResult.apply(properties);

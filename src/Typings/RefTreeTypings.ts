@@ -5,7 +5,7 @@ export type TMethodBranch = {
   params: string[],
   refParamsMap: Map<number, string[]>,
   expressionParamMap: Map<number, {
-    expression: string, params: string[]
+    expression: string, params: string[][]
   }>,
   target: Attr,
   eventType: string,
@@ -28,11 +28,11 @@ export type TDynamicElementBranch = {
 }
 
 export type TRefTree = {
-  __els?: Map<string|number,TElement>,
-  __attrs?: Attr[],
-  __expressions?: TExpressionItem[],
-  __methods?: TMethodBranch[],
-  __dynamicElements?: TDynamicElementBranch[]
+  __els?: Map<symbol, Text>,
+  __attrs?: Map<symbol, Attr>,
+  __expressions?: Map<symbol, TExpressionItem>,
+  __methods?: Map<symbol, TMethodBranch>,
+  __dynamicElements?: Map<symbol,TDynamicElementBranch>
 }
 
 export type TRefInfo = {

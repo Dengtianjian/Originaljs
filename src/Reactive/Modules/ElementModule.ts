@@ -46,8 +46,11 @@ export default {
         Utils.defineOGProperty(newTextEl, defineProperties);
 
         const refTreePart: TRefTree = {};
+        const refPropertyKeyMap: Map<symbol, string[]> = new Map();
         refPropertyNames.forEach(propertyNames => {
-          Utils.objectMerge(refTreePart, Ref.generateRefTree(propertyNames, newTextEl));
+          const branchKey: symbol = Symbol(propertyNames.toString());
+          refPropertyKeyMap.set(branchKey, propertyNames);
+          Utils.objectMerge(refTreePart, Ref.generateRefTree(propertyNames, newTextEl, branchKey));
         });
 
         newTextChildNodes.push(newTextEl);
@@ -56,8 +59,7 @@ export default {
         Utils.defineOGProperty(newTextEl, {
           properties: rootEl,
           ref: {
-            propertyNames: refPropertyNames,
-            hasRefs: true
+            propertyKeyMap: refPropertyKeyMap
           }
         });
         Utils.objectMerge(refTree, refTreePart);
@@ -67,28 +69,22 @@ export default {
         parentNode.insertBefore(newTextItem, target);
       }
 
-      Utils.defineOGProperty(parentNode, {
-        hasRefs: true
-      });
-
       return refTree;
     },
     setUpdateView(refTree: TRefTree, properties: Record<string, any>, value: any): void {
       if (refTree?.__els === undefined) return;
-      const els: TElement[] = refTree.__els;
 
-      els.forEach(el => {
-        el.textContent = Transform.transformObjectToString(value);
+      refTree.__els.forEach(elItem => {
+        elItem.textContent = Transform.transformObjectToString(value);
       });
     },
     clearElRefTree(target: Text & { [key: string]: any } & TElement): void {
       const ref = target.__OG__.ref;
 
-      ref.propertyNames.forEach(propertyNameArray => {
-        const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
+      ref.propertyKeyMap.forEach((propertyItem, itemKey) => {
+        const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyItem);
         if (branch.__els) {
-          const els: TElement[] = branch.__els;
-          els.splice(els.indexOf(target), 1);
+          branch.__els.delete(itemKey);
         }
       });
     }

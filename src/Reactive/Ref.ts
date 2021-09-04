@@ -65,7 +65,7 @@ function updateRef(refTree: TRefTree, refProperties: ICustomElement | TElement |
   }
 }
 
-function generateRefTreeByRefString(refString: string, target: Attr | Text | Element, endBranch?: Record<string, any>, endBranchName?: string): TRefTree {
+function generateRefTreeByRefString(refString: string, target: Attr | Text | Element, branchKey: symbol, endBranch?: Record<string, any>, endBranchName?: string): TRefTree {
   const refs: string[] = getRefKey(refString, false);
   if (refs.length === 0) return {};
 
@@ -74,14 +74,14 @@ function generateRefTreeByRefString(refString: string, target: Attr | Text | Ele
     const refPropertyNames: string[][] | string[] = collecRef(refItem);
 
     refPropertyNames.forEach(propertyNames => {
-      Utils.objectMerge(refTree, generateRefTree(propertyNames, target, endBranch,
+      Utils.objectMerge(refTree, generateRefTree(propertyNames, target, branchKey, endBranch,
         endBranchName));
     });
   });
   return refTree;
 }
 
-function generateRefTree(propertyNames: string[], target: unknown, endBranch: Record<string, any> = {}, endBranchName?: string): TRefTree {
+function generateRefTree(propertyNames: string[], target: unknown, branchKey: symbol, endBranch: Record<string, any> = {}, endBranchName?: string): TRefTree {
   let expression: string = "";
   if (!endBranchName) {
     if (target instanceof Attr) {
@@ -98,30 +98,28 @@ function generateRefTree(propertyNames: string[], target: unknown, endBranch: Re
 
   switch (endBranchName) {
     case "__expressions": {
-      endBranch = [
-        {
-          ...endBranch,
-          ...Expression.handleExpressionRef(expression, target as Attr | Text)
-        }
-      ];
+      endBranch = {
+        ...endBranch,
+        ...Expression.handleExpressionRef(expression, target as Attr | Text)
+      };
     }
       break;
     case "__attrs":
     case "__els":
-      endBranch = [target];
+      endBranch = target;
       break;
     case "__methods":
-      endBranch = [
-        {
-          ...endBranch,
-          target
-        }
-      ];
+      endBranch = {
+        ...endBranch,
+        target
+      };
       break;
   }
 
+  const branchValue: Map<symbol, any> = new Map();
+  branchValue.set(branchKey, endBranch);
   return Utils.generateObjectTree(propertyNames, {
-    [endBranchName]: endBranch
+    [endBranchName]: branchValue
   });
 }
 
@@ -180,11 +178,9 @@ function clearRefByRefInfo(refInfo: TRefInfo, target: TElement): void {
       refPropertyNames.forEach(propertyNameArray => {
         const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
         if (branch.__dynamicElements) {
-          const dynamicElements: TDynamicElementBranch[] = branch.__dynamicElements;
-          dynamicElements.forEach((elementItem, itemIndex) => {
-            if (elementItem.target === target) {
-              dynamicElements.splice(itemIndex, 1);
-            }
+          const dynamicElements: Map<symbol, TDynamicElementBranch> = branch.__dynamicElements;
+          dynamicElements.forEach((elementItem, itemKey) => {
+            branch.__dynamicElements.delete(itemKey);
           });
         }
       })
@@ -208,7 +204,7 @@ function clearElRef(target: TElement, isDeep: boolean = false): void {
     });
   }
 
-  if (!target.__OG__ || !target.__OG__.hasRefs) return;
+  if (!target.__OG__) return;
   const clearElTreeArguments: any[] = Array.from(arguments);
   Module.useAll("reactive.clearRefTree", Array.from(arguments));
   target.childNodes.forEach(nodeItem => {

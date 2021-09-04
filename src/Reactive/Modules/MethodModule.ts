@@ -60,34 +60,39 @@ export default {
       const ownerElement: HTMLElement = target.ownerElement as HTMLElement;
       ownerElement[target.nodeName] = null; //* 清除已有方法
 
-      const paramPropertyNames: string[][] = [];
+      const paramPropertyMap: Map<symbol, string[][]> = new Map();
+      const refExpressionParamMap: Map<symbol, string[][]> = new Map();
       for (let methodName of methodNames) {
         let listener = null;
         let paramString = methodName.match(MethodRules.MethodParams);
         let params: string[] = [];
+        const branchKey: symbol = Symbol();
 
         let refParamsMap: Map<number, string[]> = new Map();
         const expressionParamMap: Map<number, {
-          expression: string, params: string[]
+          expression: string, params: string[][]
         }> = new Map();
+        const refExpressionParams: string[][] = [];
 
         if (paramString) {
+          // TODO 实参如果是数字就转换为数字
           params = Parser.parseMethodParams(paramString[0]);
           params.forEach((param, index) => {
             if (RefRules.refItem.test(param)) {
               params[index] = param = param.match(RefRules.extractRefItem)[0];
 
               if (Expression.isExpression(`{ ${param} }`)) {
+                const params: string[][] = Ref.collecRef(param) as string[][]
                 expressionParamMap.set(index, {
                   expression: Expression.handleExpressionRef(`{ ${param} }`, target).expression,
-                  params: Ref.collecRef(param) as string[]
+                  params
                 });
+                refExpressionParams.push(...params);
               } else {
                 refParamsMap.set(index, Transform.transformPropertyNameToArray(param));
-                paramPropertyNames.push(refParamsMap.get(index));
               }
             }
-          })
+          });
         }
 
         let extractMethodName: string[] | string = methodName.match(MethodRules.MethodName);
@@ -106,42 +111,51 @@ export default {
         if (refParamsMap.size === 0 && expressionParamMap.size === 0) {
           bindMethod(branch, properties);
         } else {
-          Utils.objectMerge(refTree, Ref.generateRefTreeByRefString(methodName, target, branch, "__methods"));
+          paramPropertyMap.set(branchKey, Array.from(refParamsMap.values()));
+          refExpressionParamMap.set(branchKey, refExpressionParams);
+          Utils.objectMerge(refTree, Ref.generateRefTreeByRefString(methodName, target, branchKey, branch, "__methods"));
         }
       }
       ownerElement.removeAttribute(target.nodeName); //* 移除属性
+
       Utils.defineOGProperty(ownerElement, {
         properties,
         ref: {
-          paramPropertyNames
+          type: "method",
+          paramPropertyMap,
+          expressionParamMap: refExpressionParamMap
         }
       });
 
       return refTree;
     },
-    setUpdateView(refTree: TRefTree, properties: ICustomElement, value, propertyNames): void {
+    setUpdateView(refTree: TRefTree, properties: ICustomElement): void {
       if (refTree?.__methods === undefined) return;
-      const methods: TMethodBranch[] = refTree.__methods;
+      const methods: Map<symbol, TMethodBranch> = refTree.__methods;
 
-      for (const method of methods) {
-        bindMethod(method, properties.__OG__.properties);
-      }
+      methods.forEach(methodItem => {
+        bindMethod(methodItem, properties.__OG__.properties);
+      });
     },
     clearRefTree(target: TElement): void {
       if (!target.__OG__ || !target.__OG__.ref) return;
       const ref = target.__OG__.ref;
-      if (!ref.paramPropertyNames) return;
-      ref.paramPropertyNames.forEach(propertyNameArray => {
+      if (ref.type !== "method") return;
+
+      ref.paramPropertyMap.forEach((propertyNameArray, branchKey) => {
         const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
         if (branch.__methods) {
-          const methods: TMethodBranch[] = branch.__methods;
-          methods.forEach((methodItem, itemIndex) => {
-            if (methodItem.ownerElement === target) {
-              methods.splice(itemIndex, 1);
-            }
-          });
+          branch.__methods.delete(branchKey);
         }
-      })
+      });
+      ref.expressionParamMap.forEach((propertyNameArray, branchKey) => {
+        propertyNameArray.forEach(propertyNames => {
+          const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNames);
+          if (branch.__methods) {
+            branch.__methods.delete(branchKey);
+          }
+        });
+      });
     }
   }
 } as TModuleOptions

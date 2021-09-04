@@ -10,11 +10,11 @@ import AttrModule from "./Modules/AttrModule";
 import MethodModule from "./Modules/MethodModule";
 import DynamicElementModule from "./Modules/DynamicElementModule";
 
+Module.add("ExpressionModule", ExpressionModule);
+Module.add("MethodModule", MethodModule);
+Module.add("DynamicElementModule", DynamicElementModule);
 Module.add("ElementModule", ElementModule);
 Module.add("AttrModule", AttrModule);
-Module.add("MethodModule", MethodModule);
-Module.add("ExpressionModule", ExpressionModule);
-Module.add("DynamicElementModule", DynamicElementModule);
 
 /**
  * 遍历每一个节点，并且引用collectElRef、collectAttrRef钩子
