@@ -97,13 +97,6 @@ export default {
             break;
         }
       })
-    },
-    // clearRefTree(target: TElement): void {
-    //   if (!target.__OG__ || !target.__OG__.ref) return;
-    //   const ref = target.__OG__.ref;
-
-    //   if (!ref.info) return;
-    //   Ref.clearRefByRefInfo(ref.info, target);
-    // }
+    }
   }
 } as TModuleOptions

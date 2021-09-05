@@ -169,35 +169,6 @@ function parenRefInfo(refInfo: TRefInfo, properties: ICustomElement): any {
   return Transform.transformObjectToString(result);
 }
 
-function clearRefByRefInfo(refInfo: TRefInfo, target: TElement): void {
-  switch (refInfo.type) {
-    case "expression":
-      const expressionInfo: TExpressionItem = refInfo.expressionInfo;
-      expressionInfo.refPropertyNames.forEach(propertyNameArray => {
-        const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
-        if (branch.__dynamicElements) {
-          const dynamicElements: Map<symbol, TDynamicElementBranch> = branch.__dynamicElements;
-          dynamicElements.forEach((elementItem, itemKey) => {
-            branch.__dynamicElements.delete(itemKey);
-          });
-        }
-      })
-      break;
-    case "variable":
-      const refPropertyNames: string[][] = refInfo.refPropertyNames;
-      refPropertyNames.forEach(propertyNameArray => {
-        const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
-        if (branch.__dynamicElements) {
-          const dynamicElements: Map<symbol, TDynamicElementBranch> = branch.__dynamicElements;
-          dynamicElements.forEach((elementItem, itemKey) => {
-            branch.__dynamicElements.delete(itemKey);
-          });
-        }
-      })
-      break;
-  }
-}
-
 /**
  * 判断模板字符串是变量或者表达式，还是普通字符串
  * @param refString 模板字符串
@@ -221,19 +192,6 @@ function clearElRef(target: TElement, isDeep: boolean = false): void {
     target,
     ...arguments,
   ]);
-
-  // Array.from(target.attributes).forEach(attrItem => {
-  //   clearElTreeArguments.unshift(attrItem);
-  //   Module.useAll("reactive.clearAttrRefTree", clearElTreeArguments);
-  //   clearElTreeArguments.shift();
-  // });
-}
-
-//! 待移除
-function removeRefTreeBrachProperty(refTree: TRefTree, branchName: string, propertyNames: string[], branchKey: symbol): void {
-  const branch: TRefTree = Utils.getObjectProperty(refTree, propertyNames);
-  if (!branch[branchName]) return;
-  branch[branchName].delete(branchKey);
 }
 
 function removeRefByRefererRefInfo(refInfo: Record<keyof TRefTree, Map<symbol, string[] | string[][]>>, refTree): void {
@@ -264,9 +222,7 @@ export default {
   generateRefTreeByRefString,
   parseTemplateGenerateRefInfo,
   parenRefInfo,
-  clearRefByRefInfo,
   isRef,
   clearElRef,
-  removeRefTreeBrachProperty,
   removeRefByRefererRefInfo
 }
