@@ -1,7 +1,7 @@
 import Module from "../Module";
-import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
+import { ICustomElement, TAttr, TElement, TReferrerRefInfo, TText } from "../Typings/CustomElementTypings";
 import { TExpressionItem } from "../Typings/ExpressionTypings";
-import { TDynamicElementBranch, TMethodBranch, TRefInfo, TRefTree } from "../Typings/RefTreeTypings";
+import { TDynamicElementBranch, TMethodBranch, TReferrerPropertyRef, TRefInfo, TRefTree } from "../Typings/RefTypings";
 import Utils from "../Utils";
 import Expression from "./Expression";
 import { RefRules } from "./Rules";
@@ -100,7 +100,7 @@ function generateRefTree(propertyNames: string[], target: unknown, branchKey: sy
     case "__expressions": {
       endBranch = {
         ...endBranch,
-        ...Expression.handleExpressionRef(expression, target as Attr | Text)
+        ...Expression.handleExpressionRef(expression, target as Text | Attr)
       };
     }
       break;
@@ -208,29 +208,52 @@ function isRef(refString: string): boolean {
 }
 
 function clearElRef(target: TElement, isDeep: boolean = false): void {
-  if (isDeep && target.children?.length > 0) {
+  if (isDeep && target.children && target.children.length > 0) {
     Array.from(target.children).forEach(nodeItem => {
       clearElRef(nodeItem as TElement, true);
     });
   }
 
   if (!target.__OG__) return;
-  const clearElTreeArguments: any[] = Array.from(arguments);
   Module.useAll("reactive.clearRefTree", Array.from(arguments));
-  target.childNodes.forEach(nodeItem => {
-    // @ts-ignore
-    if (nodeItem instanceof Text && nodeItem.__OG__?.ref) {
-      clearElTreeArguments.unshift(nodeItem);
-      Module.useAll("reactive.clearElRefTree", clearElTreeArguments);
-      clearElTreeArguments.shift();
-    }
-  });
 
-  Array.from(target.attributes).forEach(attrItem => {
-    clearElTreeArguments.unshift(attrItem);
-    Module.useAll("reactive.clearAttrRefTree", clearElTreeArguments);
-    clearElTreeArguments.shift();
-  })
+  Module.useAll("reactive.clearElRefTree", [
+    target,
+    ...arguments,
+  ]);
+
+  // Array.from(target.attributes).forEach(attrItem => {
+  //   clearElTreeArguments.unshift(attrItem);
+  //   Module.useAll("reactive.clearAttrRefTree", clearElTreeArguments);
+  //   clearElTreeArguments.shift();
+  // });
+}
+
+//! 待移除
+function removeRefTreeBrachProperty(refTree: TRefTree, branchName: string, propertyNames: string[], branchKey: symbol): void {
+  const branch: TRefTree = Utils.getObjectProperty(refTree, propertyNames);
+  if (!branch[branchName]) return;
+  branch[branchName].delete(branchKey);
+}
+
+function removeRefByRefererRefInfo(refInfo: Record<keyof TRefTree, Map<symbol, string[] | string[][]>>, refTree): void {
+  for (const type in refInfo) {
+    if (!refInfo.hasOwnProperty(type)) continue;
+    const propertyKeyMap: Map<symbol, string[] | string[][]> = refInfo[type];
+    propertyKeyMap.forEach((propertyNames, itemKey) => {
+      if (propertyNames[0] && Array.isArray(propertyNames[0])) {
+        propertyNames.forEach(secondPropertyNames => {
+          const branch: TRefTree = Utils.getObjectProperty(refTree, secondPropertyNames);
+          if (!branch[type]) return;
+          branch[type].delete(itemKey);
+        })
+      } else if (propertyNames.length > 0) {
+        const branch: TRefTree = Utils.getObjectProperty(refTree, propertyNames as string[]);
+        if (!branch[type]) return;
+        branch[type].delete(itemKey);
+      }
+    });
+  }
 }
 
 export default {
@@ -243,5 +266,7 @@ export default {
   parenRefInfo,
   clearRefByRefInfo,
   isRef,
-  clearElRef
+  clearElRef,
+  removeRefTreeBrachProperty,
+  removeRefByRefererRefInfo
 }

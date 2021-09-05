@@ -1,6 +1,6 @@
-import { ICustomElement, TElement } from "../../Typings/CustomElementTypings";
+import { ICustomElement, TElement, TReferrerElement, TReferrerElementOGProperties } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TMethodBranch, TRefTree } from "../../Typings/RefTreeTypings";
+import { TMethodBranch, TRefTree } from "../../Typings/RefTypings";
 import { MethodRules, RefRules } from "../Rules";
 import Parser from "../Parser";
 import Utils from "../../Utils";
@@ -60,8 +60,7 @@ export default {
       const ownerElement: HTMLElement = target.ownerElement as HTMLElement;
       ownerElement[target.nodeName] = null; //* 清除已有方法
 
-      const paramPropertyMap: Map<symbol, string[][]> = new Map();
-      const refExpressionParamMap: Map<symbol, string[][]> = new Map();
+      const refPropertyKeyMap: Map<symbol, string[][]> = new Map();
       for (let methodName of methodNames) {
         let listener = null;
         let paramString = methodName.match(MethodRules.MethodParams);
@@ -84,7 +83,7 @@ export default {
               if (Expression.isExpression(`{ ${param} }`)) {
                 const params: string[][] = Ref.collecRef(param) as string[][]
                 expressionParamMap.set(index, {
-                  expression: Expression.handleExpressionRef(`{ ${param} }`, target).expression,
+                  expression: Expression.handleExpressionRef(`{ ${param} }`).expression,
                   params
                 });
                 refExpressionParams.push(...params);
@@ -111,21 +110,20 @@ export default {
         if (refParamsMap.size === 0 && expressionParamMap.size === 0) {
           bindMethod(branch, properties);
         } else {
-          paramPropertyMap.set(branchKey, Array.from(refParamsMap.values()));
-          refExpressionParamMap.set(branchKey, refExpressionParams);
+          const params = Array.from(refParamsMap.values());
+          params.push(...refExpressionParams);
+          refPropertyKeyMap.set(branchKey, params);
+
           Utils.objectMerge(refTree, Ref.generateRefTreeByRefString(methodName, target, branchKey, branch, "__methods"));
         }
       }
       ownerElement.removeAttribute(target.nodeName); //* 移除属性
 
       Utils.defineOGProperty(ownerElement, {
-        properties,
-        ref: {
-          type: "method",
-          paramPropertyMap,
-          expressionParamMap: refExpressionParamMap
+        refs: {
+          "__methods": refPropertyKeyMap
         }
-      });
+      } as TReferrerElementOGProperties);
 
       return refTree;
     },
@@ -135,26 +133,6 @@ export default {
 
       methods.forEach(methodItem => {
         bindMethod(methodItem, properties.__OG__.properties);
-      });
-    },
-    clearRefTree(target: TElement): void {
-      if (!target.__OG__ || !target.__OG__.ref) return;
-      const ref = target.__OG__.ref;
-      if (ref.type !== "method") return;
-
-      ref.paramPropertyMap.forEach((propertyNameArray, branchKey) => {
-        const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
-        if (branch.__methods) {
-          branch.__methods.delete(branchKey);
-        }
-      });
-      ref.expressionParamMap.forEach((propertyNameArray, branchKey) => {
-        propertyNameArray.forEach(propertyNames => {
-          const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNames);
-          if (branch.__methods) {
-            branch.__methods.delete(branchKey);
-          }
-        });
       });
     }
   }

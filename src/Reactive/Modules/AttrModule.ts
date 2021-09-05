@@ -1,8 +1,7 @@
-import { ICustomElement, IElement, TElement } from "../../Typings/CustomElementTypings";
+import { ICustomElement, TAttr, TReferrerElement, TReferrerElementOGProperties, TReferrerRefInfo } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TRefTree } from "../../Typings/RefTreeTypings";
+import { TRefTree } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
-import Expression from "../Expression";
 import Ref from "../Ref";
 import { MethodRules, RefRules } from "../Rules";
 import Transform from "../Transform";
@@ -17,16 +16,14 @@ export default {
 
       const branchKey: symbol = Symbol();
       const refTree: TRefTree = Ref.generateRefTreeByRefString(target.nodeValue, target, branchKey);
-      const propertyNames: string[] = Ref.collecRef(target.nodeValue, true)[0] as string[];
+      const propertyKeyMap: Map<symbol, string[] | string[][]> = new Map();
+      propertyKeyMap.set(branchKey, Ref.collecRef(target.nodeValue, true)[0] as string[]);
 
-      Utils.defineOGProperty(target, {
-        attrCollected: true,
-        properties,
-        ref: {
-          branchKey,
-          propertyNames
+      Utils.defineOGProperty(target.ownerElement, {
+        refs: {
+          "__attrs": propertyKeyMap
         }
-      });
+      } as TReferrerElementOGProperties);
       Utils.defineOGProperty(target.ownerElement, {
         hasRefs: true
       });
@@ -39,13 +36,9 @@ export default {
         attr.nodeValue = Transform.transformObjectToString(value);
       });
     },
-    clearAttrRefTree(target: Attr & { [key: string]: any } & TElement): void {
-      if (!target.__OG__) return;
-      const ref = target.__OG__.ref;
-
-      const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, ref.propertyNames);
-      if (!branch.__attrs) return;
-      branch.__attrs.delete(ref.branchKey);
+    clearAttrRefTree(target: TReferrerElement): void {
+      // if (!target.__OG__||!target.__OG__.refs) return;
+      // Ref.removeRefByRefererRefInfo(target.__OG__.refs, target.__OG__.refTree);
     }
   }
 } as TModuleOptions

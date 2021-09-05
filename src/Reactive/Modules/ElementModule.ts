@@ -1,7 +1,8 @@
-import { ICustomElement, TElement } from "../../Typings/CustomElementTypings";
+import { ICustomElement, TElement, TReferrerElement, TReferrerElementOGProperties, TReferrerRefInfo, TText } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TRefTree } from "../../Typings/RefTreeTypings";
+import { TRefTree } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
+import Expression from "../Expression";
 import Ref from "../Ref";
 import { RefRules } from "../Rules";
 import Transform from "../Transform";
@@ -39,11 +40,7 @@ export default {
         }
         const refPropertyNames: string[][] | string[] = Ref.collecRef(refItem);
         const newTextEl: Text = document.createTextNode(refItem);
-
-        let defineProperties: Record<string, any> = {
-          elementParsed: false,
-        };
-        Utils.defineOGProperty(newTextEl, defineProperties);
+        const isExpression: boolean = Expression.isExpression(refItem);
 
         const refTreePart: TRefTree = {};
         const refPropertyKeyMap: Map<symbol, string[]> = new Map();
@@ -56,12 +53,13 @@ export default {
         newTextChildNodes.push(newTextEl);
         target.textContent = target.textContent.slice(refItem.length);
 
-        Utils.defineOGProperty(newTextEl, {
+        Utils.defineOGProperty(parentNode, {
           properties: rootEl,
-          ref: {
-            propertyKeyMap: refPropertyKeyMap
+          refTree: rootEl.__OG__.reactive.refTree,
+          refs: {
+            [isExpression ? '__expressions' : '__els']: refPropertyKeyMap
           }
-        });
+        } as TReferrerElementOGProperties);
         Utils.objectMerge(refTree, refTreePart);
       });
 
@@ -78,15 +76,10 @@ export default {
         elItem.textContent = Transform.transformObjectToString(value);
       });
     },
-    clearElRefTree(target: Text & { [key: string]: any } & TElement): void {
-      const ref = target.__OG__.ref;
+    clearElRefTree(target: TReferrerElement): void {
+      if (!target.__OG__||!target.__OG__.refs) return;
 
-      ref.propertyKeyMap.forEach((propertyItem, itemKey) => {
-        const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyItem);
-        if (branch.__els) {
-          branch.__els.delete(itemKey);
-        }
-      });
+      Ref.removeRefByRefererRefInfo(target.__OG__.refs, target.__OG__.properties.__OG__.refTree);
     }
   }
 } as TModuleOptions

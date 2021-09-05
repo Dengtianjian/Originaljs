@@ -1,6 +1,6 @@
 import Reactive from ".";
 import { ICustomElement } from "../Typings/CustomElementTypings";
-import { TRefTree } from "../Typings/RefTreeTypings";
+import { TRefTree } from "../Typings/RefTypings";
 import Utils from "../Utils";
 import View from "./View";
 

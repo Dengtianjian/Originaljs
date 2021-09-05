@@ -1,4 +1,5 @@
 import OG from "./src";
+import Ref from "./src/Reactive/Ref";
 
 let CElTemplate: string = await fetch("./cel.html").then(res => res.text());
 import Utils from "./src/Utils";
@@ -40,13 +41,14 @@ class CEl extends OG.createElement() {
   count = 888;
   display = {
     show: false,
-    staticHtml: `<o-el value="{ {display.staticHTML2} + '<p>2</p>' }"></o-el>`,
+    staticHtml: `hello world`,
     staticHTML2: "<h1>Hello static HTML2</h1>"
   };
   UpdateHtml = () => {
-    fetch("./staticHTML.html").then(res => res.text()).then(res => {
-      this.display.staticHtml = res;
-    })
+    Ref.clearElRef(this.__OG__.el.querySelector(".ref"),true);
+    // fetch("./staticHTML.html").then(res => res.text()).then(res => {
+    //   this.display.staticHtml = res;
+    // })
     // this.dynimicElements.tag1 = "1";
 
   }

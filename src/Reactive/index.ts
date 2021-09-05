@@ -1,5 +1,5 @@
 import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
-import { TRefTree } from "../Typings/RefTreeTypings";
+import { TRefTree } from "../Typings/RefTypings";
 import Utils from "../Utils";
 import Module from "../Module";
 import ElementModule from "./Modules/ElementModule";
@@ -51,9 +51,9 @@ function traverseNodes(target: TElement | TElement[], properties: Record<string,
     }
 
     if (elementItem.childNodes && elementItem.childNodes.length > 0) {
-      elementItem.childNodes.forEach(nodeItem => {
+      for (const nodeItem of Array.from(elementItem.childNodes)) {
         Utils.objectMerge(refTree, traverseNodes(nodeItem as TElement, properties));
-      });
+      }
     }
   }
 

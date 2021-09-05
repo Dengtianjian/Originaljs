@@ -1,6 +1,6 @@
 import Reactive from "../Reactive";
-import { ICustomElement, IElement } from "./CustomElementTypings";
-import { TRefTree } from "./RefTreeTypings";
+import { ICustomElement, IElement, TReferrerElement } from "./CustomElementTypings";
+import { TRefTree } from "./RefTypings";
 
 export type TModuleHookNames = {
   //* 生命周期
@@ -55,9 +55,9 @@ export type TModuleOptions = {
     afterUpdatedElView?: () => void;
     afterUpdateAttrView?: () => void;
     afterUpdatedView?: () => void;
-    clearRefTree?: (target: Element, isDeep: boolean) => void;
-    clearElRefTree?: (target: Text, parentNode: Element, isDeep: boolean) => void;
-    clearAttrRefTree?: (target: Attr, parentNode: Element, isDeep: boolean) => void;
+    clearRefTree?: (target: TReferrerElement, isDeep: boolean) => void;
+    clearElRefTree?: (target: TReferrerElement, parentNode: Element, isDeep: boolean) => void;
+    clearAttrRefTree?: (target: TReferrerElement, parentNode: Element, isDeep: boolean) => void;
     end?: () => void;
   }
 };

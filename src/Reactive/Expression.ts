@@ -1,4 +1,4 @@
-import { ICustomElement, IElement, TElement } from "../Typings/CustomElementTypings";
+import { ICustomElement, IElement, TAttr, TElement, TText } from "../Typings/CustomElementTypings";
 import { TExpressionItem } from "../Typings/ExpressionTypings";
 import Ref from "./Ref";
 import { RefRules } from "./Rules";
@@ -47,10 +47,10 @@ function handleExpressionRef(expression: string, target?: Text | Attr): TExpress
   });
 
   return {
+    target,
     expression,
-    refPropertyNames: propertyNames as string[],
-    target
-  };
+    refPropertyNames: propertyNames
+  }
 }
 
 /**
