@@ -1,4 +1,5 @@
 import OG from "./src";
+import Ref from "./src/Reactive/Ref";
 
 let CElTemplate: string = await fetch("./cel.html").then(res => res.text());
 import Utils from "./src/Utils";
@@ -40,13 +41,14 @@ class CEl extends OG.createElement() {
   count = 888;
   display = {
     show: false,
-    staticHtml: `<o-el html="{ {display.staticHTML2} + '3' }"></o-el>`,
+    staticHtml: `hello world`,
     staticHTML2: "<h1>Hello static HTML2</h1>"
   };
   UpdateHtml = () => {
-    fetch("./staticHTML.html").then(res => res.text()).then(res => {
-      this.display.staticHtml = res;
-    })
+    Ref.clearElRef(this.__OG__.el.querySelector(".ref"),true);
+    // fetch("./staticHTML.html").then(res => res.text()).then(res => {
+    //   this.display.staticHtml = res;
+    // })
     // this.dynimicElements.tag1 = "1";
 
   }
@@ -54,15 +56,15 @@ class CEl extends OG.createElement() {
     this.display.staticHTML2 = "hhhhhhhh";
   }
   elhtml = "<h1>Hello Originaljs</h1>";
-  updateData(...rest){
+  updateData(...rest) {
     console.log(rest);
 
     this.user.name = "https://sortablejs.github.io/Vue.Draggable/img/logo.c6a3753c.svg";
     this.display.show = !this.display.show;
   }
   updateCount() {
-    this.obj.a.c = Date.now();
-    this.display.show = !this.display.show;
+    // this.obj.a.c = Date.now();
+    // this.display.show = !this.display.show;
     console.log(this.obj.a.c);
   }
   dynimicElements = {

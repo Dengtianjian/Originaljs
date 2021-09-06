@@ -1,6 +1,6 @@
 import Module from "../Module";
 import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
-import { TRefTree } from "../Typings/RefTreeTypings";
+import { TRefTree } from "../Typings/RefTypings";
 import Utils from "../Utils";
 
 function updateView() {

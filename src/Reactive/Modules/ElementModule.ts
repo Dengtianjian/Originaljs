@@ -1,7 +1,8 @@
-import { ICustomElement, TElement } from "../../Typings/CustomElementTypings";
+import { ICustomElement, TElement, TReferrerElement, TReferrerElementOGProperties, TReferrerRefInfo, TText } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TRefTree } from "../../Typings/RefTreeTypings";
+import { TRefTree } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
+import Expression from "../Expression";
 import Ref from "../Ref";
 import { RefRules } from "../Rules";
 import Transform from "../Transform";
@@ -39,27 +40,26 @@ export default {
         }
         const refPropertyNames: string[][] | string[] = Ref.collecRef(refItem);
         const newTextEl: Text = document.createTextNode(refItem);
-
-        let defineProperties: Record<string, any> = {
-          elementParsed: false,
-        };
-        Utils.defineOGProperty(newTextEl, defineProperties);
+        const isExpression: boolean = Expression.isExpression(refItem);
 
         const refTreePart: TRefTree = {};
+        const refPropertyKeyMap: Map<symbol, string[]> = new Map();
         refPropertyNames.forEach(propertyNames => {
-          Utils.objectMerge(refTreePart, Ref.generateRefTree(propertyNames, newTextEl));
+          const branchKey: symbol = Symbol(propertyNames.toString());
+          refPropertyKeyMap.set(branchKey, propertyNames);
+          Utils.objectMerge(refTreePart, Ref.generateRefTree(propertyNames, newTextEl, branchKey));
         });
 
         newTextChildNodes.push(newTextEl);
         target.textContent = target.textContent.slice(refItem.length);
 
-        Utils.defineOGProperty(newTextEl, {
+        Utils.defineOGProperty(parentNode, {
           properties: rootEl,
-          ref: {
-            propertyNames: refPropertyNames,
-            hasRefs: true
+          refTree: rootEl.__OG__.reactive.refTree,
+          refs: {
+            [isExpression ? '__expressions' : '__els']: refPropertyKeyMap
           }
-        });
+        } as TReferrerElementOGProperties);
         Utils.objectMerge(refTree, refTreePart);
       });
 
@@ -67,30 +67,19 @@ export default {
         parentNode.insertBefore(newTextItem, target);
       }
 
-      Utils.defineOGProperty(parentNode, {
-        hasRefs: true
-      });
-
       return refTree;
     },
     setUpdateView(refTree: TRefTree, properties: Record<string, any>, value: any): void {
       if (refTree?.__els === undefined) return;
-      const els: TElement[] = refTree.__els;
 
-      els.forEach(el => {
-        el.textContent = Transform.transformObjectToString(value);
+      refTree.__els.forEach(elItem => {
+        elItem.textContent = Transform.transformObjectToString(value);
       });
     },
-    clearElRefTree(target: Text & { [key: string]: any } & TElement): void {
-      const ref = target.__OG__.ref;
+    clearElRefTree(target: TReferrerElement): void {
+      if (!target.__OG__||!target.__OG__.refs) return;
 
-      ref.propertyNames.forEach(propertyNameArray => {
-        const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
-        if (branch.__els) {
-          const els: TElement[] = branch.__els;
-          els.splice(els.indexOf(target), 1);
-        }
-      });
+      Ref.removeRefByRefererRefInfo(target.__OG__.refs, target.__OG__.properties.__OG__.refTree);
     }
   }
 } as TModuleOptions

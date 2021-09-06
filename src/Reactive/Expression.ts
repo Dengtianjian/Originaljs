@@ -1,4 +1,4 @@
-import { ICustomElement, IElement, TElement } from "../Typings/CustomElementTypings";
+import { ICustomElement, IElement, TAttr, TElement, TText } from "../Typings/CustomElementTypings";
 import { TExpressionItem } from "../Typings/ExpressionTypings";
 import Ref from "./Ref";
 import { RefRules } from "./Rules";
@@ -11,14 +11,15 @@ import Transform from "./Transform";
  * @param refPropertyNames 引用的数据名称数组
  * @returns 表达式执行结果
  */
-function executeExpression(expression: string, properties: IElement | Record<string, any>, refPropertyNames?: string[]): any {
+function executeExpression(expression: string, properties: IElement | Record<string, any>, refPropertyNames?: string[][] | string[]): any {
   let expressionItem: TExpressionItem = null;
   if (refPropertyNames === undefined) {
     expressionItem = handleExpressionRef(expression, null);
     if (!expressionItem) return "";
-    refPropertyNames = expressionItem.refPropertyNames;
     expression = expressionItem.expression;
   }
+
+  // TODO { count } { {count} + 2 } 会报错
   let executeResult: any = new Function(`return ${expression}`).apply(properties);
   if (typeof executeResult === "function") {
     executeResult = executeResult.apply(properties);
@@ -46,10 +47,10 @@ function handleExpressionRef(expression: string, target?: Text | Attr): TExpress
   });
 
   return {
+    target,
     expression,
-    refPropertyNames: propertyNames as string[],
-    target
-  };
+    refPropertyNames: propertyNames
+  }
 }
 
 /**

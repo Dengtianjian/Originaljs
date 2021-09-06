@@ -1,7 +1,7 @@
 import Module from "../Module";
-import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
+import { ICustomElement, TAttr, TElement, TReferrerRefInfo, TText } from "../Typings/CustomElementTypings";
 import { TExpressionItem } from "../Typings/ExpressionTypings";
-import { TDynamicElementBranch, TMethodBranch, TRefInfo, TRefTree } from "../Typings/RefTreeTypings";
+import { TDynamicElementBranch, TMethodBranch, TReferrerPropertyRef, TRefInfo, TRefTree } from "../Typings/RefTypings";
 import Utils from "../Utils";
 import Expression from "./Expression";
 import { RefRules } from "./Rules";
@@ -65,7 +65,7 @@ function updateRef(refTree: TRefTree, refProperties: ICustomElement | TElement |
   }
 }
 
-function generateRefTreeByRefString(refString: string, target: Attr | Text | Element, endBranch?: Record<string, any>, endBranchName?: string): TRefTree {
+function generateRefTreeByRefString(refString: string, target: Attr | Text | Element, branchKey: symbol, endBranch?: Record<string, any>, endBranchName?: string): TRefTree {
   const refs: string[] = getRefKey(refString, false);
   if (refs.length === 0) return {};
 
@@ -74,14 +74,14 @@ function generateRefTreeByRefString(refString: string, target: Attr | Text | Ele
     const refPropertyNames: string[][] | string[] = collecRef(refItem);
 
     refPropertyNames.forEach(propertyNames => {
-      Utils.objectMerge(refTree, generateRefTree(propertyNames, target, endBranch,
+      Utils.objectMerge(refTree, generateRefTree(propertyNames, target, branchKey, endBranch,
         endBranchName));
     });
   });
   return refTree;
 }
 
-function generateRefTree(propertyNames: string[], target: unknown, endBranch: Record<string, any> = {}, endBranchName?: string): TRefTree {
+function generateRefTree(propertyNames: string[], target: unknown, branchKey: symbol, endBranch: Record<string, any> = {}, endBranchName?: string): TRefTree {
   let expression: string = "";
   if (!endBranchName) {
     if (target instanceof Attr) {
@@ -98,30 +98,28 @@ function generateRefTree(propertyNames: string[], target: unknown, endBranch: Re
 
   switch (endBranchName) {
     case "__expressions": {
-      endBranch = [
-        {
-          ...endBranch,
-          ...Expression.handleExpressionRef(expression, target as Attr | Text)
-        }
-      ];
+      endBranch = {
+        ...endBranch,
+        ...Expression.handleExpressionRef(expression, target as Text | Attr)
+      };
     }
       break;
     case "__attrs":
     case "__els":
-      endBranch = [target];
+      endBranch = target;
       break;
     case "__methods":
-      endBranch = [
-        {
-          ...endBranch,
-          target
-        }
-      ];
+      endBranch = {
+        ...endBranch,
+        target
+      };
       break;
   }
 
+  const branchValue: Map<symbol, any> = new Map();
+  branchValue.set(branchKey, endBranch);
   return Utils.generateObjectTree(propertyNames, {
-    [endBranchName]: endBranch
+    [endBranchName]: branchValue
   });
 }
 
@@ -171,27 +169,6 @@ function parenRefInfo(refInfo: TRefInfo, properties: ICustomElement): any {
   return Transform.transformObjectToString(result);
 }
 
-function clearRefByRefInfo(refInfo: TRefInfo, target: TElement): void {
-  switch (refInfo.type) {
-    case "expression":
-      break;
-    case "variable":
-      const refPropertyNames: string[][] = refInfo.refPropertyNames;
-      refPropertyNames.forEach(propertyNameArray => {
-        const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
-        if (branch.__dynamicElements) {
-          const dynamicElements: TDynamicElementBranch[] = branch.__dynamicElements;
-          dynamicElements.forEach((elementItem, itemIndex) => {
-            if (elementItem.target === target) {
-              dynamicElements.splice(itemIndex, 1);
-            }
-          });
-        }
-      })
-      break;
-  }
-}
-
 /**
  * 判断模板字符串是变量或者表达式，还是普通字符串
  * @param refString 模板字符串
@@ -202,29 +179,39 @@ function isRef(refString: string): boolean {
 }
 
 function clearElRef(target: TElement, isDeep: boolean = false): void {
-  if (isDeep && target.children?.length > 0) {
+  if (isDeep && target.children && target.children.length > 0) {
     Array.from(target.children).forEach(nodeItem => {
       clearElRef(nodeItem as TElement, true);
     });
   }
 
-  if (!target.__OG__ || !target.__OG__.hasRefs) return;
-  const clearElTreeArguments: any[] = Array.from(arguments);
+  if (!target.__OG__) return;
   Module.useAll("reactive.clearRefTree", Array.from(arguments));
-  target.childNodes.forEach(nodeItem => {
-    // @ts-ignore
-    if (nodeItem instanceof Text && nodeItem.__OG__?.ref) {
-      clearElTreeArguments.unshift(nodeItem);
-      Module.useAll("reactive.clearElRefTree", clearElTreeArguments);
-      clearElTreeArguments.shift();
-    }
-  });
 
-  Array.from(target.attributes).forEach(attrItem => {
-    clearElTreeArguments.unshift(attrItem);
-    Module.useAll("reactive.clearAttrRefTree", clearElTreeArguments);
-    clearElTreeArguments.shift();
-  })
+  Module.useAll("reactive.clearElRefTree", [
+    target,
+    ...arguments,
+  ]);
+}
+
+function removeRefByRefererRefInfo(refInfo: Record<keyof TRefTree, Map<symbol, string[] | string[][]>>, refTree): void {
+  for (const type in refInfo) {
+    if (!refInfo.hasOwnProperty(type)) continue;
+    const propertyKeyMap: Map<symbol, string[] | string[][]> = refInfo[type];
+    propertyKeyMap.forEach((propertyNames, itemKey) => {
+      if (propertyNames[0] && Array.isArray(propertyNames[0])) {
+        propertyNames.forEach(secondPropertyNames => {
+          const branch: TRefTree = Utils.getObjectProperty(refTree, secondPropertyNames);
+          if (!branch[type]) return;
+          branch[type].delete(itemKey);
+        })
+      } else if (propertyNames.length > 0) {
+        const branch: TRefTree = Utils.getObjectProperty(refTree, propertyNames as string[]);
+        if (!branch[type]) return;
+        branch[type].delete(itemKey);
+      }
+    });
+  }
 }
 
 export default {
@@ -235,7 +222,7 @@ export default {
   generateRefTreeByRefString,
   parseTemplateGenerateRefInfo,
   parenRefInfo,
-  clearRefByRefInfo,
   isRef,
-  clearElRef
+  clearElRef,
+  removeRefByRefererRefInfo
 }

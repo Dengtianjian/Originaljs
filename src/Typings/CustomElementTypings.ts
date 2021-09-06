@@ -1,7 +1,7 @@
 import CustomElement from "../CustomElement";
 import Reactive from "../Reactive";
 import Transition from "../Transition";
-import { TRefTree } from "./RefTreeTypings";
+import { TReferrerPropertyRef, TRefTree } from "./RefTypings";
 import { TCSSStyleDeclaration } from "./TransitionTypings";
 
 export type TOG = {
@@ -37,4 +37,29 @@ export type TElement = {
 } & Element & HTMLElement & Node & ParentNode & ICustomElement;
 export interface IElement extends Element {
   __OG__: TOG
+}
+
+export type TReferrerRefInfo = {
+  [key: string | symbol | number]: any,
+  properties: ICustomElement,
+  refTree: TRefTree,
+  ref: TReferrerPropertyRef
+}
+export type TText = {
+  __OG__: TReferrerRefInfo
+} & Text
+
+export type TAttr = {
+  __OG__: TReferrerRefInfo
+} & Attr
+
+export type TReferrerElementOGProperties = {
+  [key: string | number | symbol]: any,
+  hasRefs?: boolean,
+  properties: ICustomElement,
+  refTree: TRefTree,
+  refs: Record<keyof TRefTree, Map<symbol, string[] | string[][]>>,
+}
+export type TReferrerElement = {
+  __OG__: TReferrerElementOGProperties
 }

@@ -1,7 +1,7 @@
 import Reactive from "..";
-import { ICustomElement, IElement, TElement } from "../../Typings/CustomElementTypings";
+import { ICustomElement, IElement, TElement, TReferrerElementOGProperties } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TDynamicElementBranch, TDynamicElementContentTypes, TRefInfo, TRefTree } from "../../Typings/RefTreeTypings";
+import { TDynamicElementBranch, TDynamicElementContentTypes, TRefInfo, TRefTree } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
 import Parser from "../Parser";
 import Ref from "../Ref";
@@ -37,20 +37,30 @@ export default {
           break;
       }
       if (Ref.isRef(attrValue)) {
+        const branchKey: symbol = Symbol();
         const refInfo: TRefInfo = Ref.parseTemplateGenerateRefInfo(attrValue);
-        refTree = Ref.generateRefTreeByRefString(attrValue, attr, [{
+        refTree = Ref.generateRefTreeByRefString(attrValue, attr, branchKey, {
           attr,
           target,
           contentType,
           refInfo,
           ...endBranch
-        }], "__dynamicElements");
+        }, "__dynamicElements");
+
+        const refPropertyKeyMap: Map<symbol, string[] | string[][]> = new Map();
+        if (refInfo.type === "expression") {
+          refPropertyKeyMap.set(branchKey, refInfo.expressionInfo.refPropertyNames);
+        } else {
+          refPropertyKeyMap.set(branchKey, refInfo.refPropertyNames);
+        }
+
         Utils.defineOGProperty(target, {
           hasRefs: true,
-          ref: {
-            info: refInfo
+          refTree: roolEl.__OG__.reactive.refTree,
+          refs: {
+            "__dynamicElements": refPropertyKeyMap
           }
-        });
+        } as TReferrerElementOGProperties);
       }
 
       Utils.defineOGProperty(target, {
@@ -64,7 +74,7 @@ export default {
     },
     setUpdateView(refTree: TRefTree, properties: Record<string, any>) {
       if (refTree?.__dynamicElements === undefined) return;
-      const dynamicElements: TDynamicElementBranch[] = refTree.__dynamicElements;
+      const dynamicElements: Map<symbol, TDynamicElementBranch> = refTree.__dynamicElements;
 
       dynamicElements.forEach(dynamicElementInfo => {
         const refPropertyValue: any = Ref.parenRefInfo(dynamicElementInfo.refInfo, properties.__OG__.properties);
@@ -87,12 +97,6 @@ export default {
             break;
         }
       })
-    },
-    clearRefTree(target: TElement): void {
-      if (!target.__OG__ || !target.__OG__.ref) return;
-      const ref = target.__OG__.ref;
-
-      Ref.clearRefByRefInfo(ref.info, target);
     }
   }
 } as TModuleOptions

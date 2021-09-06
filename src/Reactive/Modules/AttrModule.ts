@@ -1,6 +1,6 @@
-import { ICustomElement, IElement, TElement } from "../../Typings/CustomElementTypings";
+import { ICustomElement, TAttr, TReferrerElement, TReferrerElementOGProperties, TReferrerRefInfo } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TRefTree } from "../../Typings/RefTreeTypings";
+import { TRefTree } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
 import Ref from "../Ref";
 import { MethodRules, RefRules } from "../Rules";
@@ -12,17 +12,18 @@ export default {
       if (!target.nodeValue) return {};
       if (RefRules.refItem.test(target.nodeValue) === false) return {};
       if (MethodRules.OnAttributeName.test(target.nodeName)) return {};
+      if (!Ref.isRef(target.nodeValue)) return {};
 
-      const refTree: TRefTree = Ref.generateRefTreeByRefString(target.nodeValue, target);
-      const propertyNames: string[][] = Ref.collecRef(target.nodeValue, true) as string[][];
+      const branchKey: symbol = Symbol();
+      const refTree: TRefTree = Ref.generateRefTreeByRefString(target.nodeValue, target, branchKey);
+      const propertyKeyMap: Map<symbol, string[] | string[][]> = new Map();
+      propertyKeyMap.set(branchKey, Ref.collecRef(target.nodeValue, true)[0] as string[]);
 
-      Utils.defineOGProperty(target, {
-        attrCollected: true,
-        properties,
-        ref: {
-          propertyNames
+      Utils.defineOGProperty(target.ownerElement, {
+        refs: {
+          "__attrs": propertyKeyMap
         }
-      });
+      } as TReferrerElementOGProperties);
       Utils.defineOGProperty(target.ownerElement, {
         hasRefs: true
       });
@@ -30,20 +31,14 @@ export default {
     },
     setUpdateView(refTree, properties, value): void {
       if (refTree?.__attrs === undefined) return;
-      const attrs: Attr[] = refTree.__attrs;
 
-      attrs.forEach(attr => {
+      refTree.__attrs.forEach(attr => {
         attr.nodeValue = Transform.transformObjectToString(value);
       });
     },
-    clearAttrRefTree(target: Attr & { [key: string]: any } & TElement): void {
-      if (!target.__OG__) return;
-      target.__OG__.ref.propertyNames.forEach(propertyNameArray => {
-        const branch: TRefTree = Utils.getObjectProperty(target.__OG__.properties.__OG__.refTree, propertyNameArray);
-        const attrs: Attr[] = branch.__attrs;
-        attrs.splice(attrs.indexOf(target), 1);
-      });
-      target.__OG__.ref.propertyNames = [];
+    clearAttrRefTree(target: TReferrerElement): void {
+      // if (!target.__OG__||!target.__OG__.refs) return;
+      // Ref.removeRefByRefererRefInfo(target.__OG__.refs, target.__OG__.refTree);
     }
   }
 } as TModuleOptions
