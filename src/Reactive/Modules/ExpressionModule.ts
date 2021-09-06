@@ -14,7 +14,7 @@ export default {
       const expressions: Map<symbol, TExpressionItem> = refTree.__expressions;
 
       expressions.forEach(expressionItem => {
-        expressionItem.target.textContent = Transform.transformObjectToString(Expression.executeExpression(expressionItem.expression, properties.__OG__.properties, expressionItem.refPropertyNames));
+        expressionItem.target.textContent = Transform.transformObjectToString(Expression.executeExpression(expressionItem.expression, properties.__OG__.properties, expressionItem.refPropertyNames)).toString();
       })
     }
   }

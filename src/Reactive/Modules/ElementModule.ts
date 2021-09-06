@@ -72,7 +72,7 @@ export default {
       if (refTree?.__els === undefined) return;
 
       refTree.__els.forEach(elItem => {
-        elItem.textContent = Transform.transformObjectToString(value);
+        elItem.textContent = Transform.transformObjectToString(value).toString();
       });
     },
     clearElRefTree(target: TReferrerElement): void {

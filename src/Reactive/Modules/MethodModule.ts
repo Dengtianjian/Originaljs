@@ -74,7 +74,6 @@ export default {
         const refExpressionParams: string[][] = [];
 
         if (paramString) {
-          // TODO 实参如果是数字就转换为数字
           params = Parser.parseMethodParams(paramString[0]);
           params.forEach((param, index) => {
             if (RefRules.refItem.test(param)) {

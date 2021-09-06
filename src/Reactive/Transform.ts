@@ -86,7 +86,7 @@ function transformPropertyNameToString(propertyNames: string[] & number[]): stri
  * @param target 被转换成字符串的任意类型对象
  * @returns 转换后的字符串
  */
-function transformObjectToString(target: any): string {
+function transformObjectToString(target: any): string | number {
   if (typeof target === "object" && target !== null) {
     const valueItem: string[] = [];
     for (const key in target) {
@@ -106,7 +106,8 @@ function transformObjectToString(target: any): string {
   }
   if (target === null) return "null";
   if (target === undefined) return "undefined";
-  return target.toString();
+  if (isNaN(target)) return target.toString();
+  return Number(target);
 }
 
 export default {

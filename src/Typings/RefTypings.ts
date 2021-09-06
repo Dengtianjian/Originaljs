@@ -2,7 +2,7 @@ import { TAttr, TElement, TText } from "./CustomElementTypings";
 import { TExpressionItem } from "./ExpressionTypings";
 
 export type TMethodBranch = {
-  params: string[],
+  params: string[] | number[],
   refParamsMap: Map<number, string[]>,
   expressionParamMap: Map<number, {
     expression: string, params: string[][]

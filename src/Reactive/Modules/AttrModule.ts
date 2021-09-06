@@ -33,6 +33,7 @@ export default {
       if (refTree?.__attrs === undefined) return;
 
       refTree.__attrs.forEach(attr => {
+        // @ts-ignore 可以存放number类型的
         attr.nodeValue = Transform.transformObjectToString(value);
       });
     },
