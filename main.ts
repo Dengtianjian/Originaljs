@@ -41,14 +41,14 @@ class CEl extends OG.createElement() {
   count = 888;
   display = {
     show: false,
-    staticHtml: `hello world`,
+    staticHtml: `<p>{msg}</p>`,
     staticHTML2: "<h1>Hello static HTML2</h1>"
   };
   UpdateHtml = () => {
-    Ref.clearElRef(this.__OG__.el.querySelector(".ref"),true);
-    // fetch("./staticHTML.html").then(res => res.text()).then(res => {
-    //   this.display.staticHtml = res;
-    // })
+    // Ref.clearElRef(this.__OG__.el.querySelector(".ref"),true);
+    fetch("./staticHTML.html").then(res => res.text()).then(res => {
+      this.display.staticHtml = res;
+    });
     // this.dynimicElements.tag1 = "1";
 
   }

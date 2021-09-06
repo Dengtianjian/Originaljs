@@ -93,7 +93,7 @@ export default {
             const newEl: Element = document.createElement(refPropertyValue);
             dynamicElementInfo.showEl.parentNode.insertBefore(newEl, dynamicElementInfo.showEl); //* 插入新的标签
             dynamicElementInfo.showEl.parentNode.removeChild(dynamicElementInfo.showEl); //* 移除旧标签
-            dynamicElementInfo.showEl = newEl; //* 现在现在显示的标签
+            dynamicElementInfo.showEl = newEl; //* 现在显示的标签
             break;
         }
       })
