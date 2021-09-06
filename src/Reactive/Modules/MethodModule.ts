@@ -42,6 +42,7 @@ function bindMethod(methodItem: TMethodBranch, properties: Record<string, any>) 
   methodItem.ownerElement.addEventListener(methodItem.eventType, listener);
   methodItem.listener = listener;
 }
+let count = 1;
 
 export default {
   reactive: {
@@ -105,12 +106,22 @@ export default {
           ownerElement,
           target
         }
+
         //* 没有响应式的参数方法先绑定
         if (refParamsMap.size === 0 && expressionParamMap.size === 0) {
           bindMethod(branch, properties);
         } else {
-          const params = Array.from(refParamsMap.values());
+          let params: string[][] = Array.from(refParamsMap.values());
           params.push(...refExpressionParams);
+
+          //* 去重
+          const paramString: string[] = params.map(item => {
+            return item.toString();
+          });
+          params = Array.from(new Set(paramString)).map(item => {
+            return item.split(",");
+          });
+
           refPropertyKeyMap.set(branchKey, params);
 
           Utils.objectMerge(refTree, Ref.generateRefTreeByRefString(methodName, target, branchKey, branch, "__methods"));
@@ -126,13 +137,19 @@ export default {
 
       return refTree;
     },
-    setUpdateView(refTree: TRefTree, properties: ICustomElement): void {
+    setUpdateView(refTree: TRefTree, properties: ICustomElement, value, propertyNames): void {
       if (refTree?.__methods === undefined) return;
       const methods: Map<symbol, TMethodBranch> = refTree.__methods;
 
-      methods.forEach(methodItem => {
-        bindMethod(methodItem, properties.__OG__.properties);
-      });
+      if (count === 1) {
+        methods.forEach(methodItem => {
+          console.log(methodItem.listener);
+
+          bindMethod(methodItem, properties.__OG__.properties);
+        });
+      }
+
+      count++;
     }
   }
 } as TModuleOptions
