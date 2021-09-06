@@ -33,12 +33,23 @@ function defineProperty(target: object, propertyKey: string, value: any, configu
   }
 }
 
+const filterPropertyKeys: string[] = ["properties", "refTree"];
+function filterAppendProperties(target: (Attr | Text | IElement | Node) & { __OG__: {} }, appendProperties: object): void {
+  const OG = target.__OG__;
+  filterPropertyKeys.forEach(keyItem => {
+    if (OG[keyItem] && appendProperties[keyItem]) {
+      delete appendProperties[keyItem];
+    }
+  });
+}
 function defineOGProperty(target: Attr | Text | IElement | Node
-  , properties: Record<string, any> = {}): void {
+  , appendProperties: Record<string, any> = {}): void {
   if (target.hasOwnProperty("__OG__")) {
-    objectMerge((target as TElement).__OG__, properties);
+    // @ts-ignore
+    filterAppendProperties(target, appendProperties);
+    objectMerge((target as TElement).__OG__, appendProperties);
   } else {
-    defineProperty(target, "__OG__", properties, false, false, false);
+    defineProperty(target, "__OG__", appendProperties, false, false, false);
   }
 }
 
