@@ -179,8 +179,8 @@ function isRef(refString: string): boolean {
 }
 
 function clearElRef(target: TElement, isDeep: boolean = false): void {
-  if (isDeep && target.children && target.children.length > 0) {
-    Array.from(target.children).forEach(nodeItem => {
+  if (isDeep && target.childNodes && target.childNodes.length > 0) {
+    target.childNodes.forEach(nodeItem => {
       clearElRef(nodeItem as TElement, true);
     });
   }
