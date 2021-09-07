@@ -9,11 +9,13 @@ import ExpressionModule from "./Modules/ExpressionModule";
 import AttrModule from "./Modules/AttrModule";
 import MethodModule from "./Modules/MethodModule";
 import DynamicElementModule from "./Modules/DynamicElementModule";
+import TransitionElement from "./Modules/TransitionElement";
 
 Module.add("ExpressionModule", ExpressionModule);
 Module.add("MethodModule", MethodModule);
 Module.add("DynamicElementModule", DynamicElementModule);
 Module.add("ElementModule", ElementModule);
+Module.add("TransitionElement", TransitionElement);
 Module.add("AttrModule", AttrModule);
 
 /**

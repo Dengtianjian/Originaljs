@@ -1,10 +1,8 @@
 <button onclick="UpdateHtml">UpdateHtml</button>
 <button onclick="updateCount">updateCount</button>
 
-<div class="ref" onclick="updateData({count},'{ {count} + {obj.a.c} }')">
-  { count }{obj.a.c} { {count} + {obj.a.c} }
-</div>
-<div>
-  { {count} + {obj.a.c} }
-</div>
-<o-el value="{ display.staticHtml }"></o-el>
+<o-transition name="showDiv">
+  <div>
+    { {count} + {obj.a.c} }
+  </div>
+</o-transition>

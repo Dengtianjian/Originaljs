@@ -1,3 +1,5 @@
+import { TElement } from "./CustomElementTypings";
+
 /** An object that is a CSS declaration block, and exposes style information and various style-related methods and properties. */
 export type TCSSStyleDeclaration = {
   alignContent?: string;
@@ -458,4 +460,24 @@ export type TCSSStyleDeclaration = {
   zIndex?: string;
   /** @deprecated */
   zoom?: string;
+}
+
+export type TPreset={
+
+}
+
+export type TTransitionItem = {
+  styles: TCSSStyleDeclaration,
+  callBack?: () => void
+}
+
+export interface ITransition {
+  els: TElement[];
+  updatePart: TElement[];
+  transitions: TTransitionItem[];
+  step: (styles: TCSSStyleDeclaration, callBack?: () => void) => ITransition;
+  stop(): ITransition;
+  continue(): ITransition;
+  end: (callBack: () => void) => ITransition;
+  clear: () => ITransition;
 }
