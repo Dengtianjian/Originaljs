@@ -8,7 +8,7 @@ import Transform from "../Transform";
 
 export default {
   reactive: {
-    collectAttrRef(target: Attr, properties: ICustomElement): TRefTree {
+    collectAttrRef(target: Attr): TRefTree {
       if (!target.nodeValue) return {};
       if (RefRules.refItem.test(target.nodeValue) === false) return {};
       if (MethodRules.OnAttributeName.test(target.nodeName)) return {};
@@ -37,9 +37,5 @@ export default {
         attr.nodeValue = Transform.transformObjectToString(value);
       });
     },
-    clearAttrRefTree(target: TReferrerElement): void {
-      // if (!target.__OG__||!target.__OG__.refs) return;
-      // Ref.removeRefByRefererRefInfo(target.__OG__.refs, target.__OG__.refTree);
-    }
   }
 } as TModuleOptions

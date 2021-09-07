@@ -1,4 +1,4 @@
-import { ICustomElement, TElement, TReferrerElement, TReferrerElementOGProperties } from "../../Typings/CustomElementTypings";
+import { ICustomElement, TElement, TReferrerElementOGProperties } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
 import { TMethodBranch, TRefTree } from "../../Typings/RefTypings";
 import { MethodRules, RefRules } from "../Rules";

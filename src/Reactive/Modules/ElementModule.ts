@@ -1,4 +1,4 @@
-import { ICustomElement, TElement, TReferrerElement, TReferrerElementOGProperties, TReferrerRefInfo, TText } from "../../Typings/CustomElementTypings";
+import { ICustomElement, TElement, TReferrerElement, TReferrerElementOGProperties } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
 import { TRefTree } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
