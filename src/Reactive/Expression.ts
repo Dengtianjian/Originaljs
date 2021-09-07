@@ -19,7 +19,6 @@ function executeExpression(expression: string, properties: IElement | Record<str
     expression = expressionItem.expression;
   }
 
-  // TODO { count } { {count} + 2 } 会报错
   let executeResult: any = new Function(`return ${expression}`).apply(properties);
   if (typeof executeResult === "function") {
     executeResult = executeResult.apply(properties);
