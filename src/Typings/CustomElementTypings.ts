@@ -2,7 +2,7 @@ import CustomElement from "../CustomElement";
 import Reactive from "../Reactive";
 import Transition from "../Transition";
 import { TReferrerPropertyRef, TRefTree } from "./RefTypings";
-import { TCSSStyleDeclaration } from "./TransitionTypings";
+import { ITransition, TCSSStyleDeclaration } from "./TransitionTypings";
 
 export type TOG = {
   [key: string]: any,
@@ -15,7 +15,7 @@ export type TOG = {
 
 export interface ICustomElement extends HTMLElement {
   __OG__: {
-    transitions: Record<string, Transition>,
+    transitions: Record<string, ITransition>,
     el: IElement,
     slots: Record<string, Node[]>,
     props: string[]

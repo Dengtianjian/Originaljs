@@ -1,7 +1,10 @@
-import { ITransition } from "./Typings/TransitionTypings";
+import { TElement } from "./Typings/CustomElementTypings";
+import { ITransition, TTransitionItem } from "./Typings/TransitionTypings";
 
 export default class Transition implements ITransition {
-  updatePart = [];
+  els: TElement[] = [];
+  updatePart: TElement[] = [];
+  transitions: TTransitionItem[] = [];
   step() {
     return this;
   }
@@ -9,6 +12,12 @@ export default class Transition implements ITransition {
     return this;
   }
   clear() {
+    return this;
+  }
+  continue() {
+    return this;
+  }
+  stop() {
     return this;
   }
 }

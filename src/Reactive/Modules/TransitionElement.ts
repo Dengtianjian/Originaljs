@@ -3,7 +3,7 @@ import { TElement } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
 import { TRefTree } from "../../Typings/RefTypings";
 import { ITransition } from "../../Typings/TransitionTypings";
-import Utils from "../../Utils";
+import { RefRules } from "../Rules";
 
 export default {
   reactive: {
@@ -13,18 +13,19 @@ export default {
         console.warn("Transition element is missing name attribute");
         return {};
       }
-
       const transitionName: string = target.attributes['name'].nodeValue;
-      const transition: Transition = rootEl.__OG__.transitions[transitionName];
+      if (RefRules.refItem.test(transitionName)) return {};
+      const transition: ITransition = rootEl.__OG__.transitions[transitionName];
 
-      if(transition){
-
-      }else{
-
+      if (transition) {
+        transition.els.push(target);
+        if (!Array.isArray(transition.updatePart)) transition.updatePart = [];
+        transition.updatePart.push(target);
+      } else {
+        rootEl.__OG__.transitions[transitionName] = new Transition();
+        rootEl.__OG__.transitions[transitionName]['updatePart'] = [target];
+        rootEl.__OG__.transitions[transitionName]['els'].push(target);
       }
-
-
-      return {};
     }
   }
 } as TModuleOptions
