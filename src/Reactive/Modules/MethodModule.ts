@@ -11,7 +11,6 @@ import Expression from "../Expression";
 const GlobalMatchMethodName: RegExp = new RegExp(MethodRules.MatchMethodName, "g");
 
 function bindMethod(methodItem: TMethodBranch, properties: Record<string, any>) {
-  // methodItem=methodItem.ownerElement.__OG__.methods;
   if (!properties[methodItem.methodName]) {
     console.error(`Method ${methodItem.methodName} is not define`);
     return;
@@ -69,7 +68,6 @@ export default {
         }
       } as TReferrerElementOGProperties<{ methods: Map<symbol, TMethodBranch> }>);
       for (let methodName of methodNames) {
-        let listener = null;
         let paramString = methodName.match(MethodRules.MethodParams);
         let params: string[] = [];
         const branchKey: symbol = Symbol();
@@ -107,7 +105,7 @@ export default {
           params,
           refParamsMap,
           expressionParamMap,
-          listener,
+          listener:null,
           eventType,
           methodName: extractMethodName,
           ownerElement: ownerElement as TElement,
