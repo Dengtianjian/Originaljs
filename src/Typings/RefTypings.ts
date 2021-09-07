@@ -2,6 +2,7 @@ import { TAttr, TElement, TText } from "./CustomElementTypings";
 import { TExpressionItem } from "./ExpressionTypings";
 
 export type TMethodBranch = {
+  branchKey: symbol,
   params: string[] | number[],
   refParamsMap: Map<number, string[]>,
   expressionParamMap: Map<number, {
@@ -10,7 +11,7 @@ export type TMethodBranch = {
   target: Attr,
   eventType: string,
   methodName: string,
-  ownerElement: Element,
+  ownerElement: TElement,
   listener: (event: any) => void
 };
 

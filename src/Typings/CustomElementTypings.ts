@@ -53,13 +53,12 @@ export type TAttr = {
   __OG__: TReferrerRefInfo
 } & Attr
 
-export type TReferrerElementOGProperties = {
-  [key: string | number | symbol]: any,
+export type TReferrerElementOGProperties<T = {}> = {
   hasRefs?: boolean,
   properties: ICustomElement,
   refTree: TRefTree,
   refs: Record<keyof TRefTree, Map<symbol, string[] | string[][]>>,
-}
+} & T
 export type TReferrerElement = {
   __OG__: TReferrerElementOGProperties
 }

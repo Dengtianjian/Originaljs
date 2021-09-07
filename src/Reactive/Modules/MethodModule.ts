@@ -11,6 +11,7 @@ import Expression from "../Expression";
 const GlobalMatchMethodName: RegExp = new RegExp(MethodRules.MatchMethodName, "g");
 
 function bindMethod(methodItem: TMethodBranch, properties: Record<string, any>) {
+  // methodItem=methodItem.ownerElement.__OG__.methods;
   if (!properties[methodItem.methodName]) {
     console.error(`Method ${methodItem.methodName} is not define`);
     return;
@@ -42,7 +43,6 @@ function bindMethod(methodItem: TMethodBranch, properties: Record<string, any>) 
   methodItem.ownerElement.addEventListener(methodItem.eventType, listener);
   methodItem.listener = listener;
 }
-let count = 1;
 
 export default {
   reactive: {
@@ -62,6 +62,12 @@ export default {
       ownerElement[target.nodeName] = null; //* 清除已有方法
 
       const refPropertyKeyMap: Map<symbol, string[][]> = new Map();
+      Utils.defineOGProperty(ownerElement, {
+        methods: new Map(),
+        refs: {
+          "__methods": refPropertyKeyMap
+        }
+      } as TReferrerElementOGProperties<{ methods: Map<symbol, TMethodBranch> }>);
       for (let methodName of methodNames) {
         let listener = null;
         let paramString = methodName.match(MethodRules.MethodParams);
@@ -97,15 +103,18 @@ export default {
         let extractMethodName: string[] | string = methodName.match(MethodRules.MethodName);
         extractMethodName = extractMethodName ? extractMethodName[0] : null;
         const branch: TMethodBranch = {
+          branchKey,
           params,
           refParamsMap,
           expressionParamMap,
           listener,
           eventType,
           methodName: extractMethodName,
-          ownerElement,
+          ownerElement: ownerElement as TElement,
           target
         }
+        // @ts-ignore
+        ownerElement.__OG__.methods.set(branchKey, branch);
 
         //* 没有响应式的参数方法先绑定
         if (refParamsMap.size === 0 && expressionParamMap.size === 0) {
@@ -124,30 +133,22 @@ export default {
 
           refPropertyKeyMap.set(branchKey, params);
 
-          Utils.objectMerge(refTree, Ref.generateRefTreeByRefString(methodName, target, branchKey, branch, "__methods"));
+          Utils.objectMerge(refTree, Ref.generateRefTreeByRefString(methodName, target, branchKey, {
+            branchKey,
+            ownerElement
+          }, "__methods"));
         }
       }
       ownerElement.removeAttribute(target.nodeName); //* 移除属性
 
-      Utils.defineOGProperty(ownerElement, {
-        refs: {
-          "__methods": refPropertyKeyMap
-        }
-      } as TReferrerElementOGProperties);
-
       return refTree;
     },
-    setUpdateView(refTree: TRefTree, properties: ICustomElement, value, propertyNames): void {
+    setUpdateView(refTree: TRefTree, properties: ICustomElement): void {
       if (refTree?.__methods === undefined) return;
-      const methods: Map<symbol, TMethodBranch> = refTree.__methods;
 
-      if (count === 1) {
-        methods.forEach(methodItem => {
-          bindMethod(methodItem, properties.__OG__.properties);
-        });
-      }
-
-      count++;
+      refTree.__methods.forEach(methodItem => {
+        bindMethod(methodItem.ownerElement.__OG__.methods.get(methodItem.branchKey), properties.__OG__.properties);
+      });
     }
   }
 } as TModuleOptions
