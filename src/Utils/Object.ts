@@ -1,5 +1,11 @@
 import { IElement, TElement } from "../Typings/CustomElementTypings";
 
+/**
+ * 合并两个对象，会修改目标对象，而不是返回新的对象
+ * @param target 合并到目标对象
+ * @param source 合并的对象数据
+ * @returns 空
+ */
 function objectMerge(target: object, source: object): void {
   for (const key in source) {
     if (!source.hasOwnProperty(key)) return;
@@ -33,6 +39,15 @@ function objectMerge(target: object, source: object): void {
   }
 }
 
+/**
+ * 给对象定义一个属性，是对Object.defineProperty的封装
+ * @param target 目标对象
+ * @param propertyKey 定义的属性名称
+ * @param value 属性值
+ * @param configurable 可配置
+ * @param writable 可写入
+ * @param enumerable 可枚举
+ */
 function defineProperty(target: object, propertyKey: string, value: any, configurable: boolean = false, writable: boolean = false, enumerable: boolean = false): void {
   if (target.hasOwnProperty(propertyKey)) {
     if (Object.getOwnPropertyDescriptors(target)[propertyKey].writable === true) {
@@ -57,6 +72,11 @@ function filterAppendProperties(target: (Attr | Text | IElement | Node) & { __OG
     }
   });
 }
+/**
+ * 定义对象的OG属性。如果目标存在OG属性就合并，否则就定义
+ * @param target 目标
+ * @param appendProperties 附加的属性
+ */
 function defineOGProperty(target: Attr | Text | IElement | Node
   , appendProperties: Record<string, any> = {}): void {
   if (target.hasOwnProperty("__OG__")) {
@@ -68,6 +88,12 @@ function defineOGProperty(target: Attr | Text | IElement | Node
   }
 }
 
+/**
+ * 获取目标对象的属性值。
+ * @param target 目标对象
+ * @param propertyNames 属性名称数组，每一个代表一个层级。例如：['obj','a','b'] 就是 obj->a->c的值
+ * @returns 获取到属性值
+ */
 function getObjectProperty(target: object, propertyNames: string[]): any {
   if (typeof target[propertyNames[0]] === "object") {
     if (propertyNames.slice(1).length > 0) {
@@ -78,6 +104,12 @@ function getObjectProperty(target: object, propertyNames: string[]): any {
   return target[propertyNames[0]];
 }
 
+/**
+ * 根据传入的属性名称生成有层级的对象。例如：['obj','a','c'] 生成后 {obj:{a:{c:endPropertyValue } } } }
+ * @param propertyNames 属性名称数组
+ * @param endPropertyValue 属性值
+ * @returns 生成对象
+ */
 function generateObjectTree(propertyNames: string[], endPropertyValue: object = {}): object {
   const tree = {};
 
