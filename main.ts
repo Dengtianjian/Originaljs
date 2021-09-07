@@ -63,7 +63,7 @@ class CEl extends OG.createElement() {
     this.display.show = !this.display.show;
   }
   updateCount() {
-    // this.obj.a.c = Date.now();
+    this.obj.a.c = Date.now();
     // this.display.show = !this.display.show;
     console.log(this.obj.a.c);
   }

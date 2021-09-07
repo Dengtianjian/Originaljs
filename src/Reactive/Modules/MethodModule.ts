@@ -143,8 +143,6 @@ export default {
 
       if (count === 1) {
         methods.forEach(methodItem => {
-          console.log(methodItem.listener);
-
           bindMethod(methodItem, properties.__OG__.properties);
         });
       }

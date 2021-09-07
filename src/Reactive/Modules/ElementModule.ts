@@ -26,65 +26,64 @@ export default {
       if (target.nodeType !== 3) return refTree;
 
       const refs: string[] = Ref.getRefKey(target.textContent, false);
+
       if (refs.length === 0) return refTree;
 
       const parentNode: TElement = target.parentNode as TElement;
       const newTextChildNodes: Text[] = [];
 
       refs.forEach(refItem => {
-        // console.log(refItem);
+        const isExpression: boolean = Expression.isExpression(refItem);
+        const refPropertyNames: string[][] | string[] = Ref.collecRef(refItem);
 
-        // const isExpression: boolean = Expression.isExpression(refItem);
-        // const refPropertyNames: string[][] | string[] = Ref.collecRef(refItem);
+        const previousText: string = target.textContent.slice(0, target.textContent.indexOf(refItem));
+        if (previousText) {
+          newTextChildNodes.push(document.createTextNode(previousText));
+          target.textContent = target.textContent.slice(target.textContent.indexOf(refItem));
+        }
 
-        // const previousText: string = target.textContent.slice(0, target.textContent.indexOf(refItem));
-        // if (previousText) {
-        //   newTextChildNodes.push(document.createTextNode(previousText));
-        //   target.textContent = target.textContent.slice(target.textContent.indexOf(refItem));
-        // }
+        const refTreePart: TRefTree = {};
+        const refPropertyKeyMap: Map<symbol, string[]> = new Map();
+        if (isExpression) {
+          const newTextEl: Text = document.createTextNode(refItem);
+          refPropertyNames.forEach(propertyNames => {
+            const branchKey: symbol = Symbol(propertyNames.toString());
+            refPropertyKeyMap.set(branchKey, propertyNames);
+            Utils.objectMerge(refTreePart, Ref.generateRefTree(propertyNames, newTextEl, branchKey));
+            newTextChildNodes.push(newTextEl);
+          });
+          Utils.defineOGProperty(parentNode.tagName === "O-EL" ? newTextEl : parentNode, {
+            properties: rootEl,
+            refTree: rootEl.__OG__.reactive.refTree,
+            refs: {
+              [isExpression ? '__expressions' : '__els']: refPropertyKeyMap
+            }
+          } as TReferrerElementOGProperties);
+        } else {
+          refPropertyNames.forEach(propertyNames => {
+            const newTextEl: Text = document.createTextNode("");
+            const branchKey: symbol = Symbol(propertyNames.toString());
+            refPropertyKeyMap.set(branchKey, propertyNames);
+            Utils.objectMerge(refTreePart, Ref.generateRefTree(propertyNames, newTextEl, branchKey));
+            newTextChildNodes.push(newTextEl);
+            newTextChildNodes.push(document.createTextNode(" "));
+            Utils.defineOGProperty(parentNode.tagName === "O-EL" ? newTextEl : parentNode, {
+              properties: rootEl,
+              refTree: rootEl.__OG__.reactive.refTree,
+              refs: {
+                [isExpression ? '__expressions' : '__els']: refPropertyKeyMap
+              }
+            } as TReferrerElementOGProperties);
+          });
+        }
 
-        // const refTreePart: TRefTree = {};
-        // const refPropertyKeyMap: Map<symbol, string[]> = new Map();
-        // if (isExpression) {
-        //   const newTextEl: Text = document.createTextNode(refItem);
-        //   refPropertyNames.forEach(propertyNames => {
-        //     const branchKey: symbol = Symbol(propertyNames.toString());
-        //     refPropertyKeyMap.set(branchKey, propertyNames);
-        //     Utils.objectMerge(refTreePart, Ref.generateRefTree(propertyNames, newTextEl, branchKey));
-        //     newTextChildNodes.push(newTextEl);
-        //   });
-        //   Utils.defineOGProperty(parentNode.tagName === "O-EL" ? newTextEl : parentNode, {
-        //     properties: rootEl,
-        //     refTree: rootEl.__OG__.reactive.refTree,
-        //     refs: {
-        //       [isExpression ? '__expressions' : '__els']: refPropertyKeyMap
-        //     }
-        //   } as TReferrerElementOGProperties);
-        // } else {
-        //   refPropertyNames.forEach(propertyNames => {
-        //     const newTextEl: Text = document.createTextNode("");
-        //     const branchKey: symbol = Symbol(propertyNames.toString());
-        //     refPropertyKeyMap.set(branchKey, propertyNames);
-        //     Utils.objectMerge(refTreePart, Ref.generateRefTree(propertyNames, newTextEl, branchKey));
-        //     newTextChildNodes.push(newTextEl);
-        //     newTextChildNodes.push(document.createTextNode(" "));
-        //     Utils.defineOGProperty(parentNode.tagName === "O-EL" ? newTextEl : parentNode, {
-        //       properties: rootEl,
-        //       refTree: rootEl.__OG__.reactive.refTree,
-        //       refs: {
-        //         [isExpression ? '__expressions' : '__els']: refPropertyKeyMap
-        //       }
-        //     } as TReferrerElementOGProperties);
-        //   });
-        // }
-
-        // target.textContent = target.textContent.slice(refItem.length);
-        // Utils.objectMerge(refTree, refTreePart);
+        target.textContent = target.textContent.slice(refItem.length);
+        Utils.objectMerge(refTree, refTreePart);
       });
 
-      // for (const newTextItem of newTextChildNodes) {
-      //   parentNode.insertBefore(newTextItem, target);
-      // }
+      for (const newTextItem of newTextChildNodes) {
+        parentNode.insertBefore(newTextItem, target);
+      }
 
       return refTree;
     },

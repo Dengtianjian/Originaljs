@@ -63,9 +63,45 @@ function parseMethodParams(paramString: string): string[] {
   return params;
 }
 
+
+function parseRefString(refString: string): string[] {
+  const refs: string[] = [];
+
+  let isAround: number = 0;
+  const startIndex: number = refString.indexOf("{");
+  let refFramge: string = "{";
+  for (let index = startIndex; index < refString.length; index++) {
+    const character: string = refString[index];
+    if (isAround > 0) {
+      refFramge += character;
+    }
+    switch (character) {
+      case "{":
+        isAround++;
+        break;
+      case "}":
+        isAround--;
+        if (isAround < 0) {
+          throw new Error("Syntax error");
+        }
+        if (isAround === 0) {
+          refs.push(refFramge);
+          refFramge = "{";
+        }
+        break;
+    }
+  }
+  if (isAround > 0) {
+    throw new Error("Syntax error");
+  }
+
+  return refs;
+}
+
 export default {
   parseDom,
   parseTemplate,
   optimizeRefKey,
-  parseMethodParams
+  parseMethodParams,
+  parseRefString
 }

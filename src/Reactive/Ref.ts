@@ -4,6 +4,7 @@ import { TExpressionItem } from "../Typings/ExpressionTypings";
 import { TDynamicElementBranch, TMethodBranch, TReferrerPropertyRef, TRefInfo, TRefTree } from "../Typings/RefTypings";
 import Utils from "../Utils";
 import Expression from "./Expression";
+import Parser from "./Parser";
 import { RefRules } from "./Rules";
 import Transform from "./Transform";
 import View from "./View";
@@ -18,8 +19,14 @@ const matchAndExtractVariableName: RegExp = new RegExp(RefRules.extractVariableN
  * @returns 引用key
  */
 function getRefKey(sourceString: string, extract: boolean = true): string[] {
-  let refs: string[] = sourceString.match(extract ? matchAndExtract : matchRefItem) || [];
+  let refs: string[] = Parser.parseRefString(sourceString);
 
+  if (extract) {
+    return refs.map(refItem => {
+      const extract: string[] = refItem.match(matchAndExtract);
+      if (extract) return extract[0].trim();
+    });
+  }
   return refs.map(refItem => {
     return refItem.trim();
   });
