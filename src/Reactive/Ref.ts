@@ -185,6 +185,12 @@ function isRef(refString: string): boolean {
   return RefRules.matchRefItem.test(refString);
 }
 
+/**
+ * 清除元素的引用
+ * @param target 目标元素
+ * @param isDeep 是否递归，如果是true 就会遍历元素下的childNodes
+ * @returns 空
+ */
 function clearElRef(target: TElement, isDeep: boolean = false): void {
   if (isDeep && target.childNodes && target.childNodes.length > 0) {
     target.childNodes.forEach(nodeItem => {
@@ -201,10 +207,10 @@ function clearElRef(target: TElement, isDeep: boolean = false): void {
   ]);
 }
 
-function removeRefByRefererRefInfo(refInfo: Record<keyof TRefTree, Map<symbol, string[] | string[][]>>, refTree): void {
-  for (const type in refInfo) {
-    if (!refInfo.hasOwnProperty(type)) continue;
-    const propertyKeyMap: Map<symbol, string[] | string[][]> = refInfo[type];
+function removeRefByRefererRefInfo(refs: Record<keyof TRefTree, Map<symbol, string[] | string[][]>>, refTree): void {
+  for (const type in refs) {
+    if (!refs.hasOwnProperty(type)) continue;
+    const propertyKeyMap: Map<symbol, string[] | string[][]> = refs[type];
     propertyKeyMap.forEach((propertyNames, itemKey) => {
       if (propertyNames[0] && Array.isArray(propertyNames[0])) {
         propertyNames.forEach(secondPropertyNames => {
