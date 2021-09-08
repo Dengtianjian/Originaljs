@@ -51,6 +51,8 @@ class CEl extends OG.createElement() {
     //   this.display.staticHtml = res;
     // });
     // this.dynimicElements.tag1 = "1";
+    this.useTransitionPreset("fadeHide", this.transitions.key);
+    return;
     this.transitionStop = this.transition(this.transitions.transitionName).step({
       transform: "translateX(0px)",
       transitionDuration: "0.3s",
@@ -79,7 +81,8 @@ class CEl extends OG.createElement() {
     })
   }
   transitions = {
-    transitionName: "showDiv"
+    transitionName: "fadeHide",
+    key: "count"
   }
   updateStaticHTML2 = () => {
     // this.display.staticHTML2 = "hhhhhhhh";
@@ -93,7 +96,8 @@ class CEl extends OG.createElement() {
     this.display.show = !this.display.show;
   }
   updateCount() {
-    this.transitionStop.stop();
+    this.transitions.key="obj";
+    // this.transitionStop.stop();
     // this.obj.a.c = Date.now();
     // this.display.show = !this.display.show;
     // console.log(this.obj.a.c);

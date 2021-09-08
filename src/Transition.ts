@@ -1,5 +1,7 @@
 import { TElement } from "./Typings/CustomElementTypings";
-import { ITransition, TCSSStyleDeclaration, TTransitionItem } from "./Typings/TransitionTypings";
+import { ITransition, TCSSStyleDeclaration, TPreset, TPresetReturn, TTransitionItem } from "./Typings/TransitionTypings";
+
+const Presets: Record<string, TPreset> = {};
 
 export default class Transition implements ITransition {
   els: TElement[] = [];
@@ -10,6 +12,29 @@ export default class Transition implements ITransition {
   updatedStyles: Record<string, string> = {};
   isClearStyles: boolean = false;
   endCallBack?: () => void;
+  elKey?: string = null;
+  static preset(name: string): TPresetReturn {
+    Presets[name] = {
+      transitions: []
+    };
+    const TransitionClass = this;
+    return {
+      add(styles: TCSSStyleDeclaration): TPresetReturn {
+        TransitionClass.presetAddTransition(name, styles);
+        return this;
+      }
+    }
+  }
+  static presetAddTransition(name: string, styles: TCSSStyleDeclaration, stepEndCallBack?: () => void) {
+    Presets[name].transitions.push({
+      styles,
+      callBack: stepEndCallBack
+    })
+    return this;
+  }
+  static getPreset(name: string): TPreset {
+    return Presets[name];
+  }
   private batchChangeElStyle(els: TElement[] | HTMLCollection, properties: TCSSStyleDeclaration) {
     Array.from(els).forEach(el => {
       this.changeElStyle(el as HTMLElement, properties);
@@ -31,8 +56,14 @@ export default class Transition implements ITransition {
     if (this.transitions.length === 0 || this.els.length === 0) return;
     const transition: TTransitionItem = this.transitions[0];
 
-    const updateEls: TElement[] = this.updatePart || this.els;
+    let updateEls: TElement[] = this.updatePart || this.els;
     const duration: number = parseFloat(transition.styles.transitionDuration);
+
+    if (this.elKey) {
+      updateEls = updateEls.filter(transitionEl => {
+        return transitionEl.attributes['key'] && transitionEl.attributes['key'].nodeValue === this.elKey;
+      });
+    }
 
     updateEls.forEach(elSet => {
       this.batchChangeElStyle(elSet.children, transition.styles);
@@ -53,6 +84,7 @@ export default class Transition implements ITransition {
           this.clearElStyles(updateEls);
         }
 
+        // TODO 仅移除已经使用了过渡的元素
         this.updatePart = null;
         clearTimeout(this.timer);
 

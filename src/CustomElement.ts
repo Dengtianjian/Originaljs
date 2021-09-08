@@ -1,8 +1,15 @@
 import Transition from "./Transition";
 import { ICustomElement, IElement, TElement, TOG } from "./Typings/CustomElementTypings";
-import { TCSSStyleDeclaration, TTransitionItem } from "./Typings/TransitionTypings";
+import { TCSSStyleDeclaration, TPreset, TTransitionItem } from "./Typings/TransitionTypings";
 import Parser from "./Reactive/Parser";
 import Reactive from "./Reactive";
+Transition.preset("fadeHide").add({
+  opacity: "0",
+  transitionDuration: "0.3s"
+}).add({
+  opacity: "1",
+  transitionDuration: "0.3s"
+})
 
 export default class CustomElement extends HTMLElement implements ICustomElement {
   constructor(props: string[] = []) {
@@ -87,14 +94,25 @@ export default class CustomElement extends HTMLElement implements ICustomElement
   revokeObserve(target: string | IElement, isDeep: boolean): void {
 
   }
-  transition(transitionName: string): Transition {
+  transition(transitionName: string, elKey?: string): Transition {
     const transition: Transition = this.__OG__.transitions[transitionName];
     if (transition === undefined) {
       throw new Error("Undefined transition element：" + transitionName);
     }
+    transition.elKey = elKey;
     return transition;
   }
-  useTransitionPreset(presetName: string): Transition {
-    return;
+  useTransitionPreset(presetName: string, elKey?: string): Transition {
+    const preset: TPreset = Transition.getPreset(presetName)
+    if (preset === undefined) {
+      throw new Error("Transition preset does not exist");
+    }
+
+    let transition: Transition = this.transition(presetName, elKey);
+    preset.transitions.forEach(transitionItem => {
+      transition.step(transitionItem.styles, transitionItem.callBack);
+    });
+
+    return transition;
   }
 }

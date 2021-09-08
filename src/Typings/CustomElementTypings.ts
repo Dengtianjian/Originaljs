@@ -29,7 +29,7 @@ export interface ICustomElement extends HTMLElement {
   updateProperty(propertyName: string, newValue: any): void;
   revokeObserve(target: string | IElement, isDeep: boolean): void;
   transition(transitionName: string, initStyles?: TCSSStyleDeclaration): Transition | undefined;
-  useTransitionPreset(presetName: string): Transition
+  useTransitionPreset(presetName: string, key?: string): Transition
 }
 
 export type TElement = {

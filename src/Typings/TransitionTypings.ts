@@ -462,8 +462,15 @@ export type TCSSStyleDeclaration = {
   zoom?: string;
 }
 
-export type TPreset={
+export type TPreset = {
+  transitions: Array<{
+    styles: TCSSStyleDeclaration,
+    callBack?: () => void
+  }>,
+}
 
+export type TPresetReturn = {
+  add: (styles: TCSSStyleDeclaration) => TPresetReturn
 }
 
 export type TTransitionItem = {
