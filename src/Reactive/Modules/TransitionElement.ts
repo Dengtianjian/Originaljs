@@ -17,13 +17,14 @@ function addTransition(target: TElement, rootEl: ICustomElement) {
   const transition: ITransition = rootEl.__OG__.transitions[transitionName];
 
   if (transition) {
-    transition.els.push(target);
-    if (!Array.isArray(transition.updatePart)) transition.updatePart = [];
-    transition.updatePart.push(target);
+    transition.els.add(target);
+    if (!Array.isArray(transition.updatePart)) transition.updatePart = new Set();
+    transition.updatePart.add(target);
   } else {
     rootEl.__OG__.transitions[transitionName] = new Transition();
-    rootEl.__OG__.transitions[transitionName]['updatePart'] = [target];
-    rootEl.__OG__.transitions[transitionName]['els'].push(target);
+    rootEl.__OG__.transitions[transitionName]['els'].add(target);
+    rootEl.__OG__.transitions[transitionName]['updatePart'] = new Set();
+    rootEl.__OG__.transitions[transitionName]['updatePart'].add(target);
   }
 }
 
@@ -39,9 +40,9 @@ export default {
       let transitions = rootEl.__OG__.properties.__OG__.transitions;
       let transition: ITransition = transitions[nodeValue];
       if (!transitions[nodeValue]) return;
-      transition.els.splice(transition.els.indexOf(attr.ownerElement as TElement), 1);
+      transition.els.delete(attr.ownerElement as TElement);
       if (transition.updatePart !== null) {
-        transition.updatePart.splice(transition.updatePart.indexOf(attr.ownerElement as TElement), 1);
+        transition.updatePart.delete(attr.ownerElement as TElement);
       }
     },
     afterUpdateAttrView(attr: Attr, newValue: string, properties: TReferrerElement): void {

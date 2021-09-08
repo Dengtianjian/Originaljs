@@ -4,8 +4,8 @@ import { ITransition, TCSSStyleDeclaration, TPreset, TPresetReturn, TTransitionI
 const Presets: Record<string, TPreset> = {};
 
 export default class Transition implements ITransition {
-  els: TElement[] = [];
-  updatePart: TElement[] = [];
+  els: Set<TElement> = new Set();
+  updatePart: Set<TElement> = new Set();
   transitions: TTransitionItem[] = [];
   currentRuningIndex: number = null;
   timer: number = null;
@@ -53,10 +53,10 @@ export default class Transition implements ITransition {
     this.updatedStyles = {};
   }
   private trigger() {
-    if (this.transitions.length === 0 || this.els.length === 0) return;
+    if (this.transitions.length === 0 || this.els.size === 0) return;
     const transition: TTransitionItem = this.transitions[0];
 
-    let updateEls: TElement[] = this.updatePart || this.els;
+    let updateEls: TElement[] = this.updatePart ? Array.from(this.updatePart) : Array.from(this.els);
     const duration: number = parseFloat(transition.styles.transitionDuration);
 
     if (this.elKey) {

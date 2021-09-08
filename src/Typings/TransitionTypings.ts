@@ -479,8 +479,8 @@ export type TTransitionItem = {
 }
 
 export interface ITransition {
-  els: TElement[];
-  updatePart: TElement[];
+  els: Set<TElement>;
+  updatePart: Set<TElement>;
   transitions: TTransitionItem[];
   step: (styles: TCSSStyleDeclaration, callBack?: () => void) => ITransition;
   stop(): ITransition;
