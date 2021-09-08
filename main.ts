@@ -45,13 +45,13 @@ class CEl extends OG.createElement() {
     staticHTML2: "<h1>Hello static HTML2</h1>"
   };
   transitionStop = null;
-  UpdateHtml = () => {
+  UpdateHtml() {
     // Ref.clearElRef(this.__OG__.el.querySelector(".ref"),true);
     // fetch("./staticHTML.html").then(res => res.text()).then(res => {
     //   this.display.staticHtml = res;
     // });
     // this.dynimicElements.tag1 = "1";
-    this.transitionStop = this.transition("showDiv").step({
+    this.transitionStop = this.transition(this.transitions.transitionName).step({
       transform: "translateX(0px)",
       transitionDuration: "0.3s",
       opacity: "1"
@@ -78,8 +78,12 @@ class CEl extends OG.createElement() {
 
     })
   }
+  transitions = {
+    transitionName: "showDiv"
+  }
   updateStaticHTML2 = () => {
-    this.display.staticHTML2 = "hhhhhhhh";
+    // this.display.staticHTML2 = "hhhhhhhh";
+    this.transitions.transitionName = "showA";
   }
   elhtml = "<h1>Hello Originaljs</h1>";
   updateData(...rest) {

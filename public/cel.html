@@ -1,8 +1,9 @@
 <button onclick="UpdateHtml">UpdateHtml</button>
 <button onclick="updateCount">stop transition</button>
 <button onclick="continueTransition">continue transition</button>
+<button onclick="updateStaticHTML2">update transition Name</button>
 
-<o-transition name="showDiv">
+<o-transition name="{transitions.transitionName}">
   <div>
     { {count} + {obj.a.c} }
   </div>

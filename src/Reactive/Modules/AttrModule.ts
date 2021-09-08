@@ -1,3 +1,4 @@
+import Module from "../../Module";
 import { ICustomElement, TAttr, TReferrerElement, TReferrerElementOGProperties, TReferrerRefInfo } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
 import { TRefTree } from "../../Typings/RefTypings";
@@ -33,8 +34,10 @@ export default {
       if (refTree?.__attrs === undefined) return;
 
       refTree.__attrs.forEach(attr => {
+        Module.useAll("reactive.beforeUpdateAttrView", [attr, attr.nodeValue, properties, refTree]);
         // @ts-ignore 可以存放number类型的
         attr.nodeValue = Transform.transformObjectToString(value);
+        Module.useAll("reactive.afterUpdateAttrView", [attr, value, properties, refTree]);
       });
     },
   }
