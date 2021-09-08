@@ -7,7 +7,7 @@ export default class Transition implements ITransition {
   transitions: TTransitionItem[] = [];
   currentRuningIndex: number = null;
   timer: number = null;
-  updatedStyles: Set<string> = new Set();
+  updatedStyles: Record<string, string> = {};
   isClearStyles: boolean = false;
   endCallBack?: () => void;
   private batchChangeElStyle(els: TElement[] | HTMLCollection, properties: TCSSStyleDeclaration) {
@@ -17,9 +17,15 @@ export default class Transition implements ITransition {
   }
   private changeElStyle(target: HTMLElement, properties: TCSSStyleDeclaration) {
     for (const propertyName in properties) {
-      this.updatedStyles.add(propertyName);
+      this.updatedStyles[propertyName] = "";
       target.style[propertyName] = properties[propertyName];
     }
+  }
+  private clearElStyles(els: TElement[]): void {
+    els.forEach(elSet => {
+      this.batchChangeElStyle(elSet.children, this.updatedStyles);
+    });
+    this.updatedStyles = {};
   }
   private trigger() {
     if (this.transitions.length === 0 || this.els.length === 0) return;
@@ -27,6 +33,7 @@ export default class Transition implements ITransition {
 
     const updateEls: TElement[] = this.updatePart || this.els;
     const duration: number = parseFloat(transition.styles.transitionDuration);
+
     updateEls.forEach(elSet => {
       this.batchChangeElStyle(elSet.children, transition.styles);
     });
@@ -38,18 +45,12 @@ export default class Transition implements ITransition {
       clearTimeout(this.timer);
       this.timer = null;
       if (this.transitions.length > 0) {
+        this.clearElStyles(updateEls);
         this.trigger();
       } else {
         if (this.isClearStyles) {
           this.isClearStyles = false;
-          const clearStyles: Record<string, any> = {};
-          this.updatedStyles.forEach(item => {
-            clearStyles[item] = "";
-          });
-          updateEls.forEach(elSet => {
-            this.batchChangeElStyle(elSet.children, clearStyles);
-          });
-          this.updatedStyles.clear();
+          this.clearElStyles(updateEls);
         }
 
         this.updatePart = null;

@@ -60,13 +60,22 @@ class CEl extends OG.createElement() {
     }).step({
       opacity: "0",
       transform: "translateX(50px)",
-      // transitionDuration: "0.3s",
+      transitionDuration: "0.3s",
+      transitionTimingFunction: "cubic-bezier(0.47, -0.38, 0.46, 1.43)"
     }).end(() => {
       console.log("end");
     }).step({
       opacity: "1",
       transform: "translateY(60px)",
+      transitionDuration: "0.3s",
+
+    }).step({
+      transform: "translateY(120px)",
+      // transitionDuration: "0.6s",
       // transitionDuration: "0.3s",
+    }, () => {
+      console.log("120px");
+
     })
   }
   updateStaticHTML2 = () => {
@@ -87,10 +96,10 @@ class CEl extends OG.createElement() {
   }
   continueTransition() {
     this.transitionStop.continue().step({
-      transform:"translateY(120px)",
+      transform: "translateY(120px)",
       // transitionDuration: "0.6s"
       // transitionDuration: "0.3s",
-    },()=>{
+    }, () => {
       console.log("120px");
 
     });
