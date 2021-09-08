@@ -44,6 +44,7 @@ class CEl extends OG.createElement() {
     staticHtml: `<p>{msg}</p>`,
     staticHTML2: "<h1>Hello static HTML2</h1>"
   };
+  show = false;
   transitionStop = null;
   UpdateHtml() {
     // Ref.clearElRef(this.__OG__.el.querySelector(".ref"),true);
@@ -96,7 +97,7 @@ class CEl extends OG.createElement() {
     this.display.show = !this.display.show;
   }
   updateCount() {
-    this.transitions.key="obj";
+    this.transitions.key = "obj";
     // this.transitionStop.stop();
     // this.obj.a.c = Date.now();
     // this.display.show = !this.display.show;

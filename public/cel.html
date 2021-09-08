@@ -3,12 +3,9 @@
 <button onclick="continueTransition">continue transition</button>
 <button onclick="updateStaticHTML2">update transition Name</button>
 
-<o-transition name="{transitions.transitionName}" key="{transitions.key}">
-  <div>
-    { {count} + {obj.a.c} }
-  </div>
-</o-transition>
-
-<o-transition name="{transitions.transitionName}" key="obj">
-  <p>Hello world</p>
-</o-transition>
+<o-if condition="{show}">
+  {show}
+</o-if>
+<o-else-if condition="{ !{show} }">
+  { !{show} }
+</o-else-if>

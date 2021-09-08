@@ -2,10 +2,5 @@ export type TConditionElItem = {
   target: HTMLElement | Element,
   conditionAttr?: Attr,
   shadow: Comment,
-  parentElement: HTMLElement
+  parentNode: ParentNode
 };
-
-export type TConditionItem = {
-  els: TConditionElItem[]
-  current: number
-}

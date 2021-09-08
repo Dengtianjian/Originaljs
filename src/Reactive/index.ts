@@ -10,10 +10,12 @@ import AttrModule from "./Modules/AttrModule";
 import MethodModule from "./Modules/MethodModule";
 import DynamicElementModule from "./Modules/DynamicElementModule";
 import TransitionElement from "./Modules/TransitionElement";
+import ConditionElementModule from "./Modules/ConditionElementModule";
 
 Module.add("ExpressionModule", ExpressionModule);
 Module.add("MethodModule", MethodModule);
 Module.add("DynamicElementModule", DynamicElementModule);
+Module.add("ConditionElementModule", ConditionElementModule);
 Module.add("ElementModule", ElementModule);
 Module.add("TransitionElement", TransitionElement);
 Module.add("AttrModule", AttrModule);
