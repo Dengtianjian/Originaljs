@@ -44,13 +44,30 @@ class CEl extends OG.createElement() {
     staticHtml: `<p>{msg}</p>`,
     staticHTML2: "<h1>Hello static HTML2</h1>"
   };
+  transitionStop = null;
   UpdateHtml = () => {
     // Ref.clearElRef(this.__OG__.el.querySelector(".ref"),true);
-    fetch("./staticHTML.html").then(res => res.text()).then(res => {
-      this.display.staticHtml = res;
-    });
+    // fetch("./staticHTML.html").then(res => res.text()).then(res => {
+    //   this.display.staticHtml = res;
+    // });
     // this.dynimicElements.tag1 = "1";
-
+    this.transitionStop = this.transition("showDiv").step({
+      transform: "translateX(0px)",
+      transitionDuration: "0.3s",
+      opacity: "1"
+    }, () => {
+      console.log("step end");
+    }).step({
+      opacity: "0",
+      transform: "translateX(50px)",
+      // transitionDuration: "0.3s",
+    }).end(() => {
+      console.log("end");
+    }).step({
+      opacity: "1",
+      transform: "translateY(60px)",
+      // transitionDuration: "0.3s",
+    })
   }
   updateStaticHTML2 = () => {
     this.display.staticHTML2 = "hhhhhhhh";
@@ -63,9 +80,20 @@ class CEl extends OG.createElement() {
     this.display.show = !this.display.show;
   }
   updateCount() {
-    this.obj.a.c = Date.now();
+    this.transitionStop.stop();
+    // this.obj.a.c = Date.now();
     // this.display.show = !this.display.show;
-    console.log(this.obj.a.c);
+    // console.log(this.obj.a.c);
+  }
+  continueTransition() {
+    this.transitionStop.continue().step({
+      transform:"translateY(120px)",
+      // transitionDuration: "0.6s"
+      // transitionDuration: "0.3s",
+    },()=>{
+      console.log("120px");
+
+    });
   }
   dynimicElements = {
     tag1: "div"

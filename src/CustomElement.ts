@@ -1,6 +1,6 @@
 import Transition from "./Transition";
 import { ICustomElement, IElement, TElement, TOG } from "./Typings/CustomElementTypings";
-import { TCSSStyleDeclaration } from "./Typings/TransitionTypings";
+import { TCSSStyleDeclaration, TTransitionItem } from "./Typings/TransitionTypings";
 import Parser from "./Reactive/Parser";
 import Reactive from "./Reactive";
 
@@ -87,10 +87,14 @@ export default class CustomElement extends HTMLElement implements ICustomElement
   revokeObserve(target: string | IElement, isDeep: boolean): void {
 
   }
-  transition(transitionName: string, initStyles?: TCSSStyleDeclaration): Transition {
-    return {}
+  transition(transitionName: string): Transition {
+    const transition: Transition = this.__OG__.transitions[transitionName];
+    if (transition === undefined) {
+      throw new Error("Undefined transition element：" + transitionName);
+    }
+    return transition;
   }
   useTransitionPreset(presetName: string): Transition {
-    return {};
+    return;
   }
 }
