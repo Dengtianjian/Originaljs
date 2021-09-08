@@ -84,7 +84,6 @@ export default class Transition implements ITransition {
           this.clearElStyles(updateEls);
         }
 
-        // TODO 仅移除已经使用了过渡的元素
         this.updatePart = null;
         clearTimeout(this.timer);
 
