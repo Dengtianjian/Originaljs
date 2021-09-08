@@ -6,7 +6,7 @@ import { ITransition } from "../../Typings/TransitionTypings";
 import Ref from "../Ref";
 import { RefRules } from "../Rules";
 
-function addTransition(target: TElement, rootEl: ICustomElement) {
+function addTransition(target: TElement, rootEl: ICustomElement, updateKey: boolean = false) {
   if (target.tagName !== "O-TRANSITION") return {};
   if (!target.attributes['name']) {
     console.warn("Transition element is missing name attribute");
@@ -14,17 +14,21 @@ function addTransition(target: TElement, rootEl: ICustomElement) {
   }
   const transitionName: string = target.attributes['name'].nodeValue;
   if (RefRules.refItem.test(transitionName)) return {};
-  const transition: ITransition = rootEl.__OG__.transitions[transitionName];
+  let transition: ITransition = rootEl.__OG__.transitions[transitionName];
 
   if (transition) {
     transition.els.add(target);
-    if (!Array.isArray(transition.updatePart)) transition.updatePart = new Set();
-    transition.updatePart.add(target);
+    if (!transition.updatePart) transition.updatePart = new Set();
+    if (updateKey) {
+      transition.updatePart = transition.els;
+    } else {
+      transition.updatePart.add(target);
+    }
   } else {
-    rootEl.__OG__.transitions[transitionName] = new Transition();
-    rootEl.__OG__.transitions[transitionName]['els'].add(target);
-    rootEl.__OG__.transitions[transitionName]['updatePart'] = new Set();
-    rootEl.__OG__.transitions[transitionName]['updatePart'].add(target);
+    transition = rootEl.__OG__.transitions[transitionName] = new Transition();
+    transition['els'].add(target);
+    transition['updatePart'] = new Set();
+    transition['updatePart'].add(target);
   }
 }
 
@@ -48,7 +52,7 @@ export default {
     afterUpdateAttrView(attr: Attr, newValue: string, properties: TReferrerElement): void {
       if (attr.ownerElement === null || attr.ownerElement.tagName !== "O-TRANSITION") return;
 
-      addTransition(attr.ownerElement as TElement, properties.__OG__.properties);
+      addTransition(attr.ownerElement as TElement, properties.__OG__.properties, attr.nodeName === "key");
     }
   }
 } as TModuleOptions
