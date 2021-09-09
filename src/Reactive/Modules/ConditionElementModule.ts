@@ -101,6 +101,7 @@ export default {
           break;
         }
       }
+
       if (showIndex === conditionItem.current) {
         return;
       }
@@ -121,6 +122,7 @@ export default {
         conditionItem.parentNode.removeChild(showConditionEl.shadow);
       }
 
+      // TODO 收集引用，导致多次更新视图问题
       Reactive.collectEl(Array.from(showConditionEl.target.childNodes) as TElement[], properties.__OG__.properties, properties.__OG__.properties.__OG__.reactive);
 
       conditionItem.current = showIndex;

@@ -53,6 +53,7 @@ class CEl extends OG.createElement() {
   UpdateHtml() {
     this.obj.a.c = Date.now();
     this.display.staticHtml = "Hell world:" + Math.round(Math.random() * 10000);
+    this.display.staticHTML2="{count}";
     // Ref.clearElRef(this.__OG__.el.querySelector(".ref"),true);
     // fetch("./staticHTML.html").then(res => res.text()).then(res => {
     //   this.display.staticHtml = res;

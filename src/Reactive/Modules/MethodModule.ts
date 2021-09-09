@@ -65,7 +65,8 @@ export default {
         methods: new Map(),
         refs: {
           "__methods": refPropertyKeyMap
-        }
+        },
+        updateRef: true,
       } as TReferrerElementOGProperties<{ methods: Map<symbol, TMethodBranch> }>);
       for (let methodName of methodNames) {
         let paramString = methodName.match(MethodRules.MethodParams);
@@ -105,7 +106,7 @@ export default {
           params,
           refParamsMap,
           expressionParamMap,
-          listener:null,
+          listener: null,
           eventType,
           methodName: extractMethodName,
           ownerElement: ownerElement as TElement,

@@ -23,11 +23,10 @@ export default {
       Utils.defineOGProperty(target.ownerElement, {
         refs: {
           "__attrs": propertyKeyMap
-        }
+        },
+        hasRefs: true,
+        updateRef: true,
       } as TReferrerElementOGProperties);
-      Utils.defineOGProperty(target.ownerElement, {
-        hasRefs: true
-      });
       return refTree;
     },
     setUpdateView(refTree, properties, value): void {

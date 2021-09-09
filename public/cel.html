@@ -10,7 +10,9 @@
 </div>
 
 <o-if condition="{ {display.number}==1 }">
+  <p>{count}</p>
   {display.number}
+  <o-el value="{ display.staticHTML2 }"></o-el>
 </o-if>
 <o-else-if condition="{ {display.number}==2 }">
   { display.number }

@@ -14,6 +14,7 @@ export default {
 
       const attributes: NamedNodeMap = target.attributes;
       const attr: Attr = attributes['html'] || attributes['value'] || attributes['is'];
+      if (!attr) return {};
       const contentType: keyof TDynamicElementContentTypes = attr.nodeName as keyof TDynamicElementContentTypes;
       const attrValue: string = attr.nodeValue;
       let refTree: TRefTree = {};
@@ -40,6 +41,7 @@ export default {
         const branchKey: symbol = Symbol();
         const refInfo: TRefInfo = Ref.parseTemplateGenerateRefInfo(attrValue);
         refTree = Ref.generateRefTreeByRefString(attrValue, attr, branchKey, {
+          updateRef: true,
           attr,
           target,
           contentType,

@@ -55,6 +55,7 @@ export default {
           Utils.defineOGProperty(parentNode.tagName === "O-EL" ? newTextEl : parentNode, {
             properties: rootEl,
             refTree: rootEl.__OG__.reactive.refTree,
+            updateRef: true,
             refs: {
               [isExpression ? '__expressions' : '__els']: refPropertyKeyMap
             }
