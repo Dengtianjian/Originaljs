@@ -110,8 +110,6 @@ export default {
         if (conditionItem.parentNode.contains(oldConditionEl.target)) {
           conditionItem.parentNode.insertBefore(oldConditionEl.shadow, oldConditionEl.target);
           conditionItem.parentNode.removeChild(oldConditionEl.target);
-        } else {
-          conditionItem.parentNode.appendChild(oldConditionEl.shadow);
         }
         Ref.clearElRef(oldConditionEl.target as TElement, true);
       }
@@ -121,8 +119,6 @@ export default {
         showConditionEl.target.innerHTML = showConditionEl.target.__OG__.condition.template
         conditionItem.parentNode.insertBefore(showConditionEl.target, showConditionEl.shadow);
         conditionItem.parentNode.removeChild(showConditionEl.shadow);
-      } else {
-        conditionItem.parentNode.appendChild(showConditionEl.shadow);
       }
 
       Reactive.collectEl(Array.from(showConditionEl.target.childNodes) as TElement[], properties.__OG__.properties, properties.__OG__.properties.__OG__.reactive);
