@@ -125,9 +125,14 @@ function generateRefTree(propertyNames: string[], target: unknown, branchKey: sy
 
   const branchValue: Map<symbol, any> = new Map();
   branchValue.set(branchKey, endBranch);
-  return Utils.generateObjectTree(propertyNames, {
-    [endBranchName]: branchValue
-  });
+  return {
+    [propertyNames.join()]: {
+      [endBranchName]: branchValue
+    }
+  }
+  // return Utils.generateObjectTree(propertyNames, {
+  //   [endBranchName]: branchValue
+  // });
 }
 
 /**

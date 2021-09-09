@@ -66,6 +66,7 @@ function traverseNodes(target: TElement | TElement[], properties: Record<string,
 
 export default class Reactive {
   refTree: TRefTree = {};
+  refTreeMap: Map<string, TRefTree> = new Map();
   /**
    * 观察元素
    * @param target 观察的目标元素或者目标元素数组
@@ -78,6 +79,7 @@ export default class Reactive {
   static collectEl(target: TElement | TElement[], properties: ICustomElement, reactiveInstance: Reactive) {
     Module.useAll("reactive.start", Array.from(arguments));
     const elRefTree: TRefTree = traverseNodes(target, properties);
+    console.log(elRefTree);
 
     for (const item of Module.useAll<TRefTree>("reactive.collectRef", Array.from(arguments))) {
       Utils.objectMerge(elRefTree, item);
