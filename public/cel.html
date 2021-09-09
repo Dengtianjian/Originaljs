@@ -1,11 +1,17 @@
-<button onclick="UpdateHtml">UpdateHtml</button>
-<button onclick="updateCount">stop transition</button>
-<button onclick="continueTransition">continue transition</button>
-<button onclick="updateStaticHTML2">update transition Name</button>
+<h1>Condition Els</h1>
+<p> display.number:{display.number} </p>
+<div>
+  <button onclick="updateNumber(1)">1</button>
+  <button onclick="updateNumber(2)">2</button>
+  <button onclick="updateNumber(3)">3</button>
+</div>
 
-<o-if condition="{show}">
-  {show}
+<o-if condition="{ {display.number}==1 }">
+  {display.number}
 </o-if>
-<o-else-if condition="{ !{show} }">
-  { !{show} }
+<o-else-if condition="{ {display.number}==2 }">
+  { display.number }
 </o-else-if>
+<o-else>
+  { display.number }
+</o-else>

@@ -1,19 +1,18 @@
-import { TConditionElItem } from "../../Typings/ConditionElementTypings";
+import { TConditionElItem, TConditionItem } from "../../Typings/ConditionElementTypings";
 import { TElement } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
 import { TRefTree } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
 import Err from "../../Utils/Err";
 const ConditionElTagNames: string[] = ["O-IF", "O-ELSE", "O-ELSE-IF"];
+const Conditions: Map<symbol, TConditionItem> = new Map();
 
 function getConditionElSibling(target: TElement | Element): TConditionElItem[] {
   const els: TConditionElItem[] = [{
     target,
     conditionAttr: target.attributes['condition'],
-    shadow: new Comment(target.nodeName),
-    parentNode: target.parentNode
+    shadow: new Comment(target.nodeName)
   }];
-
 
   if (target.tagName !== "O-ELSE") {
     if (!target.attributes['condition']) {
@@ -33,16 +32,15 @@ function getConditionElSibling(target: TElement | Element): TConditionElItem[] {
 export default {
   reactive: {
     collecElRef(target: TElement | TElement[]): TRefTree {
-      const refTree: TRefTree = {};
       if (Array.isArray(target)) {
         target.forEach(elItem => {
-          Utils.objectMerge(refTree, this.collectElRef(elItem));
+          this.collectElRef(elItem)
         })
-        return refTree;
+        return {};
       }
 
       if (target.nodeType !== 1 || !ConditionElTagNames.includes(target.tagName)) {
-        return refTree;
+        return {};
       }
       if (["O-ELSE-IF", "O-ELSE"].includes(target.tagName)) {
         if (!target.__OG__.conditionElementCollected) {
@@ -54,11 +52,74 @@ export default {
         Err.throwError("Condition element is missing condition attribute");
       }
 
+      const parentNode: ParentNode = target.parentNode;
       const els: TConditionElItem[] = getConditionElSibling(target);
-      console.log(els);
+      const conditionKey: symbol = Symbol();
+      Conditions.set(conditionKey, {
+        els,
+        current: null,
+        parentNode
+      });
 
+      for (const elItem of els) {
+        Utils.defineOGProperty(elItem.target, {
+          condition: {
+            conditionKey
+          }
+        });
+        if (parentNode.contains(elItem.target)) {
+          parentNode.insertBefore(elItem.shadow, elItem.target);
+          parentNode.removeChild(elItem.target);
+        } else {
+          parentNode.appendChild(elItem.shadow);
+        }
 
-      return refTree;
+      }
+
+      return {};
+    },
+    afterUpdateAttrView(attr, nodeValue, properties, refTree): void {
+      if (!['O-IF', 'O-ELSE-IF'].includes(attr.ownerElement.tagName)) return;
+
+      const ownerElement: TElement = attr.ownerElement as TElement;
+      const conditionItem: TConditionItem = Conditions.get(ownerElement.__OG__.condition.conditionKey);
+
+      let showIndex: number = conditionItem.current;
+      for (let index = 0; index < conditionItem.els.length; index++) {
+        const conditionElItem = conditionItem.els[index];
+        if (conditionElItem.conditionAttr) {
+          const nodeValue: boolean = Boolean(Number(conditionElItem.conditionAttr.nodeValue));
+          if (nodeValue === true) {
+            showIndex = index;
+            break;
+          }
+        } else if (conditionElItem.target.tagName === "O-ELSE") {
+          showIndex = index;
+          break;
+        }
+      }
+      if (showIndex === conditionItem.current) {
+        return;
+      }
+
+      if (conditionItem.current !== null) {
+        const oldConditionEl: TConditionElItem = conditionItem.els[conditionItem.current];
+        if (conditionItem.parentNode.contains(oldConditionEl.target)) {
+          conditionItem.parentNode.insertBefore(oldConditionEl.shadow, oldConditionEl.target);
+          conditionItem.parentNode.removeChild(oldConditionEl.target);
+        } else {
+          conditionItem.parentNode.appendChild(oldConditionEl.shadow);
+        }
+      }
+
+      const showConditionEl: TConditionElItem = conditionItem.els[showIndex];
+      if (conditionItem.parentNode.contains(showConditionEl.shadow)) {
+        conditionItem.parentNode.insertBefore(showConditionEl.target, showConditionEl.shadow);
+        conditionItem.parentNode.removeChild(showConditionEl.shadow);
+      } else {
+        conditionItem.parentNode.appendChild(showConditionEl.shadow);
+      }
+      conditionItem.current = showIndex;
     }
   }
 } as TModuleOptions
