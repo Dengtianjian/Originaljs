@@ -96,6 +96,7 @@ export default {
     },
     clearElRefTree(target: TReferrerElement): void {
       if (!target.__OG__ || !target.__OG__.refs) return;
+
       Ref.removeRefByRefererRefInfo(target.__OG__.refs, target.__OG__.properties.__OG__.refTree);
     }
   }

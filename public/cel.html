@@ -5,13 +5,19 @@
   <button onclick="updateNumber(2)">2</button>
   <button onclick="updateNumber(3)">3</button>
 </div>
+<div>
+  <button onclick="UpdateHtml">Update html</button>
+</div>
 
 <o-if condition="{ {display.number}==1 }">
   {display.number}
 </o-if>
 <o-else-if condition="{ {display.number}==2 }">
   { display.number }
+  <p>
+    { display.staticHtml }
+  </p>
 </o-else-if>
 <o-else>
-  { display.number }
+  { obj.a.c }
 </o-else>

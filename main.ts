@@ -51,12 +51,14 @@ class CEl extends OG.createElement() {
     this.display.number = number;
   }
   UpdateHtml() {
+    this.obj.a.c = Date.now();
+    this.display.staticHtml = "Hell world:" + Math.round(Math.random() * 10000);
     // Ref.clearElRef(this.__OG__.el.querySelector(".ref"),true);
     // fetch("./staticHTML.html").then(res => res.text()).then(res => {
     //   this.display.staticHtml = res;
     // });
     // this.dynimicElements.tag1 = "1";
-    this.useTransitionPreset("fadeHide", this.transitions.key);
+    // this.useTransitionPreset("fadeHide", this.transitions.key);
     return;
     this.transitionStop = this.transition(this.transitions.transitionName).step({
       transform: "translateX(0px)",

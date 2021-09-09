@@ -1,5 +1,7 @@
+import { TElement } from "./CustomElementTypings";
+
 export type TConditionElItem = {
-  target: HTMLElement | Element,
+  target: TElement,
   conditionAttr?: Attr,
   shadow: Comment
 };

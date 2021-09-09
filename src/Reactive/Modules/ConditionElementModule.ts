@@ -4,12 +4,14 @@ import { TModuleOptions } from "../../Typings/ModuleTypings";
 import { TRefTree } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
 import Err from "../../Utils/Err";
+import Reactive from "../";
+import Ref from "../Ref";
 const ConditionElTagNames: string[] = ["O-IF", "O-ELSE", "O-ELSE-IF"];
 const Conditions: Map<symbol, TConditionItem> = new Map();
 
 function getConditionElSibling(target: TElement | Element): TConditionElItem[] {
   const els: TConditionElItem[] = [{
-    target,
+    target: target as TElement,
     conditionAttr: target.attributes['condition'],
     shadow: new Comment(target.nodeName)
   }];
@@ -63,8 +65,10 @@ export default {
 
       for (const elItem of els) {
         Utils.defineOGProperty(elItem.target, {
+          skipChildNodesCollect: true,
           condition: {
-            conditionKey
+            conditionKey,
+            template: elItem.target.innerHTML
           }
         });
         if (parentNode.contains(elItem.target)) {
@@ -73,7 +77,6 @@ export default {
         } else {
           parentNode.appendChild(elItem.shadow);
         }
-
       }
 
       return {};
@@ -110,15 +113,20 @@ export default {
         } else {
           conditionItem.parentNode.appendChild(oldConditionEl.shadow);
         }
+        Ref.clearElRef(oldConditionEl.target as TElement, true);
       }
 
       const showConditionEl: TConditionElItem = conditionItem.els[showIndex];
       if (conditionItem.parentNode.contains(showConditionEl.shadow)) {
+        showConditionEl.target.innerHTML = showConditionEl.target.__OG__.condition.template
         conditionItem.parentNode.insertBefore(showConditionEl.target, showConditionEl.shadow);
         conditionItem.parentNode.removeChild(showConditionEl.shadow);
       } else {
         conditionItem.parentNode.appendChild(showConditionEl.shadow);
       }
+
+      Reactive.collectEl(Array.from(showConditionEl.target.childNodes) as TElement[], properties.__OG__.properties, properties.__OG__.properties.__OG__.reactive);
+
       conditionItem.current = showIndex;
     }
   }
