@@ -3,13 +3,6 @@ import { ICustomElement, IElement, TElement, TOG } from "./Typings/CustomElement
 import { TCSSStyleDeclaration, TPreset, TTransitionItem } from "./Typings/TransitionTypings";
 import Parser from "./Reactive/Parser";
 import Reactive from "./Reactive";
-Transition.preset("fadeHide").add({
-  opacity: "0",
-  transitionDuration: "0.3s"
-}).add({
-  opacity: "1",
-  transitionDuration: "0.3s"
-})
 
 export default class CustomElement extends HTMLElement implements ICustomElement {
   constructor(props: string[] = []) {

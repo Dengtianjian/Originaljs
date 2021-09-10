@@ -17,20 +17,15 @@ export default class Transition implements ITransition {
     Presets[name] = {
       transitions: []
     };
-    const TransitionClass = this;
     return {
-      add(styles: TCSSStyleDeclaration): TPresetReturn {
-        TransitionClass.presetAddTransition(name, styles);
+      add(styles: TCSSStyleDeclaration, stepEndCallBack?: () => void): TPresetReturn {
+        Presets[name].transitions.push({
+          styles,
+          callBack: stepEndCallBack
+        })
         return this;
       }
     }
-  }
-  static presetAddTransition(name: string, styles: TCSSStyleDeclaration, stepEndCallBack?: () => void) {
-    Presets[name].transitions.push({
-      styles,
-      callBack: stepEndCallBack
-    })
-    return this;
   }
   static getPreset(name: string): TPreset {
     return Presets[name];

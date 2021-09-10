@@ -6,7 +6,12 @@ function warning(message: string): void {
   console.warn(message);
 }
 
+function error(message: string): void {
+  console.error(message);
+}
+
 export default {
   throwError,
-  warning
+  warning,
+  error
 }

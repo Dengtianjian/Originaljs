@@ -74,7 +74,7 @@ export default {
       target.removeAttribute(contentType);
       return refTree;
     },
-    setUpdateView(refTree: TRefTree, properties: Record<string, any>) {
+    setUpdateView(refTree: TRefTree, value: any, properties: Record<string, any>) {
       if (refTree?.__dynamicElements === undefined) return;
       const dynamicElements: Map<symbol, TDynamicElementBranch> = refTree.__dynamicElements;
 

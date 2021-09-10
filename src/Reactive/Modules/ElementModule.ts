@@ -1,6 +1,6 @@
 import { ICustomElement, TElement, TReferrerElement, TReferrerElementOGProperties } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TRefTree } from "../../Typings/RefTypings";
+import { TRefs, TRefTree } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
 import Expression from "../Expression";
 import Ref from "../Ref";
@@ -54,7 +54,6 @@ export default {
           });
           Utils.defineOGProperty(parentNode.tagName === "O-EL" ? newTextEl : parentNode, {
             properties: rootEl,
-            refTree: rootEl.__OG__.reactive.refTree,
             updateRef: true,
             refs: {
               [isExpression ? '__expressions' : '__els']: refPropertyKeyMap
@@ -70,7 +69,7 @@ export default {
             newTextChildNodes.push(document.createTextNode(" "));
             Utils.defineOGProperty(parentNode.tagName === "O-EL" ? newTextEl : parentNode, {
               properties: rootEl,
-              refTree: rootEl.__OG__.reactive.refTree,
+              refMap:rootEl.__OG__.reactive.refMap,
               refs: {
                 [isExpression ? '__expressions' : '__els']: refPropertyKeyMap
               }
@@ -88,7 +87,7 @@ export default {
 
       return refTree;
     },
-    setUpdateView(refTree: TRefTree, properties: Record<string, any>, value: any): void {
+    setUpdateView(refTree: TRefs, value: any): void {
       if (refTree?.__els === undefined) return;
 
       refTree.__els.forEach(elItem => {
@@ -98,7 +97,7 @@ export default {
     clearElRefTree(target: TReferrerElement): void {
       if (!target.__OG__ || !target.__OG__.refs) return;
 
-      Ref.removeRefByRefererRefInfo(target.__OG__.refs, target.__OG__.properties.__OG__.refTree);
+      Ref.removeRefByRefererRefInfo(target.__OG__.refs, target.__OG__.refMap);
     }
   }
 } as TModuleOptions

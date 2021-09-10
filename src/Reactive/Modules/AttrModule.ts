@@ -29,7 +29,7 @@ export default {
       } as TReferrerElementOGProperties);
       return refTree;
     },
-    setUpdateView(refTree, properties, value): void {
+    setUpdateView(refTree, value, properties): void {
       if (refTree?.__attrs === undefined) return;
 
       refTree.__attrs.forEach(attr => {

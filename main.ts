@@ -1,8 +1,13 @@
 import OG from "./src";
-import Ref from "./src/Reactive/Ref";
+OG.transitionPreset("fadeHide").add({
+  opacity: "0",
+  transitionDuration: "0.3s"
+}).add({
+  opacity: "1",
+  transitionDuration: "0.3s"
+});
 
 let CElTemplate: string = await fetch("./cel.html").then(res => res.text());
-import Utils from "./src/Utils";
 
 class CEl extends OG.createElement() {
   constructor() {
@@ -13,6 +18,9 @@ class CEl extends OG.createElement() {
     })
   }
   rendered() {
+    setTimeout(() => {
+      this.obj.a.c = 2;
+    }, 5000);
     console.timeLog("render");
     // setInterval(() => {
     //   this.user.name = this.formatTime();
@@ -42,24 +50,32 @@ class CEl extends OG.createElement() {
   display = {
     show: false,
     number: 1,
+    tagName: "o-table",
     staticHtml: `<p>{msg}</p>`,
     staticHTML2: "<h1>Hello static HTML2</h1>"
   };
   show = false;
   transitionStop = null;
   updateNumber(number) {
+    console.log(number);
+
     this.display.number = number;
   }
+  updateTagName() {
+    this.display.tagName = "o-cell";
+  }
   UpdateHtml() {
-    this.obj.a.c = Date.now();
-    this.display.staticHtml = "Hell world:" + Math.round(Math.random() * 10000);
-    this.display.staticHTML2="{count}";
+    // this.obj.a.c = Date.now();
+    // this.display.staticHTML2 = "Hell world:" + Math.round(Math.random() * 10000);
+    this.display.staticHtml = "{count}";
     // Ref.clearElRef(this.__OG__.el.querySelector(".ref"),true);
     // fetch("./staticHTML.html").then(res => res.text()).then(res => {
     //   this.display.staticHtml = res;
     // });
     // this.dynimicElements.tag1 = "1";
     // this.useTransitionPreset("fadeHide", this.transitions.key);
+    // return;
+    // this.useTransitionPreset("fadeHide");
     return;
     this.transitionStop = this.transition(this.transitions.transitionName).step({
       transform: "translateX(0px)",
@@ -81,7 +97,7 @@ class CEl extends OG.createElement() {
 
     }).step({
       transform: "translateY(120px)",
-      // transitionDuration: "0.6s",
+      transitionDuration: "0.6s",
       // transitionDuration: "0.3s",
     }, () => {
       console.log("120px");
@@ -104,17 +120,17 @@ class CEl extends OG.createElement() {
     this.display.show = !this.display.show;
   }
   updateCount() {
-    this.transitions.key = "obj";
-    // this.transitionStop.stop();
+    // this.transitions.key = "obj";
+    this.transitionStop.stop();
     // this.obj.a.c = Date.now();
     // this.display.show = !this.display.show;
     // console.log(this.obj.a.c);
   }
   continueTransition() {
     this.transitionStop.continue().step({
-      transform: "translateY(120px)",
+      transform: "translateY(200px)",
       // transitionDuration: "0.6s"
-      // transitionDuration: "0.3s",
+      transitionDuration: "0.3s",
     }, () => {
       console.log("120px");
 
@@ -145,5 +161,22 @@ class CEl extends OG.createElement() {
   }
 }
 
+class OTable extends OG.createElement() {
+  constructor() {
+    super();
+    fetch("./ctable.html").then(res => res.text()).then(res => {
+      this.render(res);
+    })
+  }
+}
 
+class OCell extends OG.createElement() {
+  constructor() {
+    super();
+    this.render("O-CELL");
+  }
+}
+
+OG.defineElement("o-table", OTable);
+OG.defineElement("o-cell", OCell);
 OG.defineElement("c-el", CEl);

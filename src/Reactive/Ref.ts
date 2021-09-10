@@ -1,7 +1,7 @@
 import Module from "../Module";
 import { ICustomElement, TAttr, TElement, TReferrerRefInfo, TText } from "../Typings/CustomElementTypings";
 import { TExpressionItem } from "../Typings/ExpressionTypings";
-import { TDynamicElementBranch, TMethodBranch, TReferrerPropertyRef, TRefInfo, TRefTree } from "../Typings/RefTypings";
+import { TRefInfo, TRefRecord, TRefTree } from "../Typings/RefTypings";
 import Utils from "../Utils";
 import Expression from "./Expression";
 import Parser from "./Parser";
@@ -20,6 +20,8 @@ const matchAndExtractVariableName: RegExp = new RegExp(RefRules.extractVariableN
  */
 function getRefKey(sourceString: string, extract: boolean = true): string[] {
   let refs: string[] = Parser.parseRefString(sourceString);
+  console.log(refs);
+
 
   if (extract) {
     return refs.map(refItem => {
@@ -59,16 +61,14 @@ function collecRef(sourceString: string, transformPropertyNameToArray: boolean =
  * @param refTree 引用数
  * @param refProperties 根标签，也是数据保存的
  */
-function updateRef(refTree: TRefTree, refProperties: ICustomElement | TElement | Record<string, any>): void {
-  for (const branchName in refTree) {
-    if (refProperties[branchName] === undefined) continue;
-    let branch: TRefTree = refTree[branchName];
-    let branchProperty: Record<string, any> = refProperties[branchName];
+function updateRef(refMap: TRefRecord, refProperties: ICustomElement): void {
+  for (const propertyNameString in refMap) {
+    const propertyNames: string[] = propertyNameString.split(",");
 
-    if (typeof branch === "object") {
-      updateRef(branch, branchProperty);
-    }
-    View.setUpdateView(refProperties, branchName, branchProperty, refProperties);
+    let branchProperty: Record<string, any> = Utils.getObjectProperty(refProperties, propertyNames);
+    if (branchProperty === undefined) continue;
+
+    View.setUpdateView(refMap[propertyNameString], branchProperty, refProperties);
   }
 }
 
@@ -212,19 +212,19 @@ function clearElRef(target: TElement, isDeep: boolean = false): void {
   ]);
 }
 
-function removeRefByRefererRefInfo(refs: Record<keyof TRefTree, Map<symbol, string[] | string[][]>>, refTree): void {
+function removeRefByRefererRefInfo(refs: Record<keyof TRefTree, Map<symbol, string[] | string[][]>>, refMap: Map<string, TRefTree>): void {
   for (const type in refs) {
     if (!refs.hasOwnProperty(type)) continue;
     const propertyKeyMap: Map<symbol, string[] | string[][]> = refs[type];
     propertyKeyMap.forEach((propertyNames, itemKey) => {
       if (propertyNames[0] && Array.isArray(propertyNames[0])) {
         propertyNames.forEach(secondPropertyNames => {
-          const branch: TRefTree = Utils.getObjectProperty(refTree, secondPropertyNames);
+          const branch: TRefTree = refMap.get(secondPropertyNames.join());
           if (!branch[type]) return;
           branch[type].delete(itemKey);
         })
       } else if (propertyNames.length > 0) {
-        const branch: TRefTree = Utils.getObjectProperty(refTree, propertyNames as string[]);
+        const branch: TRefTree = refMap.get(propertyNames.join());
         if (!branch[type]) return;
         branch[type].delete(itemKey);
       }

@@ -38,6 +38,15 @@ export type TRefTree = {
   __methods?: Map<symbol, TMethodBranch>,
   __dynamicElements?: Map<symbol, TDynamicElementBranch>
 }
+export type TRefs = {
+  __els?: Map<symbol, TText>,
+  __attrs?: Map<symbol, TAttr>,
+  __expressions?: Map<symbol, TExpressionItem>,
+  __methods?: Map<symbol, TMethodBranch>,
+  __dynamicElements?: Map<symbol, TDynamicElementBranch>
+}
+export type TRefMap = Map<string, TRefs>;
+export type TRefRecord = Record<string, TRefs>;
 
 export type TRefInfo = {
   type: string,

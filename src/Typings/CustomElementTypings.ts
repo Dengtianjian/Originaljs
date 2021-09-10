@@ -59,6 +59,7 @@ export type TReferrerElementOGProperties<T = {}> = {
   properties: ICustomElement,
   refTree: TRefTree,
   refs: Record<keyof TRefTree, Map<symbol, string[] | string[][]>>,
+  refMap: Map<string, TRefTree>
 } & T
 export type TReferrerElement = {
   __OG__: TReferrerElementOGProperties

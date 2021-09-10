@@ -7,12 +7,17 @@ import Utils from "../../Utils";
 import Ref from "../Ref";
 import Transform from "../Transform";
 import Expression from "../Expression";
+import Err from "../../Utils/Err";
 
 const GlobalMatchMethodName: RegExp = new RegExp(MethodRules.MatchMethodName, "g");
 
 function bindMethod(methodItem: TMethodBranch, properties: Record<string, any>) {
   if (!properties[methodItem.methodName]) {
-    console.error(`Method ${methodItem.methodName} is not define`);
+    Err.error(`Method ${methodItem.methodName} is not define`);
+    return;
+  }
+  if (typeof properties[methodItem.methodName] !== "function") {
+    Err.error("The element monitoring must be a function");
     return;
   }
 
@@ -30,7 +35,7 @@ function bindMethod(methodItem: TMethodBranch, properties: Record<string, any>) 
     })
   }
 
-  const listener = function (event): any {
+  let listener = function (event): any {
     properties[methodItem.methodName].apply(properties, [...methodItem.params, event, methodItem.ownerElement]);
   }
 
@@ -142,7 +147,7 @@ export default {
 
       return refTree;
     },
-    setUpdateView(refTree: TRefTree, properties: ICustomElement): void {
+    setUpdateView(refTree: TRefTree, value: any, properties: ICustomElement): void {
       if (refTree?.__methods === undefined) return;
 
       refTree.__methods.forEach(methodItem => {

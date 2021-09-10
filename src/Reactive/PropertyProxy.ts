@@ -1,42 +1,46 @@
 import Reactive from ".";
 import { ICustomElement } from "../Typings/CustomElementTypings";
-import { TRefTree } from "../Typings/RefTypings";
+import { TRefRecord, TRefs } from "../Typings/RefTypings";
 import Utils from "../Utils";
 import View from "./View";
 
-function setProxy(refTree: TRefTree, properties: ICustomElement, reactiveInstance: Reactive, paths: number[] & string[] = []): void {
-  for (const branchName in refTree) {
-    if (properties[branchName] === undefined || typeof properties[branchName] !== "object") continue;
-    paths.push(branchName);
+function setPropertyToProxy(propertyNames: string[], properties: ICustomElement, reactiveInstance: Reactive, paths: string[] = []): void {
+  const propertyName: string = propertyNames[0];
+  if (properties[propertyName] === undefined || typeof properties[propertyName] !== "object") return;
 
-    setProxy(refTree[branchName], properties[branchName], reactiveInstance, paths);
+  setPropertyToProxy(propertyNames.slice(1), properties[propertyName], reactiveInstance, [propertyName]);
 
-    if (properties[branchName].hasOwnProperty('__OG__')) {
-      paths.pop();
-      continue;
+  if (properties[propertyName].hasOwnProperty('__OG__')) return;
+
+  Utils.defineOGProperty(properties[propertyName], {
+    propertiesKeyPath: [...paths, propertyName],
+    reactive: reactiveInstance,
+    refMap: reactiveInstance.refMap,
+    properties: reactiveInstance.properties
+  });
+
+  properties[propertyName] = new Proxy(properties[propertyName], {
+    set(target, propertyKey, value: any, receiver: any): boolean {
+      Reflect.set(target, propertyKey, value, receiver);
+
+      const propertiesKeyPath: string[] = [...target.__OG__.propertiesKeyPath, propertyKey];
+      const refs: TRefs = target.__OG__.refMap.get(propertiesKeyPath.join());
+
+      View.setUpdateView(refs, value, target.__OG__.properties);
+      return true;
+    },
+    deleteProperty(...rest): boolean {
+      Reflect.deleteProperty(...rest);
+      return View.deleteUpdateView(...rest);
     }
+  })
+}
 
-    Utils.defineOGProperty(properties[branchName], {
-      propertiesKeyPath: [...paths],
-      reactive: reactiveInstance,
-      refTree: reactiveInstance.refTree,
-      properties: reactiveInstance.properties
-    });
+function setProxy(refTree: TRefRecord, properties: ICustomElement, reactiveInstance: Reactive): void {
+  for (const propertyNameString in refTree) {
+    const propertyNames: string[] = propertyNameString.split(",");
 
-    properties[branchName] = new Proxy(properties[branchName], {
-      set(...rest): boolean {
-        Reflect.set(...rest);
-        // @ts-ignore
-        View.setUpdateView(...rest);
-        return true;
-      },
-      deleteProperty(...rest): boolean {
-        Reflect.deleteProperty(...rest);
-        return View.deleteUpdateView(...rest);
-      }
-    })
-
-    paths.pop();
+    setPropertyToProxy(propertyNames, properties, reactiveInstance);
   }
 }
 
