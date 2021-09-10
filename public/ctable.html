@@ -1,10 +1,29 @@
 <style>
   table {
-    border: 1px solid red;
+    padding: 5px;
+    color: #333;
+    border: 2px solid blueviolet;
+  }
+
+  td {
+    padding: 10px 5px;
+    border-bottom: 1px solid blueviolet;
+  }
+
+  button {
+    padding: 3px 6px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    background-color: blueviolet;
+  }
+
+  button:hover {
+    filter: brightness(90%);
   }
 </style>
 
-<table style="color:aqua;border:1px solid red;">
+<table>
   <tr>
     <td>Name</td>
     <td>Age</td>
@@ -17,6 +36,11 @@
     <td>Qinghua</td>
     <td>
       <button>Remove</button>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="5" style="text-align: center;">
+      { rows }
     </td>
   </tr>
 </table>

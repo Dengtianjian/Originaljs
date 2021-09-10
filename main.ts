@@ -166,8 +166,9 @@ class OTable extends OG.createElement() {
     super();
     fetch("./ctable.html").then(res => res.text()).then(res => {
       this.render(res);
-    })
+    });
   }
+  rows = 10;
 }
 
 class OCell extends OG.createElement() {

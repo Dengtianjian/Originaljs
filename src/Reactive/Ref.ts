@@ -20,8 +20,9 @@ const matchAndExtractVariableName: RegExp = new RegExp(RefRules.extractVariableN
  */
 function getRefKey(sourceString: string, extract: boolean = true): string[] {
   let refs: string[] = Parser.parseRefString(sourceString);
-  console.log(refs);
-
+  refs = refs.filter(item => {
+    return RefRules.variableItem.test(item) || RefRules.expressionItem.test(item);
+  });
 
   if (extract) {
     return refs.map(refItem => {
