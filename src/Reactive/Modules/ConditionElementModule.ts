@@ -33,14 +33,7 @@ function getConditionElSibling(target: TElement | Element): TConditionElItem[] {
 
 export default {
   reactive: {
-    collecElRef(target: TElement | TElement[], rootEl: ICustomElement): TRefTree {
-      if (Array.isArray(target)) {
-        target.forEach(elItem => {
-          this.collectElRef(elItem)
-        })
-        return {};
-      }
-
+    collecElRef(target: TElement, rootEl: ICustomElement): TRefTree {
       if (target.nodeType !== 1 || !ConditionElTagNames.includes(target.tagName)) {
         return {};
       }

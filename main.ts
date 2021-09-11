@@ -137,6 +137,7 @@ class CEl extends OG.createElement() {
   dynimicElements = {
     tag1: "div"
   }
+  numbers = [1, 2, 3, 4];
   async computed() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {

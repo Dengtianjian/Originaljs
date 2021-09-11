@@ -45,7 +45,7 @@ export type TModuleOptions = {
   reactive?: {
     start?: (target: IElement | IElement[], rootEl: ICustomElement, reactiveInstance: Reactive) => void;
     collectRef?: (target: IElement | IElement[], rootEl: ICustomElement, reactiveInstance: Reactive) => TRefTree;
-    collecElRef?: (target: IElement | IElement[], rootEl: ICustomElement) => TRefTree;
+    collecElRef?: (target: IElement, rootEl: ICustomElement) => TRefTree;
     collectAttrRef?: (target: Attr, rootEl: ICustomElement) => TRefTree;
     beforeUpdateView?: () => void;
     beforeUpdateElView?: () => void;

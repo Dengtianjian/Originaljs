@@ -11,11 +11,13 @@ import MethodModule from "./Modules/MethodModule";
 import DynamicElementModule from "./Modules/DynamicElementModule";
 import TransitionElement from "./Modules/TransitionElement";
 import ConditionElementModule from "./Modules/ConditionElementModule";
+import ForElementModule from "./Modules/ForElementModule";
 
 Module.add("ExpressionModule", ExpressionModule);
 Module.add("MethodModule", MethodModule);
 Module.add("DynamicElementModule", DynamicElementModule);
 Module.add("ConditionElementModule", ConditionElementModule);
+Module.add("ForElementModule", ForElementModule);
 Module.add("ElementModule", ElementModule);
 Module.add("TransitionElement", TransitionElement);
 Module.add("AttrModule", AttrModule);
@@ -77,7 +79,15 @@ export default class Reactive {
   }
   static collectEl(target: TElement | TElement[], properties: ICustomElement, reactiveInstance: Reactive) {
     Module.useAll("reactive.start", Array.from(arguments));
-    const elRefTreeMap: TRefRecord = traverseNodes(target, properties);
+
+    let elRefTreeMap: TRefRecord = {};
+    if (Array.isArray(target)) {
+      for (const elItem of target) {
+        Utils.objectMerge(elRefTreeMap, traverseNodes(elItem, properties));
+      }
+    } else {
+      elRefTreeMap = traverseNodes(target, properties);
+    }
 
     for (const item of Module.useAll<TRefTree>("reactive.collectRef", Array.from(arguments))) {
       Utils.objectMerge(elRefTreeMap, item);

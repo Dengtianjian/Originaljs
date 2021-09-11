@@ -1,28 +1,6 @@
 <p>
-  <button onclick="updateNumber(1)">
-    number=1
-  </button>
-  <button onclick="updateNumber(2)">
-    number=2
-  </button>
-  <button onclick="updateNumber(3)">
-    number=3
-  </button>
+  {numbers}
 </p>
-<p>
-  display.number：{ display.number }
-</p>
-
-<p>
-  {computed}
-</p>
-<o-if condition="{ { display.number }==1 }">
-  <button onclick="UpdateHtml">update obj.a.c</button>
-  { obj.a.c }
-</o-if>
-<o-else-if condition="{ { display.number }==2 }">
-  2
-</o-else-if>
-<o-else>
-  {formatTime}
-</o-else>
+<o-for item index in="{numbers}">
+  { item }
+</o-for>

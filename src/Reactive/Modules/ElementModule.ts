@@ -8,15 +8,8 @@ import Transform from "../Transform";
 
 export default {
   reactive: {
-    collecElRef(target: TElement | TElement[], rootEl: ICustomElement): TRefTree {
+    collecElRef(target: TElement, rootEl: ICustomElement): TRefTree {
       const refTree: TRefTree = {};
-
-      if (Array.isArray(target)) {
-        target.forEach(nodeItem => {
-          Utils.objectMerge(refTree, this.reactive.collectElRef(nodeItem, rootEl));
-        });
-        return refTree;
-      }
 
       if ((target.__OG__ && target.__OG__.elementCollected) || target.textContent === "") return;
       Utils.defineOGProperty(target, {
