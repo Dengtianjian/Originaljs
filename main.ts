@@ -57,17 +57,15 @@ class CEl extends OG.createElement() {
   show = false;
   transitionStop = null;
   updateNumber(number) {
-    console.log(number);
-
     this.display.number = number;
   }
   updateTagName() {
     this.display.tagName = "o-cell";
   }
   UpdateHtml() {
-    // this.obj.a.c = Date.now();
+    this.obj.a.c = Date.now();
     // this.display.staticHTML2 = "Hell world:" + Math.round(Math.random() * 10000);
-    this.display.staticHtml = "{count}";
+    // this.display.staticHtml = "{count}";
     // Ref.clearElRef(this.__OG__.el.querySelector(".ref"),true);
     // fetch("./staticHTML.html").then(res => res.text()).then(res => {
     //   this.display.staticHtml = res;
@@ -141,8 +139,8 @@ class CEl extends OG.createElement() {
   }
   async computed() {
     return new Promise((resolve, reject) => {
-      resolve(1);
       setTimeout(() => {
+        resolve(20);
         reject({
           message: "error"
         });

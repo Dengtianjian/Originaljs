@@ -1,5 +1,5 @@
 import { TConditionElItem, TConditionItem } from "../../Typings/ConditionElementTypings";
-import { TElement } from "../../Typings/CustomElementTypings";
+import { ICustomElement, TElement } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
 import { TRefTree } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
@@ -33,7 +33,7 @@ function getConditionElSibling(target: TElement | Element): TConditionElItem[] {
 
 export default {
   reactive: {
-    collecElRef(target: TElement | TElement[]): TRefTree {
+    collecElRef(target: TElement | TElement[], rootEl: ICustomElement): TRefTree {
       if (Array.isArray(target)) {
         target.forEach(elItem => {
           this.collectElRef(elItem)
@@ -66,9 +66,10 @@ export default {
       for (const elItem of els) {
         Utils.defineOGProperty(elItem.target, {
           skipChildNodesCollect: true,
+          refMap: rootEl.__OG__.reactive.refMap,
           condition: {
             conditionKey,
-            template: elItem.target.innerHTML
+            template: elItem.target.innerHTML,
           }
         });
         if (parentNode.contains(elItem.target)) {
@@ -122,7 +123,6 @@ export default {
         conditionItem.parentNode.removeChild(showConditionEl.shadow);
       }
 
-      // TODO 收集引用，导致多次更新视图问题
       Reactive.collectEl(Array.from(showConditionEl.target.childNodes) as TElement[], properties.__OG__.properties, properties.__OG__.properties.__OG__.reactive);
 
       conditionItem.current = showIndex;

@@ -10,7 +10,8 @@ function setUpdateView(refs: TRefs, value: any, properties: ICustomElement): boo
       }).catch(err => {
         Module.useAll("reactive.setUpdateView", [refs, err, properties]);
       })
-      value = "";
+      // value = "";
+      return true;
     } else {
       value = value.apply(properties);
     }

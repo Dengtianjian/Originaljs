@@ -1,10 +1,28 @@
-{obj.a.c}
-{ {obj.a.c} + 2 }
-<div>
-  { transitions.transitionName }
-</div>
 <p>
-  <button onclick="updateTagName">update tagName</button>
+  <button onclick="updateNumber(1)">
+    number=1
+  </button>
+  <button onclick="updateNumber(2)">
+    number=2
+  </button>
+  <button onclick="updateNumber(3)">
+    number=3
+  </button>
+</p>
+<p>
+  display.number：{ display.number }
 </p>
 
-<o-el is="{ display.tagName }"></o-el>
+<p>
+  {computed}
+</p>
+<o-if condition="{ { display.number }==1 }">
+  <button onclick="UpdateHtml">update obj.a.c</button>
+  { obj.a.c }
+</o-if>
+<o-else-if condition="{ { display.number }==2 }">
+  2
+</o-else-if>
+<o-else>
+  {formatTime}
+</o-else>
