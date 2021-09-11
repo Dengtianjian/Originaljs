@@ -60,10 +60,23 @@ class CEl extends OG.createElement() {
     this.display.number = number;
   }
   updateTagName() {
-    this.display.tagName = "o-cell";
+    // this.display.tagName = "o-cell";
+    if (this.users[3]) {
+      setInterval(() => {
+        this.users[3].id = this.formatTime();
+      }, 1000);
+    }
+
   }
+  users = [{
+    id: 2
+  }];
   UpdateHtml() {
-    this.obj.a.c = Date.now();
+    // this.users[0].id = 6;
+    this.users.push({
+      id: Date.now()
+    });
+    // this.obj.a.c = Date.now();
     // this.display.staticHTML2 = "Hell world:" + Math.round(Math.random() * 10000);
     // this.display.staticHtml = "{count}";
     // Ref.clearElRef(this.__OG__.el.querySelector(".ref"),true);
@@ -108,7 +121,8 @@ class CEl extends OG.createElement() {
   }
   updateStaticHTML2 = () => {
     // this.display.staticHTML2 = "hhhhhhhh";
-    this.transitions.transitionName = "showA";
+    // this.transitions.transitionName = "showA";
+    this.obj.a.c = Date.now();
   }
   elhtml = "<h1>Hello Originaljs</h1>";
   updateData(...rest) {

@@ -166,7 +166,7 @@ function parseTemplateGenerateRefInfo(refString: string): TRefInfo {
  * @param properties 数据
  * @returns 解析结果
  */
-function parenRefInfo(refInfo: TRefInfo, properties: ICustomElement): any {
+function parenRefInfo(refInfo: TRefInfo, properties: ICustomElement, transformToString: boolean = true): any {
   let result: any = null;
   switch (refInfo.type) {
     case "expression":
@@ -179,7 +179,8 @@ function parenRefInfo(refInfo: TRefInfo, properties: ICustomElement): any {
       }
       break;
   }
-  return Transform.transformObjectToString(result);
+  if (transformToString) return Transform.transformObjectToString(result);
+  return result;
 }
 
 /**

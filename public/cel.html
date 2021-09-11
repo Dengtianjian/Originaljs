@@ -1,6 +1,12 @@
 <p>
-  {numbers}
+  <button onclick="UpdateHtml">update users</button>
+  <button onclick="updateTagName">update users any</button>
+  <button onclick="updateStaticHTML2">update obj.a.c</button>
 </p>
-<o-for item index in="{numbers}">
-  { item }
+<o-for item index in="{ users }">
+  <p>
+    1
+    { item }
+    { obj.a.c }
+  </p>
 </o-for>

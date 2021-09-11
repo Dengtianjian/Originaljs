@@ -28,6 +28,19 @@ export type TDynamicElementBranch = {
   showEl?: Element
 }
 
+export type TForElementItem = {
+  target: TElement,
+  refs: TRefInfo,
+  for: {
+    indexName: string,
+    itemName: string,
+    keyName: string,
+    template: string,
+    propertyNames: string[],
+    els: Map<string, Element | ChildNode>
+  }
+}
+
 export type TRefBracnhItem = {
 
 };
@@ -36,7 +49,8 @@ export type TRefTree = {
   __attrs?: Map<symbol, TAttr>,
   __expressions?: Map<symbol, TExpressionItem>,
   __methods?: Map<symbol, TMethodBranch>,
-  __dynamicElements?: Map<symbol, TDynamicElementBranch>
+  __dynamicElements?: Map<symbol, TDynamicElementBranch>,
+  __fors?: Map<symbol, TForElementItem>
 }
 export type TRefs = {
   __els?: Map<symbol, TText>,

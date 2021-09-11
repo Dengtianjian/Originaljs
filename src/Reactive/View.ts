@@ -16,7 +16,6 @@ function setUpdateView(refs: TRefs, value: any, properties: ICustomElement): boo
       value = value.apply(properties);
     }
   }
-
   Module.useAll("reactive.setUpdateView", [refs, value, properties]);
   return true;
 }

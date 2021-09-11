@@ -56,6 +56,8 @@ export type TAttr = {
 export type TReferrerElementOGProperties<T = {}> = {
   hasRefs?: boolean,
   updateRef?: boolean,
+  skipAttrCollect?: boolean,
+  skipChildNodesCollect?: boolean,
   properties: ICustomElement,
   refTree: TRefTree,
   refs: Record<keyof TRefTree, Map<symbol, string[] | string[][]>>,
