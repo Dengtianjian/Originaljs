@@ -89,16 +89,20 @@ function transformPropertyNameToString(propertyNames: string[] & number[]): stri
 function transformObjectToString(target: any): string | number {
   if (typeof target === "object" && target !== null) {
     const valueItem: string[] = [];
-    for (const key in target) {
-      if (Array.isArray(target[key])) {
-        valueItem.push(`${key}: [ ${target[key].toString()} ]`);
-      } else if (typeof target[key] === "object" && target[key] !== null) {
-        valueItem.push(`${key}: ${transformObjectToString(target[key])}`);
-      } else {
-        if (target[key] === null || target[key] === undefined) {
-          target[key] = target[key] === null ? 'null' : 'undefined';
+    if (Array.isArray(target)) {
+      return `[ ${target.toString()} ]`;
+    } else {
+      for (const key in target) {
+        if (Array.isArray(target[key])) {
+          valueItem.push(`${key}: [ ${target[key].toString()} ]`);
+        } else if (typeof target[key] === "object" && target[key] !== null) {
+          valueItem.push(`${key}: ${transformObjectToString(target[key])}`);
+        } else {
+          if (target[key] === null || target[key] === undefined) {
+            target[key] = target[key] === null ? 'null' : 'undefined';
+          }
+          valueItem.push(`${key}: ${target[key].toString()}`);
         }
-        valueItem.push(`${key}: ${target[key].toString()}`);
       }
     }
 
