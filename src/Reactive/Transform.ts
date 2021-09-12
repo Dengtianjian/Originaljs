@@ -65,13 +65,14 @@ function transformPropertyNameToArray(propertyNameString: string): string[] {
  * @param propertyNames 属性名数组
  * @returns 属性名路径字符串
  */
-function transformPropertyNameToString(propertyNames: string[] & number[]): string {
+function transformPropertyNameToString(propertyNames: (string | number)[]): string {
+  propertyNames = [...propertyNames];
   let propertyPath: string = String(propertyNames[0]);
   propertyNames.splice(0, 1);
 
   for (let index = 0; index < propertyNames.length; index++) {
     const name = propertyNames[index];
-    if (isNaN(name)) {
+    if (isNaN(Number(name))) {
       propertyPath += `['${name}']`;
     } else {
       propertyPath += `[${name}]`;
@@ -89,23 +90,22 @@ function transformPropertyNameToString(propertyNames: string[] & number[]): stri
 function transformObjectToString(target: any): string | number {
   if (typeof target === "object" && target !== null) {
     const valueItem: string[] = [];
-    if (Array.isArray(target)) {
-      return `[ ${target.toString()} ]`;
-    } else {
-      for (const key in target) {
-        if (Array.isArray(target[key])) {
-          valueItem.push(`${key}: [ ${target[key].toString()} ]`);
-        } else if (typeof target[key] === "object" && target[key] !== null) {
-          valueItem.push(`${key}: ${transformObjectToString(target[key])}`);
-        } else {
-          if (target[key] === null || target[key] === undefined) {
-            target[key] = target[key] === null ? 'null' : 'undefined';
-          }
-          valueItem.push(`${key}: ${target[key].toString()}`);
+    for (const key in target) {
+      if (Array.isArray(target[key])) {
+        valueItem.push(`${key}: [ ${target[key].toString()} ]`);
+      } else if (typeof target[key] === "object" && target[key] !== null) {
+        valueItem.push(`${key}: ${transformObjectToString(target[key])}`);
+      } else {
+        if (target[key] === null || target[key] === undefined) {
+          target[key] = target[key] === null ? 'null' : 'undefined';
         }
+        valueItem.push(`${key}: ${target[key].toString()}`);
       }
     }
 
+    if (Array.isArray(target)) {
+      return `[ ${valueItem.join(",")} ]`;
+    }
     return `{ ${valueItem.join(",")} }`;
   }
   if (target === null) return "null";
