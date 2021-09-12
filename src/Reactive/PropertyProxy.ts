@@ -4,12 +4,12 @@ import { TRefMap, TRefRecord, TRefs } from "../Typings/RefTypings";
 import Utils from "../Utils";
 import View from "./View";
 
-function bubblingUpdateView(propertyKeyPath: string[], refMap: TRefMap, properties: ICustomElement): void {
+function bubblingUpdateView(propertyKeyPath: string[], refMap: TRefMap, properties: ICustomElement, propertyKey: symbol | string): void {
   const refs: TRefs = refMap.get(propertyKeyPath.join());
   const value: any = Utils.getObjectProperty(properties, propertyKeyPath);
-  View.setUpdateView(refs, value, properties);
+  View.setUpdateView(refs, value, properties, propertyKey);
   if (propertyKeyPath.length > 1) {
-    bubblingUpdateView(propertyKeyPath.slice(0, propertyKeyPath.length - 1), refMap, properties);
+    bubblingUpdateView(propertyKeyPath.slice(0, propertyKeyPath.length - 1), refMap, properties, propertyKey);
   }
 }
 
@@ -32,9 +32,9 @@ function setPropertyToProxy(propertyNames: string[], properties: ICustomElement,
     set(target, propertyKey, value: any, receiver: any): boolean {
       Reflect.set(target, propertyKey, value, receiver);
 
-      const propertiesKeyPath: string[] = [...target.__OG__.propertiesKeyPath,propertyKey];
-      
-      bubblingUpdateView(propertiesKeyPath, target.__OG__.refMap, target.__OG__.properties);
+      const propertiesKeyPath: string[] = [...target.__OG__.propertiesKeyPath, propertyKey];
+
+      bubblingUpdateView(propertiesKeyPath, target.__OG__.refMap, target.__OG__.properties, propertyKey);
       return true;
     },
     deleteProperty(...rest): boolean {

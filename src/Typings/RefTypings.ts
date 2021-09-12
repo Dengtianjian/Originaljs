@@ -36,7 +36,7 @@ export type TForElementItem = {
     itemName: string,
     keyName: string,
     template: string,
-    propertyNames: string[],
+    propertyName: string,
     els: Map<string, Element | ChildNode>
   }
 }

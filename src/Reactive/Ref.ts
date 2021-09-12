@@ -69,7 +69,7 @@ function updateRef(refMap: TRefRecord, refProperties: ICustomElement): void {
     let branchProperty: Record<string, any> = Utils.getObjectProperty(refProperties, propertyNames);
     if (branchProperty === undefined) continue;
 
-    View.setUpdateView(refMap[propertyNameString], branchProperty, refProperties);
+    View.setUpdateView(refMap[propertyNameString], branchProperty, refProperties, propertyNames[propertyNames.length - 1]);
   }
 }
 

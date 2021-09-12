@@ -18,9 +18,9 @@ class CEl extends OG.createElement() {
     })
   }
   rendered() {
-    setTimeout(() => {
-      this.obj.a.c = 2;
-    }, 5000);
+    // setTimeout(() => {
+    //   this.obj.a.c = 2;
+    // }, 5000);
     console.timeLog("render");
     // setInterval(() => {
     //   this.user.name = this.formatTime();
@@ -70,6 +70,8 @@ class CEl extends OG.createElement() {
   }
   users = [{
     id: 2
+  }, {
+    id: 3
   }];
   UpdateHtml() {
     // this.users[0].id = 6;

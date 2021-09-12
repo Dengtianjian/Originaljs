@@ -93,7 +93,6 @@ export default class Reactive {
       Utils.objectMerge(elRefTreeMap, item);
     }
 
-    PropertyProxy.setProxy(elRefTreeMap, properties, reactiveInstance);
 
     for (const key in elRefTreeMap) {
       if (reactiveInstance.refMap.has(key)) {
@@ -104,6 +103,8 @@ export default class Reactive {
     }
 
     Ref.updateRef(elRefTreeMap, properties);
+
+    PropertyProxy.setProxy(elRefTreeMap, properties, reactiveInstance);
   }
   constructor(private target: TElement | TElement[], public properties: ICustomElement) {
     let defineProperties: Record<string, any> = {

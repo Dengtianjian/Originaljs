@@ -43,11 +43,14 @@ export default {
         Err.throwError("The for element in attribute does nont support expressions");
       }
       target.removeAttribute("in");
-      const refs: string[] = Ref.collecRef(refString, false) as string[];
+      const refs: string[][] = Ref.collecRef(refString) as string[][];
+      const propertyName: string[] = refs[0];
+      const property: any = Utils.getObjectProperty(rootEl, propertyName);
+      const propertyNameString: string = Transform.transformPropertyNameToString(propertyName);
 
       const forTemplate: string = target.innerHTML.trim();
       const refInfo: TRefInfo = Ref.parseTemplateGenerateRefInfo(refString);
-      const branchKey: symbol = Symbol("refString");
+      const branchKey: symbol = Symbol(refString);
       const refTree: TRefTree = Ref.generateRefTreeByRefString(refString, target, branchKey, {
         target,
         for: {
@@ -55,7 +58,7 @@ export default {
           indexName,
           keyName,
           template: forTemplate,
-          propertyNames: refs,
+          propertyName: propertyNameString,
           els: new Map()
         },
         refs: refInfo
@@ -69,8 +72,6 @@ export default {
 
       Utils.defineOGProperty(target, {
         properties: rootEl,
-        skipAttrCollect: true,
-        skipChildNodesCollect: true,
         refMap: refTree,
         refs: {
           __fors: refPropertyKeyMap
@@ -78,28 +79,31 @@ export default {
       } as TReferrerElementOGProperties);
 
       target.innerHTML = "";
+      // for (let index = 0; index < property.length; index++) {
+      //   target.innerHTML += replaceRef(forTemplate, itemName, `{${propertyNameString}[${index}]}`);;
+      // }
+
       return refTree;
     },
-    setUpdateView(refTree, value, properties: ICustomElement): boolean {
+    setUpdateView(refTree, value, properties: ICustomElement, propertyKey): boolean {
       if (!refTree || !refTree.__fors) return true;
       if (typeof value !== "object") return false;
       const fors: Map<symbol, TForElementItem> = refTree.__fors;
 
-      fors.forEach(forItem => {
-        const proeprtyValue: any = Ref.parenRefInfo(forItem.refs, properties, false);
+      console.log(propertyKey);
 
+      for (const { 1: forItem } of fors) {
+        if (forItem.for.propertyName === propertyKey) continue;
         const containerEl = document.createElement("div");
-        for (let index = 0; index < proeprtyValue.length; index++) {
-          if (forItem.for.els.get(String(index))) continue;
-          const appendHTML = replaceRef(forItem.for.template, forItem.for.itemName, `{${forItem.for.propertyNames[0]}[${index}]}`);
-          containerEl.append(...Parser.parseDom(appendHTML));
-          forItem.for.els.set(String(index), containerEl.childNodes.item(containerEl.childNodes.length - 1));
-        }
+
+        const appendHTML = replaceRef(forItem.for.template, forItem.for.itemName, `{${forItem.for.propertyName}[${propertyKey.toString()}]}`);
+
+        containerEl.append(...Parser.parseDom(appendHTML));
 
         // @ts-ignore
         Reactive.collectEl(containerEl, properties, properties.__OG__.reactive);
         forItem.target.append(...Array.from(containerEl.childNodes));
-      });
+      }
 
       return true;
     }
