@@ -79,9 +79,9 @@ export default {
       } as TReferrerElementOGProperties);
 
       target.innerHTML = "";
-      // for (let index = 0; index < property.length; index++) {
-      //   target.innerHTML += replaceRef(forTemplate, itemName, `{${propertyNameString}[${index}]}`);;
-      // }
+      for (let index = 0; index < property.length; index++) {
+        target.innerHTML += replaceRef(forTemplate, itemName, `{${propertyNameString}[${index}]}`);;
+      }
 
       return refTree;
     },
