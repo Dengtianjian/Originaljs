@@ -88,9 +88,8 @@ export default {
     setUpdateView(refTree, value, properties: ICustomElement, propertyKey): boolean {
       if (!refTree || !refTree.__fors) return true;
       if (typeof value !== "object") return false;
+      if(propertyKey==="length") return true;
       const fors: Map<symbol, TForElementItem> = refTree.__fors;
-
-      console.log(propertyKey);
 
       for (const { 1: forItem } of fors) {
         if (forItem.for.propertyName === propertyKey) continue;
