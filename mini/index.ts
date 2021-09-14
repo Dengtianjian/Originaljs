@@ -93,6 +93,6 @@ function deepUpdate(data) {
   }
 }
 deepUpdate(data);
-// console.log(data);
+console.log(data);
 
 // updateView("aa");
