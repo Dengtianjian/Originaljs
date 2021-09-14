@@ -79,12 +79,14 @@ export default {
 
       return refTree;
     },
-    setUpdateView(refTree: TRefs, value: any): void {
-      if (refTree?.__els === undefined) return;
+    setUpdateView(): void {
+      console.log(arguments);
 
-      refTree.__els.forEach(elItem => {
-        elItem.textContent = Transform.transformObjectToString(value).toString();
-      });
+      // if (refTree?.__els === undefined) return;
+
+      // refTree.__els.forEach(elItem => {
+      //   elItem.textContent = Transform.transformObjectToString(value).toString();
+      // });
     },
     clearElRefTree(target: TReferrerElement): void {
       if (!target.__OG__ || !target.__OG__.refs) return;

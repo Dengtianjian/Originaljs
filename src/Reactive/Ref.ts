@@ -66,12 +66,12 @@ function updateRef(refMap: TRefRecord, refProperties: ICustomElement): void {
   for (const propertyNameString in refMap) {
     const propertyNames: string[] = propertyNameString.split(",");
 
-    let branchProperty: Record<string, any> = Utils.getObjectProperty(refProperties, propertyNames);
+    let branchProperty: Record<string, any> = Utils.getObjectProperty(refProperties, propertyNames.slice(0, propertyNames.length - 1));
     if (branchProperty === undefined) continue;
 
-    if(typeof branchProperty === "object") return;
+    // if(typeof branchProperty === "object") return;
 
-    View.setUpdateView(refMap[propertyNameString], branchProperty, refProperties, propertyNames[propertyNames.length - 1]);
+    View.setUpdateView(branchProperty, propertyNames[propertyNames.length - 1], branchProperty[propertyNames[propertyNames.length - 1]], branchProperty);
   }
 }
 

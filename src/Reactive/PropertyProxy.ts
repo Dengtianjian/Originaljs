@@ -4,13 +4,21 @@ import { TRefMap, TRefRecord, TRefs } from "../Typings/RefTypings";
 import Utils from "../Utils";
 import View from "./View";
 
-function bubblingUpdateView(propertyKeyPath: string[], refMap: TRefMap, properties: ICustomElement, propertyKey: symbol | string): void {
-  const refs: TRefs = refMap.get(propertyKeyPath.join());
-  const value: any = Utils.getObjectProperty(properties, propertyKeyPath);
-  View.setUpdateView(refs, value, properties, propertyKey);
-  if (propertyKeyPath.length > 1) {
-    bubblingUpdateView(propertyKeyPath.slice(0, propertyKeyPath.length - 1), refMap, properties, propertyKey);
-  }
+// function bubblingUpdateView(propertyKeyPath: string[], refMap: TRefMap, properties: ICustomElement, propertyKey: symbol | string): void {
+//   const refs: TRefs = refMap.get(propertyKeyPath.join());
+//   const value: any = Utils.getObjectProperty(properties, propertyKeyPath);
+//   View.setUpdateView(refs, value, properties, propertyKey);
+//   if (propertyKeyPath.length > 1) {
+//     bubblingUpdateView(propertyKeyPath.slice(0, propertyKeyPath.length - 1), refMap, properties, propertyKey);
+//   }
+// }
+function bubblingUpdateView(...rest): void {
+  // const refs: TRefs = refMap.get(propertyKeyPath.join());
+  // const value: any = Utils.getObjectProperty(properties, propertyKeyPath);
+  View.setUpdateView(...rest);
+  // if (propertyKeyPath.length > 1) {
+  //   bubblingUpdateView(propertyKeyPath.slice(0, propertyKeyPath.length - 1), refMap, properties, propertyKey);
+  // }
 }
 
 function setPropertyToProxy(propertyNames: string[], properties: ICustomElement, reactiveInstance: Reactive, paths: string[] = []): void {
@@ -34,7 +42,9 @@ function setPropertyToProxy(propertyNames: string[], properties: ICustomElement,
 
       const propertiesKeyPath: string[] = [...target.__OG__.propertiesKeyPath, propertyKey];
 
-      bubblingUpdateView(propertiesKeyPath, target.__OG__.refMap, target.__OG__.properties, propertyKey);
+      // console.log(target, receiver, propertyKey);
+
+      bubblingUpdateView(target, propertyKey, value, receiver);
       return true;
     },
     deleteProperty(...rest): boolean {

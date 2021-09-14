@@ -79,9 +79,9 @@ export default {
       } as TReferrerElementOGProperties);
 
       target.innerHTML = "";
-      // for (let index = 0; index < property.length; index++) {
-      //   target.innerHTML += replaceRef(forTemplate, itemName, `{${propertyNameString}[${index}]}`);;
-      // }
+      for (let index = 0; index < property.length; index++) {
+        target.innerHTML += replaceRef(forTemplate, itemName, `{${propertyNameString}[${index}]}`);;
+      }
 
       return refTree;
     },
@@ -90,7 +90,7 @@ export default {
       if (typeof value !== "object") return false;
       const fors: Map<symbol, TForElementItem> = refTree.__fors;
 
-      console.log(propertyKey);
+      // console.trace(propertyKey);
 
       for (const { 1: forItem } of fors) {
         if (forItem.for.propertyName === propertyKey) continue;
