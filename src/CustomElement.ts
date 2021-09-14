@@ -1,6 +1,6 @@
 import Transition from "./Transition";
-import { ICustomElement, IElement, TElement, TOG } from "./Typings/CustomElementTypings";
-import { TCSSStyleDeclaration, TPreset, TTransitionItem } from "./Typings/TransitionTypings";
+import { ICustomElement, IElement, TOG } from "./Typings/CustomElementTypings";
+import { TPreset } from "./Typings/TransitionTypings";
 import Parser from "./Reactive/Parser";
 import Reactive from "./Reactive";
 
@@ -57,8 +57,8 @@ export default class CustomElement extends HTMLElement implements ICustomElement
   render(template: string | Element | NodeList | Node[]): Promise<boolean> {
     this.__OG__.el.innerHTML = "";
     this.__OG__.slots = {};
-    this.__OG__.el.append(...Parser.parseTemplate(template));
-    Reactive.observe(this.__OG__.el as TElement, this as unknown as ICustomElement);
+    // this.__OG__.el.append(...Parser.parseTemplate(template));
+    // Reactive.observe(this.__OG__.el as TElement, this as unknown as ICustomElement);
 
     this.collectSlots();
 
