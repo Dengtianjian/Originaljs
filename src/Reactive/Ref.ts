@@ -72,9 +72,6 @@ function updateRef(refMap: TRefRecord, refProperties: ICustomElement): void {
     const refs: TRefs = refMap[propertyNames.join()];
     const propertyKey: string = propertyNames[propertyNames.length - 1];
 
-
-    if (typeof value === "object") return;
-
     View.setUpdateView(refs, target, propertyKey, value, refProperties);
   }
 }
