@@ -81,8 +81,6 @@ export default {
     },
     setUpdateView(refs: TRefs, target, propertyKey, value): boolean {
       if (refs?.__els === undefined) return;  
-
-      console.trace(propertyKey);
       
       refs.__els.forEach(elItem => {
         elItem.textContent = Transform.transformObjectToString(value).toString();

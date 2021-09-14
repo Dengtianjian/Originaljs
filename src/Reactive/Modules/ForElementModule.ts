@@ -81,9 +81,9 @@ export default {
       } as TReferrerElementOGProperties);
 
       target.innerHTML = "";
-      // for (let index = 0; index < property.length; index++) {
-      //   target.innerHTML += replaceRef(forTemplate, itemName, `{${propertyNameString}[${index}]}`);;
-      // }
+      for (let index = 0; index < property.length; index++) {
+        target.innerHTML += replaceRef(forTemplate, itemName, `{${propertyNameString}[${index}]}`);;
+      }
 
       // Utils.objectMerge(refTree, Reactive.collectEl(Array.from(target.childNodes) as TElement[], rootEl));
       return refTree;

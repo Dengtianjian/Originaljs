@@ -106,8 +106,6 @@ export default class Reactive {
       }
     }
 
-    // Ref.updateRef(elRefTreeMap, properties);
-
     PropertyProxy.setProxy(elRefTreeMap, properties, reactiveInstance);
   }
   constructor(private target: TElement | TElement[], public properties: ICustomElement) {
