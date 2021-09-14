@@ -18,15 +18,25 @@ function use(name: string): TModuleOptions {
   return Modules[AddedModuleMap[name]];
 }
 
-function useAll<T>(moduleName: keyof TModuleHookNames, args: any[] = []): T[] {
+function useAll<T>(moduleName: keyof TModuleHookNames, args: any[] = [], callBack?: (result: any, breakForof: () => void) => void): T[] {
   const results: T[] = [];
   const moduleNames: string[] = moduleName.split(".");
 
   for (const moduleItem of Modules) {
     let hookFunction: Function = Utils.getObjectProperty(moduleItem, moduleNames);
     if (hookFunction === undefined) continue;
-    
-    results.push(hookFunction(...args));
+
+    const functionExecuteResult: any = hookFunction(...args);
+    results.push(functionExecuteResult);
+    if (callBack) {
+      let forofBreak: boolean = false;
+      callBack(functionExecuteResult, () => {
+        forofBreak = true;
+      });
+      if (forofBreak) {
+        break;
+      }
+    }
   }
 
   return results;

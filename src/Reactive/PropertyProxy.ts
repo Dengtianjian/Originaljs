@@ -1,24 +1,30 @@
 import Reactive from ".";
-import { ICustomElement } from "../Typings/CustomElementTypings";
+import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
 import { TRefMap, TRefRecord, TRefs } from "../Typings/RefTypings";
 import Utils from "../Utils";
 import View from "./View";
 
-// function bubblingUpdateView(propertyKeyPath: string[], refMap: TRefMap, properties: ICustomElement, propertyKey: symbol | string): void {
-//   const refs: TRefs = refMap.get(propertyKeyPath.join());
-//   const value: any = Utils.getObjectProperty(properties, propertyKeyPath);
-//   View.setUpdateView(refs, value, properties, propertyKey);
-//   if (propertyKeyPath.length > 1) {
-//     bubblingUpdateView(propertyKeyPath.slice(0, propertyKeyPath.length - 1), refMap, properties, propertyKey);
-//   }
-// }
-function bubblingUpdateView(...rest): void {
-  // const refs: TRefs = refMap.get(propertyKeyPath.join());
-  // const value: any = Utils.getObjectProperty(properties, propertyKeyPath);
-  View.setUpdateView(...rest);
-  // if (propertyKeyPath.length > 1) {
-  //   bubblingUpdateView(propertyKeyPath.slice(0, propertyKeyPath.length - 1), refMap, properties, propertyKey);
-  // }
+function bubblingUpdateView(target: TElement, propertyKey: string | symbol, value: any, receiver: any): void {
+  const refMap: TRefMap = target.__OG__.reactive.refMap;
+  const propertyKeyPath: (string | symbol)[] = [...target.__OG__.propertiesKeyPath, propertyKey];
+
+  const refs: TRefs = refMap.get(propertyKeyPath.join());
+
+  View.setUpdateView(refs, target, propertyKey, value, target.__OG__.properties);
+  if (propertyKeyPath.length > 1) {
+    let newTarget: any = target;
+    const newPropertyKeyPath: (string | symbol)[] = propertyKeyPath.slice(0, propertyKeyPath.length - 1);
+    let newPropertyKey: string | symbol = newPropertyKeyPath[newPropertyKeyPath.length - 1];
+    if (propertyKeyPath.length === 2) {
+      newTarget = target.__OG__.properties;
+    } else {
+      newTarget = Utils.getObjectProperty(target.__OG__.properties, newPropertyKeyPath);
+      newPropertyKey = propertyKeyPath[propertyKeyPath.length - 2];
+    }
+    value = Utils.getObjectProperty(target.__OG__.properties, newPropertyKeyPath);
+
+    bubblingUpdateView(newTarget, newPropertyKey, value, target.__OG__.properties);
+  }
 }
 
 function setPropertyToProxy(propertyNames: string[], properties: ICustomElement, reactiveInstance: Reactive, paths: string[] = []): void {
@@ -39,10 +45,6 @@ function setPropertyToProxy(propertyNames: string[], properties: ICustomElement,
   properties[propertyName] = new Proxy(properties[propertyName], {
     set(target, propertyKey, value: any, receiver: any): boolean {
       Reflect.set(target, propertyKey, value, receiver);
-
-      const propertiesKeyPath: string[] = [...target.__OG__.propertiesKeyPath, propertyKey];
-
-      // console.log(target, receiver, propertyKey);
 
       bubblingUpdateView(target, propertyKey, value, receiver);
       return true;

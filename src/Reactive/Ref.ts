@@ -1,7 +1,7 @@
 import Module from "../Module";
 import { ICustomElement, TAttr, TElement, TReferrerRefInfo, TText } from "../Typings/CustomElementTypings";
 import { TExpressionItem } from "../Typings/ExpressionTypings";
-import { TRefInfo, TRefRecord, TRefTree } from "../Typings/RefTypings";
+import { TRefInfo, TRefRecord, TRefs, TRefTree } from "../Typings/RefTypings";
 import Utils from "../Utils";
 import Expression from "./Expression";
 import Parser from "./Parser";
@@ -66,12 +66,16 @@ function updateRef(refMap: TRefRecord, refProperties: ICustomElement): void {
   for (const propertyNameString in refMap) {
     const propertyNames: string[] = propertyNameString.split(",");
 
-    let branchProperty: Record<string, any> = Utils.getObjectProperty(refProperties, propertyNames.slice(0, propertyNames.length - 1));
-    if (branchProperty === undefined) continue;
+    let target: Record<string, any> = Utils.getObjectProperty(refProperties, propertyNames.slice(0, propertyNames.length - 1));
+    if (target === undefined) continue;
+    const value: any = target[propertyNames[propertyNames.length - 1]];
+    const refs: TRefs = refMap[propertyNames.join()];
+    const propertyKey: string = propertyNames[propertyNames.length - 1];
 
-    // if(typeof branchProperty === "object") return;
 
-    View.setUpdateView(branchProperty, propertyNames[propertyNames.length - 1], branchProperty[propertyNames[propertyNames.length - 1]], branchProperty);
+    if (typeof value === "object") return;
+
+    View.setUpdateView(refs, target, propertyKey, value, refProperties);
   }
 }
 

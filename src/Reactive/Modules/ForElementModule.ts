@@ -1,7 +1,7 @@
 import Reactive from "..";
 import { ICustomElement, IElement, TElement, TReferrerElementOGProperties } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TForElementItem, TRefInfo, TRefTree } from "../../Typings/RefTypings";
+import { TForElementItem, TRefInfo, TRefMap, TRefs, TRefTree } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
 import Err from "../../Utils/Err";
 import Ref from "../Ref";
@@ -73,25 +73,28 @@ export default {
       Utils.defineOGProperty(target, {
         properties: rootEl,
         refMap: refTree,
+        // skipAttrCollect: true,
+        // skipChildNodesCollect: true,
         refs: {
           __fors: refPropertyKeyMap
         }
       } as TReferrerElementOGProperties);
 
       target.innerHTML = "";
-      for (let index = 0; index < property.length; index++) {
-        target.innerHTML += replaceRef(forTemplate, itemName, `{${propertyNameString}[${index}]}`);;
-      }
+      // for (let index = 0; index < property.length; index++) {
+      //   target.innerHTML += replaceRef(forTemplate, itemName, `{${propertyNameString}[${index}]}`);;
+      // }
 
+      // Utils.objectMerge(refTree, Reactive.collectEl(Array.from(target.childNodes) as TElement[], rootEl));
       return refTree;
     },
-    setUpdateView(refTree, value, properties: ICustomElement, propertyKey): boolean {
-      if (!refTree || !refTree.__fors) return true;
+    setUpdateView(refs: TRefs, target: TElement, propertyKey: string | symbol, value: any, properties: Record<string, any>): boolean | null {
+      if (!Array.isArray(target)) return false;
+      if (propertyKey === "length") return null;
+      const propertyRefMap: TRefTree = target.__OG__.reactive.refMap.get(target.__OG__.propertiesKeyPath.join());
+      if (!propertyRefMap.__fors) return false;
       if (typeof value !== "object") return false;
-      if(propertyKey==="length") return true;
-      const fors: Map<symbol, TForElementItem> = refTree.__fors;
-
-      // console.trace(propertyKey);
+      const fors: Map<symbol, TForElementItem> = propertyRefMap.__fors;
 
       for (const { 1: forItem } of fors) {
         if (forItem.for.propertyName === propertyKey) continue;
@@ -102,11 +105,13 @@ export default {
         containerEl.append(...Parser.parseDom(appendHTML));
 
         // @ts-ignore
-        Reactive.collectEl(containerEl, properties, properties.__OG__.reactive);
+        // Reactive.watch(containerEl, properties, properties.__OG__.reactive);
         forItem.target.append(...Array.from(containerEl.childNodes));
       }
+      console.trace(propertyKey);
 
-      return true;
+
+      return null;
     }
   }
 } as TModuleOptions

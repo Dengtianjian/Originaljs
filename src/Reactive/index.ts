@@ -77,7 +77,7 @@ export default class Reactive {
   static observe(target: TElement | TElement[], properties: ICustomElement): Reactive {
     return new Reactive(target, properties);
   }
-  static collectEl(target: TElement | TElement[], properties: ICustomElement, reactiveInstance: Reactive) {
+  static collectEl(target: TElement | TElement[], properties: ICustomElement): TRefRecord {
     Module.useAll("reactive.start", Array.from(arguments));
 
     let elRefTreeMap: TRefRecord = {};
@@ -93,6 +93,10 @@ export default class Reactive {
       Utils.objectMerge(elRefTreeMap, item);
     }
 
+    return elRefTreeMap;
+  }
+  static watch(target: TElement | TElement[], properties: ICustomElement, reactiveInstance: Reactive): void {
+    const elRefTreeMap = this.collectEl(target, properties);
 
     for (const key in elRefTreeMap) {
       if (reactiveInstance.refMap.has(key)) {
@@ -102,7 +106,7 @@ export default class Reactive {
       }
     }
 
-    Ref.updateRef(elRefTreeMap, properties);
+    // Ref.updateRef(elRefTreeMap, properties);
 
     PropertyProxy.setProxy(elRefTreeMap, properties, reactiveInstance);
   }
@@ -121,6 +125,6 @@ export default class Reactive {
       Utils.defineOGProperty(properties, defineProperties);
     }
 
-    Reactive.collectEl(target, properties, this);
+    Reactive.watch(target, properties, this);
   }
 }

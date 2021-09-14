@@ -61,7 +61,7 @@ export default {
             newTextChildNodes.push(document.createTextNode(" "));
             Utils.defineOGProperty(parentNode.tagName === "O-EL" ? newTextEl : parentNode, {
               properties: rootEl,
-              refMap:rootEl.__OG__.reactive.refMap,
+              refMap: rootEl.__OG__.reactive.refMap,
               refs: {
                 [isExpression ? '__expressions' : '__els']: refPropertyKeyMap
               }
@@ -79,14 +79,16 @@ export default {
 
       return refTree;
     },
-    setUpdateView(): void {
-      console.log(arguments);
+    setUpdateView(refs: TRefs, target, propertyKey, value): boolean {
+      if (refs?.__els === undefined) return;  
 
-      // if (refTree?.__els === undefined) return;
+      console.trace(propertyKey);
+      
+      refs.__els.forEach(elItem => {
+        elItem.textContent = Transform.transformObjectToString(value).toString();
+      });
 
-      // refTree.__els.forEach(elItem => {
-      //   elItem.textContent = Transform.transformObjectToString(value).toString();
-      // });
+      return true;
     },
     clearElRefTree(target: TReferrerElement): void {
       if (!target.__OG__ || !target.__OG__.refs) return;

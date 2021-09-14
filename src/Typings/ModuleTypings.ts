@@ -1,6 +1,6 @@
 import Reactive from "../Reactive";
 import { ICustomElement, IElement, TReferrerElement } from "./CustomElementTypings";
-import { TRefTree } from "./RefTypings";
+import { TRefs, TRefTree } from "./RefTypings";
 
 export type TModuleHookNames = {
   //* 生命周期
@@ -50,7 +50,7 @@ export type TModuleOptions = {
     beforeUpdateView?: () => void;
     beforeUpdateElView?: () => void;
     beforeUpdateAttrView?: (attr: Attr, nodeValue: string, properties: TReferrerElement, refTree: TRefTree) => void;
-    setUpdateView?: (refTree: TRefTree, value: any, properties: Record<string, any>, propertyKey: string | symbol) => void;
+    setUpdateView?: (refs: TRefs, target: any, propertyKey: string | symbol, value: any, properties: Record<string, any>) => boolean | null;
     deleteUpdateView?: () => void;
     afterUpdatedElView?: () => void;
     afterUpdateAttrView?: (attr: Attr, newValue: string, properties: TReferrerElement, refTree: TRefTree) => void;

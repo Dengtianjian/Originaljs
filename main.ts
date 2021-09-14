@@ -125,6 +125,8 @@ class CEl extends OG.createElement() {
     // this.display.staticHTML2 = "hhhhhhhh";
     // this.transitions.transitionName = "showA";
     this.obj.a.c = Date.now();
+    console.log(this.obj.a.c);
+    
   }
   elhtml = "<h1>Hello Originaljs</h1>";
   updateData(...rest) {
