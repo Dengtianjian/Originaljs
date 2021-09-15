@@ -1,10 +1,26 @@
+import Module from "../Module";
 import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
-import { TRefMap } from "../Typings/RefTypings";
+import { TRefMap, TRefRecord } from "../Typings/RefTypings";
 import Utils from "../Utils";
+import ElementModule from "./Modules/ElementModule";
+import PropertyProxy from "./PropertyProxy";
+import Ref from "./Ref";
+
+Module.add("ElementModule", ElementModule);
 
 export default class Reactive {
   static observe(target: TElement | TElement[], properties: ICustomElement, reactiveInstance: Reactive) {
-    
+    const refRecord: TRefRecord = Ref.collectRef(target, properties, reactiveInstance);
+
+    for (const key in refRecord) {
+      if (reactiveInstance.refMap.has(key)) {
+        Utils.objectMerge(reactiveInstance.refMap.get(key), refRecord[key]);
+      } else {
+        reactiveInstance.refMap.set(key, refRecord[key]);
+      }
+    }
+
+    PropertyProxy.setProxy(refRecord, properties, reactiveInstance);
   }
   refMap: TRefMap = new Map();
   constructor(target: TElement, properties: ICustomElement) {
@@ -12,7 +28,7 @@ export default class Reactive {
       reactive: this,
       refMap: this.refMap,
       propertiesKeyPath: [],
-      properties
+      properties,
     };
     Utils.defineOGProperty(properties, defineProperties);
 
