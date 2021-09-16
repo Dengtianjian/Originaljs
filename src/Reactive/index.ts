@@ -3,9 +3,11 @@ import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
 import { TRefMap, TRefRecord } from "../Typings/RefTypings";
 import Utils from "../Utils";
 import ElementModule from "./Modules/ElementModule";
+import ForElementModule from "./Modules/ForElementModule";
 import PropertyProxy from "./PropertyProxy";
 import Ref from "./Ref";
 
+Module.add("ForElementModule", ForElementModule);
 Module.add("ElementModule", ElementModule);
 
 export default class Reactive {
