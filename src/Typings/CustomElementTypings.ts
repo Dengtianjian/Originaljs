@@ -1,7 +1,7 @@
 import CustomElement from "../CustomElement";
 import Reactive from "../Reactive";
 import Transition from "../Transition";
-import { TReferrerPropertyRef, TRefTree } from "./RefTypings";
+import { TReferrerPropertyRef, TRefMap, TRefTree } from "./RefTypings";
 import { ITransition, TCSSStyleDeclaration } from "./TransitionTypings";
 
 export type TOG = {
@@ -63,9 +63,8 @@ export type TReferrerElementOGProperties<T = {}> = {
   skipAttrCollect?: boolean;
   skipChildNodesCollect?: boolean;
   properties: ICustomElement;
-  refTree: TRefTree;
+  refMap: TRefMap;
   refs: Record<keyof TRefTree, Map<symbol, string[] | string[][]>>;
-  refMap: Map<string, TRefTree>;
 } & T;
 export type TReferrerElement = {
   __OG__: TReferrerElementOGProperties;

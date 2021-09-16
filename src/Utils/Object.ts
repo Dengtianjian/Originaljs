@@ -77,12 +77,12 @@ function filterAppendProperties(target: (Attr | Text | IElement | Node) & { __OG
  * @param target 目标
  * @param appendProperties 附加的属性
  */
-function defineOGProperty(target: Attr | Text | IElement | Node
-  , appendProperties: Record<string, any> = {}): void {
+function defineOGProperty<T = {}>(target: Attr | Text | IElement | Node
+  , appendProperties: T | object = {}): void {
   if (target.hasOwnProperty("__OG__")) {
     // @ts-ignore
     filterAppendProperties(target, appendProperties);
-    objectMerge((target as TElement).__OG__, appendProperties);
+    objectMerge((target as TElement).__OG__, appendProperties as object);
   } else {
     defineProperty(target, "__OG__", appendProperties, false, false, false);
   }

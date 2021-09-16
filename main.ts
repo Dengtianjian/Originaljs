@@ -21,6 +21,9 @@ class CEl extends OG.createElement() {
     // setTimeout(() => {
     //   this.obj.a.c = 2;
     // }, 5000);
+    // setInterval(() => {
+    //   this.obj.a.c = this.formatTime();
+    // }, 1000);
     console.timeLog("render");
     // setInterval(() => {
     //   this.user.name = this.formatTime();
@@ -126,7 +129,7 @@ class CEl extends OG.createElement() {
     // this.transitions.transitionName = "showA";
     this.obj.a.c = Date.now();
     console.log(this.obj.a.c);
-    
+
   }
   elhtml = "<h1>Hello Originaljs</h1>";
   updateData(...rest) {
