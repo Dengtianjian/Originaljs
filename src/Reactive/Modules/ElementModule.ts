@@ -1,8 +1,10 @@
 import { TElement, TReferrerElementOGProperties } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TRefRecord } from "../../Typings/RefTypings";
+import { TRefRecord, TRefs } from "../../Typings/RefTypings";
 import Ref from "../Ref";
 import Utils from "../../Utils";
+import Expression from "../Expression";
+import Transform from "../Transform";
 
 export default {
   reactive: {
@@ -58,5 +60,12 @@ export default {
 
       return refRecord;
     },
+    setUpdateView(refs: TRefs, target, propertyKey, value, properties) {
+      if (!refs.__texts) return;
+      refs.__texts.forEach(refItem => {
+        refItem.target.textContent = Transform.transformObjectToString(Expression.executeExpression(refItem.expressionInfo, properties)) as string;
+      });
+      return true;
+    }
   },
 } as TModuleOptions;

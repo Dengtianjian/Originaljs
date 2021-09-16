@@ -54,12 +54,18 @@ export type TRefTree = {
 }
 export type TRefs = {
   __els?: Map<symbol, TText>,
-  __attrs?: Map<symbol, TAttr>,
+  __attrs?: Map<symbol, {
+    target: TAttr,
+    expression: string
+  }>,
   __expressions?: Map<symbol, TExpressionItem>,
   __methods?: Map<symbol, TMethodBranch>,
   __dynamicElements?: Map<symbol, TDynamicElementBranch>,
   __fors?: Map<symbol, TForElementItem>,
-  __texts?: Map<symbol, TText>,
+  __texts?: Map<symbol, {
+    target: TText,
+    expressionInfo: TExpressionInfo
+  }>,
 }
 export type TRefMap = Map<string, TRefs>;
 export type TRefRecord = Record<string, TRefs>;
@@ -68,6 +74,11 @@ export type TRefInfo = {
   type: string,
   expressionInfo: TExpressionItem | null,
   refPropertyNames: string[][]
+}
+
+export type TExpressionInfo = {
+  propertyKeys: string[][],
+  expression: string
 }
 
 //* 新定义

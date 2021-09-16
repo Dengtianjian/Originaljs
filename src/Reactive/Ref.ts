@@ -2,11 +2,12 @@ import Reactive from ".";
 import Module from "../Module";
 import { RefRules } from "./Rules";
 import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
-import { TRefMap, TRefRecord, TRefs } from "../Typings/RefTypings";
+import { TExpressionInfo, TRefMap, TRefRecord, TRefs } from "../Typings/RefTypings";
 import Utils from "../Utils";
 import Parser from "./Parser";
 import Transform from "./Transform";
 import View from "./View";
+import Expression from "./Expression";
 
 function traverseNodes(target: TElement | TElement[], properties: ICustomElement): TRefRecord {
   const refRecord: TRefRecord = {};
@@ -90,15 +91,18 @@ function getExpression(sourceString: string, extract: boolean = true): string[] 
   return expressions;
 }
 
+const GlobalMatchPropertyKey: RegExp = new RegExp(RefRules.variableItem, "g");
 const ExtractGlobalPropertyKey: RegExp = new RegExp(RefRules.extractVariableName, "g");
-function getRefPropertyKey(expression: string, transformToArray: boolean = true): string[] | string[][] {
-  let propertyKeys: string[] | string[][] = expression.match(ExtractGlobalPropertyKey);
+function getRefPropertyKey(expression: string, extract: boolean = true, transformToArray: boolean = true, deduplication: boolean = true): string[] | string[][] {
+  let propertyKeys: string[] | string[][] = expression.match(extract ? ExtractGlobalPropertyKey : GlobalMatchPropertyKey);
   propertyKeys = propertyKeys.map(keyItem => {
     return keyItem.trim();
   });
-  propertyKeys = Array.from(new Set(propertyKeys));
+  if (deduplication) {
+    propertyKeys = Array.from(new Set(propertyKeys));
+  }
 
-  if (transformToArray) {
+  if (extract && transformToArray) {
     propertyKeys = propertyKeys.map(keyItem => {
       return Transform.transformPropertyKeyToArray(keyItem);
     })
@@ -119,7 +123,10 @@ function generateRefRecord(propertyKeys: string[], target: unknown, mapKey: symb
   switch (endPropertyKey) {
     case "__attrs":
     case "__texts":
-      endPropertyValue = target;
+      endPropertyValue = {
+        target,
+        expressionInfo: Expression.generateExpressionInfo((target as Attr | Text).textContent)
+      };
       break;
     case "__methods":
       endPropertyValue = {
