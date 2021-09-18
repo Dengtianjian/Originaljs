@@ -24,8 +24,10 @@ export default class Reactive {
 
     Ref.updateRefMap(refRecord, properties);
     PropertyProxy.setProxy(refRecord, properties, reactiveInstance);
+    reactiveInstance.inited = true;
   }
   refMap: TRefMap = new Map();
+  inited: boolean = false;
   constructor(target: TElement, public properties: ICustomElement) {
     let defineProperties: Record<string, any> = {
       reactive: this,

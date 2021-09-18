@@ -24,6 +24,11 @@ class CEl extends OG.createElement() {
     // setInterval(() => {
     //   this.obj.a.c = this.formatTime();
     // }, 1000);
+    // setInterval(() => {
+    //   this.users.push({
+    //     id: Date.now()
+    //   })
+    // }, 1000);
     console.timeLog("render");
     // setInterval(() => {
     //   this.user.name = this.formatTime();

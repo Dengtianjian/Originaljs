@@ -30,14 +30,15 @@ export type TDynamicElementBranch = {
 
 export type TForElementItem = {
   target: TElement,
-  refs: TRefInfo,
+  expressionInfo: TExpressionInfo,
   for: {
     indexName: string,
     itemName: string,
     keyName: string,
     template: string,
     propertyName: string,
-    els: Map<string, Element | ChildNode>
+    els: Map<string, Element | ChildNode>,
+    propertyKeyString: string
   }
 }
 

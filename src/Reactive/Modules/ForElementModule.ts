@@ -1,10 +1,16 @@
-import { TReferrerElementOGProperties } from "../../Typings/CustomElementTypings";
+import { TElement, TReferrerElementOGProperties } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TExpressionInfo, TRefRecord } from "../../Typings/RefTypings";
+import { TExpressionInfo, TForElementItem, TRefRecord } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
 import Err from "../../Utils/Err";
 import Expression from "../Expression";
+import Parser from "../Parser";
 import Ref from "../Ref";
+
+function replaceRef(template: string, searchValue: string, replaceValue: string): string {
+  template = template.replaceAll(new RegExp(`\{ *${searchValue} *\}`, "g"), replaceValue);
+  return template;
+}
 
 export default {
   reactive: {
@@ -38,6 +44,8 @@ export default {
         Err.throwError("The for element 'in' attribute value only one variable is allowed");
       }
       const propertyKeys: string[] = refs[0] as string[];
+      const propertyKeyString: string = propertyKeys.join(".");
+      const property: object = Utils.getObjectProperty(properties, propertyKeys);
 
       const forTemplate: string = target.innerHTML;
       const expressionInfo: TExpressionInfo = Expression.generateExpressionInfo(refString);
@@ -45,8 +53,16 @@ export default {
       const mapKey: symbol = Symbol(propertyKeys.join());
       refKeyMap.set(mapKey, propertyKeys);
       const refRecord: TRefRecord = Ref.generateRefRecord(propertyKeys, target, mapKey, {
-        forTemplate,
         target,
+        for: {
+          template: forTemplate,
+          itemName,
+          indexName,
+          keyName,
+          propertyName: refString,
+          els: new Map(),
+          propertyKeyString
+        },
         expressionInfo
       }, "__fors");
 
@@ -61,11 +77,33 @@ export default {
       });
       target.innerHTML = "";
 
+      let index: number = 0;
+      for (const key in property) {
+        index++;
+        target.innerHTML += replaceRef(forTemplate, itemName, `{${propertyKeyString}[${key}]}`);
+      }
+      Utils.objectMerge(refRecord, Ref.collectRef(Array.from(target.childNodes) as TElement[], properties, properties.__OG__.reactive));
+
       return refRecord;
     },
-    setUpdateView(refs, target) {
-      console.trace(target);
-      
+    setUpdateView(refs, target, propertyKey, value, properties) {
+      if (!refs.__fors || refs.__fors && propertyKey === "length") return true;
+      const fors: Map<symbol, TForElementItem> = refs.__fors;
+
+      for (const { 1: forItem } of fors) {
+        if (forItem.expressionInfo.propertyKeys[0].length === 1 && forItem.expressionInfo.propertyKeys[0][0] === propertyKey) {
+          continue;
+        }
+        const propertyHTML: string = replaceRef(forItem.for.template, forItem.for.itemName, `{${forItem.for.propertyKeyString}[${String(propertyKey)}]}`);
+        const els = Parser.parseDom(propertyHTML);
+        forItem.target.append(...els);
+        const refRecord: TRefRecord = Ref.collectRef(els as TElement[], properties, properties.__OG__.reactive);
+        for (const key in refRecord) {
+          properties.__OG__.reactive.refMap.set(key, refRecord[key]);
+        }
+        Ref.updateRefMap(refRecord, properties);
+      }
+
       return true;
     }
   }

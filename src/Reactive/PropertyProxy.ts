@@ -10,14 +10,12 @@ function recursionSetProxy(propertyKeys: string[], properties: ICustomElement, r
   if (!properties[propertyKey] === undefined) return;
 
   if (typeof properties[propertyKey] !== "object") {
-    properties[propertyKey] = properties[propertyKey];
     return;
   }
 
   recursionSetProxy(propertyKeys.slice(1), properties[propertyKey], reactiveInstance, [propertyKey]);
 
   if (properties[propertyKey].hasOwnProperty("__OG__")) return;
-
   Utils.defineOGProperty(properties[propertyKey], {
     propertyKeys: [...keys, propertyKey]
   });
@@ -26,8 +24,15 @@ function recursionSetProxy(propertyKeys: string[], properties: ICustomElement, r
     set(target: any, propertyKey: string | symbol, value: any, receiver: any): boolean {
       Reflect.set(target, propertyKey, value, receiver);
 
+      if (reactiveInstance.inited === false) {
+        return true;
+      }
       const propertyKeys: string[] = [...target.__OG__.propertyKeys, propertyKey];
-      const refs: TRefs = reactiveInstance.refMap.get(propertyKeys.join());
+      let refs: TRefs = reactiveInstance.refMap.get(propertyKeys.join());
+      if (refs === undefined) {
+        refs = reactiveInstance.refMap.get(propertyKeys.slice(0, propertyKeys.length - 1).join());
+        if (refs === undefined) return false;
+      }
 
       View.setUpdateView(refs, target, propertyKey, value, reactiveInstance.properties);
       return true;
