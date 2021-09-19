@@ -18,9 +18,9 @@ class CEl extends OG.createElement() {
     })
   }
   rendered() {
-    // setTimeout(() => {
-    //   this.obj.a.c = 2;
-    // }, 5000);
+    setTimeout(() => {
+      this.obj.a.c = 2;
+    }, 5000);
     // setInterval(() => {
     //   this.obj.a.c = this.formatTime();
     // }, 1000);
@@ -29,17 +29,17 @@ class CEl extends OG.createElement() {
     //     id: Date.now()
     //   })
     // }, 1000);
-    setTimeout(() => {
-      this.users.unshift(...[
-        {
-          id: 8
-        }, {
-          id: 9
-        }, {
-          id: 10
-        }
-      ])
-    }, 2000);
+    // setTimeout(() => {
+    //   this.users.push(...[
+    //     {
+    //       id: 8
+    //     }, {
+    //       id: 9
+    //     }, {
+    //       id: 10
+    //     }
+    //   ])
+    // }, 2000);
     // setTimeout(() => {
     //   this.users.push({
     //     id: Date.now()

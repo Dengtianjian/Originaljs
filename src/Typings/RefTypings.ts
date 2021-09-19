@@ -57,7 +57,7 @@ export type TRefs = {
   __els?: Map<symbol, TText>,
   __attrs?: Map<symbol, {
     target: TAttr,
-    expression: string
+    expressionInfo: TExpressionInfo
   }>,
   __expressions?: Map<symbol, TExpressionItem>,
   __methods?: Map<symbol, TMethodBranch>,

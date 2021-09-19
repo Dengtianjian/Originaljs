@@ -62,8 +62,7 @@ export default {
     },
     updateProperty(refs: TRefs, target, propertyKey, value, properties) {
       if (!refs.__texts) return;
-      // console.log(propertyKey,value);
-      
+
       refs.__texts.forEach(refItem => {
         refItem.target.textContent = Transform.transformObjectToString(Expression.executeExpression(refItem.expressionInfo, properties)) as string;
       });

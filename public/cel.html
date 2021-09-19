@@ -5,13 +5,13 @@
 </p>
 
 <div>{ obj.a.c }</div>
-<p>
+<p title="{obj.a.c}">
   { users }
   1 { {obj.a.c} + { obj.a.c } }1
 </p>
 
 <o-for item index in="{ users }">
-  <p>
+  <p title="{item}">
     { item }
   </p>
 </o-for>

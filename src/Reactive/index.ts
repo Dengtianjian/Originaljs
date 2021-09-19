@@ -2,13 +2,23 @@ import Module from "../Module";
 import { ICustomElement, TElement } from "../Typings/CustomElementTypings";
 import { TRefMap, TRefRecord } from "../Typings/RefTypings";
 import Utils from "../Utils";
+import AttrModule from "./Modules/AttrModule";
+import ConditionElementModule from "./Modules/ConditionElementModule";
+import DynamicElementModule from "./Modules/DynamicElementModule";
 import ElementModule from "./Modules/ElementModule";
 import ForElementModule from "./Modules/ForElementModule";
+import MethodModule from "./Modules/MethodModule";
+import TransitionElement from "./Modules/TransitionElement";
 import PropertyProxy from "./PropertyProxy";
 import Ref from "./Ref";
 
-Module.add("ForElementModule", ForElementModule);
+// Module.add("ConditionElement", ConditionElementModule);
+// Module.add("ForElementModule", ForElementModule);
+// Module.add("MethodModule", MethodModule);
+// Module.add("TransitionElementModule", TransitionElement);
+// Module.add("DynamicElementModule", DynamicElementModule);
 Module.add("ElementModule", ElementModule);
+Module.add("AttrModule", AttrModule);
 
 export default class Reactive {
   static observe(target: TElement | TElement[], properties: ICustomElement, reactiveInstance: Reactive) {

@@ -160,8 +160,21 @@ function updateRefMap(refRecord: TRefRecord, properties: ICustomElement) {
     const currentPropertyKey: string = propertyKeys[propertyKeys.length - 1];
     const value: any = target[currentPropertyKey];
 
-    Module.useAll("reactive.updateProperty",[refs, target, currentPropertyKey, value, properties]);
+    Module.useAll("reactive.updateProperty", [refs, target, currentPropertyKey, value, properties]);
   }
+}
+
+function generateRefRecords(target: Text | Attr, mapKey: symbol): TRefRecord {
+  const expressions: string[] = getExpression(target.textContent.trim(), false);
+  if (expressions.length === 0) return {};
+
+  const refRecord: TRefRecord = {};
+  expressions.forEach(expressionItem => {
+    const refPropertyKeys: string[] = getRefPropertyKey(expressionItem) as string[];
+
+    Utils.objectMerge(refRecord, generateRefRecord(refPropertyKeys, target, mapKey))
+  })
+  return refRecord;
 }
 
 export default {
@@ -171,5 +184,6 @@ export default {
   getExpression,
   getRefPropertyKey,
   generateRefRecord,
+  generateRefRecords,
   updateRefMap
 };
