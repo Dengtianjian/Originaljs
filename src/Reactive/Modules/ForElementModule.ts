@@ -86,14 +86,11 @@ export default {
 
       return refRecord;
     },
-    setUpdateView(refs, target, propertyKey, value, properties) {
-      if (!refs.__fors || refs.__fors && propertyKey === "length") return true;
+    setProperty(refs, target, propertyKey, value, properties, receiver){
+      if (!refs.__fors) return true;
       const fors: Map<symbol, TForElementItem> = refs.__fors;
-
+      
       for (const { 1: forItem } of fors) {
-        if (forItem.expressionInfo.propertyKeys[0].length === 1 && forItem.expressionInfo.propertyKeys[0][0] === propertyKey) {
-          continue;
-        }
         const propertyHTML: string = replaceRef(forItem.for.template, forItem.for.itemName, `{${forItem.for.propertyKeyString}[${String(propertyKey)}]}`);
         const els = Parser.parseDom(propertyHTML);
         forItem.target.append(...els);

@@ -20,7 +20,9 @@ export type TModuleHookNames = {
   "reactive.beforeUpdateElView";
   "reactive.beforeUpdateAttrView";
   "reactive.setUpdateView";
-  "reactive.deleteUpdateView";
+  "reactive.setProperty";
+  "reactive.updateProperty";
+  "reactive.deleteUpdate";
   "reactive.afterUpdatedElView";
   "reactive.afterUpdateAttrView";
   "reactive.afterUpdatedView";
@@ -50,8 +52,10 @@ export type TModuleOptions = {
     beforeUpdateView?: () => void;
     beforeUpdateElView?: () => void;
     beforeUpdateAttrView?: (attr: Attr, nodeValue: string, properties: TReferrerElement, refTree: TRefTree) => void;
-    setUpdateView?: (refs: TRefs, target: any, propertyKey: string | symbol, value: any, properties: ICustomElement) => boolean | null;
-    deleteUpdateView?: () => void;
+    setUpdateView?: (refs: TRefs, target: any, propertyKey: string | symbol, value: any, properties: ICustomElement, receiver: any) => boolean | null;
+    setProperty?: (refs: TRefs, target: any, propertyKey: string | symbol, value: any, properties: ICustomElement, receiver: any) => void;
+    updateProperty?: (refs: TRefs, target: any, propertyKey: string | symbol, value: any, properties: ICustomElement, receiver: any) => void;
+    deleteProperty?: () => void;
     afterUpdatedElView?: () => void;
     afterUpdateAttrView?: (attr: Attr, newValue: string, properties: TReferrerElement, refTree: TRefTree) => void;
     afterUpdatedView?: () => void;

@@ -29,6 +29,22 @@ class CEl extends OG.createElement() {
     //     id: Date.now()
     //   })
     // }, 1000);
+    setTimeout(() => {
+      this.users.unshift(...[
+        {
+          id: 8
+        }, {
+          id: 9
+        }, {
+          id: 10
+        }
+      ])
+    }, 2000);
+    // setTimeout(() => {
+    //   this.users.push({
+    //     id: Date.now()
+    //   })
+    // }, 1000);
     console.timeLog("render");
     // setInterval(() => {
     //   this.user.name = this.formatTime();

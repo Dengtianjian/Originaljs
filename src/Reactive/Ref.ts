@@ -160,7 +160,7 @@ function updateRefMap(refRecord: TRefRecord, properties: ICustomElement) {
     const currentPropertyKey: string = propertyKeys[propertyKeys.length - 1];
     const value: any = target[currentPropertyKey];
 
-    View.setUpdateView(refs, target, currentPropertyKey, value, properties);
+    Module.useAll("reactive.updateProperty",[refs, target, currentPropertyKey, value, properties]);
   }
 }
 

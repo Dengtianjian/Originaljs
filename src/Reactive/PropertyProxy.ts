@@ -1,4 +1,5 @@
 import Reactive from ".";
+import Module from "../Module";
 import { ICustomElement } from "../Typings/CustomElementTypings";
 import { TRefRecord, TRefs } from "../Typings/RefTypings";
 import Utils from "../Utils";
@@ -22,11 +23,10 @@ function recursionSetProxy(propertyKeys: string[], properties: ICustomElement, r
 
   properties[propertyKey] = new Proxy(properties[propertyKey], {
     set(target: any, propertyKey: string | symbol, value: any, receiver: any): boolean {
-      Reflect.set(target, propertyKey, value, receiver);
+      const isHas: boolean = target.hasOwnProperty(propertyKey);
+      const result: boolean = Reflect.set(target, propertyKey, value, receiver);
+      if (result === false) return false;
 
-      if (reactiveInstance.inited === false) {
-        return true;
-      }
       const propertyKeys: string[] = [...target.__OG__.propertyKeys, propertyKey];
       let refs: TRefs = reactiveInstance.refMap.get(propertyKeys.join());
       if (refs === undefined) {
@@ -34,7 +34,11 @@ function recursionSetProxy(propertyKeys: string[], properties: ICustomElement, r
         if (refs === undefined) return false;
       }
 
-      View.setUpdateView(refs, target, propertyKey, value, reactiveInstance.properties);
+      if (isHas) {
+        Module.useAll("reactive.updateProperty", [refs, target, propertyKey, value, reactiveInstance.properties, receiver]);
+      } else {
+        Module.useAll("reactive.setProperty", [refs, target, propertyKey, value, reactiveInstance.properties, receiver]);
+      }
       return true;
     },
     deleteProperty(target: any, propertyKey: string | symbol): boolean {
