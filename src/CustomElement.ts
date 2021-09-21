@@ -19,7 +19,8 @@ export default class CustomElement extends HTMLElement implements ICustomElement
     transitions: {},
     el: null,
     slots: {},
-    props: []
+    props: [],
+    refMap: {}
   } as {
     transitions: Record<string, Transition>;
     el: IElement;

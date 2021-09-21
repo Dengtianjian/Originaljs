@@ -1,7 +1,7 @@
 import CustomElement from "../CustomElement";
 import Reactive from "../Reactive";
 import Transition from "../Transition";
-import { TReferrerPropertyRef, TRefMap, TRefTree } from "./RefTypings";
+import { TReferrerPropertyRef, TRefMap, TRefs, TRefTree } from "./RefTypings";
 import { ITransition, TCSSStyleDeclaration } from "./TransitionTypings";
 
 export type TOG = {
@@ -11,6 +11,8 @@ export type TOG = {
   refTree: TRefTree;
   propertiesKeyPath: string[];
   properties: Record<string, any>;
+  refs: TRefs,
+  refMap: TRefMap
 };
 
 export interface ICustomElement extends HTMLElement {
@@ -19,6 +21,7 @@ export interface ICustomElement extends HTMLElement {
     el: IElement;
     slots: Record<string, Node[]>;
     props: string[];
+    refMap: TRefMap
   } & TOG;
   connected(): void;
   disconnected(): void;

@@ -1,15 +1,14 @@
-import Reactive from "..";
-import { ICustomElement, IElement, TElement, TReferrerElementOGProperties } from "../../Typings/CustomElementTypings";
+import { ICustomElement, TElement, TReferrerElementOGProperties } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TDynamicElementBranch, TDynamicElementContentTypes, TRefInfo, TRefTree } from "../../Typings/RefTypings";
+import { TDynamicElementBranch, TDynamicElementContentTypes, TExpressionInfo, TRefInfo, TRefRecord, TRefs } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
+import Expression from "../Expression";
 import Parser from "../Parser";
 import Ref from "../Ref";
-import { RefRules } from "../Rules";
 
 export default {
   reactive: {
-    collecElRef(target: TElement, roolEl: ICustomElement): TRefTree {
+    collecElRef(target: TElement, roolEl: ICustomElement): TRefRecord {
       if (target.tagName !== "O-EL") return {};
 
       const attributes: NamedNodeMap = target.attributes;
@@ -17,8 +16,7 @@ export default {
       if (!attr) return {};
       const contentType: keyof TDynamicElementContentTypes = attr.nodeName as keyof TDynamicElementContentTypes;
       const attrValue: string = attr.nodeValue;
-      let refTree: TRefTree = {};
-      const endBranch: Record<string, any> = {};
+      let refRecord: TRefRecord = {};
       switch (contentType) {
         case "html":
           if (Ref.isRef(attrValue) === false) {
@@ -29,67 +27,67 @@ export default {
         case "value":
           if (Ref.isRef(attrValue) === false) {
             //* 不是数据绑定，直渲染
-            target.innerHTML = Parser.optimizeRefKey(attrValue);
-            Reactive.collectEl(Array.from(target.childNodes) as TElement[], roolEl, roolEl.__OG__.reactive); //* 收集元素下的子元素数据绑定依赖
+            // target.innerHTML = Parser.optimizeRefKey(attrValue);
+            // Utils.objectMerge(refRecord, Ref.collectRef(Array.from(target.childNodes) as TElement[], roolEl, roolEl.__OG__.reactive)); //* 收集元素下的子元素数据绑定依赖
           }
           break;
         case "is":
-          endBranch['showEl'] = target;
+          if (Ref.isRef(attrValue) === false) {
+            const newEl = document.createElement(attrValue.trim());
+            target.parentNode.insertBefore(newEl, target);
+            target.parentNode.removeChild(target);
+          }
           break;
       }
+      const refPropertyKeyMap: Map<symbol, string[]> = new Map();
       if (Ref.isRef(attrValue)) {
-        const branchKey: symbol = Symbol();
-        const refInfo: TRefInfo = Ref.parseTemplateGenerateRefInfo(attrValue);
-        refTree = Ref.generateRefTreeByRefString(attrValue, attr, branchKey, {
-          updateRef: true,
-          attr,
-          target,
-          contentType,
-          refInfo,
-          ...endBranch
-        }, "__dynamicElements");
-
-        const refPropertyKeyMap: Map<symbol, string[] | string[][]> = new Map();
-        if (refInfo.type === "expression") {
-          refPropertyKeyMap.set(branchKey, refInfo.expressionInfo.refPropertyNames);
-        } else {
-          refPropertyKeyMap.set(branchKey, refInfo.refPropertyNames);
-        }
-
-        Utils.defineOGProperty(target, {
-          hasRefs: true,
-          refTree: roolEl.__OG__.reactive.refTree,
-          refs: {
-            "__dynamicElements": refPropertyKeyMap
-          }
-        } as TReferrerElementOGProperties);
+        const mapKey: symbol = Symbol();
+        const expressionInfo: TExpressionInfo = Expression.generateExpressionInfo(attrValue);
+        expressionInfo.propertyKeys.forEach(propertyKeyGroup => {
+          Utils.objectMerge(refRecord, Ref.generateRefRecord<TDynamicElementBranch>(propertyKeyGroup, target, mapKey, {
+            target: attr,
+            ownerElement: attr.ownerElement,
+            expressionInfo,
+            contentType,
+            showEl: target,
+          }, "__dynamicElements"));
+          refPropertyKeyMap.set(mapKey, propertyKeyGroup);
+        });
       }
 
-      Utils.defineOGProperty(target, {
+      Utils.defineOGProperty<TReferrerElementOGProperties>(target, {
         skipAttrCollect: true,
         skipChildNodesCollect: true,
-        properties: roolEl
+        properties: roolEl,
+        refs: {
+          __dynamicElements: refPropertyKeyMap
+        }
       });
 
       target.removeAttribute(contentType);
-      return refTree;
+      return refRecord;
     },
-    setUpdateView(refTree: TRefTree, value: any, properties: Record<string, any>) {
-      if (refTree?.__dynamicElements === undefined) return;
-      const dynamicElements: Map<symbol, TDynamicElementBranch> = refTree.__dynamicElements;
+    updateProperty(refs: TRefs, target: any, propertyKey: string | symbol, value: any, properties: ICustomElement): void {
+      if (!refs.__dynamicElements) return;
+      const dynamicElements: Map<symbol, TDynamicElementBranch> = refs.__dynamicElements;
 
       dynamicElements.forEach(dynamicElementInfo => {
-        const refPropertyValue: any = Ref.parenRefInfo(dynamicElementInfo.refInfo, properties.__OG__.properties);
+        const refPropertyValue: any = Expression.executeExpression(dynamicElementInfo.expressionInfo, properties);
         switch (dynamicElementInfo.contentType) {
           case "html":
-            dynamicElementInfo.target.innerHTML = refPropertyValue;
+            dynamicElementInfo.ownerElement.innerHTML = refPropertyValue;
             break;
           case "value":
-            dynamicElementInfo.target.childNodes.forEach(childNode => {
-              Ref.clearElRef(childNode as TElement, true);
+            dynamicElementInfo.ownerElement.childNodes.forEach(childNode => {
+              Ref.clearElRef(childNode as TElement,properties.__OG__.reactive.refMap);
             });
-            dynamicElementInfo.target.innerHTML = Parser.optimizeRefKey(refPropertyValue);
-            Reactive.collectEl(Array.from(dynamicElementInfo.target.childNodes) as TElement[], properties.__OG__.properties, properties.__OG__.reactive);
+            dynamicElementInfo.ownerElement.innerHTML = Parser.optimizeRefKey(refPropertyValue);
+            const refRecord: TRefRecord = Ref.collectRef(Array.from(dynamicElementInfo.ownerElement.childNodes) as TElement[], properties, properties.__OG__.reactive);
+
+            Ref.updateRefMap(refRecord, properties);
+            for (const key in refRecord) {
+              properties.__OG__.reactive.refMap.set(key, refRecord[key]);
+            }
             break;
           case "is":
             const newEl: Element = document.createElement(refPropertyValue);

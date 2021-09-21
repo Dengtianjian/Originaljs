@@ -16,7 +16,7 @@ import Ref from "./Ref";
 // Module.add("ForElementModule", ForElementModule);
 Module.add("MethodModule", MethodModule);
 Module.add("TransitionElementModule", TransitionElement);
-// Module.add("DynamicElementModule", DynamicElementModule);
+Module.add("DynamicElementModule", DynamicElementModule);
 Module.add("ElementModule", ElementModule);
 Module.add("AttrModule", AttrModule);
 

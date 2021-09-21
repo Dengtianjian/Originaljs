@@ -75,7 +75,7 @@ class CEl extends OG.createElement() {
     show: false,
     number: 1,
     tagName: "o-table",
-    staticHtml: `<p>{msg}</p>`,
+    staticHtml: `<p>{obj.a.c}</p>`,
     staticHTML2: "<h1>Hello static HTML2</h1>"
   };
   show = false;
@@ -84,13 +84,13 @@ class CEl extends OG.createElement() {
     this.display.number = number;
   }
   updateTagName() {
-    // this.display.tagName = "o-cell";
-    this.transitions.transitionName="show1";
-    if (this.users[3]) {
-      setInterval(() => {
-        this.users[3].id = this.formatTime();
-      }, 1000);
-    }
+    this.display.tagName = "o-cell";
+    // this.transitions.transitionName="show1";
+    // if (this.users[3]) {
+    //   setInterval(() => {
+    //     this.users[3].id = this.formatTime();
+    //   }, 1000);
+    // }
 
   }
   users = [{
@@ -104,8 +104,9 @@ class CEl extends OG.createElement() {
     //   id: Date.now()
     // });
     // this.obj.a.c = Date.now();
-    // this.display.staticHTML2 = "Hell world:" + Math.round(Math.random() * 10000);
-    // this.display.staticHtml = "{count}";
+    // this.display.staticHtml = "Hell world:" + Math.round(Math.random() * 10000);
+  
+    this.display.staticHtml = "{count}";
     // Ref.clearElRef(this.__OG__.el.querySelector(".ref"),true);
     // fetch("./staticHTML.html").then(res => res.text()).then(res => {
     //   this.display.staticHtml = res;
@@ -114,7 +115,7 @@ class CEl extends OG.createElement() {
     // this.useTransitionPreset("fadeHide", this.transitions.key);
     // return;
     // this.useTransitionPreset("fadeHide");
-    // return;
+    return;
     this.transitionStop = this.transition(this.transitions.transitionName).step({
       transform: "translateX(0px)",
       transitionDuration: "0.3s",
@@ -149,8 +150,8 @@ class CEl extends OG.createElement() {
   updateStaticHTML2(number,arrs,objac) {
     // this.display.staticHTML2 = "hhhhhhhh";
     // this.transitions.transitionName = "showA";
-    // this.obj.a.c = Date.now();
-    console.log(number,objac);
+    this.obj.a.c = Date.now();
+    // console.log(number,objac);
     
   }
   elhtml = "<h1>Hello Originaljs</h1>";
@@ -216,7 +217,7 @@ class OTable extends OG.createElement() {
 class OCell extends OG.createElement() {
   constructor() {
     super();
-    this.render("O-CELL");
+    this.render("This is O-CELL el");
   }
 }
 

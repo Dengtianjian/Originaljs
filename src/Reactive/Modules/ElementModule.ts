@@ -47,7 +47,7 @@ export default {
         Utils.defineOGProperty<TReferrerElementOGProperties>(newText, {
           properties,
           refs: {
-            "__els": refKeyMap
+            "__texts": refKeyMap
           },
         });
 

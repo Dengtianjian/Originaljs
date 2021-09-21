@@ -61,7 +61,7 @@ function collectRef(target: TElement | TElement[], properties: ICustomElement, r
  * @returns true=是变量或者表达式，false=普通字符串
  */
 function isRef(refString: string): boolean {
-  return RefRules.refItem.test(refString);
+  return RefRules.matchRefItem.test(refString);
 }
 
 const GlobalMatchRefs: RegExp = new RegExp(RefRules.refItem, "g");
@@ -171,6 +171,25 @@ function generateRefRecords(target: Text | Attr, mapKey: symbol): TRefRecord {
   return refRecord;
 }
 
+function clearElRef(target: TElement, refMap: TRefMap, deep: boolean = true): void {
+  if (target.childNodes.length > 0) {
+    target.childNodes.forEach(childNode => {
+      clearElRef(childNode as TElement, refMap);
+    })
+  }
+
+  if (!target.__OG__ || !target.__OG__.refs) return;
+
+  const refs: TRefs = target.__OG__.refs;
+  for (const refType in refs) {
+    const refPartMap = refs[refType];
+    refPartMap.forEach((refItem, mapKey) => {
+      const ref = refMap.get(refItem.join());
+      ref[refType].delete(mapKey);
+    })
+  }
+}
+
 export default {
   collectRef,
   isRef,
@@ -179,5 +198,6 @@ export default {
   getRefPropertyKey,
   generateRefRecord,
   generateRefRecords,
-  updateRefMap
+  updateRefMap,
+  clearElRef
 };

@@ -18,9 +18,9 @@ export type TDynamicElementContentTypes = {
   is: 3
 };
 export type TDynamicElementBranch = {
-  attr: Attr,
-  target: TElement,
-  refInfo: TRefInfo,
+  target: Attr,
+  ownerElement: TElement,
+  expressionInfo: TExpressionInfo,
   contentType: keyof TDynamicElementContentTypes | string,
   showEl?: Element
 }
