@@ -85,6 +85,7 @@ class CEl extends OG.createElement() {
   }
   updateTagName() {
     // this.display.tagName = "o-cell";
+    this.transitions.transitionName="show1";
     if (this.users[3]) {
       setInterval(() => {
         this.users[3].id = this.formatTime();
@@ -99,9 +100,9 @@ class CEl extends OG.createElement() {
   }];
   UpdateHtml() {
     // this.users[0].id = 6;
-    this.users.push({
-      id: Date.now()
-    });
+    // this.users.push({
+    //   id: Date.now()
+    // });
     // this.obj.a.c = Date.now();
     // this.display.staticHTML2 = "Hell world:" + Math.round(Math.random() * 10000);
     // this.display.staticHtml = "{count}";
@@ -113,7 +114,7 @@ class CEl extends OG.createElement() {
     // this.useTransitionPreset("fadeHide", this.transitions.key);
     // return;
     // this.useTransitionPreset("fadeHide");
-    return;
+    // return;
     this.transitionStop = this.transition(this.transitions.transitionName).step({
       transform: "translateX(0px)",
       transitionDuration: "0.3s",

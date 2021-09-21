@@ -30,14 +30,14 @@ export default {
       });
       return refRecord;
     },
-    updateProperty(refs, target, propertyKey, value, properties): void {
+    updateProperty(refs, target: TAttr, propertyKey, value, properties): void {
       if (refs?.__attrs === undefined) return;
 
       refs.__attrs.forEach(attr => {
-        Module.useAll("reactive.beforeUpdateAttrView", [attr, attr.target.nodeValue, properties, refs]);
+        Module.useAll("reactive.beforeUpdateAttrView", [attr.target, attr.target.nodeValue, properties, refs]);
         // @ts-ignore 可以存放number类型的 // TODO 如果是Props就不转换为字符串
         attr.target.textContent = Transform.transformObjectToString(Expression.executeExpression(attr.expressionInfo, properties));
-        Module.useAll("reactive.afterUpdateAttrView", [attr, value, properties, refs]);
+        Module.useAll("reactive.afterUpdateAttrView", [attr.target, value, properties, refs]);
       });
     },
   }
