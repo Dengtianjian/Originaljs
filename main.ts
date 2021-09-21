@@ -145,12 +145,12 @@ class CEl extends OG.createElement() {
     transitionName: "fadeHide",
     key: "count"
   }
-  updateStaticHTML2 = () => {
+  updateStaticHTML2(number,arrs,objac) {
     // this.display.staticHTML2 = "hhhhhhhh";
     // this.transitions.transitionName = "showA";
-    this.obj.a.c = Date.now();
-    console.log(this.obj.a.c);
-
+    // this.obj.a.c = Date.now();
+    console.log(number,objac);
+    
   }
   elhtml = "<h1>Hello Originaljs</h1>";
   updateData(...rest) {

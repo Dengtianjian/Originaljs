@@ -1,17 +1,16 @@
 import { ICustomElement, TElement, TReferrerElementOGProperties } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TMethodBranch, TRefTree } from "../../Typings/RefTypings";
+import { TExpressionInfo, TMethodBranch, TMethodRef, TRefRecord, TRefs, TRefTree } from "../../Typings/RefTypings";
 import { MethodRules, RefRules } from "../Rules";
 import Parser from "../Parser";
 import Utils from "../../Utils";
 import Ref from "../Ref";
-import Transform from "../Transform";
 import Expression from "../Expression";
 import Err from "../../Utils/Err";
 
 const GlobalMatchMethodName: RegExp = new RegExp(MethodRules.MatchMethodName, "g");
 
-function bindMethod(methodItem: TMethodBranch, properties: Record<string, any>) {
+function bindMethod(methodItem: TMethodBranch, properties: ICustomElement) {
   if (!properties[methodItem.methodName]) {
     Err.error(`Method ${methodItem.methodName} is not define`);
     return;
@@ -21,17 +20,10 @@ function bindMethod(methodItem: TMethodBranch, properties: Record<string, any>) 
     return;
   }
 
-  //* 引用参数转换
+  //* 参数转换
   if (methodItem.refParamsMap.size > 0) {
     methodItem.refParamsMap.forEach((refParamItem, paramIndex) => {
-      methodItem.params[paramIndex] = Transform.transformObjectToString(Utils.getObjectProperty(properties, refParamItem));
-    })
-  }
-
-  //* 表达式参数转换
-  if (methodItem.expressionParamMap.size > 0) {
-    methodItem.expressionParamMap.forEach((expressionItem, paramIndex) => {
-      methodItem.params[paramIndex] = Transform.transformObjectToString(Expression.executeExpression(expressionItem.expression, properties, expressionItem.params));
+      methodItem.params[paramIndex] = Expression.executeExpression(refParamItem, properties);
     })
   }
 
@@ -39,18 +31,18 @@ function bindMethod(methodItem: TMethodBranch, properties: Record<string, any>) 
     properties[methodItem.methodName].apply(properties, [...methodItem.params, event, methodItem.ownerElement]);
   }
 
-  //* 移除旧的监听事件
+  //   //* 移除旧的监听事件
   if (methodItem.listener !== null) {
     methodItem.ownerElement.removeEventListener(methodItem.eventType, methodItem.listener);
   }
-  //* 监听元素事件
+  //   //* 监听元素事件
   methodItem.ownerElement.addEventListener(methodItem.eventType, listener);
   methodItem.listener = listener;
 }
 
 export default {
   reactive: {
-    collectAttrRef(target: Attr, properties: ICustomElement): TRefTree {
+    collectAttrRef(target: Attr, properties: ICustomElement): TRefRecord {
       if (target.ownerElement === null) return {};
       if (MethodRules.OnAttributeName.test(target.nodeName) === false || MethodRules.MethodNameAttibuteValue.test(target.nodeValue) === false) return {};
 
@@ -60,98 +52,68 @@ export default {
       const eventType: string = target.nodeName.match(MethodRules.MethodType)[0];
       if (!eventType || !methodNames) return {};
 
-      const refTree: TRefTree = {};
+      const refRecord: TRefRecord = {};
 
       const ownerElement: HTMLElement = target.ownerElement as HTMLElement;
       ownerElement[target.nodeName] = null; //* 清除已有方法
 
-      const refPropertyKeyMap: Map<symbol, string[][]> = new Map();
-      Utils.defineOGProperty(ownerElement, {
-        methods: new Map(),
-        refs: {
-          "__methods": refPropertyKeyMap
-        },
-        updateRef: true,
-      } as TReferrerElementOGProperties<{ methods: Map<symbol, TMethodBranch> }>);
+      const methodMap: Map<symbol, TMethodBranch> = new Map();
       for (let methodName of methodNames) {
         let paramString = methodName.match(MethodRules.MethodParams);
         let params: string[] = [];
-        const branchKey: symbol = Symbol();
-
-        let refParamsMap: Map<number, string[]> = new Map();
-        const expressionParamMap: Map<number, {
-          expression: string, params: string[][]
-        }> = new Map();
-        const refExpressionParams: string[][] = [];
+        const mapKey: symbol = Symbol(`${eventType}:${methodName}`);
+        const refParamsMap: Map<number, TExpressionInfo> = new Map();
 
         if (paramString) {
           params = Parser.parseMethodParams(paramString[0]);
-          params.forEach((param, index) => {
-            if (RefRules.refItem.test(param)) {
-              params[index] = param = param.match(RefRules.extractRefItem)[0];
+          for (let index = 0; index < params.length; index++) {
+            const param = params[index];
+            const paramRefPropertyKeys: string[][] = Ref.getRefPropertyKey(param) as string[][];
+            if (paramRefPropertyKeys.length === 0) continue;
 
-              if (Expression.isExpression(`{ ${param} }`)) {
-                const params: string[][] = Ref.collecRef(param) as string[][]
-                expressionParamMap.set(index, {
-                  expression: Expression.handleExpressionRef(`{ ${param} }`).expression,
-                  params
-                });
-                refExpressionParams.push(...params);
-              } else {
-                refParamsMap.set(index, Transform.transformPropertyNameToArray(param));
-              }
-            }
-          });
+            const expressionInfo: TExpressionInfo = Expression.generateExpressionInfo(param);
+            Utils.objectMerge(refRecord, Ref.generateRefRecord<TMethodRef>(paramRefPropertyKeys[0], ownerElement, mapKey, {
+              mapKey,
+              expressionInfo,
+              ownerElement
+            }, "__methods"));
+            refParamsMap.set(index, expressionInfo);
+          }
         }
 
         let extractMethodName: string[] | string = methodName.match(MethodRules.MethodName);
         extractMethodName = extractMethodName ? extractMethodName[0] : null;
-        const branch: TMethodBranch = {
-          branchKey,
+        const methodItem: TMethodBranch = {
+          mapKey,
           params,
           refParamsMap,
-          expressionParamMap,
           listener: null,
           eventType,
           methodName: extractMethodName,
           ownerElement: ownerElement as TElement,
           target
         }
-        // @ts-ignore
-        ownerElement.__OG__.methods.set(branchKey, branch);
+        methodMap.set(mapKey, methodItem);
 
-        //* 没有响应式的参数方法先绑定
-        if (refParamsMap.size === 0 && expressionParamMap.size === 0) {
-          bindMethod(branch, properties);
-        } else {
-          let params: string[][] = Array.from(refParamsMap.values());
-          params.push(...refExpressionParams);
-
-          //* 去重
-          const paramString: string[] = params.map(item => {
-            return item.toString();
-          });
-          params = Array.from(new Set(paramString)).map(item => {
-            return item.split(",");
-          });
-
-          refPropertyKeyMap.set(branchKey, params);
-
-          Utils.objectMerge(refTree, Ref.generateRefTreeByRefString(methodName, target, branchKey, {
-            branchKey,
-            ownerElement
-          }, "__methods"));
+        if (params.length === 0) {
+          bindMethod(methodItem, properties);
         }
       }
+
+      Utils.defineOGProperty<TReferrerElementOGProperties>(ownerElement, {
+        refs: {
+          "__methods": methodMap
+        },
+      });
       ownerElement.removeAttribute(target.nodeName); //* 移除属性
 
-      return refTree;
+      return refRecord;
     },
-    setUpdateView(refTree: TRefTree, value: any, properties: ICustomElement): void {
-      if (refTree?.__methods === undefined) return;
+    updateProperty(refs: TRefs, target: any, propertyKey: string | symbol, value: any, properties: ICustomElement) {
+      if (refs?.__methods === undefined) return;
 
-      refTree.__methods.forEach(methodItem => {
-        bindMethod(methodItem.ownerElement.__OG__.methods.get(methodItem.branchKey), properties.__OG__.properties);
+      refs.__methods.forEach((methodItem, mapKey) => {
+        bindMethod(methodItem.ownerElement.__OG__.refs.__methods.get(mapKey), properties);
       });
     }
   }

@@ -2,12 +2,9 @@ import { TAttr, TElement, TText } from "./CustomElementTypings";
 import { TExpressionItem } from "./ExpressionTypings";
 
 export type TMethodBranch = {
-  branchKey: symbol,
+  mapKey: symbol,
   params: string[] | number[],
-  refParamsMap: Map<number, string[]>,
-  expressionParamMap: Map<number, {
-    expression: string, params: string[][]
-  }>,
+  refParamsMap: Map<number, TExpressionInfo>,
   target: Attr,
   eventType: string,
   methodName: string,
@@ -42,6 +39,12 @@ export type TForElementItem = {
   }
 }
 
+export type TMethodRef = {
+  expressionInfo: TExpressionInfo,
+  ownerElement: TElement,
+  mapKey: symbol
+}
+
 export type TRefBracnhItem = {
 
 };
@@ -60,7 +63,7 @@ export type TRefs = {
     expressionInfo: TExpressionInfo
   }>,
   __expressions?: Map<symbol, TExpressionItem>,
-  __methods?: Map<symbol, TMethodBranch>,
+  __methods?: Map<symbol, TMethodRef>,
   __dynamicElements?: Map<symbol, TDynamicElementBranch>,
   __fors?: Map<symbol, TForElementItem>,
   __texts?: Map<symbol, {

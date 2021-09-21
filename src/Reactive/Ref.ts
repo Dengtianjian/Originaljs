@@ -111,7 +111,7 @@ function getRefPropertyKey(expression: string, extract: boolean = true, transfor
   return propertyKeys;
 }
 
-function generateRefRecord(propertyKeys: string[], target: unknown, mapKey: symbol, endPropertyValue: any = {}, endPropertyKey?: string): TRefRecord {
+function generateRefRecord<T = {}>(propertyKeys: string[], target: unknown, mapKey: symbol, endPropertyValue: T | {} = {}, endPropertyKey?: string): TRefRecord {
   if (!endPropertyKey) {
     if (target instanceof Attr) {
       endPropertyKey = "__attrs";
@@ -127,12 +127,6 @@ function generateRefRecord(propertyKeys: string[], target: unknown, mapKey: symb
         target,
         expressionInfo: Expression.generateExpressionInfo((target as Attr | Text).textContent)
       };
-      break;
-    case "__methods":
-      endPropertyValue = {
-        ...endPropertyValue,
-        target
-      }
       break;
   }
 
