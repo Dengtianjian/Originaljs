@@ -57,7 +57,7 @@ export default {
       for (const newText of newTextChildNodes) {
         parentNode.insertBefore(newText, target);
       }
-
+      
       return refRecord;
     },
     updateProperty(refs: TRefs, target, propertyKey, value, properties) {

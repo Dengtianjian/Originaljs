@@ -123,12 +123,13 @@ export default {
         conditionItem.parentNode.removeChild(showConditionEl.shadow);
       }
 
-      // const refRecord: TRefRecord = Ref.collectRef(Array.from(showConditionEl.target.childNodes) as TElement[], properties, properties.__OG__.reactive);
-      // Ref.updateRefMap(refRecord, properties);
+      const refRecord: TRefRecord = Ref.collectRef(Array.from(showConditionEl.target.childNodes) as TElement[], properties, properties.__OG__.reactive);
+      Ref.updateRefMap(refRecord, properties);
       // Utils.objectMerge(properties.__OG__.reactive.refMap, refRecord);
-      // for (const propertyKey in refRecord) {
-      //   properties.__OG__.reactive.refMap.set(propertyKey,refRecord)
-      // }
+      // TODO BUG 合并到refMap问题
+      for (const propertyKey in refRecord) {
+        properties.__OG__.reactive.refMap.set(propertyKey,refRecord[propertyKey])
+      }
 
       conditionItem.current = showIndex;
     }
