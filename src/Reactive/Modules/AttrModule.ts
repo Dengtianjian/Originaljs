@@ -14,7 +14,7 @@ export default {
       if (!target.nodeValue) return {};
       if (RefRules.refItem.test(target.nodeValue) === false) return {};
       if (MethodRules.OnAttributeName.test(target.nodeName)) return {};
-      if (!Ref.isRef(target.nodeValue)) return {};
+      if (!Ref.hasRef(target.nodeValue)) return {};
 
       const mapKey: symbol = Symbol();
       const refRecord: TRefRecord = Ref.generateRefRecords(target, mapKey);

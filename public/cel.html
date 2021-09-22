@@ -1,7 +1,17 @@
 <p>
   <button onclick="UpdateHtml">update users</button>
-  <button onclick="updateTagName">update users any</button>
+  <button onclick="updateNumber">updateNumber</button>
   <button onclick="updateStaticHTML2('{{obj.a.c} + 2}','{ users }','{ obj.a.c }')">update obj.a.c</button>
 </p>
-
-<o-el value="{display.staticHtml}"></o-el>
+<p>
+  {obj.a.c}
+</p>
+<o-if condition="{ {obj.a.c}===1 }">
+  o-if {display.number} 
+</o-if>
+<o-else-if condition="{ {obj.a.c}===2 }">
+  o-else-if 
+</o-else-if>
+<o-else>
+  o-else
+</o-else>

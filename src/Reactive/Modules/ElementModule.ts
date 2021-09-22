@@ -16,7 +16,7 @@ export default {
     ): TRefRecord {
       if (target.nodeType !== 3 || target.textContent === "") return {};
       if (target.__OG__ && target.__OG__.elementCollected) return {};
-      if (Ref.isRef(target.textContent) === false) return {};
+      if (Ref.hasRef(target.textContent) === false) return {};
 
       const expressions: string[] = Ref.getExpression(target.textContent.trim(), false);
       if (expressions.length === 0) return {};

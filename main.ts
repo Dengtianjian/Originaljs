@@ -67,10 +67,10 @@ class CEl extends OG.createElement() {
   };
   obj = {
     a: {
-      c: 8
+      c: 1
     }
   };
-  count = 888;
+  count = 1;
   display = {
     show: false,
     number: 1,
@@ -81,7 +81,7 @@ class CEl extends OG.createElement() {
   show = false;
   transitionStop = null;
   updateNumber(number) {
-    this.display.number = number;
+    this.display.number = Date.now();
   }
   updateTagName() {
     this.display.tagName = "o-cell";
@@ -103,10 +103,10 @@ class CEl extends OG.createElement() {
     // this.users.push({
     //   id: Date.now()
     // });
-    // this.obj.a.c = Date.now();
+    this.obj.a.c = this.obj.a.c === 1 ? 2 : this.obj.a.c === 2 ? 3 : 1;
     // this.display.staticHtml = "Hell world:" + Math.round(Math.random() * 10000);
-  
-    this.display.staticHtml = "{count}";
+
+    // this.display.staticHtml = "{count}";
     // Ref.clearElRef(this.__OG__.el.querySelector(".ref"),true);
     // fetch("./staticHTML.html").then(res => res.text()).then(res => {
     //   this.display.staticHtml = res;
@@ -147,12 +147,12 @@ class CEl extends OG.createElement() {
     transitionName: "fadeHide",
     key: "count"
   }
-  updateStaticHTML2(number,arrs,objac) {
+  updateStaticHTML2(number, arrs, objac) {
     // this.display.staticHTML2 = "hhhhhhhh";
     // this.transitions.transitionName = "showA";
     this.obj.a.c = Date.now();
     // console.log(number,objac);
-    
+
   }
   elhtml = "<h1>Hello Originaljs</h1>";
   updateData(...rest) {

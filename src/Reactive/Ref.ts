@@ -63,6 +63,9 @@ function collectRef(target: TElement | TElement[], properties: ICustomElement, r
 function isRef(refString: string): boolean {
   return RefRules.matchRefItem.test(refString);
 }
+function hasRef(refString: string): boolean {
+  return RefRules.refItem.test(refString);
+}
 
 const GlobalMatchRefs: RegExp = new RegExp(RefRules.refItem, "g");
 function collectExpression(sourceString: string): string[] {
@@ -193,6 +196,7 @@ function clearElRef(target: TElement, refMap: TRefMap, deep: boolean = true): vo
 export default {
   collectRef,
   isRef,
+  hasRef,
   collectExpression,
   getExpression,
   getRefPropertyKey,

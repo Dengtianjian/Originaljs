@@ -12,7 +12,7 @@ import TransitionElement from "./Modules/TransitionElement";
 import PropertyProxy from "./PropertyProxy";
 import Ref from "./Ref";
 
-// Module.add("ConditionElement", ConditionElementModule);
+Module.add("ConditionElement", ConditionElementModule);
 // Module.add("ForElementModule", ForElementModule);
 Module.add("MethodModule", MethodModule);
 Module.add("TransitionElementModule", TransitionElement);

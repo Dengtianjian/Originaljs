@@ -1,19 +1,25 @@
 import { TConditionElItem, TConditionItem } from "../../Typings/ConditionElementTypings";
 import { ICustomElement, TElement } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TRefTree } from "../../Typings/RefTypings";
+import { TExpressionInfo, TRefRecord, TRefTree } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
 import Err from "../../Utils/Err";
 import Reactive from "../";
 import Ref from "../Ref";
+import Expression from "../Expression";
 const ConditionElTagNames: string[] = ["O-IF", "O-ELSE", "O-ELSE-IF"];
 const Conditions: Map<symbol, TConditionItem> = new Map();
 
 function getConditionElSibling(target: TElement | Element): TConditionElItem[] {
+  let expressionInfo: TExpressionInfo = null;
+  if (target.attributes['condition']) {
+    expressionInfo = Expression.generateExpressionInfo(target.attributes['condition'].nodeValue);
+  }
   const els: TConditionElItem[] = [{
     target: target as TElement,
     conditionAttr: target.attributes['condition'],
-    shadow: new Comment(target.nodeName)
+    shadow: new Comment(target.nodeName),
+    expressionInfo
   }];
 
   if (target.tagName !== "O-ELSE") {
@@ -85,8 +91,9 @@ export default {
       for (let index = 0; index < conditionItem.els.length; index++) {
         const conditionElItem = conditionItem.els[index];
         if (conditionElItem.conditionAttr) {
-          const nodeValue: boolean = Boolean(Number(conditionElItem.conditionAttr.nodeValue));
-          if (nodeValue === true) {
+          const expressionResult: boolean = Boolean(Expression.executeExpression(conditionElItem.expressionInfo, properties));
+
+          if (expressionResult === true) {
             showIndex = index;
             break;
           }
@@ -96,9 +103,7 @@ export default {
         }
       }
 
-      if (showIndex === conditionItem.current) {
-        return;
-      }
+      if (showIndex === conditionItem.current) return;
 
       if (conditionItem.current !== null) {
         const oldConditionEl: TConditionElItem = conditionItem.els[conditionItem.current];
@@ -106,7 +111,9 @@ export default {
           conditionItem.parentNode.insertBefore(oldConditionEl.shadow, oldConditionEl.target);
           conditionItem.parentNode.removeChild(oldConditionEl.target);
         }
-        Ref.clearElRef(oldConditionEl.target as TElement, true);
+        oldConditionEl.target.childNodes.forEach(childNode => {
+          Ref.clearElRef(childNode as TElement, properties.__OG__.reactive.refMap);
+        })
       }
 
       const showConditionEl: TConditionElItem = conditionItem.els[showIndex];
@@ -116,7 +123,12 @@ export default {
         conditionItem.parentNode.removeChild(showConditionEl.shadow);
       }
 
-      Reactive.collectEl(Array.from(showConditionEl.target.childNodes) as TElement[], properties.__OG__.properties, properties.__OG__.properties.__OG__.reactive);
+      // const refRecord: TRefRecord = Ref.collectRef(Array.from(showConditionEl.target.childNodes) as TElement[], properties, properties.__OG__.reactive);
+      // Ref.updateRefMap(refRecord, properties);
+      // Utils.objectMerge(properties.__OG__.reactive.refMap, refRecord);
+      // for (const propertyKey in refRecord) {
+      //   properties.__OG__.reactive.refMap.set(propertyKey,refRecord)
+      // }
 
       conditionItem.current = showIndex;
     }

@@ -49,10 +49,10 @@ export default {
         transition.updatePart.delete(attr.ownerElement as TElement);
       }
     },
-    afterUpdateAttrView(attr: Attr, newValue: string, properties: TReferrerElement): void {
+    afterUpdateAttrView(attr: Attr, newValue: string, properties: ICustomElement): void {
       if (attr.ownerElement === null || attr.ownerElement.tagName !== "O-TRANSITION") return;
 
-      addTransition(attr.ownerElement as TElement, properties.__OG__.properties, attr.nodeName === "key");
+      addTransition(attr.ownerElement as TElement, properties, attr.nodeName === "key");
     }
   }
 } as TModuleOptions
