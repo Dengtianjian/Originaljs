@@ -17,12 +17,20 @@ function objectMerge(target: object, source: object): void {
         if (typeof sourceItem === "object") {
           if (sourceItem instanceof Map) {
             sourceItem.forEach((item, key) => {
-              targetItem.set(key, item);
+              if (targetItem.has(key)) {
+                objectMerge(targetItem.get(key), item);
+              } else {
+                targetItem.set(key, item);
+              }
             })
           } else {
             for (const key in sourceItem) {
               if (!sourceItem.hasOwnProperty(key)) continue;
-              targetItem.set(key, sourceItem[key]);
+              if (targetItem.has(key)) {
+                objectMerge(targetItem.get(key), sourceItem[key]);
+              } else {
+                targetItem.set(key, sourceItem[key]);
+              }
             }
           }
         } else {

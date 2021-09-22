@@ -95,10 +95,8 @@ export default {
         const els = Parser.parseDom(propertyHTML);
         forItem.target.append(...els);
         const refRecord: TRefRecord = Ref.collectRef(els as TElement[], properties, properties.__OG__.reactive);
-        for (const key in refRecord) {
-          properties.__OG__.reactive.refMap.set(key, refRecord[key]);
-        }
         Ref.updateRefMap(refRecord, properties);
+        Utils.objectMerge(properties.__OG__.reactive.refMap,refRecord);
       }
 
       return true;
