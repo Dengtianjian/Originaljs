@@ -193,16 +193,6 @@ function clearElRef(target: TElement, refMap: TRefMap, deep: boolean = true): vo
   }
 }
 
-function mergeRefRecordToGlobalRefMap(refRecord: TRefRecord, refMap: TRefMap): void {
-  for (const propertyKeyString in refRecord) {
-    if (refMap.has(propertyKeyString)) {
-      Utils.objectMerge(refMap.get(propertyKeyString), refRecord[propertyKeyString]);
-    } else {
-      refMap.set(propertyKeyString, refRecord[propertyKeyString]);
-    }
-  }
-}
-
 export default {
   collectRef,
   isRef,
@@ -213,6 +203,5 @@ export default {
   generateRefRecord,
   generateRefRecords,
   updateRefMap,
-  clearElRef,
-  mergeRefRecordToGlobalRefMap
+  clearElRef
 };
