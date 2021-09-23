@@ -20,16 +20,19 @@ function recursionSetProxy(propertyKeys: string[], properties: ICustomElement, r
     propertyKeys: [...keys, propertyKey]
   });
 
+  // console.log([...keys, propertyKey]);
+  
   properties[propertyKey] = new Proxy(properties[propertyKey], {
     set(target: any, propertyKey: string | symbol, value: any, receiver: any): boolean {
       const isHas: boolean = target.hasOwnProperty(propertyKey);
       const result: boolean = Reflect.set(target, propertyKey, value, receiver);
       if (result === false) return false;
       const propertyKeys: string[] = [...target.__OG__.propertyKeys, propertyKey];
+      
       let refs: TRefs = reactiveInstance.refMap.get(propertyKeys.join());
       if (refs === undefined) {
         refs = reactiveInstance.refMap.get(propertyKeys.slice(0, propertyKeys.length - 1).join());
-        if (refs === undefined) return false;
+        if (refs === undefined) return true;
       }
       if (isHas) {
         Module.useAll("reactive.updateProperty", [refs, target, propertyKey, value, reactiveInstance.properties, receiver]);

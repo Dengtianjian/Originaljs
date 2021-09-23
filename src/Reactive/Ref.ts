@@ -6,7 +6,6 @@ import { TExpressionInfo, TRefMap, TRefRecord, TRefs } from "../Typings/RefTypin
 import Utils from "../Utils";
 import Parser from "./Parser";
 import Transform from "./Transform";
-import View from "./View";
 import Expression from "./Expression";
 
 function traverseNodes(target: TElement | TElement[], properties: ICustomElement): TRefRecord {
@@ -51,7 +50,8 @@ function collectRef(target: TElement | TElement[], properties: ICustomElement, r
   }
 
   Utils.objectMerge(refRecord, traverseNodes(target, properties));
-
+ 
+  // TODO 两次合并
   return refRecord;
 }
 

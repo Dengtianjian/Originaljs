@@ -24,13 +24,7 @@ export default class Reactive {
   static observe(target: TElement | TElement[], properties: ICustomElement, reactiveInstance: Reactive) {
     const refRecord: TRefRecord = Ref.collectRef(target, properties, reactiveInstance);
 
-    for (const key in refRecord) {
-      if (reactiveInstance.refMap.has(key)) {
-        Utils.objectMerge(reactiveInstance.refMap.get(key), refRecord[key]);
-      } else {
-        reactiveInstance.refMap.set(key, refRecord[key]);
-      }
-    }
+    Ref.mergeRefMap(refRecord, reactiveInstance.refMap);
 
     Ref.updateRefMap(refRecord, properties);
     PropertyProxy.setProxy(refRecord, properties, reactiveInstance);

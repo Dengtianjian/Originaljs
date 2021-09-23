@@ -81,7 +81,8 @@ class CEl extends OG.createElement() {
   show = false;
   transitionStop = null;
   updateNumber(number) {
-    this.display.number = Date.now();
+    // this.display.number = Date.now();
+    this.users[2].numbers[0] = Date.now();
   }
   updateTagName() {
     this.display.tagName = "o-cell";
