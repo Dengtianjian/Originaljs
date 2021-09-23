@@ -3,22 +3,12 @@
   <button onclick="updateNumber">updateNumber</button>
   <button onclick="updateStaticHTML2('{{obj.a.c} + 2}','{ users }','{ obj.a.c }')">update obj.a.c</button>
 </p>
-<p>
-  {obj.a.c}
+
+<o-for item index in="{users}">
   <p>
-    {display.number} 
+    { item.id }
+    <p>
+      { item.numbers[0] }
+    </p>
   </p>
-</p>
-<o-if condition="{ {obj.a.c}===1 }">
-  o-if {display.number} 
-</o-if>
-<o-else-if condition="{ {obj.a.c}===2 }">
-  o-else-if 
-  <o-el value="{display.staticHtml}"></o-el>
-</o-else-if>
-<o-else-if condition="{ {obj.a.c}===3 }">
-  o-else-if  3
-</o-else-if>
-<o-else>
-  o-else
-</o-else>
+</o-for>

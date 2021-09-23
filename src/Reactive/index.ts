@@ -13,7 +13,7 @@ import PropertyProxy from "./PropertyProxy";
 import Ref from "./Ref";
 
 Module.add("ConditionElement", ConditionElementModule);
-// Module.add("ForElementModule", ForElementModule);
+Module.add("ForElementModule", ForElementModule);
 Module.add("MethodModule", MethodModule);
 Module.add("TransitionElementModule", TransitionElement);
 Module.add("DynamicElementModule", DynamicElementModule);

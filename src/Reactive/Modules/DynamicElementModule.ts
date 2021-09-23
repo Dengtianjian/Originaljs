@@ -86,8 +86,8 @@ export default {
             const refRecord: TRefRecord = Ref.collectRef(Array.from(dynamicElementInfo.ownerElement.childNodes) as TElement[], properties, properties.__OG__.reactive);
 
             Ref.updateRefMap(refRecord, properties);
-            PropertyProxy.setProxy(refRecord, properties, properties.__OG__.reactive);
             Ref.mergeRefMap(refRecord, properties.__OG__.reactive.refMap);
+            PropertyProxy.setProxy(refRecord, properties, properties.__OG__.reactive);
             break;
           case "is":
             const newEl: Element = document.createElement(refPropertyValue);

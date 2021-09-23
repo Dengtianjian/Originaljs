@@ -9,7 +9,7 @@ import PropertyProxy from "../PropertyProxy";
 import Ref from "../Ref";
 
 function replaceRef(template: string, searchValue: string, replaceValue: string): string {
-  template = template.replaceAll(new RegExp(`\{ *${searchValue} *\}`, "g"), replaceValue);
+  template = template.replaceAll(searchValue, replaceValue);
   return template;
 }
 
@@ -81,8 +81,9 @@ export default {
       let index: number = 0;
       for (const key in property) {
         index++;
-        target.innerHTML += replaceRef(forTemplate, itemName, `{${propertyKeyString}[${key}]}`);
+        target.innerHTML += replaceRef(forTemplate, itemName, `${propertyKeyString}[${key}]`);
       }
+
       Utils.objectMerge(refRecord, Ref.collectRef(Array.from(target.childNodes) as TElement[], properties, properties.__OG__.reactive));
 
       return refRecord;
@@ -92,13 +93,13 @@ export default {
       const fors: Map<symbol, TForElementItem> = refs.__fors;
 
       for (const { 1: forItem } of fors) {
-        const propertyHTML: string = replaceRef(forItem.for.template, forItem.for.itemName, `{${forItem.for.propertyKeyString}[${String(propertyKey)}]}`);
+        const propertyHTML: string = replaceRef(forItem.for.template, forItem.for.itemName, `${forItem.for.propertyKeyString}[${String(propertyKey)}]`);
         const els = Parser.parseDom(propertyHTML);
         forItem.target.append(...els);
         const refRecord: TRefRecord = Ref.collectRef(els as TElement[], properties, properties.__OG__.reactive);
         Ref.updateRefMap(refRecord, properties);
-        PropertyProxy.setProxy(refRecord, properties, properties.__OG__.reactive);
         Ref.mergeRefMap(refRecord, properties.__OG__.reactive.refMap);
+        PropertyProxy.setProxy(refRecord, properties, properties.__OG__.reactive);
       }
 
       return true;

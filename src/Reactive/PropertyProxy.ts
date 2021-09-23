@@ -3,7 +3,6 @@ import Module from "../Module";
 import { ICustomElement } from "../Typings/CustomElementTypings";
 import { TRefRecord, TRefs } from "../Typings/RefTypings";
 import Utils from "../Utils";
-import View from "./View";
 
 function recursionSetProxy(propertyKeys: string[], properties: ICustomElement, reactiveInstance: Reactive, keys: string[] = []) {
   if (propertyKeys.length === 0) return;
@@ -14,7 +13,7 @@ function recursionSetProxy(propertyKeys: string[], properties: ICustomElement, r
     return;
   }
 
-  recursionSetProxy(propertyKeys.slice(1), properties[propertyKey], reactiveInstance, [propertyKey]);
+  recursionSetProxy(propertyKeys.slice(1), properties[propertyKey], reactiveInstance, [...keys, propertyKey]);
 
   if (properties[propertyKey].hasOwnProperty("__OG__")) return;
   Utils.defineOGProperty(properties[propertyKey], {
@@ -26,14 +25,12 @@ function recursionSetProxy(propertyKeys: string[], properties: ICustomElement, r
       const isHas: boolean = target.hasOwnProperty(propertyKey);
       const result: boolean = Reflect.set(target, propertyKey, value, receiver);
       if (result === false) return false;
-
       const propertyKeys: string[] = [...target.__OG__.propertyKeys, propertyKey];
       let refs: TRefs = reactiveInstance.refMap.get(propertyKeys.join());
       if (refs === undefined) {
         refs = reactiveInstance.refMap.get(propertyKeys.slice(0, propertyKeys.length - 1).join());
         if (refs === undefined) return false;
       }
-
       if (isHas) {
         Module.useAll("reactive.updateProperty", [refs, target, propertyKey, value, reactiveInstance.properties, receiver]);
       } else {

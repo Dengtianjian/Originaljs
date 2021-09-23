@@ -94,16 +94,19 @@ class CEl extends OG.createElement() {
 
   }
   users = [{
-    id: 2
+    id: 2,
+    numbers: [0, 1, 2]
   }, {
-    id: 3
+    id: 3,
+    numbers: [4, 5, 6]
   }];
   UpdateHtml() {
     // this.users[0].id = 6;
-    // this.users.push({
-    //   id: Date.now()
-    // });
-    this.obj.a.c = this.obj.a.c === 1 ? 2 : this.obj.a.c === 2 ? 3 : 1;
+    this.users.push({
+      id: Date.now(),
+      numbers: [7, 8, 9]
+    });
+    // this.obj.a.c = this.obj.a.c === 1 ? 2 : this.obj.a.c === 2 ? 3 : 1;
     // this.display.staticHtml = "Hell world:" + Math.round(Math.random() * 10000);
 
     // this.display.staticHtml = "{count}";
