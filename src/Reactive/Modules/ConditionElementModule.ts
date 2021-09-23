@@ -1,7 +1,7 @@
 import { TConditionElItem, TConditionItem } from "../../Typings/ConditionElementTypings";
 import { ICustomElement, TElement } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TExpressionInfo, TRefRecord, TRefTree } from "../../Typings/RefTypings";
+import { TExpressionInfo, TRefRecord } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
 import Err from "../../Utils/Err";
 import Ref from "../Ref";
@@ -40,7 +40,7 @@ function getConditionElSibling(target: TElement | Element): TConditionElItem[] {
 
 export default {
   reactive: {
-    collecElRef(target: TElement, rootEl: ICustomElement): TRefTree {
+    collecElRef(target: TElement, rootEl: ICustomElement): TRefRecord {
       if (target.nodeType !== 1 || !ConditionElTagNames.includes(target.tagName)) {
         return {};
       }

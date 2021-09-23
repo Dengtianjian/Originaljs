@@ -1,7 +1,7 @@
 import Transition from "../../Transition";
 import { ICustomElement, TElement, TReferrerElement } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TRefTree } from "../../Typings/RefTypings";
+import { TRefRecord } from "../../Typings/RefTypings";
 import { ITransition } from "../../Typings/TransitionTypings";
 import Ref from "../Ref";
 import { RefRules } from "../Rules";
@@ -34,7 +34,7 @@ function addTransition(target: TElement, rootEl: ICustomElement, updateKey: bool
 
 export default {
   reactive: {
-    collecElRef(target: TElement, rootEl): TRefTree {
+    collecElRef(target: TElement, rootEl): TRefRecord {
       addTransition(target, rootEl);
       return {};
     },

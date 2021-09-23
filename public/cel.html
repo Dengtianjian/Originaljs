@@ -1,10 +1,277 @@
+<link rel="stylesheet" href="//at.alicdn.com/t/font_2449999_tyuwd6prgq.css">
 <style>
+  /* http://meyerweb.com/eric/tools/css/reset/
+   v5.0.1 | 20191019
+   License: none (public domain)
+*/
+
+  html,
+  body,
+  div,
+  span,
+  applet,
+  object,
+  iframe,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  blockquote,
+  pre,
+  a,
+  abbr,
+  acronym,
+  address,
+  big,
+  cite,
+  code,
+  del,
+  dfn,
+  em,
+  img,
+  ins,
+  kbd,
+  q,
+  s,
+  samp,
+  small,
+  strike,
+  strong,
+  sub,
+  sup,
+  tt,
+  var,
+  b,
+  u,
+  i,
+  center,
+  dl,
+  dt,
+  dd,
+  menu,
+  ol,
+  ul,
+  li,
+  fieldset,
+  form,
+  label,
+  legend,
+  table,
+  caption,
+  tbody,
+  tfoot,
+  thead,
+  tr,
+  th,
+  td,
+  article,
+  aside,
+  canvas,
+  details,
+  embed,
+  figure,
+  figcaption,
+  footer,
+  header,
+  hgroup,
+  main,
+  menu,
+  nav,
+  output,
+  ruby,
+  section,
+  summary,
+  time,
+  mark,
+  audio,
+  video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+  }
+
+  /* HTML5 display-role reset for older browsers */
+  article,
+  aside,
+  details,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  menu,
+  nav,
+  section {
+    display: block;
+  }
+
+  /* HTML5 hidden-attribute fix for newer browsers */
+  *[hidden] {
+    display: none;
+  }
+
+  body {
+    line-height: 1;
+  }
+
+  menu,
+  ol,
   ul {
-    background-color: red;
+    list-style: none;
+  }
+
+  blockquote,
+  q {
+    quotes: none;
+  }
+
+  blockquote:before,
+  blockquote:after,
+  q:before,
+  q:after {
+    content: '';
+    content: none;
+  }
+
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  ul {
+    padding: 10px;
+    margin: 0 auto;
+    width: 50%;
+    background-color: #f5f7f8;
+  }
+
+  @media screen and (max-width:1200px) {
+    ul {
+      width: 80vw;
+    }
+  }
+
+  .thread-item {
+    padding: 0 16px 16px;
+    margin-bottom: 10px;
+    background-color: white;
+  }
+
+  .thread-author {
+    padding: 16px 0;
+  }
+
+  .thread-author img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+  }
+
+  .thread-author_info {
+    display: inline-block;
+    margin-left: 10px;
+    line-height: 20px;
+    color: #0b0b37;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .thread-author_info>div {
+    height: 17px;
+    font-weight: normal;
+    font-size: 12px;
+    color: #8590a6;
+  }
+
+  .thread-title {
+    margin-bottom: 16px;
+    font-size: 16px;
+    color: #0b0b37;
+    font-weight: bold;
+  }
+
+  .thread-content {
+    line-height: 1.6;
+    word-break: break-all;
+  }
+
+  .thread-content p {
+    margin-bottom: 16px;
+    line-height: 1.6;
+    font-size: 16px;
+    clear: both;
+  }
+
+  .thread-content img {
+    max-width: 100%;
+  }
+
+  .thread-content pre {
+    word-break: break-all;
+  }
+
+  .load-more {
+    position: fixed;
+    right: 20px;
+    bottom: calc(50% - 60px);
+    margin: 16px auto;
+    padding: 10px;
+    width: 80px;
+    height: 60px;
+    line-height: 60px;
+    font-size: 14px;
+    color: #2469f6;
+    text-align: center;
+    background-color: #f5f7f8;
+    cursor: pointer;
+  }
+
+  .load-more:hover {
+    color: white;
+    background-color: #2469f6;
+  }
+
+  @media screen and (max-width:1200px) {
+    .load-more {
+      width: 80vw;
+    }
+  }
+
+  .load-more>i {
+    display: none;
+  }
+
+  .load-mode_loading>i {
+    display: inline-block;
   }
 </style>
 <ul>
-  <li>
-
-  </li>
+  <o-for newsitem in="{{ news.list }}">
+    <li class="thread-item">
+      <div class="thread-author">
+        <img src="{{newsitem.user.avatar}}" alt="">
+        <div class="thread-author_info">
+          { {newsitem.user.nickname}} <i class="icon shoutao st-icon-unfold"></i>
+          <div>
+            {{newsitem.diffTime}} {{newsitem.viewCount}}
+          </div>
+        </div>
+      </div>
+      <div class="thread-title">
+        {{ newsitem.title }}
+      </div>
+      <o-el class="thread-content" html="{{newsitem.content.text}}"></o-el>
+    </li>
+  </o-for>
 </ul>
+<div class="load-more { {news.loading}?'load-mode_loading':'' } {{count}}" onclick="loadMoreThread">
+  <i class="icon shoutao st-icon-loading"></i>
+  加载更多
+</div>

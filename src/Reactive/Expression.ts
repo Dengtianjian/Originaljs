@@ -5,14 +5,9 @@ import { RefRules } from "./Rules";
 
 function generateExpressionInfo(expression: string): TExpressionInfo {
   const propertyKeys: string[][] = Ref.getRefPropertyKey(expression) as string[][];
-  if (/\{ *([.\W\S]*{ *[.\W\S]+ *}[.\W\S]+)+ *\}/g.test(expression)) {
-    const extract: string[] = expression.match(RefRules.extractExpression);
-    expression = extract[0].trim();
-    expression = expression.replace(/\{ *([a-zA-z_][a-zA-z0-9_\.\[\]'"]+)? *\}/g, "this.$1");
-  } else {
-    const extract: string[] = expression.match(RefRules.extractVariableName);
-    expression = 'this.' + extract[0].trim();
-  }
+  const extract: string[] = expression.match(/(?<=\{) *.+ *(?=\})/g);
+  expression = extract[0].trim();
+  expression = expression.replace(/\{ *([a-zA-z_][a-zA-z0-9_\.\[\]'"]+)? *\}/g, "this.$1");
 
   return {
     propertyKeys,

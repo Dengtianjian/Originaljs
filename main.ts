@@ -14,12 +14,19 @@ class CEl extends OG.createElement() {
   constructor() {
     super();
     console.time("render");
-    Http.get("https://discuz.chat/apiv3/thread.list?perPage=10&page=3&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=0&dzqSid=86774261-1631617310784&dzqPf=pc").then(res => {
-      console.log(res);
+    // TODO 如果请求前没数据 然后渲染完有数据 循环不会生效
+    // TODO FOR 优化HTML问题
+    // TODO FOR 替换循环的每一项问题 item
+    this.news.loading = true;
+    Http.get("https://discuz.chat/apiv3/thread.list?perPage=10&page=" + this.page + "&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=0&dzqSid=86774261-1631617310784&dzqPf=pc").then(({ Data: res }) => {
+      this.news.list = res.pageData;
+      this.page++;
+
+      this.render(CElTemplate).then(res => {
+        console.timeEnd("render");
+      });
+      this.news.loading = false;
     });
-    this.render(CElTemplate).then(res => {
-      console.timeEnd("render");
-    })
   }
   rendered() {
     // setTimeout(() => {
@@ -65,6 +72,17 @@ class CEl extends OG.createElement() {
     //   }
     // }, 1000);
   }
+  page = 1;
+  loadMoreThread() {
+    this.news.loading = true;
+    Http.get("https://discuz.chat/apiv3/thread.list?perPage=10&page=" + this.page + "&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=0&dzqSid=86774261-1631617310784&dzqPf=pc").then(({ Data: res }) => {
+      this.page++;
+
+      this.news.list.push(...res.pageData);
+      window.scrollTo(0, window.scrollY + 100);
+      this.news.loading = false;
+    });
+  }
   msg = "Hello world";
   user = {
     name: "https://lf3-cdn-tos.bytescm.com/obj/static/xitu_juejin_web/dcec27cc6ece0eb5bb217e62e6bec104.svg"
@@ -84,6 +102,10 @@ class CEl extends OG.createElement() {
   };
   show = false;
   transitionStop = null;
+  news = {
+    list: [],
+    loading: false
+  }
   updateNumber(number) {
     // this.display.number = Date.now();
     this.users[2].numbers[0] = Date.now();

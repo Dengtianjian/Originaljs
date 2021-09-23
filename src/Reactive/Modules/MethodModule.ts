@@ -1,6 +1,6 @@
 import { ICustomElement, TElement, TReferrerElementOGProperties } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
-import { TExpressionInfo, TMethodBranch, TMethodRef, TRefRecord, TRefs, TRefTree } from "../../Typings/RefTypings";
+import { TExpressionInfo, TMethodBranch, TMethodRef, TRefRecord, TRefs } from "../../Typings/RefTypings";
 import { MethodRules, RefRules } from "../Rules";
 import Parser from "../Parser";
 import Utils from "../../Utils";

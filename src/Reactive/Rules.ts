@@ -17,7 +17,7 @@ export const RefRules: {
   variableItem: /\{ *[a-zA-z_][a-zA-z0-9_\.\[\]'"]* *\}/,
   extractVariableName: /(?<=\{) *[a-zA-z_][a-zA-z0-9_\.\[\]'"]+? *(?=\})/,
   expressionItem: /^\{ *([.\W\S]*{ *[.\W\S]+ *}[.\W\S]+)+ *\}$/g,
-  extractExpression: /(?<=\{) *([.\W\S]*{ *[.\W\S]+ *}[.\W\S]+)+ *(?=\})/,
+  extractExpression: /(?<=\{)([.\W\S]+?)(?=\})/,
 }
 
 export const MethodRules: {

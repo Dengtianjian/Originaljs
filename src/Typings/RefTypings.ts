@@ -45,22 +45,12 @@ export type TMethodRef = {
   mapKey: symbol
 }
 
-export type TRefBracnhItem = {
-
-};
-export type TRefTree = {
-  __els?: Map<symbol, TText>,
-  __attrs?: Map<symbol, TAttr>,
-  __expressions?: Map<symbol, TExpressionItem>,
-  __methods?: Map<symbol, TMethodBranch>,
-  __dynamicElements?: Map<symbol, TDynamicElementBranch>,
-  __fors?: Map<symbol, TForElementItem>
-}
 export type TRefs = {
   __els?: Map<symbol, TText>,
   __attrs?: Map<symbol, {
     target: TAttr,
-    expressionInfo: TExpressionInfo
+    expressionInfos: Record<string, TExpressionInfo>,
+    textContent: string
   }>,
   __expressions?: Map<symbol, TExpressionItem>,
   __methods?: Map<symbol, TMethodRef>,
@@ -95,6 +85,5 @@ export type TRefTreePropertyBranch = {
 export type TReferrerPropertyRef = {
   // target: Text | Attr,
   propertyKeyMap: Map<symbol, string[] | string[][]>,
-  // refTree: TRefTree,
-  type: keyof TRefTree
+  type: keyof TRefRecord
 }

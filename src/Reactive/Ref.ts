@@ -126,10 +126,17 @@ function generateRefRecord<T = {}>(propertyKeys: string[], target: unknown, mapK
 
   switch (endPropertyKey) {
     case "__attrs":
+      endPropertyValue = {
+        target,
+        textContent: (target as Text | Attr).textContent,
+        ...endPropertyValue
+      };
+      break;
     case "__texts":
       endPropertyValue = {
         target,
-        expressionInfo: Expression.generateExpressionInfo((target as Attr | Text).textContent)
+        expressionInfo: Expression.generateExpressionInfo((target as Attr | Text).textContent),
+        ...endPropertyValue
       };
       break;
   }
