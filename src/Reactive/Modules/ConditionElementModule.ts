@@ -4,7 +4,6 @@ import { TModuleOptions } from "../../Typings/ModuleTypings";
 import { TExpressionInfo, TRefRecord, TRefTree } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
 import Err from "../../Utils/Err";
-import Reactive from "../";
 import Ref from "../Ref";
 import Expression from "../Expression";
 const ConditionElTagNames: string[] = ["O-IF", "O-ELSE", "O-ELSE-IF"];
