@@ -31,6 +31,7 @@ function getConditionElSibling(target: TElement | Element): TConditionElItem[] {
     }
   }
   Utils.defineOGProperty(target, {
+    skipChildNodeCollect: true,
     conditionElementCollected: true
   });
 
@@ -125,11 +126,7 @@ export default {
 
       const refRecord: TRefRecord = Ref.collectRef(Array.from(showConditionEl.target.childNodes) as TElement[], properties, properties.__OG__.reactive);
       Ref.updateRefMap(refRecord, properties);
-      Utils.objectMerge(properties.__OG__.reactive.refMap, refRecord);
-      // TODO BUG 合并到refMap问题
-      // for (const propertyKey in refRecord) {
-      //   properties.__OG__.reactive.refMap.set(propertyKey,refRecord[propertyKey])
-      // }
+      Ref.mergeRefMap(refRecord,properties.__OG__.reactive.refMap);
 
       conditionItem.current = showIndex;
     }

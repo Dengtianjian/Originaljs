@@ -6,43 +6,40 @@ import { IElement, TElement } from "../Typings/CustomElementTypings";
  * @param source 合并的对象数据
  * @returns 空
  */
-function objectMerge(target: object, source: object): void {
-  for (const key in source) {
-    if (!source.hasOwnProperty(key)) return;
-    const targetItem = target[key];
-    const sourceItem = source[key];
-
-    if (typeof targetItem === "object" && targetItem !== null) {
-      if (targetItem instanceof Map) {
-        if (typeof sourceItem === "object") {
-          if (sourceItem instanceof Map) {
-            sourceItem.forEach((item, key) => {
-              if (targetItem.has(key)) {
-                objectMerge(targetItem.get(key), item);
-              } else {
-                targetItem.set(key, item);
-              }
-            })
-          } else {
-            for (const key in sourceItem) {
-              if (!sourceItem.hasOwnProperty(key)) continue;
-              if (targetItem.has(key)) {
-                objectMerge(targetItem.get(key), sourceItem[key]);
-              } else {
-                targetItem.set(key, sourceItem[key]);
-              }
-            }
-          }
+function objectMerge(target: any, source: any): void {
+  if (typeof target !== "object" || typeof source !== "object") return;
+  if (source instanceof Map || target instanceof Map) {
+    if (target instanceof Map && source instanceof Map) {
+      source.forEach((item, key) => {
+        if (target.has(key)) {
+          objectMerge(target.get(key), item);
         } else {
-          targetItem.set(sourceItem[key], sourceItem[key]);
+          target.set(key, item);
         }
-      } else if (Array.isArray(targetItem)) {
-        targetItem.push(...sourceItem);
-      } else {
-        objectMerge(targetItem, sourceItem);
-      }
+      });
+    } else if (typeof target === "object" && source instanceof Map) {
+      source.forEach((item, key) => {
+        target[key] = item;
+      });
     } else {
-      target[key] = source[key];
+      target = source;
+    }
+  } else if (Array.isArray(target) || Array.isArray(source)) {
+    if ((Array.isArray(target) && !Array.isArray(source)) || (!Array.isArray(target) && Array.isArray(source))) {
+      target = source;
+    } else {
+      target.push(...source);
+    }
+  } else if (source !== null && typeof source === "object" && target !== null) {
+    for (const key in source) {
+      if (source.hasOwnProperty(key) === false) continue;
+      if (target.hasOwnProperty(key) && typeof target[key] === "object" && typeof source[key] === "object") {
+        objectMerge(target[key], source[key]);
+      } else if (target instanceof Map) {
+        target.set(key, source[key]);
+      } else {
+        target[key] = source[key];
+      }
     }
   }
 }
@@ -90,7 +87,9 @@ function defineOGProperty<T = {}>(target: Attr | Text | IElement | Node
   if (target.hasOwnProperty("__OG__")) {
     // @ts-ignore
     filterAppendProperties(target, appendProperties);
-    objectMerge((target as TElement).__OG__, appendProperties as object);
+    for (const key in appendProperties as T) {
+      (target as TElement).__OG__[key] = (appendProperties as T)[key];
+    }
   } else {
     defineProperty(target, "__OG__", appendProperties, false, false, false);
   }

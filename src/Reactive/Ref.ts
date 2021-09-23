@@ -193,6 +193,24 @@ function clearElRef(target: TElement, refMap: TRefMap, deep: boolean = true): vo
   }
 }
 
+function mergeRefMap(refRecord: TRefRecord, refMap: TRefMap): void {
+  for (const proeprtyKeyString in refRecord) {
+    if (refMap.has(proeprtyKeyString)) {
+      for (const type in refRecord[proeprtyKeyString]) {
+        if (refMap.get(proeprtyKeyString)[type]) {
+          refRecord[proeprtyKeyString][type].forEach((recordItem, itemKey) => {
+            refMap.get(proeprtyKeyString)[type].set(itemKey, recordItem);
+          });
+        } else {
+          refRecord[proeprtyKeyString][type] = refRecord[proeprtyKeyString][type];
+        }
+      }
+    } else {
+      refMap.set(proeprtyKeyString, refRecord[proeprtyKeyString]);
+    }
+  }
+}
+
 export default {
   collectRef,
   isRef,
@@ -203,5 +221,6 @@ export default {
   generateRefRecord,
   generateRefRecords,
   updateRefMap,
-  clearElRef
+  clearElRef,
+  mergeRefMap
 };

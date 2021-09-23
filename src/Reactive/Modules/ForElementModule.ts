@@ -96,7 +96,7 @@ export default {
         forItem.target.append(...els);
         const refRecord: TRefRecord = Ref.collectRef(els as TElement[], properties, properties.__OG__.reactive);
         Ref.updateRefMap(refRecord, properties);
-        Utils.objectMerge(properties.__OG__.reactive.refMap,refRecord);
+        Ref.mergeRefMap(refRecord,properties.__OG__.reactive.refMap);
       }
 
       return true;
