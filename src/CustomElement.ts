@@ -15,7 +15,6 @@ export default class CustomElement extends HTMLElement implements ICustomElement
   __OG__ = {
     reactive: null,
     rootEl: null,
-    refTree: {},
     transitions: {},
     el: null,
     slots: {},

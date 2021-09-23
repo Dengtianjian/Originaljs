@@ -8,7 +8,6 @@ export type TOG = {
   [key: string]: any;
   reactive: Reactive;
   rootEl: IElement;
-  refTree: TRefTree;
   propertiesKeyPath: string[];
   properties: Record<string, any>;
   refs: TRefs,
