@@ -5,6 +5,7 @@ import Utils from "../../Utils";
 import Err from "../../Utils/Err";
 import Expression from "../Expression";
 import Parser from "../Parser";
+import PropertyProxy from "../PropertyProxy";
 import Ref from "../Ref";
 
 function replaceRef(template: string, searchValue: string, replaceValue: string): string {
@@ -86,17 +87,18 @@ export default {
 
       return refRecord;
     },
-    setProperty(refs, target, propertyKey, value, properties, receiver){
+    setProperty(refs, target, propertyKey, value, properties, receiver) {
       if (!refs.__fors) return true;
       const fors: Map<symbol, TForElementItem> = refs.__fors;
-      
+
       for (const { 1: forItem } of fors) {
         const propertyHTML: string = replaceRef(forItem.for.template, forItem.for.itemName, `{${forItem.for.propertyKeyString}[${String(propertyKey)}]}`);
         const els = Parser.parseDom(propertyHTML);
         forItem.target.append(...els);
         const refRecord: TRefRecord = Ref.collectRef(els as TElement[], properties, properties.__OG__.reactive);
         Ref.updateRefMap(refRecord, properties);
-        Ref.mergeRefMap(refRecord,properties.__OG__.reactive.refMap);
+        PropertyProxy.setProxy(refRecord, properties, properties.__OG__.reactive);
+        Ref.mergeRefMap(refRecord, properties.__OG__.reactive.refMap);
       }
 
       return true;

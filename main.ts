@@ -75,7 +75,7 @@ class CEl extends OG.createElement() {
     show: false,
     number: 1,
     tagName: "o-table",
-    staticHtml: `<p>{obj.a.c}</p>`,
+    staticHtml: `<p>{transitions.transitionName}</p>`,
     staticHTML2: "<h1>Hello static HTML2</h1>"
   };
   show = false;
@@ -149,8 +149,8 @@ class CEl extends OG.createElement() {
   }
   updateStaticHTML2(number, arrs, objac) {
     // this.display.staticHTML2 = "hhhhhhhh";
-    // this.transitions.transitionName = "showA";
-    this.obj.a.c = Date.now();
+    this.transitions.transitionName = this.transitions.transitionName === "showA" ? 'FadeIn' : "showA";
+    // this.obj.a.c = Date.now();
     // console.log(number,objac);
 
   }

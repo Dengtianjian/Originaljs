@@ -4,6 +4,7 @@ import { TDynamicElementBranch, TDynamicElementContentTypes, TExpressionInfo, TR
 import Utils from "../../Utils";
 import Expression from "../Expression";
 import Parser from "../Parser";
+import PropertyProxy from "../PropertyProxy";
 import Ref from "../Ref";
 
 export default {
@@ -79,13 +80,14 @@ export default {
             break;
           case "value":
             dynamicElementInfo.ownerElement.childNodes.forEach(childNode => {
-              Ref.clearElRef(childNode as TElement,properties.__OG__.reactive.refMap);
+              Ref.clearElRef(childNode as TElement, properties.__OG__.reactive.refMap);
             });
             dynamicElementInfo.ownerElement.innerHTML = Parser.optimizeRefKey(refPropertyValue);
             const refRecord: TRefRecord = Ref.collectRef(Array.from(dynamicElementInfo.ownerElement.childNodes) as TElement[], properties, properties.__OG__.reactive);
 
             Ref.updateRefMap(refRecord, properties);
-            Ref.mergeRefMap(refRecord,properties.__OG__.reactive.refMap);
+            PropertyProxy.setProxy(refRecord, properties, properties.__OG__.reactive);
+            Ref.mergeRefMap(refRecord, properties.__OG__.reactive.refMap);
             break;
           case "is":
             const newEl: Element = document.createElement(refPropertyValue);

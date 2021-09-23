@@ -6,6 +6,7 @@ import Utils from "../../Utils";
 import Err from "../../Utils/Err";
 import Ref from "../Ref";
 import Expression from "../Expression";
+import PropertyProxy from "../PropertyProxy";
 const ConditionElTagNames: string[] = ["O-IF", "O-ELSE", "O-ELSE-IF"];
 const Conditions: Map<symbol, TConditionItem> = new Map();
 
@@ -125,7 +126,8 @@ export default {
 
       const refRecord: TRefRecord = Ref.collectRef(Array.from(showConditionEl.target.childNodes) as TElement[], properties, properties.__OG__.reactive);
       Ref.updateRefMap(refRecord, properties);
-      Ref.mergeRefMap(refRecord,properties.__OG__.reactive.refMap);
+      PropertyProxy.setProxy(refRecord, properties, properties.__OG__.reactive);
+      Ref.mergeRefMap(refRecord, properties.__OG__.reactive.refMap);
 
       conditionItem.current = showIndex;
     }
