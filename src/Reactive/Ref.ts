@@ -18,6 +18,7 @@ function traverseNodes(target: TElement | TElement[], properties: ICustomElement
   }
 
   for (const elementItem of target) {
+    if (elementItem.tagName === "STYLE" || elementItem.tagName === "SCRIPT") continue;
     for (const refPart of Module.useAll<TRefRecord>("reactive.collecElRef", [elementItem, properties])) {
       Utils.objectMerge(refRecord, refPart);
     }
@@ -50,7 +51,7 @@ function collectRef(target: TElement | TElement[], properties: ICustomElement, r
   }
 
   Utils.objectMerge(refRecord, traverseNodes(target, properties));
- 
+
   // TODO 两次合并
   return refRecord;
 }

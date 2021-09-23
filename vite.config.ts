@@ -4,6 +4,22 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [],
   server: {
+    proxy: {
+      "/doubanapi": {
+        target: "https://movie.douban.com",
+        changeOrigin: true,
+        rewrite(path) {
+          return path.replace("/doubanapi", "");
+        }
+      },
+      "/weiboapi": {
+        target: "https://weibo.com",
+        changeOrigin: true,
+        rewrite(path) {
+          return path.replace("/weiboapi", "");
+        }
+      }
+    }
   },
   build: {
     minify: "esbuild",
@@ -14,5 +30,5 @@ export default defineConfig({
       formats: ["es", "iife"],
       fileName: "original",
     },
-  },
+  }
 });

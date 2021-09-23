@@ -1,4 +1,5 @@
 import OG from "./src";
+import Http from "./http";
 OG.transitionPreset("fadeHide").add({
   opacity: "0",
   transitionDuration: "0.3s"
@@ -13,6 +14,9 @@ class CEl extends OG.createElement() {
   constructor() {
     super();
     console.time("render");
+    Http.get("https://discuz.chat/apiv3/thread.list?perPage=10&page=3&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=0&dzqSid=86774261-1631617310784&dzqPf=pc").then(res => {
+      console.log(res);
+    });
     this.render(CElTemplate).then(res => {
       console.timeEnd("render");
     })
