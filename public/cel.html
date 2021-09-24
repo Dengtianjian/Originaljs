@@ -250,6 +250,17 @@
 
   .load-mode_loading>i {
     display: inline-block;
+    animation: loadingSpin 1s linear infinite;
+  }
+
+  @keyframes loadingSpin {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
   }
 </style>
 <ul>
@@ -271,7 +282,8 @@
     </li>
   </o-for>
 </ul>
-<div class="load-more { {news.loading}?'load-mode_loading':'' } {{count}}" onclick="loadMoreThread">
+<div class="load-more { {news.loading}?'load-mode_loading':{obj.a.c} } {{count}}" onclick="loadMoreThread">
   <i class="icon shoutao st-icon-loading"></i>
   加载更多
 </div>
+<o-table tabledata="{{ users }}"></o-table>

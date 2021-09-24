@@ -35,12 +35,17 @@
     <td>18</td>
     <td>Qinghua</td>
     <td>
-      <button>Remove</button>
+      <button onclick="showTableData()">Remove</button>
     </td>
   </tr>
-  <tr>
-    <td colspan="5" style="text-align: center;">
-      { rows }
-    </td>
-  </tr>
+  <p>
+    {{ tabledata }}
+  </p>
+  <o-for useritem in="{{ tabledata }}">
+    <tr>
+      <td colspan="5" style="text-align: center;">
+        {{ useritem }}
+      </td>
+    </tr>
+  </o-for>
 </table>

@@ -29,9 +29,9 @@ class CEl extends OG.createElement() {
     });
   }
   rendered() {
-    // setTimeout(() => {
-    //   this.obj.a.c = 2;
-    // }, 5000);
+    setTimeout(() => {
+      this.obj.a.c = 2;
+    }, 5000);
     // setInterval(() => {
     //   this.obj.a.c = this.formatTime();
     // }, 1000);
@@ -234,7 +234,7 @@ class CEl extends OG.createElement() {
   }
 }
 
-class OTable extends OG.createElement() {
+class OTable extends OG.createElement(["tabledata"]) {
   constructor() {
     super();
     fetch("./ctable.html").then(res => res.text()).then(res => {
@@ -242,9 +242,16 @@ class OTable extends OG.createElement() {
     });
   }
   rows = 10;
+  tabledata = []
+  showTableData() {
+    this.tabledata.push({
+      id: 8
+    })
+
+  }
 }
 
-class OCell extends OG.createElement() {
+class OCell extends OG.createElement(["tabledata"]) {
   constructor() {
     super();
     this.render("This is O-CELL el");

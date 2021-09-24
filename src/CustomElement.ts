@@ -13,6 +13,7 @@ export default class CustomElement extends HTMLElement implements ICustomElement
     }) as unknown as ICustomElement;
   }
   __OG__ = {
+    OGElement: true,
     reactive: null,
     rootEl: null,
     transitions: {},
@@ -21,6 +22,7 @@ export default class CustomElement extends HTMLElement implements ICustomElement
     props: [],
     refMap: {}
   } as {
+    OGElement: boolean,
     transitions: Record<string, Transition>;
     el: IElement;
     slots: Record<string, Node[]>;

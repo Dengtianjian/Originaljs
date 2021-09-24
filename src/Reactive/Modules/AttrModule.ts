@@ -1,5 +1,5 @@
 import Module from "../../Module";
-import { ICustomElement, TAttr, TReferrerElement, TReferrerElementOGProperties, TReferrerRefInfo } from "../../Typings/CustomElementTypings";
+import { ICustomElement, TAttr, TElement, TReferrerElement, TReferrerElementOGProperties, TReferrerRefInfo } from "../../Typings/CustomElementTypings";
 import { TModuleOptions } from "../../Typings/ModuleTypings";
 import { TExpressionInfo, TRefRecord } from "../../Typings/RefTypings";
 import Utils from "../../Utils";
@@ -18,7 +18,7 @@ export default {
 
       const refRecord: TRefRecord = {};
       const mapKey: symbol = Symbol();
-      const expressions: string[] = Ref.getExpression(target.textContent,false);
+      const expressions: string[] = Ref.getExpression(target.textContent, false);
       const expressionInfos: Record<string, TExpressionInfo> = {};
       if (expressions.length === 0) return {};
       expressions.forEach(expressionItem => {
@@ -43,7 +43,7 @@ export default {
       });
       return refRecord;
     },
-    updateProperty(refs, target: TAttr, propertyKey, value, properties): void {
+    updateProperty(refs, target, propertyKey, value, properties): void {
       if (refs?.__attrs === undefined) return;
 
       refs.__attrs.forEach(attr => {
@@ -51,11 +51,17 @@ export default {
         let replaceTextContent: string = attr.textContent;
         for (const expressionRawString in attr.expressionInfos) {
           const expressionItem: TExpressionInfo = attr.expressionInfos[expressionRawString];
-          const result = Transform.transformObjectToString(Expression.executeExpression(expressionItem, properties));
-          // @ts-ignore 可以存放number类型的 // TODO 如果是Props就不转换为字符串
-          replaceTextContent = replaceTextContent.replace(expressionRawString, result);
+          const result = Expression.executeExpression(expressionItem, properties);
+          if ((attr.target.ownerElement as TElement).__OG__ && (attr.target.ownerElement as TElement).__OG__.OGElement) {
+            attr.target.ownerElement[attr.target.nodeName] = result;
+          } else {
+            // @ts-ignore 可以存放number类型的
+            replaceTextContent = replaceTextContent.replace(expressionRawString, Transform.transformObjectToString(result));
+          }
         }
-        attr.target.textContent = replaceTextContent;
+        if (replaceTextContent !== attr.target.textContent) {
+          attr.target.textContent = replaceTextContent;
+        }
         Module.useAll("reactive.afterUpdateAttrView", [attr.target, value, properties, refs]);
       });
     },
