@@ -200,6 +200,7 @@
   .thread-content {
     line-height: 1.6;
     word-break: break-all;
+    white-space: pre-wrap;
   }
 
   .thread-content p {
@@ -213,8 +214,10 @@
     max-width: 100%;
   }
 
-  .thread-content pre {
+  .thread-content pre,
+  .thread-content code {
     word-break: break-all;
+    white-space: pre-wrap;
   }
 
   .load-more {
@@ -240,7 +243,10 @@
 
   @media screen and (max-width:1200px) {
     .load-more {
-      width: 80vw;
+      width: 60px;
+      height: 40px;
+      line-height: 40px;
+      font-size: 12px;
     }
   }
 
@@ -265,7 +271,7 @@
 </style>
 <ul>
   <o-for newsitem in="{{ news.list }}">
-    <li class="thread-item">
+    <li class="thread-item newsitem">
       <div class="thread-author">
         <img src="{{newsitem.user.avatar}}" alt="">
         <div class="thread-author_info">

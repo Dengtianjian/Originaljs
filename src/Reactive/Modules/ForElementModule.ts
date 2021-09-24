@@ -9,7 +9,7 @@ import PropertyProxy from "../PropertyProxy";
 import Ref from "../Ref";
 
 function replaceRef(template: string, searchValue: string, replaceValue: string): string {
-  template = template.replaceAll(searchValue, replaceValue);
+  template = template.replaceAll(new RegExp(`(?<=\{ *)${searchValue}`, "g"), replaceValue);
   return template;
 }
 

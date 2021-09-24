@@ -14,9 +14,10 @@ class CEl extends OG.createElement() {
   constructor() {
     super();
     console.time("render");
-    // TODO 如果请求前没数据 然后渲染完有数据 循环不会生效
-    // TODO FOR 优化HTML问题
-    // TODO FOR 替换循环的每一项问题 item
+    // BUG 如果请求前没数据 然后渲染完有数据 循环不会生效
+    // OP FOR 优化HTML问题
+    // BUG FOR 替换循环的每一项问题 item
+    // OP 获取表达式优化，之前是正则获取{} 现在改为获取{{  }}
     this.news.loading = true;
     Http.get("https://discuz.chat/apiv3/thread.list?perPage=10&page=" + this.page + "&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=0&dzqSid=86774261-1631617310784&dzqPf=pc").then(({ Data: res }) => {
       this.news.list = res.pageData;
