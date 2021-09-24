@@ -18,7 +18,7 @@ function parseDom(HTMLString: string): Node[] {
  * @returns 优化后的字符串
  */
 function optimizeRefKey(sourceString: string): string {
-  return sourceString.replaceAll(/(?<=\{) *\.([\w\d_]+)? *(?=\})/g, "['$1']");
+  return sourceString.replaceAll(/(?<=\{[ \w_\.\[\]"']*)\.([\w_]+)/g, "['$1']");
 }
 
 /**

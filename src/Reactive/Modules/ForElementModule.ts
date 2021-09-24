@@ -76,13 +76,14 @@ export default {
           "__fors": refKeyMap
         }
       });
-      target.innerHTML = "";
 
+      let targetNewHTML: string = "";
       let index: number = 0;
       for (const key in property) {
         index++;
-        target.innerHTML += replaceRef(forTemplate, itemName, `${propertyKeyString}[${key}]`);
+        targetNewHTML += replaceRef(forTemplate, itemName, `${propertyKeyString}['${key}']`);
       }
+      target.innerHTML = Parser.optimizeRefKey(targetNewHTML);
 
       Utils.objectMerge(refRecord, Ref.collectRef(Array.from(target.childNodes) as TElement[], properties, properties.__OG__.reactive));
 
