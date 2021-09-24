@@ -52,7 +52,6 @@ function collectRef(target: TElement | TElement[], properties: ICustomElement, r
 
   Utils.objectMerge(refRecord, traverseNodes(target, properties));
 
-  // TODO 两次合并
   return refRecord;
 }
 
