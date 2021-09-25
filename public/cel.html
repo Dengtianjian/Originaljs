@@ -276,7 +276,8 @@
 <ul>
   <o-for newsitem in="{{ news.list }}">
     <li class="thread-item newsitem">
-      <div class="thread-author">
+      { {newsitem.user.nickname}}
+      <!-- <div class="thread-author">
         <img src="{{newsitem.user.avatar}}" alt="">
         <div class="thread-author_info">
           { {newsitem.user.nickname}} <i class="icon shoutao st-icon-unfold"></i>
@@ -288,11 +289,11 @@
       <div class="thread-title">
         {{ newsitem.title }}
       </div>
-      <o-el class="thread-content" html="{{newsitem.content.text}}"></o-el>
+      <o-el class="thread-content" html="{{newsitem.content.text}}"></o-el> -->
     </li>
   </o-for>
 </ul>
-<div class="load-more { {news.loading}?'load-mode_loading':{obj.a.c} } {{count}}" onclick="loadMoreThread">
+<div class="load-more" onclick="loadMoreThread">
   <i class="icon shoutao st-icon-loading"></i>
   加载更多
 </div>

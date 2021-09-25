@@ -53,7 +53,9 @@ export default {
       const refKeyMap: Map<symbol, string[]> = new Map();
       const mapKey: symbol = Symbol(propertyKeys.join());
       refKeyMap.set(mapKey, propertyKeys);
+
       const refRecord: TRefRecord = Ref.generateRefRecord(propertyKeys, target, mapKey, {
+        propertyKeyString: propertyKeys.join(),
         target,
         for: {
           template: forTemplate,
@@ -103,6 +105,30 @@ export default {
         PropertyProxy.setProxy(refRecord, properties, properties.__OG__.reactive);
       }
 
+      return true;
+    },
+    updateProperty(refs, target, propertyKey, value, properties, receiver, propertyKeys) {
+      if (!refs.__fors || !target.__OG__) return true;
+      if (refs.__fors.size === 0) return true;
+      const propertyKeyString: string = propertyKeys.join();
+      const first = refs.__fors.entries().next().value[1];
+      if (first.propertyKeyString !== propertyKeyString) return true;
+      const property: object = target[propertyKey];
+      
+      refs.__fors.forEach(forItem => {
+        const property: any = Expression.executeExpression(forItem.expressionInfo, properties);
+        let propertyHTML: string = "";
+        for (const key in property) {
+          propertyHTML += replaceRef(forItem.for.template, forItem.for.itemName, `${forItem.for.propertyKeyString}[${String(key)}]`);
+        }
+        const els = Parser.parseDom(propertyHTML);
+        forItem.target.append(...els);
+        const refRecord: TRefRecord = Ref.collectRef(els as TElement[], properties, properties.__OG__.reactive);
+
+        Ref.mergeRefMap(refRecord, properties.__OG__.reactive.refMap);
+        PropertyProxy.setProxy(refRecord, properties, properties.__OG__.reactive);
+        Ref.updateRefMap(refRecord, properties);
+      });
       return true;
     }
   }

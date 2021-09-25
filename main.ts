@@ -18,22 +18,25 @@ class CEl extends OG.createElement() {
     // DONE FOR 优化HTML问题
     // FIX FOR 替换循环的每一项问题 item
     // OP 获取表达式优化，之前是正则获取{} 现在改为获取{{  }}
-
     this.render(CElTemplate).then(res => {
-      this.news.loading = true;
-      Http.get("https://discuz.chat/apiv3/thread.list?perPage=10&page=" + this.page + "&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=0&dzqSid=86774261-1631617310784&dzqPf=pc").then(({ Data: res }) => {
-        this.news.list = res.pageData;
-        this.page++;
-        this.news.loading = false;
-      });
 
       console.timeEnd("render");
     });
+    Http.get("https://discuz.chat/apiv3/thread.list?perPage=10&page=" + this.page + "&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=0&dzqSid=86774261-1631617310784&dzqPf=pc").then(({ Data: res }) => {
+      this.news.list = [res.pageData[0]];
+      this.page++;
+      this.news.loading = false;
+
+    });
+
+    this.news.loading = true;
+
+
   }
   rendered() {
-    setTimeout(() => {
-      this.obj.a.c = 2;
-    }, 5000);
+    // setTimeout(() => {
+    //   this.obj.a.c = 2;
+    // }, 5000);
     // setInterval(() => {
     //   this.obj.a.c = this.formatTime();
     // }, 1000);
