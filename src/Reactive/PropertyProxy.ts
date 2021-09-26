@@ -25,8 +25,8 @@ function recursionSetProxy(propertyKeys: string[], properties: ICustomElement, r
 
   properties[propertyKey] = new Proxy(properties[propertyKey], {
     set(target: any, propertyKey: string | symbol, value: any, receiver: any): boolean {
-      const isHas: boolean = target.hasOwnProperty(propertyKey);
-
+      const isHas: boolean = target.hasOwnProperty(propertyKey); 
+      
       const result: boolean = Reflect.set(target, propertyKey, value, receiver);
       if (result === false) return false;
       const propertyKeys: string[] = [...target.__OG__.propertyKeys, propertyKey];

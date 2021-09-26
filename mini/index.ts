@@ -44,8 +44,8 @@ function setProxy(data) {
     if (typeof data[key] === "object") {
       data[key] = new Proxy(data[key], {
         set(target, propertyKey, value) {
-          console.log(propertyKey);
-          
+          // console.log(propertyKey);
+
           if (Array.isArray(target)) {
             if (propertyKey === "length") return true;
 
@@ -112,6 +112,22 @@ function deepUpdate(data) {
   }
 }
 deepUpdate(data);
-console.log(data);
+// console.log(data);
+
+let target = {};
+let p = new Proxy(target, {
+  set() {
+    Reflect.set(...arguments);
+    console.log(1);
+    
+    return true;
+  }
+});
+
+// p.a = 37;   // 操作转发到目标
+target.a = 87;
+// p.a = 88;
+
+console.log(p,target);    // 37. 操作已经被正确地转发
 
 // updateView("aa");

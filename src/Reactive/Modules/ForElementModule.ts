@@ -46,7 +46,6 @@ export default {
       }
       const propertyKeys: string[] = refs[0] as string[];
       const propertyKeyString: string = propertyKeys.join(".");
-      const property: object = Utils.getObjectProperty(properties, propertyKeys);
 
       const forTemplate: string = target.innerHTML;
       const expressionInfo: TExpressionInfo = Expression.generateExpressionInfo(refString);
@@ -78,22 +77,15 @@ export default {
           "__fors": refKeyMap
         }
       });
-
-      let targetNewHTML: string = "";
-      let index: number = 0;
-      for (const key in property) {
-        index++;
-        targetNewHTML += replaceRef(forTemplate, itemName, `${propertyKeyString}['${key}']`);
-      }
-      target.innerHTML = Parser.optimizeRefKey(targetNewHTML);
-
-      Utils.objectMerge(refRecord, Ref.collectRef(Array.from(target.childNodes) as TElement[], properties, properties.__OG__.reactive));
+      target.innerHTML = "";
 
       return refRecord;
     },
     setProperty(refs, target, propertyKey, value, properties, receiver) {
       if (!refs.__fors) return true;
       const fors: Map<symbol, TForElementItem> = refs.__fors;
+      console.log("set");
+
 
       for (const { 1: forItem } of fors) {
         const propertyHTML: string = replaceRef(forItem.for.template, forItem.for.itemName, `${forItem.for.propertyKeyString}[${String(propertyKey)}]`);
@@ -108,21 +100,12 @@ export default {
       return true;
     },
     updateProperty(refs, target, propertyKey, value, properties, receiver, propertyKeys) {
-      if (!refs.__fors || !target.__OG__) return true;
+      if (!refs.__fors || !target.__OG__ || value.__OG__) return true;
       if (refs.__fors.size === 0) return true;
       const propertyKeyString: string = propertyKeys.join();
       const first = refs.__fors.entries().next().value[1];
       if (first.propertyKeyString !== propertyKeyString) return true;
-      const property: object = target[propertyKey];
-      console.trace(1)
-      /**
-       * 重赋值users
-       * 正常触发set，执行模块内的updateProperty
-       * updateProperty的时候setProxy
-       * 因为重赋值，users不是proxy代理的对象了
-       * setProxy时会赋值，导致多渲染一次
-       */
-      
+
       refs.__fors.forEach(forItem => {
         const property: any = Expression.executeExpression(forItem.expressionInfo, properties);
         let propertyHTML: string = "";
