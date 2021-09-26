@@ -34,10 +34,18 @@ const Ul = App.querySelector(".ul");
 const Ref = App.querySelector(".ref");
 
 function setProxy(data) {
+  // data = new Proxy(data, {
+  //   set(target: any, propertyKey: string | symbol, value: any, receiver: any) {
+  //     console.log(propertyKey);
+  //     return true;
+  //   }
+  // });
   for (const key in data) {
     if (typeof data[key] === "object") {
       data[key] = new Proxy(data[key], {
         set(target, propertyKey, value) {
+          console.log(propertyKey);
+          
           if (Array.isArray(target)) {
             if (propertyKey === "length") return true;
 
@@ -75,6 +83,17 @@ function pushNew() {
   data.users.push({
     id: Date.now(),
   });
+}
+
+function reset() {
+  data.users = [
+    {
+      id: 99
+    }
+  ]
+  setProxy(data);
+  console.log(data);
+
 }
 
 function update() {

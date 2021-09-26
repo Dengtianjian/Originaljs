@@ -114,6 +114,14 @@ export default {
       const first = refs.__fors.entries().next().value[1];
       if (first.propertyKeyString !== propertyKeyString) return true;
       const property: object = target[propertyKey];
+      console.trace(1)
+      /**
+       * 重赋值users
+       * 正常触发set，执行模块内的updateProperty
+       * updateProperty的时候setProxy
+       * 因为重赋值，users不是proxy代理的对象了
+       * setProxy时会赋值，导致多渲染一次
+       */
       
       refs.__fors.forEach(forItem => {
         const property: any = Expression.executeExpression(forItem.expressionInfo, properties);
