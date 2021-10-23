@@ -84,8 +84,6 @@ export default {
     setProperty(refs, target, propertyKey, value, properties, receiver) {
       if (!refs.__fors) return true;
       const fors: Map<symbol, TForElementItem> = refs.__fors;
-      console.log("set");
-
 
       for (const { 1: forItem } of fors) {
         const propertyHTML: string = replaceRef(forItem.for.template, forItem.for.itemName, `${forItem.for.propertyKeyString}[${String(propertyKey)}]`);
@@ -100,8 +98,8 @@ export default {
       return true;
     },
     updateProperty(refs, target, propertyKey, value, properties, receiver, propertyKeys) {
-      if (!refs.__fors || !target.__OG__ || value.__OG__) return true;
-      if (refs.__fors.size === 0) return true;
+      if (!refs.__fors || !target.__OG__) return true;
+      if (refs.__fors.size === 0 || value.__OG__) return true;
       const propertyKeyString: string = propertyKeys.join();
       const first = refs.__fors.entries().next().value[1];
       if (first.propertyKeyString !== propertyKeyString) return true;

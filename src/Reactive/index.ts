@@ -12,13 +12,13 @@ import TransitionElement from "./Modules/TransitionElement";
 import PropertyProxy from "./PropertyProxy";
 import Ref from "./Ref";
 
-// Module.add("ConditionElement", ConditionElementModule);
+Module.add("ConditionElement", ConditionElementModule);
 Module.add("ForElementModule", ForElementModule);
-// Module.add("MethodModule", MethodModule);
-// Module.add("TransitionElementModule", TransitionElement);
-// Module.add("DynamicElementModule", DynamicElementModule);
+Module.add("MethodModule", MethodModule);
+Module.add("TransitionElementModule", TransitionElement);
+Module.add("DynamicElementModule", DynamicElementModule);
 Module.add("ElementModule", ElementModule);
-// Module.add("AttrModule", AttrModule);
+Module.add("AttrModule", AttrModule);
 
 export default class Reactive {
   static observe(target: TElement | TElement[], properties: ICustomElement, reactiveInstance: Reactive) {

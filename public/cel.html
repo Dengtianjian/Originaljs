@@ -202,9 +202,12 @@
   }
 
   .thread-content {
+    display:block;
+    height:100px;
     line-height: 1.6;
     word-break: break-all;
     white-space: pre-wrap;
+    overflow:hidden;
   }
 
   .thread-content p {
@@ -276,8 +279,7 @@
 <ul>
   <o-for newsitem in="{{ news.list }}">
     <li class="thread-item newsitem">
-      { {newsitem.user.nickname}}
-      <!-- <div class="thread-author">
+      <div class="thread-author">
         <img src="{{newsitem.user.avatar}}" alt="">
         <div class="thread-author_info">
           { {newsitem.user.nickname}} <i class="icon shoutao st-icon-unfold"></i>
@@ -289,7 +291,7 @@
       <div class="thread-title">
         {{ newsitem.title }}
       </div>
-      <o-el class="thread-content" html="{{newsitem.content.text}}"></o-el> -->
+      <o-el class="thread-content" html="{{newsitem.content.text}}"></o-el>
     </li>
   </o-for>
 </ul>

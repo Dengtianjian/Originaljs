@@ -14,15 +14,18 @@ class CEl extends OG.createElement() {
   constructor() {
     super();
     console.time("render");
-    // BUG 如果请求前没数据 然后渲染完有数据 循环不会生效
+    // FIX 如果请求前没数据 然后渲染完有数据 循环不会生效
     // DONE FOR 优化HTML问题
     // FIX FOR 替换循环的每一项问题 item
     // OP 获取表达式优化，之前是正则获取{} 现在改为获取{{  }}
+    // OP 赋值变量是引用类型时并且是有循环引用的，删除已经存在的
+    // TODO 绑定方法改为执行表达式
+    // TODO 所有匹配到{{  }}不管有没有引用都当作表达式处理，如果是0引用就直接执行表达式
     this.render(CElTemplate).then(res => {
       console.timeEnd("render");
     });
-    Http.get("https://discuz.chat/apiv3/thread.list?perPage=10&page=" + this.page + "&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=0&dzqSid=86774261-1631617310784&dzqPf=pc").then(({ Data: res }) => {
-      this.news.list = [res.pageData[0]];
+    Http.get("https://discuz.chat/apiv3/thread.list?perPage=10&page="+this.page+"&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=1").then(({ Data: res }) => {
+      this.news.list = res.pageData;
       this.page++;
       // this.news.loading = false;
     });
@@ -78,10 +81,10 @@ class CEl extends OG.createElement() {
   page = 1;
   loadMoreThread() {
     this.news.loading = true;
-    Http.get("https://discuz.chat/apiv3/thread.list?perPage=10&page=" + this.page + "&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=0&dzqSid=86774261-1631617310784&dzqPf=pc").then(({ Data: res }) => {
+    Http.get("https://discuz.chat/apiv3/thread.list?perPage=10&page="+this.page+"&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=1&dzqSid=86774261-1631617310784&dzqPf=pc").then(({ Data: res }) => {
       this.page++;
 
-      this.news.list.push(...res.pageData);
+      this.news.list.unshift(...res.pageData);
       window.scrollTo(0, window.scrollY + 100);
       this.news.loading = false;
     });

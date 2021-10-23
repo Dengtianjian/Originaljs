@@ -67,6 +67,10 @@ export default {
         refItem.target.textContent = Transform.transformObjectToString(Expression.executeExpression(refItem.expressionInfo, properties)) as string;
       });
       return true;
+    },
+    deleteProperty(){
+      console.log(1);
+      
     }
   },
 } as TModuleOptions;
