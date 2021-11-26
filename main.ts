@@ -1,5 +1,5 @@
-import OG from "./src";
 import Http from "./http";
+import OG from "./src";
 OG.transitionPreset("fadeHide").add({
   opacity: "0",
   transitionDuration: "0.3s"
@@ -9,6 +9,7 @@ OG.transitionPreset("fadeHide").add({
 });
 
 let CElTemplate: string = await fetch("./cel.html").then(res => res.text());
+CElTemplate="{{ news.list }}";
 
 class CEl extends OG.createElement() {
   constructor() {
@@ -24,11 +25,11 @@ class CEl extends OG.createElement() {
     this.render(CElTemplate).then(res => {
       console.timeEnd("render");
     });
-    Http.get("https://discuz.chat/apiv3/thread.list?perPage=10&page="+this.page+"&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=1").then(({ Data: res }) => {
-      this.news.list = res.pageData;
-      this.page++;
-      // this.news.loading = false;
-    });
+    // Http.get("https://discuz.chat/apiv3/thread.list?perPage=10&page="+this.page+"&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=1").then(({ Data: res }) => {
+    //   this.news.list = res.pageData;
+    //   this.page++;
+    //   // this.news.loading = false;
+    // });
 
     // this.news.loading = true;
 
@@ -152,32 +153,6 @@ class CEl extends OG.createElement() {
     // return;
     // this.useTransitionPreset("fadeHide");
     return;
-    this.transitionStop = this.transition(this.transitions.transitionName).step({
-      transform: "translateX(0px)",
-      transitionDuration: "0.3s",
-      opacity: "1"
-    }, () => {
-      console.log("step end");
-    }).step({
-      opacity: "0",
-      transform: "translateX(50px)",
-      transitionDuration: "0.3s",
-      transitionTimingFunction: "cubic-bezier(0.47, -0.38, 0.46, 1.43)"
-    }).end(() => {
-      console.log("end");
-    }).step({
-      opacity: "1",
-      transform: "translateY(60px)",
-      transitionDuration: "0.3s",
-
-    }).step({
-      transform: "translateY(120px)",
-      transitionDuration: "0.6s",
-      // transitionDuration: "0.3s",
-    }, () => {
-      console.log("120px");
-
-    })
   }
   transitions = {
     transitionName: "fadeHide",
