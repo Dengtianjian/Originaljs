@@ -23,6 +23,7 @@ export default {
     marchExpressions.forEach((expression, index) => {
       const raw: string = expression;
       const expressionInfo = Parser.parseTemplateGetExpression(expression);
+
       expressions.push({
         ...expressionInfo,
         raw,
@@ -33,6 +34,14 @@ export default {
   },
   collectRefs(target: Node[] | Node): TRefs {
     const refs: TRefs = {};
+    //* 没有引用的表达式，即时执行表达式
+    Object.defineProperty(refs, "__emptyRefs__", {
+      value: {
+        __els: []
+      },
+      configurable: false,
+      enumerable: true
+    });
 
     if (Array.isArray(target) || target instanceof NodeList) {
       Array.from(target).forEach(childNode => {
@@ -52,6 +61,8 @@ export default {
 
     const parentElement = target.parentElement;
     const expressions: TExpressionInfo[] = this.collectExpression(target.textContent);
+    console.log(expressions);
+
 
     const newTexts: Text[] = [];
     expressions.forEach(({ expressionRefMap, refKeyMap, executableExpressions }, index) => {
@@ -66,6 +77,19 @@ export default {
         const expressionTextEl: Text = new Text(expression);
         newTexts.push(expressionTextEl);
         target.textContent = target.textContent.slice(expression.length);
+
+        //* 没有引用的表达式
+        if (refKeysRawStrings.length === 0) {
+          refs.__emptyRefs__.__els.push({
+            target: expressionTextEl,
+            expression: {
+              refs: refKeysRawStrings,
+              value: executableExpressions.get(expression),
+              raw: expression,
+              refKey: []
+            }
+          })
+        }
 
         refKeysRawStrings.forEach(refKey => {
           const refKeys: string[] = Transform.transformPropertyKey(refKey);
