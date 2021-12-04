@@ -30,14 +30,16 @@ function parseTemplateGetExpression(template: string): {
   refsRaw: string[],
   expressions: string[],
   expressionsRaw: string[],
-  executableExpressions: string[]
+  executableExpressions: Map<string, string>,
+  expressionRefMap: Map<string, string[]>
 } {
   let charts: string[] = template.split("");
   const expressions: string[] = [];
   const expressionsRaw: string[] = [];
   const refs: string[] = [];
   const refsRaw: string[] = [];
-  const executableExpressions: string[] = [];
+  const executableExpressions: Map<string, string> = new Map();
+  const expressionRefMap: Map<string, string[]> = new Map();
   let inExpression: boolean = false;
   let inExpressionCount: number = 0;
   let inRef: boolean = false;
@@ -47,6 +49,7 @@ function parseTemplateGetExpression(template: string): {
   let expression: string = "";
   let expressionRaw: string = "";
   let executableExpression: string = "";
+  let expressionRefs: string[] = []
   charts.forEach(chartItem => {
     switch (chartItem) {
       case "{":
@@ -72,6 +75,7 @@ function parseTemplateGetExpression(template: string): {
           if (inRef) {
             inRefCount--;
             refs.push(refKey);
+            expressionRefs.push(refKey);
             refKey = "";
             refKeyRaw += chartItem;
             refsRaw.push(refKeyRaw);
@@ -85,8 +89,10 @@ function parseTemplateGetExpression(template: string): {
             inExpressionCount--;
             expressionRaw += chartItem;
             expressionsRaw.push(expressionRaw);
+            executableExpressions.set(expressionRaw, executableExpression);
+            expressionRefMap.set(expressionRaw, expressionRefs);
+            expressionRefs = [];
             expressionRaw = "";
-            executableExpressions.push(executableExpression);
             executableExpression = "";
             if (inExpressionCount === 0) {
               inExpression = false;
@@ -103,7 +109,9 @@ function parseTemplateGetExpression(template: string): {
         expression += chartItem.trim();
         refKeyRaw += chartItem;
         expressionRaw += chartItem;
-        executableExpression += chartItem.trim();
+        if (inExpression) {
+          executableExpression += chartItem.trim();
+        }
         break;
     }
   });
@@ -116,7 +124,8 @@ function parseTemplateGetExpression(template: string): {
     refsRaw: filterEmptyValue(refsRaw),
     expressions: filterEmptyValue(expressions),
     expressionsRaw: filterEmptyValue(expressionsRaw),
-    executableExpressions: filterEmptyValue(executableExpressions),
+    executableExpressions,
+    expressionRefMap
   };
 }
 

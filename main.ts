@@ -4,9 +4,15 @@ class CEl extends OG.createElement() {
   constructor() {
     super();
     this.render(`
-    <p>Hello Originaljs {{ users[0].nickname } + 2 + { users[3].nickname }} {} { computed } { { users[1].nickname } }</p>
+    <div>
+    {{ age }}
+    <p> {{ username }} { { number } +2 } </p>
+    </div>
     `);
   }
+  username = "admin";
+  number = 6;
+  age = 20
 }
 
 OG.defineElement("c-el", CEl);
