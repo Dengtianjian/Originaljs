@@ -27,8 +27,6 @@ export default class extends HTMLElement implements ICustomElement {
     const wrapperEl: HTMLElement = document.createElement("div");
     wrapperEl.append(...childNodes);
     const refTree = Ref.collectRefs(wrapperEl);
-    console.log(refTree);
-
     View.updateRefView(refTree, this);
 
     this.__OG__.rootEl.append(...Array.from(wrapperEl.childNodes));

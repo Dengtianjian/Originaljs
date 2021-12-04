@@ -61,8 +61,6 @@ export default {
 
     const parentElement = target.parentElement;
     const expressions: TExpressionInfo[] = this.collectExpression(target.textContent);
-    console.log(expressions);
-
 
     const newTexts: Text[] = [];
     expressions.forEach(({ expressionRefMap, refKeyMap, executableExpressions }, index) => {
