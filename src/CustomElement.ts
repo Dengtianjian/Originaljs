@@ -1,5 +1,6 @@
 import Parser from "./Reactive/Parser";
 import Ref from "./Reactive/Ref";
+import View from "./Reactive/View";
 
 interface ICustomElement {
   __OG__: {
@@ -27,7 +28,7 @@ export default class extends HTMLElement implements ICustomElement {
     wrapperEl.append(...childNodes);
     const refTree = Ref.collectRefs(wrapperEl);
     // console.log(refTree);
-    // View.updateRefView(refTree, this);
+    View.updateRefView(refTree, this);
 
     this.__OG__.rootEl.append(...Array.from(wrapperEl.childNodes));
   }

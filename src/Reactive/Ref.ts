@@ -31,41 +31,41 @@ export default {
     });
     return expressions;
   },
-  collectRefs(childNodes: Node[] | Node): TRefs {
+  collectRefs(target: Node[] | Node): TRefs {
     const refs: TRefs = {};
 
-    if (Array.isArray(childNodes) || childNodes instanceof NodeList) {
-      childNodes.forEach(childNode => {
+    if (Array.isArray(target) || target instanceof NodeList) {
+      Array.from(target).forEach(childNode => {
         Obj.objectMerge(refs, this.collectRefs(childNode));
       });
       return refs;
     }
-    if (childNodes instanceof Text === false) {
-      if (childNodes.childNodes.length > 0) {
-        Obj.objectMerge(refs, this.collectRefs(childNodes.childNodes));
+    if (target instanceof Text === false) {
+      if (target.childNodes.length > 0) {
+        Obj.objectMerge(refs, this.collectRefs(target.childNodes));
       }
       return refs;
     }
-    if (!childNodes.textContent.trim()) {
+    if (!target.textContent.trim()) {
       return refs;
     }
 
-    const parentElement = childNodes.parentElement;
-    const expressions: TExpressionInfo[] = this.collectExpression(childNodes.textContent);
+    const parentElement = target.parentElement;
+    const expressions: TExpressionInfo[] = this.collectExpression(target.textContent);
 
     const newTexts: Text[] = [];
     expressions.forEach(({ expressionRefMap, refKeyMap, executableExpressions }, index) => {
       expressionRefMap.forEach((refKeysRawStrings, expression) => {
-        let index: number = childNodes.textContent.indexOf(expression);
-        const beforeContent: string = childNodes.textContent.slice(0, index);
+        let index: number = target.textContent.indexOf(expression);
+        const beforeContent: string = target.textContent.slice(0, index);
         if (beforeContent) {
-          childNodes.textContent = childNodes.textContent.slice(beforeContent.length);
+          target.textContent = target.textContent.slice(beforeContent.length);
           newTexts.push(new Text(beforeContent));
         }
 
         const expressionTextEl: Text = new Text(expression);
         newTexts.push(expressionTextEl);
-        childNodes.textContent = childNodes.textContent.slice(expression.length);
+        target.textContent = target.textContent.slice(expression.length);
 
         refKeysRawStrings.forEach(refKey => {
           const refKeys: string[] = Transform.transformPropertyKey(refKey);
@@ -85,10 +85,10 @@ export default {
       })
     });
 
-    newTexts.push(new Text(childNodes.textContent));
-    childNodes.textContent = "";
+    newTexts.push(new Text(target.textContent));
+    target.textContent = "";
     newTexts.forEach(newTextItem => {
-      parentElement.insertBefore(newTextItem, childNodes);
+      parentElement.insertBefore(newTextItem, target);
     });
 
     return refs;
