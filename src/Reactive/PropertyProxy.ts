@@ -14,15 +14,15 @@ function bubbleSetProxy(refKeys: string[], data: any, upperKeys: string[], root:
         set(target, propertyKey, value, receiver) {
           let targetProxy = target.__proxy__;
 
-          let refKeys: string[] = [...targetProxy.__refKeys, propertyKey];
+          let refKeys: string[] = [...targetProxy.refKeys, propertyKey];
 
           Reflect.set(target, propertyKey, value, receiver);
 
-          const refs: TRefs = targetProxy.__root.__OG__.refs;
+          const refs: TRefs = targetProxy.root.__OG__.refs;
           const refKey: string = Transform.transformPropertyKeyToString(refKeys);
 
           if (refs[refKey]) {
-            View.updateView(refs[refKey], targetProxy.__root);
+            View.updateView(refs[refKey], targetProxy.root);
           }
           return true;
         }
@@ -30,9 +30,9 @@ function bubbleSetProxy(refKeys: string[], data: any, upperKeys: string[], root:
 
       Object.defineProperty(target, "__proxy__", {
         value: {
-          __refKeys: [...upperKeys, propertyKey],
-          __refKey: propertyKey,
-          __root: root
+          refKeys: [...upperKeys, propertyKey],
+          refKey: propertyKey,
+          root: root
         },
         enumerable: false,
         configurable: false,
