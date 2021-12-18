@@ -11,7 +11,8 @@ export type TRefItemTypeEl = Array<{
 }>
 
 export type TRefItem = {
-  __els: TRefItemTypeEl
+  __els: TRefItemTypeEl,
+  __refKeys: string[]
 }
 
 export type TRefs = {

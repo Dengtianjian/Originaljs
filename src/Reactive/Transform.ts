@@ -60,6 +60,29 @@ function transformPropertyKey(propertyNameString: string): string[] {
   return propertys;
 }
 
+/**
+ * 把属性名数组转换成属性名路径。['user','age'] -> user['age']
+ * @param propertyNames 属性名数组
+ * @returns 属性名路径字符串
+ */
+function transformPropertyKeyToString(propertyNames: (string | number)[]): string {
+  propertyNames = [...propertyNames];
+  let propertyPath: string = String(propertyNames[0]);
+  propertyNames.splice(0, 1);
+
+  for (let index = 0; index < propertyNames.length; index++) {
+    const name = propertyNames[index];
+    if (isNaN(Number(name))) {
+      propertyPath += `['${name}']`;
+    } else {
+      propertyPath += `[${name}]`;
+    }
+  }
+
+  return propertyPath;
+}
+
 export default {
-  transformPropertyKey
+  transformPropertyKey,
+  transformPropertyKeyToString
 }

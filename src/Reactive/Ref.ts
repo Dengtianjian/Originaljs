@@ -1,6 +1,5 @@
 import RegExpRules from "../RegExpRules";
-import { TRefs } from "../Typings/RefType";
-import Obj from "../Utils/Obj";
+import { TRefItem, TRefs } from "../Typings/RefType";
 import Parser from "./Parser";
 import Transform from "./Transform";
 
@@ -15,21 +14,32 @@ type TExpressionInfo = {
   expressionRefMap: Map<string, string[]>;
 }
 
+function mergeRefs(target: TRefs, source: TRefs) {
+  for (const refKey in source) {
+    if (!target[refKey]) {
+      target[refKey] = source[refKey];
+      continue;
+    }
+    const refItem: TRefItem = target[refKey];
+    refItem.__els.push(...source[refKey].__els);
+  }
+}
+
 export default {
   collectExpression(template: string): TExpressionInfo[] {
     if (!template || RegExpRules.matchExpression.test(template) === false) return [];
-    const marchExpressions: string[] = template.match(new RegExp(RegExpRules.matchExpression, "g"));
-    const expressions: Array<TExpressionInfo> = [];
-    marchExpressions.forEach((expression, index) => {
-      const raw: string = expression;
-      const expressionInfo = Parser.parseTemplateGetExpression(expression);
+    const { 0: expression }: string[] = template.match(new RegExp(RegExpRules.matchExpression, "g"));
 
-      expressions.push({
-        ...expressionInfo,
-        raw,
-        refKeyMap: new Map()
-      });
+    const expressions: Array<TExpressionInfo> = [];
+    const raw: string = expression;
+    const expressionInfo = Parser.parseTemplateGetExpression(expression);
+
+    expressions.push({
+      ...expressionInfo,
+      raw,
+      refKeyMap: new Map()
     });
+
     return expressions;
   },
   collectRefs(target: Node[] | Node): TRefs {
@@ -37,7 +47,8 @@ export default {
     //* 没有引用的表达式，即时执行表达式
     Object.defineProperty(refs, "__emptyRefs__", {
       value: {
-        __els: []
+        __els: [],
+        __refKeys: []
       },
       configurable: false,
       enumerable: true
@@ -45,13 +56,13 @@ export default {
 
     if (Array.isArray(target) || target instanceof NodeList) {
       Array.from(target).forEach(childNode => {
-        Obj.objectMerge(refs, this.collectRefs(childNode));
+        mergeRefs(refs, this.collectRefs(childNode));
       });
       return refs;
     }
     if (target instanceof Text === false) {
       if (target.childNodes.length > 0) {
-        Obj.objectMerge(refs, this.collectRefs(target.childNodes));
+        mergeRefs(refs, this.collectRefs(target.childNodes));
       }
       return refs;
     }
@@ -100,7 +111,8 @@ export default {
                 raw: expression,
                 refKey: refKeys
               }
-            }]
+            }],
+            __refKeys: refKeys
           }
           refKeyMap.set(refKey, refKeys);
         })

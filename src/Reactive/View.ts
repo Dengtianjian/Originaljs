@@ -11,10 +11,16 @@ export default {
   },
   updateRefView(refs: TRefs, data: CustomElement) {
     for (const refKey in refs) {
+      if (refKey === "__emptyRefs__") {
+        continue;
+      }
       const refItem: TRefItem = refs[refKey];
-      refItem.__els.forEach(item => {
-        item.target.textContent = this.executeExpression(item.expression.value, data);
-      });
+      this.updateView(refItem, data);
     }
+  },
+  updateView(refItem: TRefItem, data: CustomElement) {
+    refItem.__els.forEach(item => {
+      item.target.textContent = this.executeExpression(item.expression.value, data);
+    });
   }
 }
