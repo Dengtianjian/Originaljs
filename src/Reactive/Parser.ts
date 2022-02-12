@@ -13,7 +13,7 @@ function parseDom(HTMLString: string): Node[] {
 }
 
 /**
- * 优化HTML模板字符串里的ref引用key，主要是为了解决在img标签src属性下带有 . 的引用，为编译完模板时会报url错误问题
+ * 优化HTML模板字符串里的ref引用key，主要是为了解决在img标签src属性下带有 . 的引用，未编译完模板时会报url错误问题
  * @param sourceString HTML模板字符串
  * @returns 优化后的字符串
  */
@@ -25,6 +25,12 @@ const emptyConditions: string[] = ["{}", ""];
 function filterEmptyValue(values: string[]): string[] {
   return values.filter(item => !emptyConditions.includes(item));
 }
+
+/**
+ * 解析模板并且获取表达式插值
+ * @param {String} template 模板HTML
+ * @returns 表达式相关
+ */
 function parseTemplateGetExpression(template: string): {
   refs: string[],
   refsRaw: string[],

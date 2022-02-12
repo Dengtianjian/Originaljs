@@ -3,7 +3,14 @@ import { TRefs } from "../Typings/RefType";
 import Transform from "./Transform";
 import View from "./View";
 
-function bubbleSetProxy(refKeys: string[], data: any, upperKeys: string[], root: CustomElement) {
+/**
+ * 冒泡对对象设置为代理对象
+ * @param refKeys 引用key数组
+ * @param data 数据
+ * @param upperKeys 上一级的keys
+ * @param root 组件实例
+ */
+function bubbleSetProxy(refKeys: string[], data: any, upperKeys: string[], root: CustomElement): void {
   const propertyKey: string = refKeys[0];
   const target = data[propertyKey];
   if (typeof target === "object") {
@@ -42,14 +49,21 @@ function bubbleSetProxy(refKeys: string[], data: any, upperKeys: string[], root:
   }
 }
 
-export default {
-  setProxy(refs: TRefs, rawData: CustomElement) {
-    for (const refKey in refs) {
-      if (refKey === "__emptyRefs__") {
-        continue;
-      }
-      const refKeys: string[] = refs[refKey]['__refKeys'];
-      bubbleSetProxy(refKeys, rawData, [], rawData);
+/**
+ * 根据插值引用设置代理对象
+ * @param refs 插值引用
+ * @param rawData 原始数据，指的是组件实例
+ */
+function setProxy(refs: TRefs, rawData: CustomElement) {
+  for (const refKey in refs) {
+    if (refKey === "__emptyRefs__") {
+      continue;
     }
+    const refKeys: string[] = refs[refKey]['__refKeys'];
+    bubbleSetProxy(refKeys, rawData, [], rawData);
   }
+}
+
+export default {
+  setProxy
 }
