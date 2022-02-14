@@ -14,6 +14,8 @@ type TExpressionInfo = {
   statementRefMap: Map<string, string[]>
 }
 
+const passCollectTags: string[] = ["SCRIPT", "STYLE"];
+
 /**
  * 合并插值引用
  * @param target 插值引用
@@ -58,7 +60,7 @@ function collectExpression(template: string): TExpressionInfo[] {
  * @returns 引用
  */
 function collectRefs(target: Node[] | Node): TRefs {
-  if (!Array.isArray(target) && target.nodeName === "STYLE" && target.nodeType === 1) {
+  if (!Array.isArray(target) && passCollectTags.includes(target.nodeName) && target.nodeType === 1) {
     return {};
   }
   const refs: TRefs = {};
