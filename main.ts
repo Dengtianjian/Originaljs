@@ -17,8 +17,8 @@ class CEl extends OG.createElement() {
     this.render(`
     <div>{ {user.age} }</div>
     <div>{ {user.age} + 2 }</div>
-    <div>{ (() => { return Date.now() })() }</div>
-    <div>{ (() => 1 + 2)() + {user.age} }</div>
+    <div>{ () => Date.now() }</div>
+    <div>{ () => 1 + 2 + {user.age} }</div>
     `);
     setInterval(() => {
       this.user.friends[0] = formatTime();

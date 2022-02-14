@@ -7,8 +7,9 @@ export default {
     let result: any = null;
     try {
       result = new Function(`return ${expression}`).call(data);
-      console.log(expression, result);
-
+      if (typeof result === "function") {
+        result = result();
+      }
     } catch (e) {
       console.log(expression, e);
     }
