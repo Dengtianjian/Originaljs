@@ -19,6 +19,12 @@ class CEl extends OG.createElement() {
     <div>{ {user.age} + 2 }</div>
     <div>{ {user.friends[0]} }</div>
     <div>{ () => 1 + 2 + {user.age} }</div>
+    <div>{ () => {
+      return "Hello world"
+    } }</div>
+    <div>{ () => {
+      return this.update
+    } }</div>
     `);
     setInterval(() => {
       this.user.friends[0] = formatTime();
@@ -30,6 +36,9 @@ class CEl extends OG.createElement() {
     friends: [
       "Jack"
     ]
+  }
+  update() {
+    return "show";
   }
 }
 
