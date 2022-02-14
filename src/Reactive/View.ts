@@ -3,17 +3,23 @@ import { TRefItem, TRefs } from "../Typings/RefType";
 
 export default {
   executeExpression(expression: string, data: CustomElement) {
-    // console.log(expression);
 
-    const result: any = new Function(`return ${expression}`).call(data);
+    let result: any = null;
+    try {
+      result = new Function(`return ${expression}`).call(data);
+      console.log(expression, result);
+
+    } catch (e) {
+      console.log(expression, e);
+    }
 
     return result;
   },
   updateRefView(refs: TRefs, data: CustomElement) {
     for (const refKey in refs) {
-      if (refKey === "__emptyRefs__") {
-        continue;
-      }
+      // if (refKey === "__emptyRefs__") {
+      //   continue;
+      // }
       const refItem: TRefItem = refs[refKey];
       this.updateView(refItem, data);
     }

@@ -34,7 +34,7 @@ export default class extends HTMLElement implements ICustomElement {
 
     this.__OG__.refs = refs;
     PropertyProxy.setProxy(refs, this);
-    console.dir(this);
+    // console.dir(refs);
     View.updateRefView(refs, this);
 
     this.__OG__.rootEl.append(...Array.from(wrapperEl.childNodes));

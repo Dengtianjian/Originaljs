@@ -1,3 +1,5 @@
+import RegExpRules from "../RegExpRules";
+
 /**
  * 转换HTML文本为标签节点数组
  * @param HTMLString HTML文本
@@ -31,112 +33,105 @@ function filterEmptyValue(values: string[]): string[] {
  * @param {String} template 模板HTML
  * @returns 表达式相关
  */
-function parseTemplateGetExpression(template: string): {
+function parseTemplateToStatement(template: string): {
   refs: string[],
   refsRaw: string[],
-  expressions: string[],
-  expressionsRaw: string[],
-  executableExpressions: Map<string, string>,
-  expressionRefMap: Map<string, string[]>
+  statements: string[],
+  statementsRaw: string[],
+  executableStatements: Map<string, string>,
+  statementRefMap: Map<string, string[]>
 } {
   let charts: string[] = template.split("");
-  const expressions: string[] = [];
-  const expressionsRaw: string[] = [];
+  const statements: string[] = [];
+  const statementsRaw: string[] = [];
   const refs: string[] = [];
   const refsRaw: string[] = [];
-  const executableExpressions: Map<string, string> = new Map();
-  const expressionRefMap: Map<string, string[]> = new Map();
-  let inExpression: boolean = false;
-  let inExpressionCount: number = 0;
-  let inRef: boolean = false;
-  let inRefCount: number = 0;
-  let refKey: string = "";
-  let refKeyRaw: string = "";
-  let expression: string = "";
-  let expressionRaw: string = "";
-  let executableExpression: string = "";
-  let expressionRefs: string[] = []
+  const executableStatements: Map<string, string> = new Map();
+  const statementRefMap: Map<string, string[]> = new Map();
+
+  let inBlockCount: number = 0; //* 进入 块级的次数，解析完后需要为0，否则就是插值语法错误
+  let executableStatement: string = ""; //* 可执行块级语句字符串，引用的数据加了this后的语句
+  let blockStatementRaw: string = ""; //* 解析出来的块级语句原始字符串，也就是插值、模板语法
+  let statement: string = ""; //* 块级语句字符串，未加this
+  let statementRefs: string[] = []; //* 语句里的数据引用
+  let statementFragment: string = ""; //* 块级内的语句片段
+
   charts.forEach(chartItem => {
     switch (chartItem) {
       case "{":
-        if (inExpression) {
-          inRef = true;
-          inRefCount++;
-
-          refKey = "";
-          refKeyRaw = "";
-          refKeyRaw += chartItem;
-          expressionRaw += chartItem;
-          executableExpression += "this.";
+        if (inBlockCount <= 0) {
+          blockStatementRaw += chartItem;
         } else {
-          inExpression = true;
-          inExpressionCount++;
-          expression = "";
-          expressionRaw = "";
-          expressionRaw += chartItem;
+          blockStatementRaw += statementFragment;
+
+          statementFragment = "";
+          statementFragment += chartItem;
+          statement += chartItem;
+          executableStatement += chartItem;
         }
+        inBlockCount++;
         break;
       case "}":
-        if (inExpression) {
-          if (inRef) {
-            inRefCount--;
-            refs.push(refKey);
-            expressionRefs.push(refKey);
-            refKey = "";
-            refKeyRaw += chartItem;
-            refsRaw.push(refKeyRaw);
-            refKeyRaw = "";
-            expressionRaw += chartItem;
+        inBlockCount--;
 
-            if (inRefCount === 0) {
-              inRef = false;
-            }
-          } else {
-            inExpressionCount--;
-            expressionRaw += chartItem;
-            expressionsRaw.push(expressionRaw);
-            executableExpressions.set(expressionRaw, executableExpression);
-            expressionRefMap.set(expressionRaw, expressionRefs);
-            expressionRefs = [];
-            expressionRaw = "";
-            executableExpression = "";
-            if (inExpressionCount === 0) {
-              inExpression = false;
-              expressions.push(expression);
-              expression = "";
-            }
-          }
-        } else {
-          throw new Error("插值语法错误");
+        statementFragment += chartItem;
+
+        blockStatementRaw += statementFragment;
+
+        if (inBlockCount !== 0) {
+          executableStatement += chartItem;
+          statement += chartItem;
         }
+        if (RegExpRules.matchRefRaw.test(statementFragment)) {
+          refsRaw.push(statementFragment);
+          const extractRef: string = statementFragment.replace(RegExpRules.extactRef, "$1").trim();
+          statementRefs.push(extractRef);
+
+          executableStatement = executableStatement.replace(statementFragment, `this.${extractRef}`);
+        }
+
+        if (inBlockCount === 0) {
+          statementsRaw.push(blockStatementRaw);
+          statementRefMap.set(blockStatementRaw, statementRefs);
+          statements.push(statement.trim());
+          refs.push(...statementRefs);
+
+          if (executableStatement === "") {
+            executableStatement = statement;
+          }
+          executableStatements.set(blockStatementRaw, executableStatement.trim());
+
+          executableStatement = "";
+          blockStatementRaw = "";
+          statementRefs = [];
+          statement = "";
+        }
+
+        statementFragment = "";
         break;
       default:
-        refKey += chartItem.trim();
-        expression += chartItem.trim();
-        refKeyRaw += chartItem;
-        expressionRaw += chartItem;
-        if (inExpression) {
-          executableExpression += chartItem.trim();
-        }
+        statementFragment += chartItem;
+        statement += chartItem;
+        executableStatement += chartItem;
         break;
     }
   });
-  if (inExpressionCount > 0) {
+  if (inBlockCount > 0 || inBlockCount < 0) {
     throw new Error("插值语法错误");
   }
 
   return {
     refs: filterEmptyValue(refs),
     refsRaw: filterEmptyValue(refsRaw),
-    expressions: filterEmptyValue(expressions),
-    expressionsRaw: filterEmptyValue(expressionsRaw),
-    executableExpressions,
-    expressionRefMap
+    statements: filterEmptyValue(statements),
+    statementsRaw: filterEmptyValue(statementsRaw),
+    executableStatements,
+    statementRefMap
   };
 }
 
 export default {
   optimizeRefKey,
   parseDom,
-  parseTemplateGetExpression
+  parseTemplateToStatement
 }

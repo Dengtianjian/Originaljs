@@ -5,13 +5,13 @@ import Transform from "./Transform";
 
 type TExpressionInfo = {
   raw: string,
-  refs: string[],
   refKeyMap: Map<string, Array<string>>,
-  refsRaw: string[];
-  expressions: string[];
-  expressionsRaw: string[];
-  executableExpressions: Map<string, string>;
-  expressionRefMap: Map<string, string[]>;
+  refs: string[],
+  refsRaw: string[],
+  statements: string[],
+  statementsRaw: string[],
+  executableStatements: Map<string, string>,
+  statementRefMap: Map<string, string[]>
 }
 
 /**
@@ -41,7 +41,7 @@ function collectExpression(template: string): TExpressionInfo[] {
 
   const expressions: Array<TExpressionInfo> = [];
   const raw: string = expression;
-  const expressionInfo = Parser.parseTemplateGetExpression(expression);
+  const expressionInfo = Parser.parseTemplateToStatement(expression);
 
   expressions.push({
     ...expressionInfo,
@@ -89,8 +89,8 @@ function collectRefs(target: Node[] | Node): TRefs {
   const expressions: TExpressionInfo[] = this.collectExpression(target.textContent);
 
   const newTexts: Text[] = [];
-  expressions.forEach(({ expressionRefMap, refKeyMap, executableExpressions }, index) => {
-    expressionRefMap.forEach((refKeysRawStrings, expression) => {
+  expressions.forEach(({ statementRefMap, refKeyMap, executableStatements }, index) => {
+    statementRefMap.forEach((refKeysRawStrings, expression) => {
       let index: number = target.textContent.indexOf(expression);
       const beforeContent: string = target.textContent.slice(0, index);
       if (beforeContent) {
@@ -108,7 +108,7 @@ function collectRefs(target: Node[] | Node): TRefs {
           target: expressionTextEl,
           expression: {
             refs: refKeysRawStrings,
-            value: executableExpressions.get(expression),
+            value: executableStatements.get(expression),
             raw: expression,
             refKey: []
           }
@@ -122,7 +122,7 @@ function collectRefs(target: Node[] | Node): TRefs {
             target: expressionTextEl,
             expression: {
               refs: refKeysRawStrings,
-              value: executableExpressions.get(expression),
+              value: executableStatements.get(expression),
               raw: expression,
               refKey: refKeys
             }
