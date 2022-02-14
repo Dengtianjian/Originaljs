@@ -25,7 +25,7 @@ export default class extends HTMLElement implements ICustomElement {
     props: [],
     refs: {}
   };
-  render(template: string) {
+  render(template: string): Promise<void> {
     template = Parser.optimizeRefKey(template);
     const childNodes: Node[] = Parser.parseDom(template);
     const wrapperEl: HTMLElement = document.createElement("div");
@@ -38,5 +38,6 @@ export default class extends HTMLElement implements ICustomElement {
     View.updateRefView(refs, this);
 
     this.__OG__.rootEl.append(...Array.from(wrapperEl.childNodes));
+    return Promise.resolve();
   }
 }

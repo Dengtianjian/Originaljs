@@ -58,6 +58,9 @@ function collectExpression(template: string): TExpressionInfo[] {
  * @returns 引用
  */
 function collectRefs(target: Node[] | Node): TRefs {
+  if (!Array.isArray(target) && target.nodeName === "STYLE" && target.nodeType === 1) {
+    return {};
+  }
   const refs: TRefs = {};
   //* 没有引用的表达式，即时执行表达式
   Object.defineProperty(refs, "__emptyRefs__", {

@@ -1,5 +1,9 @@
 import OG from "./src";
 
+function loadTemplate(fileName) {
+  return fetch(`${fileName}.html`).then(res => res.text());
+}
+
 function datePatchZero(dateEl: number | string): string | number {
   return dateEl < 10 ? `0${dateEl}` : dateEl;
 }
@@ -11,32 +15,25 @@ function formatTime(): string {
   return timeString;
 }
 
+let user = {
+  age: 2021,
+  name: "admin",
+  friends: [
+    "Jack"
+  ]
+}
+
 class CEl extends OG.createElement() {
   constructor() {
     super();
-    this.render(`
-    <div>{ {user.age} }</div>
-    <div>{ {user.age} + 2 }</div>
-    <div>{ {user.friends[0]} }</div>
-    <div>{ () => 1 + 2 + {user.age} }</div>
-    <div>{ () => {
-      return "Hello world"
-    } }</div>
-    <div>{ () => {
-      return this.update
-    } }</div>
-    `);
-    setInterval(() => {
-      this.user.friends[0] = formatTime();
-    }, 1000);
+    loadTemplate("cel").then(res => {
+      this.render(res);
+    });
+    // setInterval(() => {
+    //   this.user.age = formatTime();
+    // }, 1000);
   }
-  user = {
-    age: 2021,
-    name: "admin",
-    friends: [
-      "Jack"
-    ]
-  }
+  user = user
   update() {
     return "show";
   }
