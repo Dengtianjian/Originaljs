@@ -1,15 +1,21 @@
 import CustomElement from "../CustomElement";
 import { TRefItem, TRefs } from "../Typings/RefType";
+import Transform from "./Transform";
 
 export default {
   executeExpression(expression: string, data: CustomElement) {
-
-    let result: any = new Function(`return ${expression}`).call(data);
-    if (typeof result === "function") {
-      result = result();
+    let result: any = null;
+    try {
+      result = new Function(`return ${expression}`).call(data);
+      if (typeof result === "function") {
+        result = result();
+      }
+    } catch (e) {
+      console.log(expression);
+      throw e;
     }
 
-    return result;
+    return Transform.transformObjectToString(result);
   },
   updateRefView(refs: TRefs, data: CustomElement) {
     for (const refKey in refs) {

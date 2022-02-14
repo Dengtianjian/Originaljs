@@ -82,7 +82,41 @@ function transformPropertyKeyToString(propertyNames: (string | number)[]): strin
   return propertyPath;
 }
 
+/**
+ * 转换任意值为字符串
+ * @param target 被转换成字符串的任意类型对象
+ * @returns 转换后的字符串
+ */
+function transformObjectToString(target: any, numberToString: boolean = true): string | number {
+  if (typeof target === "object" && target !== null) {
+    const valueItem: string[] = [];
+    for (const key in target) {
+      if (Array.isArray(target[key])) {
+        valueItem.push(`${key}: [ ${target[key].toString()} ]`);
+      } else if (typeof target[key] === "object" && target[key] !== null) {
+        valueItem.push(`${key}: ${transformObjectToString(target[key])}`);
+      } else {
+        if (target[key] === null || target[key] === undefined) {
+          target[key] = target[key] === null ? 'null' : 'undefined';
+        }
+        valueItem.push(`${key}: ${target[key].toString()}`);
+      }
+    }
+
+    if (Array.isArray(target)) {
+      return `[ ${valueItem.join(",")} ]`;
+    }
+    return `{ ${valueItem.join(",")} }`;
+  }
+  if (target === null) return "null";
+  if (target === undefined) return "undefined";
+  if (isNaN(target)) return target.toString();
+  if (numberToString) return String(target);
+  return Number(target);
+}
+
 export default {
   transformPropertyKey,
-  transformPropertyKeyToString
+  transformPropertyKeyToString,
+  transformObjectToString
 }
