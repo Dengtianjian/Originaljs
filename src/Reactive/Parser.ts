@@ -55,8 +55,9 @@ function parseTemplateToStatement(template: string): {
   let statement: string = ""; //* 块级语句字符串，未加this
   let statementRefs: string[] = []; //* 语句里的数据引用
   let statementFragment: string = ""; //* 块级内的语句片段
+  let errorStatement: string = "" //* 错误语法的语句
 
-  charts.forEach(chartItem => {
+  for (const chartItem of charts) {
     switch (chartItem) {
       case "{":
         if (inBlockCount <= 0) {
@@ -113,11 +114,12 @@ function parseTemplateToStatement(template: string): {
         statementFragment += chartItem;
         statement += chartItem;
         executableStatement += chartItem;
+        errorStatement += chartItem;
         break;
     }
-  });
+  }
   if (inBlockCount > 0 || inBlockCount < 0) {
-    throw new Error("插值语法错误");
+    throw new Error(`${errorStatement}，插值语法错误`);
   }
 
   return {
