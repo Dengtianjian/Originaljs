@@ -1,6 +1,6 @@
 export default {
   matchExpression: /\{[\s\S]+\}/,
-  matchRefRaw: /\{[\w\.\[\]\'\"]+\s*\}/,
+  matchRefRaw: /\{\s*[\w\.\[\]\'\"]+\s*\}/,
   extactRef: /\{(\s*[\w\.\[\]\'\"]+)\s*\}/
 } as {
   matchExpression: RegExp //* 匹配并且抽取表达式
