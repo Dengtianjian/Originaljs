@@ -42,6 +42,23 @@ function objectMerge(target: any, source: any): void {
   }
 }
 
+/**
+ * 获取目标对象的属性值。
+ * @param target 目标对象
+ * @param propertyNames 属性名称数组，每一个代表一个层级。例如：['obj','a','b'] 就是 obj->a->c的值
+ * @returns 获取到属性值
+ */
+function getObjectProperty(target: object, propertyNames: (string | symbol)[]): any {
+  if (typeof target[propertyNames[0]] === "object") {
+    if (propertyNames.slice(1).length > 0) {
+      return getObjectProperty(target[propertyNames[0]], propertyNames.slice(1));
+    }
+    return target[propertyNames[0]];
+  }
+  return target[propertyNames[0]];
+}
+
 export default {
-  objectMerge
+  objectMerge,
+  getObjectProperty
 }
