@@ -1,12 +1,11 @@
 export type TRefStatementPropertyValue = {
   refs: string[],
   value: string,
-  raw: string,
-  refKey: string[]
+  raw: string
 }
 
 export type TRefItemBasic = {
-  target?: Text,
+  target?: Element | Text | Node,
   statement?: TRefStatementPropertyValue
 }
 

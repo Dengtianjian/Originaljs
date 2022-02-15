@@ -43,8 +43,7 @@ function collectRefs(target: Node | Element): TRefs {
         statement: {
           refs: statementRefs,
           value: executableStatements.get(refKey),
-          raw: statement,
-          refKey: refKeysRawStrings
+          raw: statement
         },
         for: {
           itemName,

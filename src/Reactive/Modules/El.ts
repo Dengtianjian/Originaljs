@@ -55,8 +55,7 @@ function collectRefs(target: Node | Element): TRefs {
           statement: {
             refs: refKeysRawStrings,
             value: executableStatements.get(statement),
-            raw: statement,
-            refKey: []
+            raw: statement
           }
         })
       }
@@ -70,8 +69,7 @@ function collectRefs(target: Node | Element): TRefs {
             statement: {
               refs: refKeysRawStrings,
               value: executableStatements.get(statement),
-              raw: statement,
-              refKey: refKeys
+              raw: statement
             }
           }],
           __refKeys: refKeys
