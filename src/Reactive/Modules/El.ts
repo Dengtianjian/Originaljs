@@ -20,6 +20,7 @@ function collectRefs(target: Node | Element): TRefs {
   Object.defineProperty(refs, "__emptyRefs__", {
     value: {
       __els: [],
+      __for: [],
       __refKeys: []
     },
     configurable: false,
