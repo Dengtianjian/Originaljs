@@ -1,7 +1,6 @@
 import CustomElement from "../CustomElement";
 import RegExpRules from "../RegExpRules";
-import { TExpressionInfo, TRefItem, TRefs } from "../Typings/RefType";
-import Obj from "../Utils/Obj";
+import { TStatement, TRefItem, TRefs, TRefItemKeys } from "../Typings/RefType";
 import Module from "./Module";
 import Parser from "./Parser";
 
@@ -26,11 +25,11 @@ function mergeRefs(target: TRefs, source: TRefs) {
  * @param template 模板HTML
  * @returns 表达式信息
  */
-function collectExpression(template: string): TExpressionInfo[] {
+function collectStatement(template: string): TStatement[] {
   if (!template || RegExpRules.matchExpression.test(template) === false) return [];
   const { 0: expression }: string[] = template.match(new RegExp(RegExpRules.matchExpression, "g"));
 
-  const expressions: Array<TExpressionInfo> = [];
+  const expressions: Array<TStatement> = [];
   const raw: string = expression;
   const expressionInfo = Parser.parseTemplateToStatement(expression);
 
@@ -56,23 +55,39 @@ function collectRefs(target: Node | Element | Node[] | NodeList | HTMLCollection
       mergeRefs(refs, collectRefs(nodeItem, root));
     });
   } else {
-    if (target.nodeType === 1) {
-      mergeRefs(refs, collectRefs(Array.from(target.childNodes), root));
-    }
     Module.useAll<TRefs>("collectRefs", arguments, (result) => {
       if (result !== null) {
         mergeRefs(refs, result);
       }
     });
+    if (target.nodeType === 1) {
+      mergeRefs(refs, collectRefs(Array.from(target.childNodes), root));
+    }
   }
-
-
-
   return refs;
 }
 
+function addRefToRefs<T>(target: TRefs, refKey: string, refKeys: string[], key: keyof TRefItemKeys, option: T) {
+  target[refKey] = {
+    __els: [],
+    __for: [],
+    __refKeys: [...refKeys]
+  };
+
+  switch (key) {
+    case "__els":
+      target[refKey]["__els"].push(option);
+      break;
+    case "__for":
+      // @ts-ignore 泛型
+      target[refKey]["__for"].push(option);
+      break;
+  }
+}
+
 export default {
-  collectExpression,
+  collectStatement,
   collectRefs,
-  mergeRefs
+  mergeRefs,
+  addRefToRefs
 }
