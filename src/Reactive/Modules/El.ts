@@ -31,30 +31,30 @@ function collectRefs(target: Node | Element): TRefs {
   }
 
   const parentElement = target.parentElement;
-  const expressions: TStatement[] = Ref.collectStatement(target.textContent);
+  const statements: TStatement[] = Ref.collectStatement(target.textContent);
 
   const newTexts: Text[] = [];
-  expressions.forEach(({ statementRefMap, refKeyMap, executableStatements }, index) => {
-    statementRefMap.forEach((refKeysRawStrings, expression) => {
-      let index: number = target.textContent.indexOf(expression);
+  statements.forEach(({ statementRefMap, refKeyMap, executableStatements }, index) => {
+    statementRefMap.forEach((refKeysRawStrings, statement) => {
+      let index: number = target.textContent.indexOf(statement);
       const beforeContent: string = target.textContent.slice(0, index);
       if (beforeContent) {
         target.textContent = target.textContent.slice(beforeContent.length);
         newTexts.push(new Text(beforeContent));
       }
 
-      const expressionTextEl: Text = new Text(expression);
-      newTexts.push(expressionTextEl);
-      target.textContent = target.textContent.slice(expression.length);
+      const statementTextEl: Text = new Text(statement);
+      newTexts.push(statementTextEl);
+      target.textContent = target.textContent.slice(statement.length);
 
       //* 没有引用的表达式
       if (refKeysRawStrings.length === 0) {
         refs.__emptyRefs__.__els.push({
-          target: expressionTextEl,
-          expression: {
+          target: statementTextEl,
+          statement: {
             refs: refKeysRawStrings,
-            value: executableStatements.get(expression),
-            raw: expression,
+            value: executableStatements.get(statement),
+            raw: statement,
             refKey: []
           }
         })
@@ -65,11 +65,11 @@ function collectRefs(target: Node | Element): TRefs {
         refs[refKey] = {
           __for: [],
           __els: [{
-            target: expressionTextEl,
-            expression: {
+            target: statementTextEl,
+            statement: {
               refs: refKeysRawStrings,
-              value: executableStatements.get(expression),
-              raw: expression,
+              value: executableStatements.get(statement),
+              raw: statement,
               refKey: refKeys
             }
           }],

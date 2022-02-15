@@ -26,20 +26,20 @@ function mergeRefs(target: TRefs, source: TRefs) {
  * @returns 表达式信息
  */
 function collectStatement(template: string): TStatement[] {
-  if (!template || RegExpRules.matchExpression.test(template) === false) return [];
-  const { 0: expression }: string[] = template.match(new RegExp(RegExpRules.matchExpression, "g"));
+  if (!template || RegExpRules.matchStatement.test(template) === false) return [];
+  const { 0: statement }: string[] = template.match(new RegExp(RegExpRules.matchStatement, "g"));
 
-  const expressions: Array<TStatement> = [];
-  const raw: string = expression;
-  const expressionInfo = Parser.parseTemplateToStatement(expression);
+  const statements: Array<TStatement> = [];
+  const raw: string = statement;
+  const statementInfo = Parser.parseTemplateToStatement(statement);
 
-  expressions.push({
-    ...expressionInfo,
+  statements.push({
+    ...statementInfo,
     raw,
     refKeyMap: new Map()
   });
 
-  return expressions;
+  return statements;
 }
 
 /**

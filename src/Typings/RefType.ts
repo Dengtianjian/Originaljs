@@ -1,4 +1,4 @@
-export type TRefExpressionPropertyValue = {
+export type TRefStatementPropertyValue = {
   refs: string[],
   value: string,
   raw: string,
@@ -7,12 +7,12 @@ export type TRefExpressionPropertyValue = {
 
 export type TRefItemTypeEl = {
   target?: Text,
-  expression?: TRefExpressionPropertyValue
+  statement?: TRefStatementPropertyValue
 };
 
 export type TRefItemTypeFor = {
   target?: Element,
-  expression?: TRefExpressionPropertyValue,
+  statement?: TRefStatementPropertyValue,
   for: {
     template: string,
     itemName: string,

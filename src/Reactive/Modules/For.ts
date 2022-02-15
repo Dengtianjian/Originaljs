@@ -40,7 +40,7 @@ function collectRefs(target: Node | Element): TRefs {
     statementRefMap.forEach((refKeysRawStrings, statement) => {
       Ref.addRefToRefs<TRefItemTypeFor>(refs, Transform.transformPropertyKeyToString(refKeysRawStrings), refKeysRawStrings, "__for", {
         target: target as Element,
-        expression: {
+        statement: {
           refs: statementRefs,
           value: executableStatements.get(refKey),
           raw: statement,

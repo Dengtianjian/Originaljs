@@ -3,15 +3,15 @@ import { TRefItem, TRefs } from "../Typings/RefType";
 import Transform from "./Transform";
 
 export default {
-  executeExpression(expression: string, data: CustomElement) {
+  executeStatement(statement: string, data: CustomElement) {
     let result: any = null;
     try {
-      result = new Function(`return ${expression}`).call(data);
+      result = new Function(`return ${statement}`).call(data);
       if (typeof result === "function") {
         result = result();
       }
     } catch (e) {
-      console.log(expression);
+      console.log(statement);
       throw e;
     }
 
@@ -28,7 +28,7 @@ export default {
   },
   updateView(refItem: TRefItem, data: CustomElement) {
     refItem.__els.forEach(item => {
-      item.target.textContent = this.executeExpression(item.expression.value, data);
+      item.target.textContent = this.executeStatement(item.statement.value, data);
     });
   }
 }
