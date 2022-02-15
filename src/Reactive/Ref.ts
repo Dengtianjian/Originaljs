@@ -1,20 +1,8 @@
 import RegExpRules from "../RegExpRules";
-import { TRefItem, TRefs } from "../Typings/RefType";
+import { TExpressionInfo, TRefItem, TRefs } from "../Typings/RefType";
+import Obj from "../Utils/Obj";
+import Module from "./Module";
 import Parser from "./Parser";
-import Transform from "./Transform";
-
-type TExpressionInfo = {
-  raw: string,
-  refKeyMap: Map<string, Array<string>>,
-  refs: string[],
-  refsRaw: string[],
-  statements: string[],
-  statementsRaw: string[],
-  executableStatements: Map<string, string>,
-  statementRefMap: Map<string, string[]>
-}
-
-const passCollectTags: string[] = ["SCRIPT", "STYLE"];
 
 /**
  * 合并插值引用
@@ -60,89 +48,12 @@ function collectExpression(template: string): TExpressionInfo[] {
  * @returns 引用
  */
 function collectRefs(target: Node[] | Node): TRefs {
-  if (!Array.isArray(target) && passCollectTags.includes(target.nodeName) && target.nodeType === 1) {
-    return {};
-  }
   const refs: TRefs = {};
-  //* 没有引用的表达式，即时执行表达式
-  Object.defineProperty(refs, "__emptyRefs__", {
-    value: {
-      __els: [],
-      __refKeys: []
-    },
-    configurable: false,
-    enumerable: true
-  });
 
-  if (Array.isArray(target) || target instanceof NodeList) {
-    Array.from(target).forEach(childNode => {
-      mergeRefs(refs, this.collectRefs(childNode));
-    });
-    return refs;
-  }
-  if (target instanceof Text === false) {
-    if (target.childNodes.length > 0) {
-      mergeRefs(refs, this.collectRefs(target.childNodes));
+  Module.useAll<TRefs>("collectRefs", arguments, (result) => {
+    if (result !== null) {
+      Obj.objectMerge(refs, result);
     }
-    return refs;
-  }
-  if (!target.textContent.trim()) {
-    return refs;
-  }
-
-  const parentElement = target.parentElement;
-  const expressions: TExpressionInfo[] = this.collectExpression(target.textContent);
-
-  const newTexts: Text[] = [];
-  expressions.forEach(({ statementRefMap, refKeyMap, executableStatements }, index) => {
-    statementRefMap.forEach((refKeysRawStrings, expression) => {
-      let index: number = target.textContent.indexOf(expression);
-      const beforeContent: string = target.textContent.slice(0, index);
-      if (beforeContent) {
-        target.textContent = target.textContent.slice(beforeContent.length);
-        newTexts.push(new Text(beforeContent));
-      }
-
-      const expressionTextEl: Text = new Text(expression);
-      newTexts.push(expressionTextEl);
-      target.textContent = target.textContent.slice(expression.length);
-
-      //* 没有引用的表达式
-      if (refKeysRawStrings.length === 0) {
-        refs.__emptyRefs__.__els.push({
-          target: expressionTextEl,
-          expression: {
-            refs: refKeysRawStrings,
-            value: executableStatements.get(expression),
-            raw: expression,
-            refKey: []
-          }
-        })
-      }
-
-      refKeysRawStrings.forEach(refKey => {
-        const refKeys: string[] = Transform.transformPropertyKey(refKey);
-        refs[refKey] = {
-          __els: [{
-            target: expressionTextEl,
-            expression: {
-              refs: refKeysRawStrings,
-              value: executableStatements.get(expression),
-              raw: expression,
-              refKey: refKeys
-            }
-          }],
-          __refKeys: refKeys
-        }
-        refKeyMap.set(refKey, refKeys);
-      })
-    })
-  });
-
-  newTexts.push(new Text(target.textContent));
-  target.textContent = "";
-  newTexts.forEach(newTextItem => {
-    parentElement.insertBefore(newTextItem, target);
   });
 
   return refs;
@@ -150,5 +61,6 @@ function collectRefs(target: Node[] | Node): TRefs {
 
 export default {
   collectExpression,
-  collectRefs
+  collectRefs,
+  mergeRefs
 }
