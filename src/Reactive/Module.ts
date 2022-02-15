@@ -3,6 +3,7 @@ import Obj from "../Utils/Obj";
 
 const Modules: TModuleOptions[] = [];
 const AddedModuleMap: Record<string, number> = {};
+const AddedModuleOrderMap: Record<string, TModuleOptions> = {};
 
 /**
  * 注册添加模块
@@ -10,10 +11,12 @@ const AddedModuleMap: Record<string, number> = {};
  * @param options TModuleOptions 模块选项
  * @returns void
  */
-function add(name: string, options: TModuleOptions): void {
-  if (AddedModuleMap[name] !== undefined) return;
+function add(options: TModuleOptions): void {
+  if (AddedModuleMap[options.name] !== undefined) return;
   Modules.push(options);
-  AddedModuleMap[name] = Modules.length - 1;
+  let index: number = Modules.length - 1;
+  AddedModuleMap[options.name] = index;
+  AddedModuleOrderMap[index] = options;
 }
 
 /**
@@ -38,8 +41,9 @@ function use(name: string): TModuleOptions {
 function useAll<T>(hookName: keyof TModuleOptions, args: any[] | IArguments = [], callBack?: (result: T, breakForof: () => void) => void): T[] {
   const results: T[] = [];
 
-  for (const moduleItem of Modules) {
-    let hookFunction: Function = moduleItem[hookName];
+  for (const index in AddedModuleOrderMap) {
+    const moduleItem = AddedModuleOrderMap[index];
+    let hookFunction: Function = moduleItem[hookName] as Function;
     if (hookFunction === undefined) continue;
 
     const functionExecuteResult: any = hookFunction(...args);
