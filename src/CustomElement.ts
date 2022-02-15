@@ -30,7 +30,7 @@ export default class extends HTMLElement implements ICustomElement {
     const childNodes: Node[] = Parser.parseDom(template);
     const wrapperEl: HTMLElement = document.createElement("div");
     wrapperEl.append(...childNodes);
-    const refs: TRefs = Ref.collectRefs(wrapperEl);
+    const refs: TRefs = Ref.collectRefs(Array.from(wrapperEl.childNodes), this);
 
     this.__OG__.refs = refs;
     PropertyProxy.setProxy(refs, this);

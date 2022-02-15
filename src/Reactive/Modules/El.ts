@@ -1,17 +1,21 @@
+import CustomElement from "../../CustomElement";
 import { TModuleOptions } from "../../Typings/ModuleType";
 import { TExpressionInfo, TRefs } from "../../Typings/RefType";
-import Obj from "../../Utils/Obj";
 import Ref from "../Ref";
 import Transform from "../Transform";
 
 const passCollectTags: string[] = ["SCRIPT", "STYLE", "CODE"];
 
-function collectRefs(target: Node | Node[] | NodeList): TRefs {
+function collectRefs(target: Node | Element): TRefs {
+  if (passCollectTags.includes((target as Node).nodeName) && (target as Node).nodeType === 1) {
+    return {};
+  }
+  if (!(target instanceof Text)) {
+    return {};
+  }
+  
   const refs: TRefs = {};
 
-  if (!Array.isArray(target) && passCollectTags.includes((target as Node).nodeName) && (target as Node).nodeType === 1) {
-    return refs;
-  }
   //* 没有引用的表达式，即时执行表达式
   Object.defineProperty(refs, "__emptyRefs__", {
     value: {
@@ -22,19 +26,6 @@ function collectRefs(target: Node | Node[] | NodeList): TRefs {
     enumerable: true
   });
 
-  if (Array.isArray(target) || target instanceof NodeList || target instanceof HTMLCollection) {
-    Array.from(target).forEach(childNode => {
-      Ref.mergeRefs(refs, collectRefs(childNode));
-    });
-    return refs;
-  }
-
-  if (target instanceof Text === false) {
-    if (target.childNodes.length > 0) {
-      Ref.mergeRefs(refs, collectRefs(target.childNodes));
-    }
-    return refs;
-  }
   if (!target.textContent.trim()) {
     return refs;
   }

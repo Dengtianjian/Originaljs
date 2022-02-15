@@ -1,3 +1,4 @@
+import CustomElement from "../CustomElement";
 import RegExpRules from "../RegExpRules";
 import { TExpressionInfo, TRefItem, TRefs } from "../Typings/RefType";
 import Obj from "../Utils/Obj";
@@ -47,14 +48,25 @@ function collectExpression(template: string): TExpressionInfo[] {
  * @param target 目标元素
  * @returns 引用
  */
-function collectRefs(target: Node[] | Node): TRefs {
+function collectRefs(target: Node | Element | Node[] | NodeList | HTMLCollection, root: CustomElement): TRefs {
   const refs: TRefs = {};
 
-  Module.useAll<TRefs>("collectRefs", arguments, (result) => {
-    if (result !== null) {
-      Obj.objectMerge(refs, result);
+  if (Array.isArray(target) || target instanceof HTMLCollection || target instanceof NodeList) {
+    Array.from(target).forEach(nodeItem => {
+      mergeRefs(refs, collectRefs(nodeItem, root));
+    });
+  } else {
+    if (target.nodeType === 1) {
+      mergeRefs(refs, collectRefs(Array.from(target.childNodes), root));
     }
-  });
+    Module.useAll<TRefs>("collectRefs", arguments, (result) => {
+      if (result !== null) {
+        mergeRefs(refs, result);
+      }
+    });
+  }
+
+
 
   return refs;
 }

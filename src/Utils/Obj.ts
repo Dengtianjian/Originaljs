@@ -58,7 +58,12 @@ function getObjectProperty(target: object, propertyNames: (string | symbol)[]): 
   return target[propertyNames[0]];
 }
 
+function isIterable(obj: any): boolean {
+  return obj !== null && typeof obj[Symbol.iterator] === "function";
+}
+
 export default {
   objectMerge,
-  getObjectProperty
+  getObjectProperty,
+  isIterable
 }
