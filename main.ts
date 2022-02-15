@@ -2,8 +2,8 @@ import OG from "./src";
 
 async function loadTemplate(fileName) {
   // @ts-ignore
-  return import("./src/Templates/el.html").then(res => {
-    return res.default;
+  return import(`./src/Templates/${fileName}.html`).then(res => {
+    return decodeURI(res.default);
   });
 }
 
@@ -13,32 +13,32 @@ function datePatchZero(dateEl: number | string): string | number {
 function formatTime(): string {
   let timeString: string = "";
   let d: Date = new Date();
-  timeString = `${d.getFullYear()}-${datePatchZero(d.getMonth() + 1)}-${datePatchZero(d.getDate())} ${datePatchZero(d.getHours())}:${datePatchZero(d.getMinutes())}:${datePatchZero(d.getSeconds())}`;
+  timeString = `${d.getFullYear()}-${datePatchZero(d.getMonth() + 1)}-${datePatchZero(d.getDate())} ${datePatchZero(d.getHours())}:${datePatchZero(d.getMinutes())}:${datePatchZero(d.getSeconds())}:${d.getMilliseconds()}`;
 
   return timeString;
-}
-
-let user = {
-  age: 2021,
-  name: "admin",
-  friends: [
-    "Jack"
-  ],
-  fontColor: "blue"
 }
 
 class CEl extends OG.createElement() {
   constructor() {
     super();
-    loadTemplate("cel").then(res => {
+    loadTemplate("el").then(res => {
       this.render(res);
     });
-    // setInterval(() => {
-    //   this.user.age = formatTime();
-    // }, 1000);
+    setInterval(() => {
+      this.user.time = formatTime();
+    }, 100);
   }
-  user = user;
+  user = {
+    age: 2021,
+    time: "2021",
+    name: "admin",
+    friends: [
+      "Jack"
+    ],
+    fontColor: "blue"
+  };
   users = ["admin", "test", "job", "jack"];
+  title = "EdgeDB 架构简析";
   update() {
     return "show";
   }
