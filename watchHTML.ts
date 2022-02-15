@@ -7,7 +7,7 @@ export default function watchHTML(): PluginOption {
     transform(code: string, id: string) {
       if (id.endsWith("html")) {
         return {
-          code: `export default \`${code}\``
+          code: `export default \`${encodeURI(code)}\``
         }
       }
       return null;
