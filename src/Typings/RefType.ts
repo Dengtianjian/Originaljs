@@ -18,3 +18,14 @@ export type TRefItem = {
 export type TRefs = {
   [key: string]: TRefItem
 }
+
+export type TExpressionInfo = {
+  raw: string,
+  refKeyMap: Map<string, Array<string>>,
+  refs: string[],
+  refsRaw: string[],
+  statements: string[],
+  statementsRaw: string[],
+  executableStatements: Map<string, string>,
+  statementRefMap: Map<string, string[]>
+}
