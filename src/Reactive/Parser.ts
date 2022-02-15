@@ -39,7 +39,8 @@ function parseTemplateToStatement(template: string): {
   statements: string[],
   statementsRaw: string[],
   executableStatements: Map<string, string>,
-  statementRefMap: Map<string, string[]>
+  statementRefMap: Map<string, string[]>,
+  refCountMap: Map<string, number>
 } {
   let charts: string[] = template.split("");
   const statements: string[] = [];
@@ -48,6 +49,7 @@ function parseTemplateToStatement(template: string): {
   const refsRaw: string[] = [];
   const executableStatements: Map<string, string> = new Map();
   const statementRefMap: Map<string, string[]> = new Map();
+  const refCountMap: Map<string, number> = new Map<string, number>();
 
   let inBlockCount: number = 0; //* 进入 块级的次数，解析完后需要为0，否则就是插值语法错误
   let executableStatement: string = ""; //* 可执行块级语句字符串，引用的数据加了this后的语句
@@ -67,7 +69,7 @@ function parseTemplateToStatement(template: string): {
           statement += chartItem;
           executableStatement += chartItem;
         }
-        
+
         inBlockCount++;
         break;
       case "}":
@@ -84,6 +86,12 @@ function parseTemplateToStatement(template: string): {
           refsRaw.push(statementFragment);
           const extractRef: string = statementFragment.replace(RegExpRules.extactRef, "$1").trim();
           statementRefs.push(extractRef);
+
+          if (refCountMap.has(extractRef)) {
+            refCountMap.set(extractRef, refCountMap.get(extractRef) + 1);
+          } else {
+            refCountMap.set(extractRef, 1);
+          }
 
           executableStatement = executableStatement.replace(statementFragment, `this.${extractRef}`);
         }
@@ -126,7 +134,8 @@ function parseTemplateToStatement(template: string): {
     statements: filterEmptyValue(statements),
     statementsRaw: filterEmptyValue(statementsRaw),
     executableStatements,
-    statementRefMap
+    statementRefMap,
+    refCountMap
   };
 }
 

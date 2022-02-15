@@ -36,7 +36,6 @@ function collectRefs(target: Node | Element): TRefs {
   console.log(statements);
   return {};
 
-
   const newTexts: Text[] = [];
   statements.forEach(({ statementRefMap, refKeyMap, executableStatements }, index) => {
     statementRefMap.forEach((refKeysRawStrings, statement) => {
