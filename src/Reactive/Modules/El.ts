@@ -48,7 +48,7 @@ function collectRefs(target: Node | Element): TRefs {
       newTexts.push(statementTextEl);
       target.textContent = target.textContent.slice(statement.length);
 
-      //* 没有引用的表达式
+      //* 没有引用的语句
       if (refKeysRawStrings.length === 0) {
         refs.__emptyRefs__.__els.push({
           target: statementTextEl,
