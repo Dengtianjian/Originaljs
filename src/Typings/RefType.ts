@@ -5,13 +5,31 @@ export type TRefExpressionPropertyValue = {
   refKey: string[]
 }
 
-export type TRefItemTypeEl = Array<{
+export type TRefItemTypeEl = {
   target?: Text,
   expression?: TRefExpressionPropertyValue
-}>
+};
+
+export type TRefItemTypeFor = {
+  target?: Element,
+  expression?: TRefExpressionPropertyValue,
+  for: {
+    template: string,
+    itemName: string,
+    indexName: string,
+    keyName: string,
+    refKey: string
+  }
+};
+
+export type TRefItemKeys = {
+  __els: "__els",
+  __for: "__for"
+}
 
 export type TRefItem = {
-  __els: TRefItemTypeEl,
+  __els: TRefItemTypeEl[],
+  __for: TRefItemTypeFor[],
   __refKeys: string[]
 }
 
@@ -19,7 +37,7 @@ export type TRefs = {
   [key: string]: TRefItem
 }
 
-export type TExpressionInfo = {
+export type TStatement = {
   raw: string,
   refKeyMap: Map<string, Array<string>>,
   refs: string[],
