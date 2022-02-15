@@ -1,8 +1,9 @@
 import { defineConfig } from "vite";
+import watchHTML from "./watchHTML";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [],
+  plugins: [watchHTML()],
   server: {
     proxy: {
     }

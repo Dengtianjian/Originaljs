@@ -1,7 +1,10 @@
 import OG from "./src";
 
-function loadTemplate(fileName) {
-  return fetch(`${fileName}.html`).then(res => res.text());
+async function loadTemplate(fileName) {
+  // @ts-ignore
+  return import("./src/Templates/el.html").then(res => {
+    return res.default;
+  });
 }
 
 function datePatchZero(dateEl: number | string): string | number {
@@ -20,7 +23,8 @@ let user = {
   name: "admin",
   friends: [
     "Jack"
-  ]
+  ],
+  fontColor: "blue"
 }
 
 class CEl extends OG.createElement() {
@@ -33,7 +37,8 @@ class CEl extends OG.createElement() {
     //   this.user.age = formatTime();
     // }, 1000);
   }
-  user = user
+  user = user;
+  users = ["admin", "test", "job", "jack"];
   update() {
     return "show";
   }
