@@ -4,7 +4,7 @@ import Obj from "../../Utils/Obj";
 import Ref from "../Ref";
 import Transform from "../Transform";
 
-const passCollectTags: string[] = ["SCRIPT", "STYLE"];
+const passCollectTags: string[] = ["SCRIPT", "STYLE", "CODE"];
 
 function collectRefs(target: Node | Node[] | NodeList): TRefs {
   const refs: TRefs = {};
