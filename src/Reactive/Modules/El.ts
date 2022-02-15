@@ -1,6 +1,6 @@
 import CustomElement from "../../CustomElement";
 import { TModuleOptions } from "../../Typings/ModuleType";
-import { TExpressionInfo, TRefs } from "../../Typings/RefType";
+import { TStatement, TRefs } from "../../Typings/RefType";
 import Ref from "../Ref";
 import Transform from "../Transform";
 
@@ -13,7 +13,7 @@ function collectRefs(target: Node | Element): TRefs {
   if (!(target instanceof Text)) {
     return {};
   }
-  
+
   const refs: TRefs = {};
 
   //* 没有引用的表达式，即时执行表达式
@@ -31,7 +31,7 @@ function collectRefs(target: Node | Element): TRefs {
   }
 
   const parentElement = target.parentElement;
-  const expressions: TExpressionInfo[] = Ref.collectExpression(target.textContent);
+  const expressions: TStatement[] = Ref.collectStatement(target.textContent);
 
   const newTexts: Text[] = [];
   expressions.forEach(({ statementRefMap, refKeyMap, executableStatements }, index) => {
@@ -63,6 +63,7 @@ function collectRefs(target: Node | Element): TRefs {
       refKeysRawStrings.forEach(refKey => {
         const refKeys: string[] = Transform.transformPropertyKey(refKey);
         refs[refKey] = {
+          __for: [],
           __els: [{
             target: expressionTextEl,
             expression: {
@@ -89,5 +90,6 @@ function collectRefs(target: Node | Element): TRefs {
 }
 
 export default {
+  name: "El",
   collectRefs
 } as TModuleOptions
