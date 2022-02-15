@@ -33,6 +33,9 @@ function collectRefs(target: Node | Element): TRefs {
 
   const parentElement = target.parentElement;
   const statements: TStatement[] = Ref.collectStatement(target.textContent);
+  console.log(statements);
+  return {};
+
 
   const newTexts: Text[] = [];
   statements.forEach(({ statementRefMap, refKeyMap, executableStatements }, index) => {
@@ -43,6 +46,8 @@ function collectRefs(target: Node | Element): TRefs {
         target.textContent = target.textContent.slice(beforeContent.length);
         newTexts.push(new Text(beforeContent));
       }
+
+      console.log(statement);
 
       const statementTextEl: Text = new Text(statement);
       newTexts.push(statementTextEl);
@@ -62,18 +67,14 @@ function collectRefs(target: Node | Element): TRefs {
 
       refKeysRawStrings.forEach(refKey => {
         const refKeys: string[] = Transform.transformPropertyKey(refKey);
-        refs[refKey] = {
-          __for: [],
-          __els: [{
-            target: statementTextEl,
-            statement: {
-              refs: refKeysRawStrings,
-              value: executableStatements.get(statement),
-              raw: statement
-            }
-          }],
-          __refKeys: refKeys
-        }
+        Ref.addRefToRefs(refs, refKey, refKeys, "__els", {
+          target: statementTextEl,
+          statement: {
+            refs: refKeysRawStrings,
+            value: executableStatements.get(statement),
+            raw: statement
+          }
+        });
         refKeyMap.set(refKey, refKeys);
       })
     })

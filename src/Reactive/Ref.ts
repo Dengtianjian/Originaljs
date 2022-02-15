@@ -68,11 +68,13 @@ function collectRefs(target: Node | Element | Node[] | NodeList | HTMLCollection
 }
 
 function addRefToRefs<T>(target: TRefs, refKey: string, refKeys: string[], key: keyof TRefItemKeys, option: T) {
-  target[refKey] = {
-    __els: [],
-    __for: [],
-    __refKeys: [...refKeys]
-  };
+  if (target[refKey] === undefined) {
+    target[refKey] = {
+      __els: [],
+      __for: [],
+      __refKeys: [...refKeys]
+    };
+  }
 
   switch (key) {
     case "__els":

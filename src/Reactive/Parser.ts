@@ -60,24 +60,21 @@ function parseTemplateToStatement(template: string): {
   for (const chartItem of charts) {
     switch (chartItem) {
       case "{":
-        if (inBlockCount <= 0) {
-          blockStatementRaw += chartItem;
-        } else {
-          blockStatementRaw += statementFragment;
-
+        blockStatementRaw += chartItem;
+        if (inBlockCount > 0) {
           statementFragment = "";
           statementFragment += chartItem;
           statement += chartItem;
           executableStatement += chartItem;
         }
+        
         inBlockCount++;
         break;
       case "}":
         inBlockCount--;
 
         statementFragment += chartItem;
-
-        blockStatementRaw += statementFragment;
+        blockStatementRaw += chartItem;
 
         if (inBlockCount !== 0) {
           executableStatement += chartItem;
@@ -92,15 +89,15 @@ function parseTemplateToStatement(template: string): {
         }
 
         if (inBlockCount === 0) {
-          statementsRaw.push(blockStatementRaw);
-          statementRefMap.set(blockStatementRaw, statementRefs);
+          statementsRaw.push(blockStatementRaw.trim());
+          statementRefMap.set(blockStatementRaw.trim(), statementRefs);
           statements.push(statement.trim());
           refs.push(...statementRefs);
 
           if (executableStatement === "") {
             executableStatement = statement;
           }
-          executableStatements.set(blockStatementRaw, executableStatement.trim());
+          executableStatements.set(blockStatementRaw.trim(), executableStatement.trim());
 
           executableStatement = "";
           blockStatementRaw = "";
@@ -115,6 +112,7 @@ function parseTemplateToStatement(template: string): {
         statement += chartItem;
         executableStatement += chartItem;
         errorStatement += chartItem;
+        blockStatementRaw += chartItem;
         break;
     }
   }
