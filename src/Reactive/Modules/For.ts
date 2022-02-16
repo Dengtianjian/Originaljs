@@ -73,12 +73,13 @@ function updateView(refItem: TRefItem, refKeys: string[], target: any, root: Cus
 
   refItem.__for.forEach(forItem => {
     if (target.__proxy__.refKey === forItem.for.refKey) {
-
-      target.forEach((item, index) => {
-        const propertyKey: string = Transform.transformPropertyKeyToString([...refKeys, index]);
+      let index: number = 0;
+      for (const key in target) {
+        const propertyKey: string = Transform.transformPropertyKeyToString([...refKeys, key]);
         const template: string = forItem.for.template.replace(new RegExp(`(?<=\{{1} *)${forItem.for.itemName}`, "g"), propertyKey);
         View.render(template, forItem.target as Element, root);
-      })
+        index++;
+      }
     } else {
       forItem.target.textContent += forItem.for.template;
     }
