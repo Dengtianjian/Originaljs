@@ -21,15 +21,20 @@ function formatTime(): string {
 class CEl extends OG.createElement() {
   constructor() {
     super();
-    loadTemplate("el").then(res => {
-      this.render(res);
+    loadTemplate("el").then(template => {
+      fetch("https://discuz.chat/api/v3/thread.list?perPage=10&page=1&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=0&dzqSid=38358337-1636364502364&dzqPf=pc").then(res => res.json()).then(({ Data: { pageData } }) => pageData).then((res) => {
+        this.articles.push(...res);
+        this.render(template);
+      })
+      // this.render(template);
     });
-    // setInterval(() => {
-    //   this.user.time = formatTime();
-    // }, 100);
+    setInterval(() => {
+      this.user.time = formatTime();
+    }, 100);
     // setTimeout(() => {
-    //   this.users.push("a");
-    // }, 2000);
+      // this.users.push("a");
+    //   this.user.time = formatTime();
+    // }, 1000);
   }
   user = {
     name: "天天向上的天健",
@@ -41,9 +46,11 @@ class CEl extends OG.createElement() {
     statistics: {
       docs: 88,
       likes: 8
-    }
+    },
+    time: "a"
   };
-  users = ["admin", "test", "job", "jack","candy"];
+  articles = [];
+  users = ["admin", "test", "job", "jack", "candy"];
   title = "EdgeDB 架构简析";
   update() {
     return "show";

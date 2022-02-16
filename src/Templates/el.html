@@ -2,11 +2,9 @@
   {{ users }}
 </p>
 
-<o-for userItem in="{{ users }}">
-  before
-  {{ useritem }}
-  after
-  <p>
-    {{ useritem }}
-  </p>
+<o-for articleItem in="{{ articles }}">
+  <li>
+    {{ user.time }}
+    <h2>{ { articleitem.title } || {articleitem.content.text} }</h2>
+  </li>
 </o-for>

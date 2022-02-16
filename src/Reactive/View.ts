@@ -30,10 +30,11 @@ export default {
       this.updateView(refItem, refKeys, targetData, data);
     }
   },
-  updateView(refItem: TRefItem, refKeys: string[], data: CustomElement) {
+  updateView(refItem: TRefItem, refKeys: string[], target: any, data: CustomElement) {
     Module.useAll("updateView", arguments);
   },
   render(template: string, rootEl: Element, root: CustomElement): Promise<void> {
+    if (!template) return Promise.resolve();
     template = Parser.optimizeRefKey(template);
     const childNodes: Node[] = Parser.parseDom(template);
     const wrapperEl: HTMLElement = document.createElement("div");

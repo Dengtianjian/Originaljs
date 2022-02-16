@@ -29,7 +29,7 @@ function bubbleSetProxy(refKeys: string[], data: any, upperKeys: string[], root:
           const refKey: string = Transform.transformPropertyKeyToString(refKeys);
 
           if (refs[refKey]) {
-            View.updateView(refs[refKey], targetProxy.root);
+            View.updateView(refs[refKey], refKeys, targetProxy, targetProxy.root);
           }
           return true;
         }
