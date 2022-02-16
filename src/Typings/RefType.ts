@@ -45,7 +45,7 @@ export type TStatement = {
   statements: string[], //* 语句 { {user.name} + ":name" } -> {user.name} + ":name"
   statementsRaw: string[], //* 语句原本的样子 { {user.name} + ":name" } -> [{ {user.name} + ":name" }]
   executableStatements: Map<string, string>, //* 已经替换好this 可以直接执行 { {user.name} + ":name" } -> this.user.name + ":name"
-  statementRefsMap: Map<string, Map<string, number>>, //* 语句对应的有哪些引用
-  refCountMap: Map<string, number> //* 当前语句同一个插值引用的次数
+  statementRefsMap: Map<string, string[]>, //* 语句对应的有哪些引用
+  // refCountMap: Map<string, number> //* 当前语句同一个插值引用的次数
   statementRawMap: Map<string, string>
 }

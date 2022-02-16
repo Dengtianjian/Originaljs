@@ -43,8 +43,7 @@ function parseTemplateToStatement(template: string): TStatement {
   const refs: string[] = [];
   const refsRaw: string[] = [];
   const executableStatements: Map<string, string> = new Map();
-  const statementRefsMap: Map<string, Map<string, number>> = new Map<string, Map<string, number>>();
-  const refCountMap: Map<string, number> = new Map<string, number>();
+  const statementRefsMap: Map<string, string[]> = new Map<string, string[]>();
   const statementRawMap: Map<string, string> = new Map<string, string>();
   const refKeyMap: Map<string, string> = new Map<string, string>();
   const refKeysMap: Map<string, string[]> = new Map<string, string[]>();
@@ -56,7 +55,7 @@ function parseTemplateToStatement(template: string): TStatement {
   let statementRefs: string[] = []; //* 语句里的数据引用
   let statementFragment: string = ""; //* 块级内的语句片段
   let errorStatement: string = "" //* 错误语法的语句
-  let countMap: Map<string, number> = new Map<string, number>();
+  let rawRefKeys: string[] = []; //* 插值引用原字符串 就是抽取并且解析之前
 
   for (const chartItem of charts) {
     switch (chartItem) {
@@ -85,19 +84,10 @@ function parseTemplateToStatement(template: string): TStatement {
           refsRaw.push(statementFragment);
           const extractRef: string = statementFragment.replace(RegExpRules.extactRef, "$1").trim();
           statementRefs.push(extractRef);
+          rawRefKeys.push(statementFragment);
 
           executableStatement = executableStatement.replace(statementFragment, `this.${extractRef}`);
 
-          if (countMap.has(extractRef)) {
-            countMap.set(statementFragment, countMap.get(extractRef) + 1);
-          } else {
-            countMap.set(statementFragment, 1);
-          }
-          if (refCountMap.has(extractRef)) {
-            refCountMap.set(extractRef, refCountMap.get(extractRef) + 1);
-          } else {
-            refCountMap.set(extractRef, 1);
-          }
           refKeyMap.set(statementFragment, extractRef);
           refKeysMap.set(statementFragment, Transform.transformPropertyKey(extractRef));
         }
@@ -115,13 +105,13 @@ function parseTemplateToStatement(template: string): TStatement {
           }
           executableStatements.set(blockStatementRaw, executableStatement.trim());
           statementRawMap.set(blockStatementRaw, statement);
-          statementRefsMap.set(blockStatementRaw, Obj.cloneMap(countMap));
+          statementRefsMap.set(blockStatementRaw, [...rawRefKeys]);
 
           executableStatement = "";
           blockStatementRaw = "";
           statementRefs = [];
+          rawRefKeys = [];
           statement = "";
-          countMap.clear();
         }
 
         statementFragment = "";
@@ -140,14 +130,13 @@ function parseTemplateToStatement(template: string): TStatement {
   }
 
   return {
-    raw: "",
+    raw: template,
     refs: filterEmptyValue(refs),
     refsRaw: filterEmptyValue(refsRaw),
     statements: filterEmptyValue(statements),
     statementsRaw: filterEmptyValue(statementsRaw),
     executableStatements,
     statementRefsMap,
-    refCountMap,
     statementRawMap,
     refKeyMap,
     refKeysMap
