@@ -35,8 +35,6 @@ function collectRefs(target: Node | Element): TRefs {
   const refKey: string = inAttr.value;
   const template: string = (target as Element).innerHTML;
   const statements: TStatement[] = Ref.collectStatement(refKey);
-  console.log(statements);
-
 
   statements.forEach(({ statementRefsMap, refKeysMap, executableStatements, statementsRaw, refKeyMap }) => {
     statementsRaw.forEach((statementRaw) => {
