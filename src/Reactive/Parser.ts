@@ -27,6 +27,11 @@ function optimizeRefKey(sourceString: string): string {
 }
 
 const emptyConditions: string[] = ["{}", ""];
+/**
+ * 过滤空值数组
+ * @param values 字符串数组
+ * @returns 过滤后的字符串数组
+ */
 function filterEmptyValue(values: string[]): string[] {
   return values.filter(item => !emptyConditions.includes(item));
 }
