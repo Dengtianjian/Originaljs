@@ -24,9 +24,9 @@ class CEl extends OG.createElement() {
     loadTemplate("el").then(res => {
       this.render(res);
     });
-    // setInterval(() => {
-    //   this.user.time = formatTime();
-    // }, 100);
+    setInterval(() => {
+      this.user.time = formatTime();
+    }, 100);
   }
   user = {
     age: 2021,

@@ -117,11 +117,13 @@ function parseTemplateToStatement(template: string): TStatement {
         statementFragment = "";
         break;
       default:
-        statementFragment += chartItem;
-        statement += chartItem;
-        executableStatement += chartItem;
-        errorStatement += chartItem;
-        blockStatementRaw += chartItem;
+        if (inBlockCount) {
+          statementFragment += chartItem;
+          statement += chartItem;
+          executableStatement += chartItem;
+          errorStatement += chartItem;
+          blockStatementRaw += chartItem;
+        }
         break;
     }
   }
