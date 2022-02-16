@@ -24,20 +24,26 @@ class CEl extends OG.createElement() {
     loadTemplate("el").then(res => {
       this.render(res);
     });
-    setInterval(() => {
-      this.user.time = formatTime();
-    }, 100);
+    // setInterval(() => {
+    //   this.user.time = formatTime();
+    // }, 100);
+    // setTimeout(() => {
+    //   this.users.push("a");
+    // }, 2000);
   }
   user = {
-    age: 2021,
-    time: "2022",
-    name: "admin",
-    friends: [
-      "Jack"
-    ],
-    fontColor: "blue"
+    name: "天天向上的天健",
+    description: "程序员👨‍💻",
+    follow: {
+      follower: 2,
+      followed: 1
+    },
+    statistics: {
+      docs: 88,
+      likes: 8
+    }
   };
-  users = ["admin", "test", "job", "jack"];
+  users = ["admin", "test", "job", "jack","candy"];
   title = "EdgeDB 架构简析";
   update() {
     return "show";

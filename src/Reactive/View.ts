@@ -2,6 +2,9 @@ import CustomElement from "../CustomElement";
 import { TRefItem, TRefs } from "../Typings/RefType";
 import Obj from "../Utils/Obj";
 import Module from "./Module";
+import Parser from "./Parser";
+import PropertyProxy from "./PropertyProxy";
+import Ref from "./Ref";
 import Transform from "./Transform";
 
 export default {
@@ -29,5 +32,19 @@ export default {
   },
   updateView(refItem: TRefItem, refKeys: string[], data: CustomElement) {
     Module.useAll("updateView", arguments);
+  },
+  render(template: string, rootEl: Element, root: CustomElement): Promise<void> {
+    template = Parser.optimizeRefKey(template);
+    const childNodes: Node[] = Parser.parseDom(template);
+    const wrapperEl: HTMLElement = document.createElement("div");
+    wrapperEl.append(...childNodes);
+    const refs: TRefs = Ref.collectRefs(Array.from(wrapperEl.childNodes), root);
+
+    Ref.mergeRefs(root.__OG__.refs, refs);
+    PropertyProxy.setProxy(refs, root);
+    this.updateRefView(refs, root);
+
+    rootEl.append(...Array.from(wrapperEl.childNodes));
+    return Promise.resolve();
   }
 }

@@ -1,7 +1,10 @@
+import CustomElement from "../../CustomElement";
 import { TModuleOptions } from "../../Typings/ModuleType";
-import { TStatement, TRefs, TRefItemTypeFor } from "../../Typings/RefType";
+import { TStatement, TRefs, TRefItemTypeFor, TRefItem } from "../../Typings/RefType";
+import Parser from "../Parser";
 import Ref from "../Ref";
 import Transform from "../Transform";
+import View from "../View";
 
 function collectRefs(target: Node | Element): TRefs {
   if (target.nodeName !== "O-FOR") {
@@ -52,7 +55,8 @@ function collectRefs(target: Node | Element): TRefs {
             itemName,
             indexName,
             keyName,
-            refKey,
+            refRawKey: refKey,
+            refKey: refKeyMap.get(refRawStr),
             template
           }
         });
@@ -64,7 +68,25 @@ function collectRefs(target: Node | Element): TRefs {
   return refs;
 }
 
+function updateView(refItem: TRefItem, refKeys: string[], target: any, root: CustomElement) {
+  if (refKeys.includes("__emptyRefs__")) return;
+
+  refItem.__for.forEach(forItem => {
+    if (target.__proxy__.refKey === forItem.for.refKey) {
+
+      target.forEach((item, index) => {
+        const propertyKey: string = Transform.transformPropertyKeyToString([...refKeys, index]);
+        const template: string = forItem.for.template.replace(new RegExp(`(?<=\{{1} *)${forItem.for.itemName}`, "g"), propertyKey);
+        View.render(template, forItem.target as Element, root);
+      })
+    } else {
+      forItem.target.textContent += forItem.for.template;
+    }
+  });
+}
+
 export default {
   name: "For",
-  collectRefs
+  collectRefs,
+  updateView
 } as TModuleOptions

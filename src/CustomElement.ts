@@ -26,18 +26,6 @@ export default class extends HTMLElement implements ICustomElement {
     refs: {}
   };
   render(template: string): Promise<void> {
-    template = Parser.optimizeRefKey(template);
-    const childNodes: Node[] = Parser.parseDom(template);
-    const wrapperEl: HTMLElement = document.createElement("div");
-    wrapperEl.append(...childNodes);
-    const refs: TRefs = Ref.collectRefs(Array.from(wrapperEl.childNodes), this);
-
-    this.__OG__.refs = refs;
-    PropertyProxy.setProxy(refs, this);
-    // console.dir(refs);
-    View.updateRefView(refs, this);
-
-    this.__OG__.rootEl.append(...Array.from(wrapperEl.childNodes));
-    return Promise.resolve();
+    return View.render(template, this.__OG__.rootEl, this);
   }
 }
