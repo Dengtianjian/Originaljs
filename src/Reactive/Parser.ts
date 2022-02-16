@@ -1,4 +1,7 @@
 import RegExpRules from "../RegExpRules";
+import { TStatement } from "../Typings/RefType";
+import Obj from "../Utils/Obj";
+import Transform from "./Transform";
 
 /**
  * 转换HTML文本为标签节点数组
@@ -33,23 +36,18 @@ function filterEmptyValue(values: string[]): string[] {
  * @param {String} template 模板HTML
  * @returns 表达式相关
  */
-function parseTemplateToStatement(template: string): {
-  refs: string[],
-  refsRaw: string[],
-  statements: string[],
-  statementsRaw: string[],
-  executableStatements: Map<string, string>,
-  statementRefMap: Map<string, string[]>,
-  refCountMap: Map<string, number>
-} {
+function parseTemplateToStatement(template: string): TStatement {
   let charts: string[] = template.split("");
   const statements: string[] = [];
   const statementsRaw: string[] = [];
   const refs: string[] = [];
   const refsRaw: string[] = [];
   const executableStatements: Map<string, string> = new Map();
-  const statementRefMap: Map<string, string[]> = new Map();
+  const statementRefsMap: Map<string, Map<string, number>> = new Map<string, Map<string, number>>();
   const refCountMap: Map<string, number> = new Map<string, number>();
+  const statementRawMap: Map<string, string> = new Map<string, string>();
+  const refKeyMap: Map<string, string> = new Map<string, string>();
+  const refKeysMap: Map<string, string[]> = new Map<string, string[]>();
 
   let inBlockCount: number = 0; //* 进入 块级的次数，解析完后需要为0，否则就是插值语法错误
   let executableStatement: string = ""; //* 可执行块级语句字符串，引用的数据加了this后的语句
@@ -58,6 +56,7 @@ function parseTemplateToStatement(template: string): {
   let statementRefs: string[] = []; //* 语句里的数据引用
   let statementFragment: string = ""; //* 块级内的语句片段
   let errorStatement: string = "" //* 错误语法的语句
+  let countMap: Map<string, number> = new Map<string, number>();
 
   for (const chartItem of charts) {
     switch (chartItem) {
@@ -87,30 +86,42 @@ function parseTemplateToStatement(template: string): {
           const extractRef: string = statementFragment.replace(RegExpRules.extactRef, "$1").trim();
           statementRefs.push(extractRef);
 
+          executableStatement = executableStatement.replace(statementFragment, `this.${extractRef}`);
+
+          if (countMap.has(extractRef)) {
+            countMap.set(statementFragment, countMap.get(extractRef) + 1);
+          } else {
+            countMap.set(statementFragment, 1);
+          }
           if (refCountMap.has(extractRef)) {
             refCountMap.set(extractRef, refCountMap.get(extractRef) + 1);
           } else {
             refCountMap.set(extractRef, 1);
           }
-
-          executableStatement = executableStatement.replace(statementFragment, `this.${extractRef}`);
+          refKeyMap.set(statementFragment, extractRef);
+          refKeysMap.set(statementFragment, Transform.transformPropertyKey(extractRef));
         }
 
         if (inBlockCount === 0) {
-          statementsRaw.push(blockStatementRaw.trim());
-          statementRefMap.set(blockStatementRaw.trim(), statementRefs);
-          statements.push(statement.trim());
+          blockStatementRaw = blockStatementRaw.trim();
+          statement = statement.trim();
+
+          statementsRaw.push(blockStatementRaw);
+          statements.push(statement);
           refs.push(...statementRefs);
 
           if (executableStatement === "") {
             executableStatement = statement;
           }
-          executableStatements.set(blockStatementRaw.trim(), executableStatement.trim());
+          executableStatements.set(blockStatementRaw, executableStatement.trim());
+          statementRawMap.set(blockStatementRaw, statement);
+          statementRefsMap.set(blockStatementRaw, Obj.cloneMap(countMap));
 
           executableStatement = "";
           blockStatementRaw = "";
           statementRefs = [];
           statement = "";
+          countMap.clear();
         }
 
         statementFragment = "";
@@ -129,13 +140,17 @@ function parseTemplateToStatement(template: string): {
   }
 
   return {
+    raw: "",
     refs: filterEmptyValue(refs),
     refsRaw: filterEmptyValue(refsRaw),
     statements: filterEmptyValue(statements),
     statementsRaw: filterEmptyValue(statementsRaw),
     executableStatements,
-    statementRefMap,
-    refCountMap
+    statementRefsMap,
+    refCountMap,
+    statementRawMap,
+    refKeyMap,
+    refKeysMap
   };
 }
 

@@ -58,12 +58,26 @@ function getObjectProperty(target: object, propertyNames: (string | symbol)[]): 
   return target[propertyNames[0]];
 }
 
+/**
+ * 判断是否是可迭代对象
+ * @param obj 任意对象
+ * @returns 是否是可迭代对象
+ */
 function isIterable(obj: any): boolean {
   return obj !== null && typeof obj[Symbol.iterator] === "function";
+}
+
+function cloneMap(obj: Map<any, any>): Map<any, any> {
+  const cloneMap = new Map();
+  obj.forEach((v, k) => {
+    cloneMap.set(k, v);
+  });
+  return cloneMap;
 }
 
 export default {
   objectMerge,
   getObjectProperty,
-  isIterable
+  isIterable,
+  cloneMap
 }

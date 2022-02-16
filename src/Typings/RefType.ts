@@ -38,12 +38,14 @@ export type TRefs = {
 
 export type TStatement = {
   raw: string, //* 语句原字符串
-  refKeyMap: Map<string, Array<string>>, //* 插值引用对应的插值key，已分割好的。user['time'] -> [user,time]
+  refKeyMap: Map<string, string>, //* 插值引用对应的插值key
+  refKeysMap: Map<string, string[]>, //* 插值引用对应的插值key，已分割好的。user['time'] -> [user,time]
   refs: string[], //* 语句有哪些插值引用
   refsRaw: string[], //* 处理前的插值引用，包含大括号 {}
   statements: string[], //* 语句 { {user.name} + ":name" } -> {user.name} + ":name"
   statementsRaw: string[], //* 语句原本的样子 { {user.name} + ":name" } -> [{ {user.name} + ":name" }]
   executableStatements: Map<string, string>, //* 已经替换好this 可以直接执行 { {user.name} + ":name" } -> this.user.name + ":name"
-  statementRefMap: Map<string, string[]>, //* 语句对应的有哪些引用
+  statementRefsMap: Map<string, Map<string, number>>, //* 语句对应的有哪些引用
   refCountMap: Map<string, number> //* 当前语句同一个插值引用的次数
+  statementRawMap: Map<string, string>
 }

@@ -30,14 +30,8 @@ function collectStatement(template: string): TStatement[] {
   const { 0: statement }: string[] = template.match(new RegExp(RegExpRules.matchStatement, "g"));
 
   const statements: Array<TStatement> = [];
-  const raw: string = statement;
-  const statementInfo = Parser.parseTemplateToStatement(statement);
 
-  statements.push({
-    ...statementInfo,
-    raw,
-    refKeyMap: new Map()
-  });
+  statements.push(Parser.parseTemplateToStatement(statement));
 
   return statements;
 }

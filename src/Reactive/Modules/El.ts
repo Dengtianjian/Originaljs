@@ -34,48 +34,65 @@ function collectRefs(target: Node | Element): TRefs {
   const parentElement = target.parentElement;
   const statements: TStatement[] = Ref.collectStatement(target.textContent);
   console.log(statements);
-  return {};
 
   const newTexts: Text[] = [];
-  statements.forEach(({ statementRefMap, refKeyMap, executableStatements }, index) => {
-    statementRefMap.forEach((refKeysRawStrings, statement) => {
-      let index: number = target.textContent.indexOf(statement);
-      const beforeContent: string = target.textContent.slice(0, index);
-      if (beforeContent) {
-        target.textContent = target.textContent.slice(beforeContent.length);
-        newTexts.push(new Text(beforeContent));
-      }
+  statements.forEach(({ refs: statementRefs, statementRefsMap, statementRawMap, statementsRaw, executableStatements, refKeyMap, refKeysMap }) => {
+    statementsRaw.forEach(statementRaw => {
+      const statementRawTemp: string = statementRaw;
+      const statement: string = statementRawMap.get(statementRaw);
+      const statementRefs: Map<string, number> = statementRefsMap.get(statementRaw) ?? new Map<string, number>();
 
-      console.log(statement);
+      const statementNewTexts: Text[] = [];
 
-      const statementTextEl: Text = new Text(statement);
-      newTexts.push(statementTextEl);
-      target.textContent = target.textContent.slice(statement.length);
+      if (statementRefs.size) {
+        statementRefs.forEach((refCount, ref) => {
+          for (let index = 0; index < refCount; index++) {
+            const positionIndex: number = statementRaw.indexOf(ref);
 
-      //* 没有引用的语句
-      if (refKeysRawStrings.length === 0) {
+            statementNewTexts.push(new Text(statementRaw.slice(0, positionIndex)));
+            statementRaw = statementRaw.slice(positionIndex);
+
+            const refTextEl: Text = new Text(statementRaw.substring(0, ref.length));
+            statementNewTexts.push(refTextEl);
+            statementRaw = statementRaw.slice(ref.length);
+
+            Ref.addRefToRefs(refs, refKeyMap.get(ref), refKeysMap.get(ref), "__els", {
+              target: refTextEl,
+              statement: {
+                refs: [refKeyMap.get(ref)],
+                value: executableStatements.get(statementRaw),
+                raw: statementRawTemp
+              }
+            })
+          }
+        });
+        statementNewTexts.push(new Text(statementRaw));
+      } else {
+        const positionIndex: number = target.textContent.indexOf(statementRaw);
+
+        statementNewTexts.push(new Text(target.textContent.slice(0, positionIndex)))
+        target.textContent = target.textContent.slice(positionIndex);
+
+        const statementTextEl: Text = new Text(statementRaw);
+        statementNewTexts.push(statementTextEl);
+        target.textContent = target.textContent.slice(0, statementRaw.length);
+
+        //* 没有引用的语句
         refs.__emptyRefs__.__els.push({
           target: statementTextEl,
           statement: {
-            refs: refKeysRawStrings,
-            value: executableStatements.get(statement),
-            raw: statement
+            refs: [],
+            value: executableStatements.get(statementRaw),
+            raw: statementRaw
           }
         })
       }
 
-      refKeysRawStrings.forEach(refKey => {
-        const refKeys: string[] = Transform.transformPropertyKey(refKey);
-        Ref.addRefToRefs(refs, refKey, refKeys, "__els", {
-          target: statementTextEl,
-          statement: {
-            refs: refKeysRawStrings,
-            value: executableStatements.get(statement),
-            raw: statement
-          }
-        });
-        refKeyMap.set(refKey, refKeys);
-      })
+      const positionIndex: number = target.textContent.indexOf(statementRawTemp);
+      const breforeText: string = target.textContent.slice(0, positionIndex);
+      target.textContent = target.textContent.slice(breforeText.length + statementRawTemp.length);
+      newTexts.push(new Text(breforeText));
+      newTexts.push(...statementNewTexts);
     })
   });
 
