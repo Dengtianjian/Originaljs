@@ -35,24 +35,30 @@ function collectRefs(target: Node | Element): TRefs {
   const refKey: string = inAttr.value;
   const template: string = (target as Element).innerHTML;
   const statements: TStatement[] = Ref.collectStatement(refKey);
+  console.log(statements);
 
-  statements.forEach(({ statementRefMap, executableStatements, refs: statementRefs }) => {
-    statementRefMap.forEach((refKeysRawStrings, statement) => {
-      Ref.addRefToRefs<TRefItemTypeFor>(refs, Transform.transformPropertyKeyToString(refKeysRawStrings), refKeysRawStrings, "__for", {
-        target: target as Element,
-        statement: {
-          refs: statementRefs,
-          value: executableStatements.get(refKey),
-          raw: statement
-        },
-        for: {
-          itemName,
-          indexName,
-          keyName,
-          refKey,
-          template
-        }
-      });
+
+  statements.forEach(({ statementRefsMap, refKeysMap, executableStatements, statementsRaw, refKeyMap }) => {
+    statementsRaw.forEach((statementRaw) => {
+      const statementRefs: string[] = statementRefsMap.get(statementRaw) ?? [];
+
+      statementRefs.forEach(refRawStr => {
+        Ref.addRefToRefs<TRefItemTypeFor>(refs, refKeyMap.get(refRawStr), refKeysMap.get(refRawStr), "__for", {
+          target: target as Element,
+          statement: {
+            refs: statementRefs,
+            value: executableStatements.get(statementRaw),
+            raw: statementRaw
+          },
+          for: {
+            itemName,
+            indexName,
+            keyName,
+            refKey,
+            template
+          }
+        });
+      })
     });
   });
   (target as Element).innerHTML = "";
