@@ -1,5 +1,6 @@
 import CustomElement from "../CustomElement";
 import { TRefItem, TRefs } from "../Typings/RefType";
+import Obj from "../Utils/Obj";
 import Module from "./Module";
 import Transform from "./Transform";
 
@@ -20,14 +21,13 @@ export default {
   },
   updateRefView(refs: TRefs, data: CustomElement) {
     for (const refKey in refs) {
-      // if (refKey === "__emptyRefs__") {
-      //   continue;
-      // }
       const refItem: TRefItem = refs[refKey];
-      this.updateView(refItem, data);
+      const refKeys: string[] = Transform.transformPropertyKey(refKey);
+      const targetData: any = Obj.getObjectProperty(data, refKeys);
+      this.updateView(refItem, refKeys, targetData, data);
     }
   },
-  updateView(refItem: TRefItem, data: CustomElement) {
+  updateView(refItem: TRefItem, refKeys: string[], data: CustomElement) {
     Module.useAll("updateView", arguments);
   }
 }

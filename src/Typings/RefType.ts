@@ -17,6 +17,7 @@ export type TRefItemTypeFor = {
     itemName: string,
     indexName: string,
     keyName: string,
+    refRawKey: string,
     refKey: string
   }
 } & TRefItemBasic;

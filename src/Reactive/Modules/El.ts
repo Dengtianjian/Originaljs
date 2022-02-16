@@ -81,7 +81,7 @@ function collectRefs(target: Node | Element): TRefs {
   return refs;
 }
 
-function updateView(refItem: TRefItem, data: CustomElement) {
+function updateView(refItem: TRefItem, refKeys: string[], target: any, data: CustomElement) {
   refItem.__els.forEach(item => {
     item.target.textContent = View.executeStatement(item.statement.value, data);
   });
