@@ -18,6 +18,7 @@ function mergeRefs(target: TRefs, source: TRefs) {
     const targetRefItem: TRefItem = target[refKey];
     const sourceRefItem: TRefItem = source[refKey];
     for (const type in targetRefItem) {
+      if (type === "__refKeys") continue;
       targetRefItem[type].push(...sourceRefItem[type]);
     }
   }
