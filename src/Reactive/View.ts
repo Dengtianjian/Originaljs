@@ -1,9 +1,10 @@
 import CustomElement from "../CustomElement";
 import { TRefItem, TRefs } from "../Typings/RefType";
+import Module from "./Module";
 import Transform from "./Transform";
 
 export default {
-  executeStatement(statement: string, data: CustomElement) {
+  executeStatement(statement: string, data: CustomElement): string {
     let result: any = null;
     try {
       result = new Function(`return ${statement}`).call(data);
@@ -15,7 +16,7 @@ export default {
       throw e;
     }
 
-    return Transform.transformObjectToString(result);
+    return Transform.transformObjectToString(result).toString();
   },
   updateRefView(refs: TRefs, data: CustomElement) {
     for (const refKey in refs) {
@@ -27,8 +28,6 @@ export default {
     }
   },
   updateView(refItem: TRefItem, data: CustomElement) {
-    refItem.__els.forEach(item => {
-      item.target.textContent = this.executeStatement(item.statement.value, data);
-    });
+    Module.useAll("updateView", arguments);
   }
 }

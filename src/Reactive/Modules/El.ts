@@ -1,8 +1,8 @@
 import CustomElement from "../../CustomElement";
 import { TModuleOptions } from "../../Typings/ModuleType";
-import { TStatement, TRefs } from "../../Typings/RefType";
+import { TStatement, TRefs, TRefItem } from "../../Typings/RefType";
 import Ref from "../Ref";
-import Transform from "../Transform";
+import View from "../View";
 
 const passCollectTags: string[] = ["SCRIPT", "STYLE", "CODE"];
 
@@ -81,7 +81,14 @@ function collectRefs(target: Node | Element): TRefs {
   return refs;
 }
 
+function updateView(refItem: TRefItem, data: CustomElement) {
+  refItem.__els.forEach(item => {
+    item.target.textContent = View.executeStatement(item.statement.value, data);
+  });
+}
+
 export default {
   name: "El",
-  collectRefs
+  collectRefs,
+  updateView
 } as TModuleOptions
