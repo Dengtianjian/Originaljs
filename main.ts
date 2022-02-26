@@ -28,13 +28,40 @@ class CEl extends OG.createElement() {
       // })
       this.render(template);
     });
-    // setInterval(() => {
-    //   this.user.time = formatTime();
-    // }, 100);
+
+    let count = 0;
+    let colors = [
+      "LightCyan",
+      "red",
+      "GoldenRod",
+      "blue",
+      "green",
+      "yellow",
+      "aliceBlue",
+      "Gold",
+      "GoldenRod",
+      "LightSteelBlue",
+      "Maroon",
+      "MediumAquaMarine",
+      "MediumPurple",
+      "Moccasin",
+      "Navy",
+      "Indigo",
+      "Lavender"
+    ];
+    setInterval(() => {
+      if (count === colors.length) {
+        count = 0;
+      }
+      this.cssStyle.color = colors[count];
+
+      count++;
+    }, 100);
     // setTimeout(() => {
-      // this.users.push("a");
-    //   this.user.time = formatTime();
-    // }, 1000);
+    //   this.cssStyle.color = "blue";
+    //   // this.users.push("a");
+    //   //   this.user.time = formatTime();
+    // }, 2000);
   }
   user = {
     name: "天天向上的天健",
@@ -52,6 +79,11 @@ class CEl extends OG.createElement() {
   articles = [];
   users = ["admin", "test", "job", "jack", "candy"];
   title = "EdgeDB 架构简析";
+  color = "red";
+  cssStyle = {
+    color: "red",
+    fontSize: "16px"
+  }
   update() {
     return "show";
   }

@@ -22,14 +22,21 @@ export type TRefItemTypeFor = {
   }
 } & TRefItemBasic;
 
+export type TRefItemTypeStyle = {
+  raw: string,
+  cssVariableName: string
+} & TRefItemBasic;
+
 export type TRefItemKeys = {
   __els: "__els",
-  __for: "__for"
+  __for: "__for",
+  __style: "__style"
 }
 
 export type TRefItem = {
   __els: TRefItemTypeEl[],
   __for: TRefItemTypeFor[],
+  __style: TRefItemTypeStyle[],
   __refKeys: string[]
 }
 

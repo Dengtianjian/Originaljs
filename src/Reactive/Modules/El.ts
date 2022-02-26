@@ -46,7 +46,7 @@ function collectRefs(target: Node | Element): TRefs {
 
       if (statementRefs.length) {
         statementRefs.forEach((refRawStr) => {
-          Ref.addRefToRefs(refs, refKeyMap.get(refRawStr), refKeysMap.get(refRawStr), "__els", {
+          Ref.addRefToRefs(refs, refKeysMap.get(refRawStr), "__els", {
             target: statementTextEl,
             statement: {
               refs: [refKeyMap.get(refRawStr)],

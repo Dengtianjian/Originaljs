@@ -6,7 +6,7 @@ import { TRefs } from "./Typings/RefType";
 
 interface ICustomElement {
   __OG__: {
-    rootEl: HTMLElement;
+    rootEl: HTMLElement | ShadowRoot;
     props: string[];
     refs: TRefs
   };

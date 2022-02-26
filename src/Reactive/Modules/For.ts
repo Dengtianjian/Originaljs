@@ -43,7 +43,7 @@ function collectRefs(target: Node | Element): TRefs {
       const statementRefs: string[] = statementRefsMap.get(statementRaw) ?? [];
 
       statementRefs.forEach(refRawStr => {
-        Ref.addRefToRefs<TRefItemTypeFor>(refs, refKeyMap.get(refRawStr), refKeysMap.get(refRawStr), "__for", {
+        Ref.addRefToRefs<TRefItemTypeFor>(refs, refKeysMap.get(refRawStr), "__for", {
           target: target as Element,
           statement: {
             refs: statementRefs,

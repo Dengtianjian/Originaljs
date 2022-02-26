@@ -1,1 +1,25 @@
-Originaljs
+<style>
+  :host {
+    --red: red;
+
+    background-color: var(--color);
+  }
+
+  h3 {
+    color:o("cssStyle.fontSize");
+  }
+
+  h1 {
+    color: o('cssStyle["color"]');
+    transition: color 0.1s ease-in-out;
+  }
+</style>
+
+{{ cssStyle["color"] }}
+<h1>
+  Hello Originaljs
+</h1>
+
+<h2 style="color:var(--o-cssStylecolor);transition: color 0.1s ease-in-out 0.05s">
+  H222222222222222222222222222
+</h2>
