@@ -1,3 +1,5 @@
+import CustomElement from "../CustomElement";
+
 export type TRefStatementPropertyValue = {
   refs: string[],
   value: string,
@@ -56,4 +58,11 @@ export type TStatement = {
   statementRefsMap: Map<string, string[]>, //* 语句对应的有哪些引用
   // refCountMap: Map<string, number> //* 当前语句同一个插值引用的次数
   statementRawMap: Map<string, string>
+}
+
+export type TPropertyRef = {
+  interpolation: string,
+  refKey: string,
+  refKeys: string[],
+  root: CustomElement
 }

@@ -30,13 +30,13 @@ class CEl extends OG.createElement() {
     });
 
     let count = 0;
-    setInterval(() => {
-      this.user.friends.push(formatTime());
-    }, 1000);
-    // setTimeout(() => {
-    //   // this.user.friends = ["1", "2"];
-    //   this.user.friends.push("99");
-    // }, 2000);
+    // setInterval(() => {
+    //   this.user.friends.push(formatTime());
+    // }, 1000);
+    setTimeout(() => {
+      // this.user.friends = ["1", "2"];
+      this.user.friends.push("99");
+    }, 2000);
   }
   user = {
     name: "天天向上的天健",

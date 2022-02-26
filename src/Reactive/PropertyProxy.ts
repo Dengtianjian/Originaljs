@@ -30,9 +30,9 @@ function bubbleSetProxy(refKeys: string[], data: any, upperKeys: string[], root:
           const refKey: string = Transform.transformPropertyKeyToString(refKeys);
 
           if (refs[refKey] === undefined) {
-            Module.useAll("set", [refKeys, targetProxy, targetProxy.root]);
+            Module.useAll("set", [refKeys, target, targetProxy.root]);
           } else {
-            View.updateView(refs[refKey], refKeys, targetProxy, targetProxy.root);
+            View.updateView(refs[refKey], refKeys, target, targetProxy.root);
           }
           return true;
         }

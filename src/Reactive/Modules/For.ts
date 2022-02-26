@@ -1,6 +1,6 @@
 import CustomElement from "../../CustomElement";
 import { TModuleOptions } from "../../Typings/ModuleType";
-import { TStatement, TRefs, TRefItemTypeFor, TRefItem } from "../../Typings/RefType";
+import { TStatement, TRefs, TRefItemTypeFor, TRefItem, TPropertyRef } from "../../Typings/RefType";
 import Obj from "../../Utils/Obj";
 import Ref from "../Ref";
 import Transform from "../Transform";
@@ -92,9 +92,11 @@ function set(refKeys: string[], target: any, root: CustomElement): void {
   const refKey: string = refKeys[refKeys.length - 1];
   if (refKey === "length") return;
 
-  const fors = root.__OG__.refs[Transform.transformPropertyKeyToString(refKeys.slice(0, refKeys.length - 1))].__for;
+  const targetRef: TPropertyRef = target.__proxy__;
+  const ref: TRefItem = root.__OG__.refs[targetRef.refKey];
+  if (ref?.__for === undefined) return;
 
-  fors.forEach(forItem => {
+  ref.__for.forEach(forItem => {
     const propertyKey: string = Transform.transformPropertyKeyToString(refKeys);
     const template: string = forItem.for.template.replace(new RegExp(`(?<=\{{1} *)${forItem.for.itemName}`, "g"), propertyKey);
     View.render(template, forItem.target as Element, root);
