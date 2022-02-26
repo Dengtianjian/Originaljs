@@ -1,6 +1,7 @@
 import CustomElement from "../../CustomElement";
 import { TModuleOptions } from "../../Typings/ModuleType";
 import { TStatement, TRefs, TRefItemTypeFor, TRefItem } from "../../Typings/RefType";
+import Obj from "../../Utils/Obj";
 import Ref from "../Ref";
 import Transform from "../Transform";
 import View from "../View";
@@ -70,23 +71,39 @@ function collectRefs(target: Node | Element): TRefs {
 function updateView(refItem: TRefItem, refKeys: string[], target: any, root: CustomElement) {
   if (refKeys.includes("__emptyRefs__")) return;
 
-  refItem.__for.forEach(forItem => {
-    if (target.__proxy__.refKey === forItem.for.refKey) {
-      let index: number = 0;
-      for (const key in target) {
-        const propertyKey: string = Transform.transformPropertyKeyToString([...refKeys, key]);
-        const template: string = forItem.for.template.replace(new RegExp(`(?<=\{{1} *)${forItem.for.itemName}`, "g"), propertyKey);
-        View.render(template, forItem.target as Element, root);
-        index++;
+  if (target.__proxy__) {
+    refItem.__for.forEach(forItem => {
+      if (target.__proxy__.refKey === forItem.for.refKey) {
+        let index: number = 0;
+        for (const key in target) {
+          const propertyKey: string = Transform.transformPropertyKeyToString([...refKeys, key]);
+          const template: string = forItem.for.template.replace(new RegExp(`(?<=\{{1} *)${forItem.for.itemName}`, "g"), propertyKey);
+          View.render(template, forItem.target as Element, root);
+          index++;
+        }
+      } else {
+        forItem.target.textContent += forItem.for.template;
       }
-    } else {
-      forItem.target.textContent += forItem.for.template;
-    }
+    });
+  }
+}
+
+function set(refKeys: string[], target: any, root: CustomElement): void {
+  const refKey: string = refKeys[refKeys.length - 1];
+  if (refKey === "length") return;
+
+  const fors = root.__OG__.refs[Transform.transformPropertyKeyToString(refKeys.slice(0, refKeys.length - 1))].__for;
+
+  fors.forEach(forItem => {
+    const propertyKey: string = Transform.transformPropertyKeyToString(refKeys);
+    const template: string = forItem.for.template.replace(new RegExp(`(?<=\{{1} *)${forItem.for.itemName}`, "g"), propertyKey);
+    View.render(template, forItem.target as Element, root);
   });
 }
 
 export default {
   name: "For",
   collectRefs,
-  updateView
+  updateView,
+  set
 } as TModuleOptions

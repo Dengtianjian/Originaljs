@@ -30,37 +30,12 @@ class CEl extends OG.createElement() {
     });
 
     let count = 0;
-    let colors = [
-      "LightCyan",
-      "red",
-      "GoldenRod",
-      "blue",
-      "green",
-      "yellow",
-      "aliceBlue",
-      "Gold",
-      "GoldenRod",
-      "LightSteelBlue",
-      "Maroon",
-      "MediumAquaMarine",
-      "MediumPurple",
-      "Moccasin",
-      "Navy",
-      "Indigo",
-      "Lavender"
-    ];
     setInterval(() => {
-      if (count === colors.length) {
-        count = 0;
-      }
-      this.cssStyle.color = colors[count];
-
-      count++;
-    }, 100);
+      this.user.friends.push(formatTime());
+    }, 1000);
     // setTimeout(() => {
-    //   this.cssStyle.color = "blue";
-    //   // this.users.push("a");
-    //   //   this.user.time = formatTime();
+    //   // this.user.friends = ["1", "2"];
+    //   this.user.friends.push("99");
     // }, 2000);
   }
   user = {
@@ -74,9 +49,11 @@ class CEl extends OG.createElement() {
       docs: 88,
       likes: 8
     },
-    time: "a"
+    time: "a",
+    friends: ["asd", "qwe", "iop"]
   };
   articles = [];
+  numbers = [88, 66];
   users = ["admin", "test", "job", "jack", "candy"];
   title = "EdgeDB 架构简析";
   color = "red";
@@ -84,6 +61,25 @@ class CEl extends OG.createElement() {
     color: "red",
     fontSize: "16px"
   }
+  colors = [
+    "LightCyan",
+    "red",
+    "GoldenRod",
+    "blue",
+    "green",
+    "yellow",
+    "aliceBlue",
+    "Gold",
+    "GoldenRod",
+    "LightSteelBlue",
+    "Maroon",
+    "MediumAquaMarine",
+    "MediumPurple",
+    "Moccasin",
+    "Navy",
+    "Indigo",
+    "Lavender"
+  ];
   update() {
     return "show";
   }

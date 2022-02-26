@@ -1,5 +1,6 @@
 import CustomElement from "../CustomElement";
 import { TRefs } from "../Typings/RefType";
+import Module from "./Module";
 import Transform from "./Transform";
 import View from "./View";
 
@@ -28,17 +29,21 @@ function bubbleSetProxy(refKeys: string[], data: any, upperKeys: string[], root:
           const refs: TRefs = targetProxy.root.__OG__.refs;
           const refKey: string = Transform.transformPropertyKeyToString(refKeys);
 
-          if (refs[refKey]) {
+          if (refs[refKey] === undefined) {
+            Module.useAll("set", [refKeys, targetProxy, targetProxy.root]);
+          } else {
             View.updateView(refs[refKey], refKeys, targetProxy, targetProxy.root);
           }
           return true;
         }
       });
 
+      const refKeys: string[] = [...upperKeys, propertyKey];
       Object.defineProperty(target, "__proxy__", {
         value: {
-          refKeys: [...upperKeys, propertyKey],
-          refKey: propertyKey,
+          refKeys,
+          interpolation: propertyKey,
+          refKey: Transform.transformPropertyKeyToString(refKeys),
           root: root
         },
         enumerable: false,
