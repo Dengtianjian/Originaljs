@@ -90,8 +90,21 @@ function updateView(refItem: TRefItem, refKeys: string[], target: any, data: Cus
   });
 }
 
+function deleteProperty(ref: TRefItem, target: any, propertyKey: string) {
+  const removeIndexs: number[] = [];
+  ref.__els.forEach((refItem, itemIndex) => {
+    refItem.target.parentElement.removeChild(refItem.target);
+    removeIndexs.push(itemIndex);
+  });
+
+  removeIndexs.forEach(item => {
+    ref.__els.splice(item, 1);
+  })
+}
+
 export default {
   name: "El",
   collectRefs,
-  updateView
+  updateView,
+  deleteProperty
 } as TModuleOptions

@@ -1,5 +1,5 @@
 import CustomElement from "../CustomElement";
-import { TRefs } from "../Typings/RefType";
+import { TPropertyRef, TRefItem, TRefs } from "../Typings/RefType";
 import Module from "./Module";
 import Transform from "./Transform";
 import View from "./View";
@@ -32,8 +32,14 @@ function bubbleSetProxy(refKeys: string[], data: any, upperKeys: string[], root:
           if (refs[refKey] === undefined) {
             Module.useAll("set", [refKeys, target, targetProxy.root]);
           } else {
-            View.updateView(refs[refKey], refKeys, target, targetProxy.root);
+            Module.useAll("updateView", [refs[refKey], refKeys, target, targetProxy.root]);
           }
+          return true;
+        },
+        deleteProperty(target: any, propertyKey) {
+          const ref: TRefItem = root.__OG__.refs[Transform.transformPropertyKeyToString([...refKeys, propertyKey.toString()])];
+
+          Module.useAll("deleteProperty", [ref, target, propertyKey]);
           return true;
         }
       });
