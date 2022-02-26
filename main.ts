@@ -22,15 +22,15 @@ class CEl extends OG.createElement() {
   constructor() {
     super();
     loadTemplate("el").then(template => {
-      fetch("https://discuz.chat/api/v3/thread.list?perPage=10&page=1&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=0&dzqSid=38358337-1636364502364&dzqPf=pc").then(res => res.json()).then(({ Data: { pageData } }) => pageData).then((res) => {
-        this.articles.push(...res);
-        this.render(template);
-      })
-      // this.render(template);
+      // fetch("https://discuz.chat/api/v3/thread.list?perPage=10&page=1&filter[essence]=0&filter[attention]=0&filter[sort]=1&scope=0&dzqSid=38358337-1636364502364&dzqPf=pc").then(res => res.json()).then(({ Data: { pageData } }) => pageData).then((res) => {
+      //   this.articles.push(...res);
+      //   this.render(template);
+      // })
+      this.render(template);
     });
-    setInterval(() => {
-      this.user.time = formatTime();
-    }, 100);
+    // setInterval(() => {
+    //   this.user.time = formatTime();
+    // }, 100);
     // setTimeout(() => {
       // this.users.push("a");
     //   this.user.time = formatTime();

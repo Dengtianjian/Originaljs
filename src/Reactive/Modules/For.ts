@@ -1,7 +1,6 @@
 import CustomElement from "../../CustomElement";
 import { TModuleOptions } from "../../Typings/ModuleType";
 import { TStatement, TRefs, TRefItemTypeFor, TRefItem } from "../../Typings/RefType";
-import Parser from "../Parser";
 import Ref from "../Ref";
 import Transform from "../Transform";
 import View from "../View";
