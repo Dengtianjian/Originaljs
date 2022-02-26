@@ -10,6 +10,9 @@ function collectRefs(target: Node | Element): TRefs {
   if (passCollectTags.includes((target as Node).nodeName) && (target as Node).nodeType === 1) {
     return {};
   }
+  if (passCollectTags.includes(target.parentElement.nodeName)) {
+    return {};
+  }
   if (!(target instanceof Text)) {
     return {};
   }
