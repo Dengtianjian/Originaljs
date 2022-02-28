@@ -84,10 +84,12 @@ function collectRefs(target: Node | Element): TRefs {
   return refs;
 }
 
-function updateView(refItem: TRefItem, refKeys: string[], target: any, data: CustomElement) {
+function reflectAfter(refItem: TRefItem, refKeys: string[], target: any, newValue: unknown, data: CustomElement): boolean {
   refItem.__els.forEach(item => {
     item.target.textContent = View.executeStatement(item.statement.value, data);
   });
+
+  return true;
 }
 
 function deleteProperty(ref: TRefItem, target: any, propertyKey: string) {
@@ -105,6 +107,7 @@ function deleteProperty(ref: TRefItem, target: any, propertyKey: string) {
 export default {
   name: "El",
   collectRefs,
-  updateView,
+  // updateView,
+  reflectAfter,
   deleteProperty
 } as TModuleOptions

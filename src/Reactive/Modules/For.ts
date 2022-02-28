@@ -68,7 +68,7 @@ function collectRefs(target: Node | Element): TRefs {
   return refs;
 }
 
-function updateView(refItem: TRefItem, refKeys: string[], target: any, root: CustomElement) {
+function reflectAfter(refItem: TRefItem, refKeys: string[], target: any, newValue: unknown, root: CustomElement): boolean {
   if (refKeys.includes("__emptyRefs__")) return;
 
   if (target.__proxy__) {
@@ -86,6 +86,8 @@ function updateView(refItem: TRefItem, refKeys: string[], target: any, root: Cus
       }
     });
   }
+
+  return true;
 }
 
 function set(refKeys: string[], target: any, root: CustomElement): void {
@@ -106,6 +108,6 @@ function set(refKeys: string[], target: any, root: CustomElement): void {
 export default {
   name: "For",
   collectRefs,
-  updateView,
+  reflectAfter,
   set
 } as TModuleOptions

@@ -1,5 +1,6 @@
 import CustomElement from "../CustomElement";
 import { TPropertyRef, TRefItem, TRefs } from "../Typings/RefType";
+import Obj from "../Utils/Obj";
 import Module from "./Module";
 import Transform from "./Transform";
 import View from "./View";
@@ -24,15 +25,17 @@ function bubbleSetProxy(refKeys: string[], data: any, upperKeys: string[], root:
 
           let refKeys: string[] = [...targetProxy.refKeys, propertyKey];
 
-          Reflect.set(target, propertyKey, value, receiver);
-
           const refs: TRefs = targetProxy.root.__OG__.refs;
           const refKey: string = Transform.transformPropertyKeyToString(refKeys);
 
           if (refs[refKey] === undefined) {
+            Reflect.set(target, propertyKey, value, receiver);
             Module.useAll("set", [refKeys, target, targetProxy.root]);
           } else {
-            Module.useAll("updateView", [refs[refKey], refKeys, target, targetProxy.root]);
+            const oldValue: unknown = Obj.getObjectProperty(root, refKeys);
+            Module.useAll("reflectBefore", [refs[refKey], refKeys, target, oldValue, targetProxy.root]);
+            Reflect.set(target, propertyKey, value, receiver);
+            Module.useAll("reflectAfter", [refs[refKey], refKeys, target, value, targetProxy.root]);
           }
           return true;
         },

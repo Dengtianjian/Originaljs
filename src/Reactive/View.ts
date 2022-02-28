@@ -22,12 +22,14 @@ export default {
 
     return Transform.transformObjectToString(result).toString();
   },
-  updateRefView(refs: TRefs, data: CustomElement) {
+  updateRefView(refs: TRefs, root: CustomElement) {
+    console.log(refs);
+
     for (const refKey in refs) {
       const refItem: TRefItem = refs[refKey];
       const refKeys: string[] = Transform.transformPropertyKey(refKey);
-      const targetData: any = Obj.getObjectProperty(data, refKeys);
-      this.updateView(refItem, refKeys, targetData, data);
+      const targetData: any = Obj.getObjectProperty(root, refKeys);
+      Module.useAll("reflectAfter", [refItem, refKeys, targetData, targetData, root]);
     }
   },
   updateView(refItem: TRefItem, refKeys: string[], target: any, data: CustomElement) {
