@@ -26,6 +26,36 @@
   <div id="app">
     <c-el></c-el>
   </div>
+
+  <script>
+    let errorEls = [];
+    function createErrorEl(message) {
+      const lastErrorEl = errorEls[errorEls.length - 1];
+      let top = 0;
+      if (lastErrorEl) {
+        top = lastErrorEl.offsetTop + lastErrorEl.offsetHeight;
+      }
+      const divEl = document.createElement("div");
+      divEl.style.cssText = `position:absolute;top:${top}px;right:0;width:40%;word-break: break-word;box-sizing:border-box;`;
+      divEl.style.color = "red";
+      divEl.style.padding = "10px";
+      divEl.style.backgroundColor = "rgb(255,240,240)";
+      divEl.style.cursor = "pointer";
+      divEl.title = "点击移除全部提示";
+      divEl.innerHTML = message;
+      divEl.onclick = function () {
+        errorEls.forEach(element => {
+          element.parentElement.removeChild(element);
+        });
+        errorEls = [];
+      };
+      errorEls.push(divEl);
+      document.body.insertBefore(divEl, document.body.firstChild);
+    }
+    window.onerror = function (details, file, line, column, message) {
+      createErrorEl(`${message} <br/> <div style='padding-top:5px;color:blue'>at ${file}:${line}:${column}</span>`);
+    }
+  </script>
 </body>
 
 </html>
