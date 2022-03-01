@@ -1,3 +1,5 @@
+import Transform from "../Reactive/Transform";
+
 /**
  * 合并两个对象，会修改目标对象，而不是返回新的对象
  * @param target 合并到目标对象
@@ -58,6 +60,18 @@ function getObjectProperty(target: object, propertyNames: (string | symbol)[]): 
   return target[propertyNames[0]];
 }
 
+export function deepSetObjectPropertyValue(obj: object, propertyNames: string[] | string, value: any): void {
+  propertyNames = Array.isArray(propertyNames) ? propertyNames : Transform.transformPropertyKey(propertyNames);
+
+  if (propertyNames.length == 1) {
+    obj[propertyNames[0]] = value;
+  } else {
+    let firstKey: string = propertyNames[0];
+    propertyNames.shift();
+    deepSetObjectPropertyValue(obj[firstKey], propertyNames, value);
+  }
+}
+
 /**
  * 判断是否是可迭代对象
  * @param obj 任意对象
@@ -78,6 +92,7 @@ function cloneMap(obj: Map<any, any>): Map<any, any> {
 export default {
   objectMerge,
   getObjectProperty,
+  deepSetObjectPropertyValue,
   isIterable,
   cloneMap
 }

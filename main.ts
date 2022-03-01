@@ -31,11 +31,16 @@ class CEl extends OG.createElement() {
 
     let count = 0;
     // setInterval(() => {
-    //   this.user.friends.unshift(formatTime());
-    // }, 1000);
+    //   let newNums = [];
+    //   for (let index = 0; index < 10; index++) {
+    //     newNums.push(Date.now() + index);
+    //   }
+    //   this.user.friends = newNums;
+    // }, 100);
+
     setTimeout(() => {
-      // this.user.friends = ["jkl", "tyu"];
-      this.user.friends.push("aa");
+      // this.user.friends = ["jkl", "tyu", "a", "b", "c"];
+      // this.user.friends.unshift("aa");
     }, 2000);
   }
   user = {

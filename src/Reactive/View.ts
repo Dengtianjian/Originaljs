@@ -23,8 +23,6 @@ export default {
     return Transform.transformObjectToString(result).toString();
   },
   updateRefView(refs: TRefs, root: CustomElement) {
-    console.log(refs);
-
     for (const refKey in refs) {
       const refItem: TRefItem = refs[refKey];
       const refKeys: string[] = Transform.transformPropertyKey(refKey);
@@ -35,8 +33,9 @@ export default {
   updateView(refItem: TRefItem, refKeys: string[], target: any, data: CustomElement) {
     Module.useAll("updateView", arguments);
   },
-  render(template: string, rootEl: Element, root: CustomElement): Promise<void> {
+  render(template: string, rootEl: Element, root: CustomElement, debug: boolean = false): Promise<void> {
     if (!template) return Promise.resolve();
+
     template = Parser.optimizeRefKey(template);
     const childNodes: Node[] = Parser.parseDom(template);
     const wrapperEl: HTMLElement = document.createElement("div");
@@ -44,10 +43,14 @@ export default {
     const refs: TRefs = Ref.collectRefs(Array.from(wrapperEl.childNodes), root);
 
     Ref.mergeRefs(root.__OG__.refs, refs);
-    PropertyProxy.setProxy(refs, root);
+    PropertyProxy.setProxyByRefs(refs, root);
+
     this.updateRefView(refs, root);
 
-    rootEl.append(...Array.from(wrapperEl.childNodes));
+    if (!debug) {
+      rootEl.append(...Array.from(wrapperEl.childNodes));
+    }
+  
     return Promise.resolve();
   }
 }

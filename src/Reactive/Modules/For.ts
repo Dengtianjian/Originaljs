@@ -2,6 +2,9 @@ import CustomElement from "../../CustomElement";
 import { TModuleOptions } from "../../Typings/ModuleType";
 import { TStatement, TRefs, TRefItemTypeFor, TRefItem, TPropertyRef } from "../../Typings/RefType";
 import Obj from "../../Utils/Obj";
+import Module from "../Module";
+import Parser from "../Parser";
+import PropertyProxy from "../PropertyProxy";
 import Ref from "../Ref";
 import Transform from "../Transform";
 import View from "../View";
@@ -68,10 +71,32 @@ function collectRefs(target: Node | Element): TRefs {
   return refs;
 }
 
-function reflectAfter(refItem: TRefItem, refKeys: string[], target: any, newValue: unknown, root: CustomElement): boolean {
+function reflectBefore(refItem: TRefItem, refKeys: string[], target: any, oldValue: any, root: CustomElement): boolean {
+  target = Obj.getObjectProperty(root, refKeys);
+  if (target.__proxy__) {
+    refItem.__for.forEach(forItem => {
+      if (target.__proxy__.refKey === forItem.for.refKey) {
+        for (const key in oldValue) {
+          const propertyKey: string = Transform.transformPropertyKeyToString([...refKeys, key]);
+          const ref: TRefItem = root.__OG__.refs[propertyKey];
+
+          if (ref) {
+            Module.useAll("deleteProperty", [ref, target, key]);
+          }
+        }
+      }
+    })
+  }
+
+  return true;
+}
+
+function reflectAfter(refItem: TRefItem, refKeys: string[], target: any, newValue: any, root: CustomElement): boolean {
   if (refKeys.includes("__emptyRefs__")) return;
 
-  if (target.__proxy__) {
+  target = Obj.getObjectProperty(root, refKeys);
+
+  if (target?.__proxy__) {
     refItem.__for.forEach(forItem => {
       if (target.__proxy__.refKey === forItem.for.refKey) {
         let index: number = 0;
@@ -85,6 +110,10 @@ function reflectAfter(refItem: TRefItem, refKeys: string[], target: any, newValu
         forItem.target.textContent += forItem.for.template;
       }
     });
+  } else {
+    if (typeof newValue === "object") {
+      Obj.deepSetObjectPropertyValue(root, refKeys, PropertyProxy.setProxy(newValue, root, refKeys, refKeys[refKeys.length - 1]));
+    }
   }
 
   return true;
@@ -108,6 +137,7 @@ function set(refKeys: string[], target: any, root: CustomElement): void {
 export default {
   name: "For",
   collectRefs,
+  reflectBefore,
   reflectAfter,
   set
 } as TModuleOptions
