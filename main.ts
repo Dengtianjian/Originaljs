@@ -26,7 +26,9 @@ class CEl extends OG.createElement() {
       //   this.articles.push(...res);
       //   this.render(template);
       // })
-      this.render(template);
+      this.render(template).then(() => {
+        this.getYuqueRecommends();
+      })
     });
 
     let count = 0;
@@ -38,6 +40,14 @@ class CEl extends OG.createElement() {
     //   this.user.friends = newNums;
     // }, 100);
 
+    // fetch("/recommend_api/v1/article/recommend_all_feed?aid=2608&uuid=7067733737542272551", {
+    //   mode: "cors",
+    //   method: "POST"
+    // }).then(res => {
+    //   return res.json();
+    // }).then(res => {
+    //   console.log(res);
+    // })
     setTimeout(() => {
       // this.user.friends = ["jkl", "tyu", "a", "b", "c"];
       // this.user.friends.unshift("aa");
@@ -87,6 +97,20 @@ class CEl extends OG.createElement() {
   ];
   update() {
     return "show";
+  }
+  page = 1;
+  yuque = {
+    articles: []
+  }
+  getYuqueRecommends() {
+    fetch("/yuque/explore/recommends?limit=20&page=" + this.page + "&type=Doc", {
+      mode: "cors"
+    }).then(res => {
+      return res.json();
+    }).then(({ data: { hasMore, items } }) => {
+      this.yuque.articles.push(...items);
+      this.page++;
+    })
   }
 }
 
