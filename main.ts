@@ -27,7 +27,10 @@ class CEl extends OG.createElement() {
       //   this.render(template);
       // })
       this.render(template).then(() => {
-        this.getYuqueRecommends();
+        // this.getYuqueRecommends();
+        // setTimeout(() => {
+        //   this.user.friends = [1, 2, 34];
+        // }, 1000);
       })
     });
 
@@ -48,10 +51,15 @@ class CEl extends OG.createElement() {
     // }).then(res => {
     //   console.log(res);
     // })
-    setTimeout(() => {
-      // this.user.friends = ["jkl", "tyu", "a", "b", "c"];
-      // this.user.friends.unshift("aa");
-    }, 2000);
+    // setTimeout(() => {
+    //   // this.user.friends = ["jkl", "tyu", "a", "b", "c"];
+    //   // this.user.friends.unshift("aa");
+    //   this.user.friends = [
+    //     {
+    //       name: "jku"
+    //     }
+    //   ];
+    // }, 2000);
   }
   user = {
     name: "天天向上的天健",
@@ -65,11 +73,17 @@ class CEl extends OG.createElement() {
       likes: 8
     },
     time: "a",
-    friends: ["asd", "qwe", "iop"]
+    friends: [{
+      name: "A1"
+    }, {
+      name: "A2"
+    }]
   };
   articles = [];
   numbers = [88, 66];
-  users = ["admin", "test", "job", "jack", "candy"];
+  users = [{
+    name: "admin"
+  }];
   title = "EdgeDB 架构简析";
   color = "red";
   cssStyle = {

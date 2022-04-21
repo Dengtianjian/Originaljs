@@ -66,3 +66,8 @@ export type TPropertyRef = {
   refKeys: string[],
   root: CustomElement
 }
+
+export type TForMark = {
+  __for__: boolean,
+  __proxy__: TPropertyRef
+}

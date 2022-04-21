@@ -83,6 +83,8 @@ function pushNew() {
   data.users.push({
     id: Date.now(),
   });
+  console.log(data.users);
+  
 }
 
 function reset() {

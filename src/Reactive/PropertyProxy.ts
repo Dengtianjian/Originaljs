@@ -27,6 +27,7 @@ function setProxy(target, root, refKeys, propertyKey) {
       const refKey: string = Transform.transformPropertyKeyToString(refKeys);
 
       if (refs[refKey] === undefined) {
+        Module.useAll("setBefore", [refKeys, target, targetProxy.root]);
         Reflect.set(target, propertyKey, value, receiver);
         Module.useAll("set", [refKeys, target, targetProxy.root]);
       } else {
@@ -61,6 +62,7 @@ function bubbleSetProxy(refKeys: string[], data: any, upperKeys: string[], root:
 
     if (target.hasOwnProperty("__proxy__") === false) {
       const refKeys: string[] = [...upperKeys, propertyKey];
+      //! 重复设值，如果是set触发了
       data[propertyKey] = setProxy(target, root, refKeys, propertyKey);
     }
   }

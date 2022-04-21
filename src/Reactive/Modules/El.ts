@@ -84,9 +84,9 @@ function collectRefs(target: Node | Element): TRefs {
   return refs;
 }
 
-function reflectAfter(refItem: TRefItem, refKeys: string[], target: any, newValue: unknown, data: CustomElement): boolean {
+function reflectAfter(refItem: TRefItem, refKeys: string[], target: any, newValue: unknown, root: CustomElement): boolean {
   refItem.__els.forEach(item => {
-    item.target.textContent = View.executeStatement(item.statement.value, data);
+    item.target.textContent = View.executeStatement(item.statement.value, root);
   });
 
   return true;
